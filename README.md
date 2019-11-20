@@ -23,28 +23,26 @@ I later expanded it to cover 4.9 on up.
 # Features
 
 Features:
-    - 'include' statements are also supported (my favorite)
-    - Relative directory support (not stuck on /etc/bind or /var/lib/bind)
-        - Useful for testing many config files in their respective
-          local subdirectory(s).
-    - Support for Bind 4.8 to v9.15.1 (working on Bind10)
-    - ISC config files are used in ISC Bind9 server, as well as both ISC DHCP server and client.
+* 'include' statements are also supported (my favorite)
+* Relative directory support (not stuck on /etc/bind or /var/lib/bind)
+  * Useful for testing many config files in their respective local subdirectory(s).
+* Support for Bind 4.8 to v9.15.1 (working on Bind10)
+* ISC config files are used in ISC Bind9 server, as well as both ISC DHCP server and client.
 
 bind9-parser make it so easy to do all of that, and now easier for you.
 
 An example Bind9 config file that contains:
-
+```
     options {
         version "4.1";
         recursion no;
     }
-
+```
 bind9-parser result is:
-
+```
     result = { 'options': { 'version': "4.1", 'recursion': 'no' }}
+```
 
-
-
-== Unit Tests ==
+# Unit Tests
 A massive unit test is supplied (under `tests/` subdirectory) to ensure that future breakage does not occur.
 
