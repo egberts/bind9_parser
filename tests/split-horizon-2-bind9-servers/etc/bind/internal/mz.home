@@ -1,0 +1,12 @@
+// File: /etc/bind/internal/mz.home
+//
+// ISP-provided 'home' TLD
+//
+// Required by cablemodem and set-top box(s)
+
+zone "home" IN {
+    type master;
+    file "/var/lib/bind/internal/master/db.home";
+    allow-update { none; };
+};
+

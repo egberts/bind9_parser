@@ -1,0 +1,10 @@
+// File: /etc/bind/internal/zone.127
+
+
+zone "0.0.127.in-addr.arpa" IN {
+    type master;
+    file "/var/lib/bind/internal/master/db.ip4.127";
+    allow-update { none; };
+    forwarders { };
+    notify no;
+    };

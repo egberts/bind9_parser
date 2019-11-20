@@ -1,0 +1,19 @@
+
+= ROOT SERVERS =
+Root Servers used to be called 'root.hint', 'named.root', 'named.cache', but
+is now called 'db.cache' and no longer resides in /etc/bind
+but resides in /var/lib/bind as /etc/bind are no longer writeable
+in accordance with the Linux File System Standard.
+
+Also, DNSSEC now signs (and thusly updates) all zone files so 
+writeable files can only be done under /var/lib/bind directory.
+
+Pick up the latest root servers here, at least monthly:
+
+    https://www.internic.net/domain/
+
+Optionally, use a cron job to fetch and update 
+this '/var/lib/bind/db.cache' file.  But that'd be a poor security risk.
+
+Or you can let bind9 networkly fetch the db.cache file content at 
+bind9 startup and leave it as memory-resident storage.

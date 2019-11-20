@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+"""
+File: isc_clause_zone.py
+
+Clause: zone
+
+Title: Clause Statement for Zone Group
+
+Description:
+"""
+from pyparsing import Keyword, ZeroOrMore, Optional, Group, ungroup
+from isc_utils import lbrack, rbrack, semicolon, parse_me
+from isc_rr import rr_domain_name
+from isc_zone import zone_statements_set, zone_name
+from isc_optviewzone import optviewzone_statements_set
+from isc_optviewzoneserver import optviewzoneserver_statements_set
+from isc_optzone import optzone_statements_set
+from isc_viewzone import viewzone_statements_set
+
+
+# Note: There is no validation method applied here to ensure that
+#       ordering of Keywords are in longest listed, firstly.
+zone_all_stmts_set = (
+     zone_statements_set
+     | optzone_statements_set
+     | optviewzone_statements_set
+     | optviewzoneserver_statements_set
+     | viewzone_statements_set
+)
+
+zone_all_stmts_series = (
+    ZeroOrMore(
+        zone_all_stmts_set
+    )
+)
+
+clause_stmt_zone_standalone = (
+    Keyword('zone').suppress()
+    - Group(
+        zone_name('zone_name')
+        - Optional(rr_domain_name)
+        - lbrack
+        - (
+            zone_all_stmts_series
+        )('')
+        + rbrack
+    )('')
+    + semicolon
+)('zone')
+
+clause_stmt_zone_series = (
+    ZeroOrMore(
+        clause_stmt_zone_standalone
+    )
+)('zone')

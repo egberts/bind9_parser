@@ -1,0 +1,14 @@
+The examples that are practical at the moment are:
+
+    parse-bind9 - Most practical of all, actually
+                  parses ISC Bind into Python Dict structure
+
+    flatten_namedconf  - Reads in all include files and creates a single file.
+
+    isc_boolean - ISC Bind9 boolean syntax (it's complex)
+
+    exclamation - Exercise the use of 'exclamation' mark.
+
+    namedconfglobal.py - Is a Pythonized database that contains all things
+                         related to ISC Bind syntax handling, except for
+                         its BNF (that's what bind9-parser is for)..

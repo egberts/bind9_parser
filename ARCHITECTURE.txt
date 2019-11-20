@@ -1,0 +1,63 @@
+Python module dependency chart
+ - TODO: Fix cyclic dependencies
+
+isc_clause
+  + isc_clause_acl
+    + isc_aml
+      + isc_inet
+  + isc_clause_controls
+  + isc_clause_dlz
+  + isc_clause_dyndb
+  + isc_clause_key
+  + isc_clause_logging
+  + isc_clause_managed_keys
+    + isc_managed_keys
+  + isc_clause_masters
+    + isc_rr
+  + isc_clause_options
+    + isc_options
+      + isc_inet
+      + isc_domain
+      + isc_aml
+    + isc_optview
+      + isc_zone
+    + isc_optviewserver
+    + isc_optviewzone
+    + isc_optviewzoneserver
+    + isc_optzone
+  + isc_clause_managed_keys
+    + isc_rr
+  + isc_clause_plugins
+  + isc_clause_server
+    + isc_server
+    + isc_optviewserver
+    + isc_optviewzoneserver
+  + isc_clause_statistics_channels
+  + isc_clause_trusted_keys
+    + isc_trusted_keys
+    + isc_domain
+  + isc_clause_view
+    + isc_rr
+    + isc_managed_keys
+    + isc_optview
+    + isc_optviewserver
+    + isc_optviewzone
+    + isc_optviewzoneserver
+    + isc_view
+      + isc_trusted_key
+    + isc_viewzone
+      + isc_clause_dlz
+    + isc_clause_zone
+    + isc_clause_trusted_key
+  + isc_clause_zone
+    + isc_rr
+    + isc_optviewzone
+    + isc_optzone
+    + isc_optviewzoneserver
+    + isc_viewzone
+    + isc_zone
+      + isc_viewzone
+      + isc_clause_masters
+
+Note: isc_utils, isc_aml, and isc_inet are pretty much in
+      all Python source files

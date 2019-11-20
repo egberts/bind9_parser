@@ -1,0 +1,15 @@
+// File: /etc/bind/internal/mz.ip4.8.168.192
+//
+//  zone clause for 8.168.192.in-addr.arpa zone
+//
+//  Updateably by ISC DHCP via DDNS_UPDATER key
+//
+zone "4.168.192.in-addr.arpa" IN {
+    type master;
+    file "/var/lib/bind/internal/master/db.ip4.4.168.192";
+    allow-update {
+        key DDNS_UPDATER;
+        };
+    forwarders { };
+    notify no;
+    };

@@ -1,0 +1,15 @@
+// File: /etc/bind/internal/zone.ip4.1.168.192
+//
+// No need to append "." to zone name (done automatically in zone data file)
+//
+zone "1.168.192.in-addr.arpa." IN {
+    type master;
+    file "/var/lib/bind/internal/master/db.ip4.1.168.192";
+
+    //  Provides dynamic update to DNS from ISC DHCP
+    allow-update {
+        key DDNS_UPDATER;
+        };
+    forwarders { };
+    notify no;
+    };

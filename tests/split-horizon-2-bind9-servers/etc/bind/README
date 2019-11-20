@@ -1,0 +1,19 @@
+Default NAMED configuration files are:
+
+  named.conf
+  acl-named.conf
+  channels-named.conf
+  controls-named.conf
+  local-named.conf
+  masters-named.conf
+  options-named.conf
+  servers-named.conf
+  statistics-named.conf
+  trusted-keys-named.conf
+
+For multiple instances of bind daemons, preface named.conf-class filename
+with something like 'dmz-', 'int-', 'public-', 'red-', or 'white-'.
+
+Zone filename begin with 'zone.'
+
+View filename begin with 'view.'

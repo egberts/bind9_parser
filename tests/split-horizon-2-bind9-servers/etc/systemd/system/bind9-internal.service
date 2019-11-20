@@ -1,0 +1,28 @@
+# File: /etc/systemd/system/bind9-public.service
+#
+# Public-facing web server
+#
+# Not to be confused with default bind9.service
+#
+[Unit]
+Description=BIND Domain Name Server (Public)
+Documentation=man:named(8)
+
+# DHCLIENT SCRIPT will be activating this systemd unit service
+# No dependencies nor startup
+# After=network.target
+# Wants=nss-lookup.target
+# Before=nss-lookup.target
+
+# If a unit has a Conflicts= setting on another unit, starting 
+# the former will stop the latter and vice versa. 
+Conflicts=bind9.service
+
+[Service]
+EnvironmentFile=/etc/default/bind9-internal
+ExecStart=/usr/sbin/named -f $OPTIONS
+ExecReload=/usr/sbin/rndc -p 953 reload
+ExecStop=/usr/sbin/rndc -p 953 stop
+
+[Install]
+# WantedBy=multi-user.target

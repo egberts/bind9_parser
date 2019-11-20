@@ -1,0 +1,17 @@
+
+- Add 'catalog-zones'  # v9.15.0
+- Add 'dnstap'  # v9.15.0
+- Add 'dnstap-identity'  # v9.15.0
+- Add 'dnstap-output'  # v9.15.0
+- Add 'dnstap-version'  # v9.15.0
+- Add 'geoip-directory'  # v9.15.0
+- Add 'new-zones-directory'  # v9.15.0
+- Add 'no-case-compress'  # v9.15.0
+- Add 'nocookie-udp-size'  # v9.15.0
+- Add 'request-sit'  # v9.15.0, experimental, only in zone?
+- Add numerous 'response-policy'   #various
+
+- Convert parse_bind9 into a Python class module
+  - Need to incorporate ParseElement action functions into a class-based one
+    - How to deal with func(--> self <--, ...)
+

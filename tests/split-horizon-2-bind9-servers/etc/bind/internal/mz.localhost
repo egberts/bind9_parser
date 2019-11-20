@@ -1,0 +1,12 @@
+// File: /etc/bind/internal/mz.localhost
+//
+
+zone "localhost" IN {
+    type master;
+    file "/var/lib/bind/internal/master/db.localhost";
+
+    //// option clause should have none for allow-update, forwarders, notify
+    allow-update { none; };
+    forwarders { };
+    notify no;
+    };
