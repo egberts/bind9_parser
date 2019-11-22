@@ -10,6 +10,8 @@ Description: Utility functions for pyparsing of ISC-style
              configuration file
 
              pe.setName() shall follow ISC Bind9 naming convention
+
+Requires: pyparsing-2.4.3 (Char method)
 """
 import os
 import os.path
