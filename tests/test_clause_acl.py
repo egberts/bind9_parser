@@ -141,7 +141,7 @@ class TestClauseACL(unittest.TestCase):
                     'aml_series': [
                         {
                             'aml': [
-                                {'addr': '173.64.99.233'}
+                                {'addr': '99.99.99.99'}
                             ]
                         }
                     ]
@@ -162,51 +162,114 @@ class TestClauseACL(unittest.TestCase):
                     'aml_series': [
                         {
                             'aml': [
-                                {'addr': '192.168.1.0/24'}
+                                {'addr': '192.168.2.0/24'}
                             ]
                         }
                     ]
                 },
                 {
                     'acl_name': 'trusted_residential_network_dmz_acl',
-                    'aml_series': [{'aml': [{'addr': '192.168.4.0/24'}]}]},
+                    'aml_series': [
+                        {
+                            'aml': [
+                                {'addr': '192.168.4.0/24'}
+                            ]
+                        }
+                    ]
+                },
                 {
                     'acl_name': 'trusted_residential_network_blue_acl',
-                    'aml_series': [{'aml': [{'addr': '192.168.5.0/24'}]}]},
+                    'aml_series': [
+                        {
+                            'aml': [
+                                {'addr': '192.168.5.0/24'}
+                            ]
+                        }
+                    ]
+                },
                 {
                     'acl_name': 'trusted_residential_gateway_acl',
-                    'aml_series': [{'aml': [{'addr': '192.168.6.1'}]}]},
+                    'aml_series': [
+                        {
+                            'aml': [
+                                {'addr': '192.168.6.1'}
+                            ]
+                        }
+                    ]
+                },
                 {
                     'acl_name': 'trusted_residential_network_green_acl',
-                    'aml_series': [{'aml': [{'addr': '192.168.6.0/24'}]}]},
+                    'aml_series': [
+                        {
+                            'aml': [
+                                {'addr': '192.168.7.0/24'}
+                            ]
+                        }
+                    ]
+                },
                 {
                     'acl_name': 'trusted_residential_network_white_acl',
-                    'aml_series': [{'aml': [{'addr': '192.168.7.0/24'}]}]},
+                    'aml_series': [
+                        {
+                            'aml': [
+                                {'addr': '192.168.8.0/24'}
+                            ]
+                        }
+                    ]
+                },
                 {
                     'acl_name': 'trusted_residential_network_vmnet_acl',
-                    'aml_series': [{'aml': [{'addr': '192.168.32.0/24'}]}]},
+                    'aml_series': [
+                        {
+                            'aml': [
+                                {'addr': '192.168.32.0/24'}
+                            ]
+                        }
+                    ]
+                },
                 {
                     'acl_name': 'trusted_remote_vpn_acl',
-                    'aml_series': [{'aml': [{'addr': '192.168.64.0/16'}]}]},
+                    'aml_series': [
+                        {
+                            'aml': [
+                                {'addr': '192.168.64.0/16'}
+                            ]
+                        }
+                    ]
+                },
                 {
                     'acl_name': 'trusted_residential_network_acl',
-                    'aml_series': [{'aml': [
-                        {'acl_name': 'trusted_residential_network_dmz_acl'},
-                        {'acl_name': 'trusted_residential_network_blue_acl'},
-                        {'acl_name': 'trusted_residential_network_green_acl'},
-                        {'acl_name': 'trusted_residential_network_white_acl'},
-                        {'acl_name': 'trusted_residential_network_vmnet_acl'}]}]},
+                    'aml_series': [
+                        {
+                            'aml': [
+                                {'acl_name': 'trusted_residential_network_dmz_acl'},
+                                {'acl_name': 'trusted_residential_network_blue_acl'},
+                                {'acl_name': 'trusted_residential_network_green_acl'},
+                                {'acl_name': 'trusted_residential_network_white_acl'},
+                                {'acl_name': 'trusted_residential_network_vmnet_acl'}
+                            ]
+                        }
+                    ]
+                },
                 {
                     'acl_name': 'trusted_all_acl',
-                    'aml_series': [{'aml': [
-                        {'acl_name': 'trusted_real_dmz_acl'},
-                        {'acl_name': 'trusted_residential_network_dmz_acl'},
-                        {'acl_name': 'trusted_residential_network_blue_acl'},
-                        {'acl_name': 'trusted_residential_network_green_acl'},
-                        {'acl_name': 'trusted_residential_network_white_acl'},
-                        {'acl_name': 'trusted_residential_network_vmnet_acl'},
-                        {'acl_name': 'trusted_cablesupport_acl'},
-                        {'acl_name': 'localnet_acl'}]}]}]}
+                    'aml_series': [
+                        {
+                            'aml': [
+                                {'acl_name': 'trusted_real_dmz_acl'},
+                                {'acl_name': 'trusted_residential_network_dmz_acl'},
+                                {'acl_name': 'trusted_residential_network_blue_acl'},
+                                {'acl_name': 'trusted_residential_network_green_acl'},
+                                {'acl_name': 'trusted_residential_network_white_acl'},
+                                {'acl_name': 'trusted_residential_network_vmnet_acl'},
+                                {'acl_name': 'trusted_cablesupport_acl'},
+                                {'acl_name': 'localnet_acl'}
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
         my_csa = clause_stmt_acl_series.setWhitespaceChars(' \t\n')
         assertParserResultDictTrue(my_csa, test_data, expected_result)
 
