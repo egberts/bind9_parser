@@ -1,0 +1,7 @@
+include bind9_parser.py
+include README.md CHANGES LICENSE modules.rst
+include examples/*.py examples/statemachine/*
+recursive-include docs *
+prune docs/_build/*
+recursive-include tests *
+include setup.py tox.ini
