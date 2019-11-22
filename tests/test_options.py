@@ -359,7 +359,7 @@ class TestOptions(unittest.TestCase):
         assertParserResultDictTrue(
             options_stmt_server_id,
             "server-id 'example.pro.';",
-            {'server_id_name': '\'example.pro.\''})
+            {'server_id_name': '\'example.pro.\''})  #ending period is allowed in FQDN here
         assertParserResultDictTrue(
             options_stmt_server_id,
             "server-id\texample.info;",
