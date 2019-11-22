@@ -169,6 +169,7 @@ domain_generic_fqdn = Combine(
         Literal('.')
         + domain_generic_label
     )
+    + Optional(Char('.'))
 )
 domain_generic_fqdn.setName('<generic-fqdn>')
 domain_generic_fqdn.setResultsName('domain_name')
