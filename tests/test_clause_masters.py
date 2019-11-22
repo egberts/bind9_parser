@@ -100,6 +100,23 @@ class TestClauseMasters(unittest.TestCase):
         }
         assertParserResultDictTrue(clause_stmt_masters_standalone, test_string, expected_result)
 
+# masters example.com { masters; my_secondaries; };
+    def test_isc_clause_stmt_masters_ACLname_passing(self):
+        """ Master clause, ACL usages; passing mode"""
+        test_string = 'masters example.com { masters; my_secondaries; };'
+        expected_result = {
+            'masters': [
+                {
+                    'master_id': 'example.com',
+                    'master_list': [
+                        {'addr': 'masters'},
+                        {'addr': 'my_secondaries'}
+                    ]
+                }
+            ]
+        }
+        assertParserResultDictTrue(clause_stmt_masters_standalone, test_string, expected_result)
+
     def test_isc_clause_stmt_masters_multielement_passing(self):
         """Masters clause, passing mode"""
         test_string = 'masters ns1 { 127.0.0.1; 192.168.1.1; 192.168.6.1; };'
@@ -217,21 +234,28 @@ class TestClauseMasters(unittest.TestCase):
         }
         assertParserResultDictTrue(clause_stmt_masters_standalone, test_string, expected_result)
 
-    def test_isc_clause_stmt_masters_failing(self):
-        """Masters clause, purposely failing mode"""
-        test_data = [
-            'masters ns1.example.com { none_for_me };',
-        ]
-        test_string = {
+    def test_isc_clause_stmt_masters_series2_passing(self):
+        """Masters clause, Master statement series; passing mode"""
+        test_string = 'masters A { B; C; }; masters D { E; F; };'
+        expected_result = {
             'masters': [
                 {
-                    'master_id': 'ns1',
+                    'master_id': 'A',
                     'master_list': [
-                        {'addr': '127.0.0.1'}
+                        {'addr': 'B'},
+                        {'addr': 'C'}
+                    ]
+                },
+                {
+                    'master_id': 'D',
+                    'master_list': [
+                        {'addr': 'E'},
+                        {'addr': 'F'}
                     ]
                 }
             ]
         }
+        assertParserResultDictTrue(clause_stmt_masters_series, test_string, expected_result)
 
 
 if __name__ == '__main__':
