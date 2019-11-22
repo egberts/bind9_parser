@@ -12,7 +12,7 @@ from isc_acl import acl_geoip_country_element,\
     acl_geoip_group, acl_geoip_element
 
 
-class TestAML(unittest.TestCase):
+class TestACL(unittest.TestCase):
     """ Clause ACL, GeoIP element """
 
     def test_isc_acl_geoip_country_element_passing(self):
