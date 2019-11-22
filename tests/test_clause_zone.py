@@ -86,7 +86,6 @@ class TestClauseZone(unittest.TestCase):
         file "/var/lib/bind/internal/master/db.localhost";
         allow-update { none; };
         forwarders { };
-        masters example.com { masters; my_secondaries; };
         notify no;
         };
     zone "0.0.127.in-addr.arpa" IN {
@@ -119,9 +118,6 @@ class TestClauseZone(unittest.TestCase):
                       {'allow_update': {'aml': [{'addr': 'none'}]},
                        'file': '"/var/lib/bind/internal/master/db.localhost"',
                        'fowarders': [[]],
-                       'masters': [{'master_id': 'example.com',
-                                    'master_list': [{'addr': 'masters'},
-                                                    {'addr': 'my_secondaries'}]}],
                        'notify': 'no',
                        'type': 'master',
                        'zone_name': '"localhost"'},
