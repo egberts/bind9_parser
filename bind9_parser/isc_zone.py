@@ -370,7 +370,7 @@ zone_statements_set = (
     | zone_stmt_ixfr_base
     | zone_stmt_ixfr_from_differences
     | zone_stmt_journal
-    | zone_stmt_masters
+###    | zone_stmt_masters
     | zone_stmt_pubkey
     | zone_stmt_server_addresses
     | zone_stmt_server_names
