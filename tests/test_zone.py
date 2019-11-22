@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_zone.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue
+from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
 from isc_zone import \
     zone_stmt_delegation_only,\
     zone_stmt_check_names,\
@@ -275,13 +275,15 @@ class TestZone(unittest.TestCase):
         result = zone_stmt_masters.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
+#  TODO: Need to investigate on the de-introduction of 'masters' statement for 'zone clause'.
+
     def test_isc_zone_statements_series_multiple_masters_passing(self):
         """ Clause zone; Statement, multiple masters; passing """
         # Only one masters statement is allowed in zone clause, so get the last one
-        assertParserResultDictTrue(
+        assertParserResultDictFalse(
             zone_statements_series,
-            'masters dmz_masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };' +
-            'masters bastion_hosts port 1025 dscp 6 { fe08::1 port 77; };',
+            'masters dmz_masters port 7552 dscp 5 { yellow_masters key priv_dns_chan_key5; }; ' +
+            'masters bastion_hosts port 1024 dscp 6 { fe08::1 port 77; };',
             {'masters': [{'dscp_port': 6,
                           'ip_port': 1025,
                           'master_id': 'bastion_hosts',
