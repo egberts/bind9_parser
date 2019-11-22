@@ -72,7 +72,7 @@ masters_element_list = (
     )
     | (
             master_id('addr')
-            - key_id_keyword_and_name_pair
+            + Optional(key_id_keyword_and_name_pair)
             + semicolon
     )   # TODO investigate if a series of master_id is supported in masters clause
     | (
