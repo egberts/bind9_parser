@@ -11,14 +11,14 @@ Description: isc_optviewzone covers configuration options that
 """
 from pyparsing import Group, Keyword, Optional,\
     Literal, ZeroOrMore, CaselessLiteral
-from isc_utils import lbrack, rbrack, semicolon, isc_boolean, path_name, \
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon, isc_boolean, path_name, \
     parse_me, seconds_type, days_type, minute_type, quoted_path_name,\
     size_spec
-from isc_inet import ip4_addr,\
+from bind9_parser.isc_inet import ip4_addr,\
     inet_ip_port_keyword_and_wildcard_element, ip6_addr,\
     inet_ip_port_keyword_and_number_element, ip46_addr_or_prefix,\
     ip4_addr_or_wildcard, ip6_addr_or_wildcard, inet_dscp_port_keyword_and_number_element
-from isc_aml import aml_nesting
+from bind9_parser.isc_aml import aml_nesting
 
 
 optviewzone_stmt_allow_notify = (

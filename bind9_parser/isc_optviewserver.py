@@ -10,7 +10,7 @@ Description: Provides 'options' and 'server'-related grammar in
              PyParsing engine for ISC-configuration style
 """
 from pyparsing import ZeroOrMore, Keyword, Literal
-from isc_utils import semicolon, isc_boolean, number_type
+from bind9_parser.isc_utils import semicolon, isc_boolean, number_type
 
 
 #  edns-udp-size <number>;  # [ server ]

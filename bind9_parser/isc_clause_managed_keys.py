@@ -11,7 +11,7 @@ Description: Provides managed-key-related grammar in
 """
 
 from pyparsing import Optional, OneOrMore, ZeroOrMore
-from isc_managed_keys import managed_keys_statement_standalone
+from bind9_parser.isc_managed_keys import managed_keys_statement_standalone
 
 
 # Due to cyclic Python import, 'clause'-based managed-keys are

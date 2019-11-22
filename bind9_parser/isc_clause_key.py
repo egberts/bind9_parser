@@ -10,7 +10,7 @@ Description: Provides key-related grammar in PyParsing engine
              for ISC-configuration style
 """
 from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore
-from isc_utils import semicolon, lbrack, rbrack, key_id, key_secret
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, key_id, key_secret
 
 # NOTE: If any declaration here is to be used OUTSIDE of the 'keys' clause,
 # it should instead be defined in isc_utils.py

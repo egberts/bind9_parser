@@ -10,8 +10,9 @@ Description:
 """
 
 from pyparsing import Group, CaselessKeyword, alphanums, Word, ZeroOrMore, OneOrMore
-from isc_utils import semicolon, name_type, isc_boolean, lbrack, rbrack, dlz_name_type,\
-    path_name
+from bind9_parser.isc_utils import semicolon, name_type, isc_boolean, \
+        lbrack, rbrack, dlz_name_type,\
+        path_name
 
 
 #  database <string>;

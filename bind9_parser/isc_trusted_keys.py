@@ -10,9 +10,9 @@ Description: Provides trusted-key-related grammar in
              PyParsing engine for ISC-configuration style
 """
 from pyparsing import Word, alphanums, Group, Keyword, Literal, ZeroOrMore
-from isc_utils import semicolon, parse_me, lbrack, rbrack, number_type,\
+from bind9_parser.isc_utils import semicolon, parse_me, lbrack, rbrack, number_type,\
     squote, dquote, Combine, ungroup
-from isc_domain import rr_domain_name_or_wildcard_type
+from bind9_parser.isc_domain import rr_domain_name_or_wildcard_type
 
 # From now on, all new installs of ISC Bind9 should use dnssec-validation auto; in place of trusted-keys.
 # source: https://github.com/webmin/webmin/issues/617

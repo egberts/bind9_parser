@@ -13,7 +13,7 @@ Description: Provides logging channels-related grammar in
 
 from pyparsing import Word, Group, Optional, Keyword, Literal, \
     srange, OneOrMore, ZeroOrMore, ungroup
-from isc_utils import semicolon, number_type, \
+from bind9_parser.isc_utils import semicolon, number_type, \
     isc_boolean, lbrack, rbrack, \
     name_type, quoted_path_name, size_spec
 

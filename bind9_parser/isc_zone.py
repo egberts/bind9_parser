@@ -11,20 +11,20 @@ Description: Provides Zone-related grammar in PyParsing engine
 """
 from pyparsing import Keyword, Group, Literal, CaselessLiteral, OneOrMore,\
     ZeroOrMore, Word, Optional, ungroup, Combine
-from isc_utils import parse_me, semicolon, lbrack, rbrack, path_name,\
+from bind9_parser.isc_utils import parse_me, semicolon, lbrack, rbrack, path_name,\
     isc_boolean, view_name, isc_file_name,\
     number_type, key_id, check_options, zone_name, acl_name,\
     key_id_keyword_and_name_pair, squote, dquote, dlz_name_type,\
     database_name_type, krb5_realm_name
-from isc_inet import ip46_addr_list_series, ip4_addr,\
+from bind9_parser.isc_inet import ip46_addr_list_series, ip4_addr,\
     ip6_addr, ip_port, dscp_port, inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element,\
     ip46_addr_and_port_list
-from isc_rr import rr_type_series, rr_type_list_series
-from isc_domain import domain_generic_fqdn,\
+from bind9_parser.isc_rr import rr_type_series, rr_type_list_series
+from bind9_parser.isc_domain import domain_generic_fqdn,\
     quotable_domain_generic_fqdn, quoted_domain_generic_fqdn, rr_fqdn_w_absolute
-from isc_viewzone import viewzone_stmt_database, viewzone_stmt_dlz
-from isc_clause_masters import clause_stmt_masters_standalone
+from bind9_parser.isc_viewzone import viewzone_stmt_database, viewzone_stmt_dlz
+from bind9_parser.isc_clause_masters import clause_stmt_masters_standalone
 
 
 

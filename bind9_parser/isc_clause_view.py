@@ -9,17 +9,17 @@ Title: Clause Statement for View Group
 Description:
 """
 from pyparsing import Keyword, Optional, ZeroOrMore, Group
-from isc_utils import lbrack, rbrack, semicolon, view_name
-from isc_rr import rr_class_set
-from isc_view import view_statements_set
-from isc_managed_keys import managed_keys_statement_standalone
-from isc_optview import optview_statements_set
-from isc_optviewserver import optviewserver_statements_set
-from isc_optviewzone import optviewzone_statements_set
-from isc_optviewzoneserver import optviewzoneserver_statements_set
-from isc_viewzone import viewzone_statements_set
-from isc_clause_zone import clause_stmt_zone_standalone
-from isc_clause_trusted_keys import clause_stmt_trusted_keys_standalone
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon, view_name
+from bind9_parser.isc_rr import rr_class_set
+from bind9_parser.isc_view import view_statements_set
+from bind9_parser.isc_managed_keys import managed_keys_statement_standalone
+from bind9_parser.isc_optview import optview_statements_set
+from bind9_parser.isc_optviewserver import optviewserver_statements_set
+from bind9_parser.isc_optviewzone import optviewzone_statements_set
+from bind9_parser.isc_optviewzoneserver import optviewzoneserver_statements_set
+from bind9_parser.isc_viewzone import viewzone_statements_set
+from bind9_parser.isc_clause_zone import clause_stmt_zone_standalone
+from bind9_parser.isc_clause_trusted_keys import clause_stmt_trusted_keys_standalone
 
 
 view_all_statements_set = (

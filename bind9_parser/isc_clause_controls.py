@@ -9,11 +9,11 @@ Title: Clause statement for the 'controls' connections.
 Description
 """
 from pyparsing import Keyword, Group, Optional, Literal, OneOrMore, ZeroOrMore
-from isc_utils import semicolon, lbrack, rbrack, \
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
     isc_boolean, quoted_path_name, number_type, \
     exclamation, key_id
-from isc_aml import aml_nesting, aml_choices
-from isc_inet import ip46_addr_or_wildcard, \
+from bind9_parser.isc_aml import aml_nesting, aml_choices
+from bind9_parser.isc_inet import ip46_addr_or_wildcard, \
     inet_ip_port_keyword_and_wildcard_element
 
 #  ( ip46_addr_or_prefix | * ) [ port ( ip_port | * ) ]

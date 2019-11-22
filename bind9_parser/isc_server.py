@@ -10,9 +10,9 @@ Description: Provides server-related grammar in PyParsing engine
              for ISC-configuration style
 """
 from pyparsing import Group, Keyword, Word, nums, Optional, Literal, ZeroOrMore
-from isc_utils import isc_boolean, semicolon, number_type, \
+from bind9_parser.isc_utils import isc_boolean, semicolon, number_type, \
     key_id, byte_type
-from isc_inet import ip4_addr_or_wildcard, ip6_addr_or_wildcard,\
+from bind9_parser.isc_inet import ip4_addr_or_wildcard, ip6_addr_or_wildcard,\
     inet_ip_port_keyword_and_wildcard_element,\
     inet_dscp_port_keyword_and_number_element
 

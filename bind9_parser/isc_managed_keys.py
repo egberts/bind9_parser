@@ -11,9 +11,9 @@ Description: Provides managed-key-related grammar in
 """
 
 from pyparsing import Word, alphanums, Group, Keyword, Literal, OneOrMore
-from isc_utils import semicolon, lbrack, rbrack, number_type,\
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, number_type,\
     squote, dquote, Combine, Char
-from isc_rr import rr_domain_name_or_root
+from bind9_parser.isc_rr import rr_domain_name_or_root
 
 
 managed_keyname_type = rr_domain_name_or_root

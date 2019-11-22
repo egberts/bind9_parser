@@ -10,14 +10,14 @@ Description:
 """
 
 from pyparsing import Group, Keyword, ZeroOrMore, ParseFatalException, Word, alphas, alphanums
-from isc_utils import lbrack, rbrack, semicolon
-from isc_options import options_statements_set
-from isc_optview import optview_statements_set
-from isc_optviewzone import optviewzone_statements_set
-from isc_optviewserver import optviewserver_statements_set
-from isc_optviewzoneserver import optviewzoneserver_statements_set
-from isc_optzone import optzone_statements_set
-from isc_viewzone import viewzone_statements_set
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon
+from bind9_parser.isc_options import options_statements_set
+from bind9_parser.isc_optview import optview_statements_set
+from bind9_parser.isc_optviewzone import optviewzone_statements_set
+from bind9_parser.isc_optviewserver import optviewserver_statements_set
+from bind9_parser.isc_optviewzoneserver import optviewzoneserver_statements_set
+from bind9_parser.isc_optzone import optzone_statements_set
+from bind9_parser.isc_viewzone import viewzone_statements_set
 
 
 class InvalidArgumentException(ParseFatalException):

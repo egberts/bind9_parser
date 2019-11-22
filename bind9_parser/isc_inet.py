@@ -13,7 +13,7 @@ Description: Provides inet-related grammar in PyParsing engine
 from pyparsing import Word, nums, Combine, Group, \
     pyparsing_common, ZeroOrMore, Literal, Keyword,\
     ungroup, OneOrMore, Optional
-from isc_utils import semicolon, squote, dquote
+from bind9_parser.isc_utils import semicolon, squote, dquote
 
 
 def ip4_subnet_range_check(strg, loc, toks):

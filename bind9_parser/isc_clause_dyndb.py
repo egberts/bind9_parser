@@ -10,7 +10,7 @@ Description:
 """
 import unittest
 from pyparsing import Group, Keyword, Word, ZeroOrMore, OneOrMore
-from isc_utils import lbrack, rbrack, semicolon, \
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon, \
     isc_file_name, quoted_path_name, charset_filename_base
 
 # TODO For dyndb_driver_content, haven't figured out how to allow curly braces inside quotes yet

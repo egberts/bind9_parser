@@ -8,8 +8,9 @@ import os.path
 from pathlib import Path
 import argparse
 import pyparsing as pp
-from isc_clause import clause_statements
-from isc_utils import key_secret, g_expose_secrets
+import bind9_parser
+# from isc_clause import clause_statements
+# from isc_utils import key_secret, g_expose_secrets
 
 g_progname = os.path.basename(__file__)
 g_root_dir = '.'  # default to current working directory
@@ -191,7 +192,7 @@ if __name__ == '__main__':
 
     if args.secrets:
         print("WARNING: Exposing key secrets")
-        g_expose_secrets = True
+        bind9_parser.g_expose_secrets = True
 
     if args.config_filepath is None:
         print("Must specify filepath/filespec to the named.conf file.")
@@ -237,23 +238,23 @@ if __name__ == '__main__':
         print("Debugging PyParsing enabled.")
         clause_statements.setDebug()
 
-    if not g_expose_secrets:
-        key_secret.addParseAction(suppress_key_secrets)
+    if not bind9_parser.g_expose_secrets:
+        bind9_parser.key_secret.addParseAction(suppress_key_secrets)
 
-    my_clauses = clause_statements.setDebug(True).setParseAction(myAction2)
+    my_clauses = bind9_parser.clause_statements.setDebug(True).setParseAction(myAction2)
 #    my_clauses = my_clauses.enablePackrat()
 
-    pp.__diag__.enable_debug_on_named_expressions = True
-    pp.__diag__.warn_multiple_tokens_in_named_alternation = True
-    pp.__diag__.warn_ungrouped_named_tokens_in_collection = True
-    pp.__diag__.warn_name_set_on_empty_Forward = True
-    pp.__diag__.warn_on_multiple_string_args_to_oneof = True
+    # pp.__diag__.enable_debug_on_named_expressions = True
+    # pp.__diag__.warn_multiple_tokens_in_named_alternation = True
+    # pp.__diag__.warn_ungrouped_named_tokens_in_collection = True
+    # pp.__diag__.warn_name_set_on_empty_Forward = True
+    # pp.__diag__.warn_on_multiple_string_args_to_oneof = True
 
-    pp.__diag__.enable("enable_debug_on_named_expressions")
-    pp.__diag__.enable("warn_multiple_tokens_in_named_alternation")
-    pp.__diag__.enable("warn_ungrouped_named_tokens_in_collection")
-    pp.__diag__.enable("warn_name_set_on_empty_Forward")
-    pp.__diag__.enable("warn_on_multiple_string_args_to_oneof")
+    # pp.__diag__.enable("enable_debug_on_named_expressions")
+    # pp.__diag__.enable("warn_multiple_tokens_in_named_alternation")
+    # pp.__diag__.enable("warn_ungrouped_named_tokens_in_collection")
+    # pp.__diag__.enable("warn_name_set_on_empty_Forward")
+    # pp.__diag__.enable("warn_on_multiple_string_args_to_oneof")
 
     result = my_clauses.parseString(toplevel_config, parseAll=True)
 

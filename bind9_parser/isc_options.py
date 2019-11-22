@@ -11,17 +11,17 @@ Description: Various 'options' statement that is used
 """
 from pyparsing import Group, Keyword, OneOrMore, Optional, Word,\
     ZeroOrMore, OneOrMore, Combine, Literal
-from isc_utils import lbrack, rbrack, semicolon, size_spec,\
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
     name_type, path_name, number_type, seconds_type, \
     isc_boolean, fqdn_name, key_id, krb5_principal_name,\
     exclamation, quoted_path_name, squote, dquote
-from isc_inet import ip_port,\
+from bind9_parser.isc_inet import ip_port,\
     inet_dscp_port_keyword_and_number_element,\
     inet_ip_port_keyword_and_number_element
-from isc_domain import domain_generic_fqdn,\
+from bind9_parser.isc_domain import domain_generic_fqdn,\
     domain_charset_alphanums_dash_underscore, domain_fqdn,\
     quoted_domain_generic_fqdn
-from isc_aml import  aml_nesting, aml_choices
+from bind9_parser.isc_aml import  aml_nesting, aml_choices
 
 
 options_stmt_acache_cleaning_interval = (

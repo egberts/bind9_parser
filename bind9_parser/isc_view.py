@@ -17,9 +17,9 @@ Description: Provides View-related grammar in PyParsing engine
              clause_stmt_view_standalone (that is in clause_view.py/test_clause_view.py)
 """
 from pyparsing import Group, Keyword, ZeroOrMore
-from isc_utils import semicolon, isc_boolean
-from isc_aml import aml_nesting
-from isc_trusted_keys import trusted_keys_statements_set
+from bind9_parser.isc_utils import semicolon, isc_boolean
+from bind9_parser.isc_aml import aml_nesting
+from bind9_parser.isc_trusted_keys import trusted_keys_statements_set
 
 
 #   match-clients { aml; } ; [ View ]

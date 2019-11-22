@@ -14,8 +14,8 @@ Description: Provides RR-related grammar in PyParsing engine
 
 from pyparsing import Optional, Combine, CaselessLiteral, \
     Literal, Char, OneOrMore, Group, ungroup
-from isc_utils import semicolon
-from isc_domain import domain_generic_fqdn, domain_charset_wildcard
+from bind9_parser.isc_utils import semicolon
+from bind9_parser.isc_domain import domain_generic_fqdn, domain_charset_wildcard
 
 
 g_test_over_63_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abc"

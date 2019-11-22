@@ -9,13 +9,13 @@ Title: Clause Statement for Zone Group
 Description:
 """
 from pyparsing import Keyword, ZeroOrMore, Optional, Group, ungroup
-from isc_utils import lbrack, rbrack, semicolon, parse_me
-from isc_rr import rr_domain_name
-from isc_zone import zone_statements_set, zone_name
-from isc_optviewzone import optviewzone_statements_set
-from isc_optviewzoneserver import optviewzoneserver_statements_set
-from isc_optzone import optzone_statements_set
-from isc_viewzone import viewzone_statements_set
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon, parse_me
+from bind9_parser.isc_rr import rr_domain_name
+from bind9_parser.isc_zone import zone_statements_set, zone_name
+from bind9_parser.isc_optviewzone import optviewzone_statements_set
+from bind9_parser.isc_optviewzoneserver import optviewzoneserver_statements_set
+from bind9_parser.isc_optzone import optzone_statements_set
+from bind9_parser.isc_viewzone import viewzone_statements_set
 
 
 # Note: There is no validation method applied here to ensure that

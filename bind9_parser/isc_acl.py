@@ -17,7 +17,7 @@ Description: Provides ACL-related grammar in PyParsing engine
 """
 from pyparsing import CaselessKeyword, Word, alphanums, nums, alphas,\
     Optional, Combine, CaselessLiteral
-from isc_utils import fqdn_name, semicolon
+from bind9_parser.isc_utils import fqdn_name, semicolon
 
 
 # All GeoIP fields are quotable, using either single-quote or double-quote

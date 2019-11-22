@@ -13,10 +13,6 @@ zone "example.com" IN
     //  In example.com, this here is THE hidden master
     type slave;
 
-    // 1:1 between 'masters'/slave-zonetype and 'also-notify'/master-zonetype
-    masters {
-        masters_list_same_nameserver;
-    };
 
     allow-query {
         external_bastion_ip_acl;

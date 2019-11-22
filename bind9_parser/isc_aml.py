@@ -12,8 +12,9 @@ Description: Provides Address Match List (AML)-related grammar in
              PyParsing engine for ISC-configuration style
 """
 from pyparsing import ZeroOrMore, Forward, Group, CaselessLiteral
-from isc_utils import semicolon, lbrack, rbrack, exclamation, acl_name
-from isc_inet import ip4_addr, ip6_addr, ip4s_prefix
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
+        exclamation, acl_name
+from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip4s_prefix
 
 # Address_Match_List (AML)
 # This AML combo is ordered very carefully so that longest pattern

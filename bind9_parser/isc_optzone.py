@@ -10,7 +10,7 @@ Description: isc_optzone contains all parse elements pertaining
              to both options and zone (but not view)
 """
 from pyparsing import Group, Keyword, OneOrMore
-from isc_utils import isc_boolean, semicolon, parse_me
+from bind9_parser.isc_utils import isc_boolean, semicolon, parse_me
 
 
 optzone_stmt_notify_to_soa = (

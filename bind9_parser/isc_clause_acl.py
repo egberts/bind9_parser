@@ -13,8 +13,8 @@ Description: Provides clause-specific aspect of ACL-related grammar
              'import' circular dependency of 'isc_aml'.
 """
 from pyparsing import Group, ZeroOrMore, Literal, Word, alphanums, Keyword
-from isc_utils import acl_name
-from isc_aml import aml_nesting
+from bind9_parser.isc_utils import acl_name
+from bind9_parser.isc_aml import aml_nesting
 
 
 #############################################################

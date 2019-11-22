@@ -11,12 +11,12 @@ Description: Provides statement support for ones found in all
              PyParsing engine for ISC-configuration style
 """
 from pyparsing import Group, Keyword, OneOrMore, ZeroOrMore, Optional, ungroup
-from isc_utils import semicolon, lbrack, rbrack, parse_me
-from isc_clause_key import key_id
-from isc_inet import ip46_addr, \
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, parse_me
+from bind9_parser.isc_clause_key import key_id
+from bind9_parser.isc_inet import ip46_addr, \
     inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element
-from isc_clause_masters import master_id
+from bind9_parser.isc_clause_masters import master_id
 
 
 #  Note:  Be careful of deleting any options/view/zone/server

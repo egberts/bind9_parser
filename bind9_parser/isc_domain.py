@@ -59,7 +59,7 @@ Note: We cannot enforce TLD syntax because many option settings allows for
 from pyparsing import Optional, Word, Combine, \
     srange, alphanums, ZeroOrMore, \
     Literal, alphas, Char, Regex, OneOrMore
-from isc_utils import squote, dquote
+from bind9_parser.isc_utils import squote, dquote
 
 g_test_over_63_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abc"
 
