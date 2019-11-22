@@ -416,11 +416,11 @@ options_stmt_serial_query_rate = (
 options_stmt_server_id_name = fqdn_name('server_id_fqdn_name')
 options_stmt_server_id_name.setName('<server_id_string>')
 
+# Server-Id MUST be quoted
 options_stmt_server_id = (
     Keyword('server-id').suppress()
     - (
-        Literal('none')('none')
-        | quoted_domain_generic_fqdn
+        quoted_domain_generic_fqdn
         | options_stmt_server_id_name('server_id_name')
 
     )('server_id_name')
