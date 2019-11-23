@@ -75,9 +75,10 @@ def process_entire_file_content(a_content_data):
 
     return master_config_content
 
+
 def suppress_key_secrets(st, locn, toks):
     """
-    This parser hook routine (as noted by (st, locn, toks) arguments)
+    TODO: This parser hook routine (as noted by (st, locn, toks) arguments)
     will stop masking the key secrets (thereby exposing its secret).
 
     :param st: the original string being parsed
@@ -155,12 +156,14 @@ def read_include_contents(st, locn, toks):
 
 
 def myAction2(strg, loc, toks):
-    print('myAction2: index(strg,;)', strg.index(';'))
-    short_string = strg[loc:strg.index(';')]
-    print('myAction2: len(strg):', len(short_string))
-    print('myAction2: strg:', short_string)
-    print('myAction2: loc:', loc)
-    print('myAction2: toks:', toks)
+    if g_verbosity:
+        print('myAction2: index(strg,;)', strg.index(';'))
+        short_string = strg[loc:strg.index(';')]
+        print('myAction2: len(strg):', len(short_string))
+        print('myAction2: strg:', short_string)
+        print('myAction2: loc:', loc)
+        print('myAction2: toks:', toks)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -241,7 +244,7 @@ if __name__ == '__main__':
     if not bind9_parser.g_expose_secrets:
         bind9_parser.key_secret.addParseAction(suppress_key_secrets)
 
-    my_clauses = bind9_parser.clause_statements.setDebug(True).setParseAction(myAction2)
+    my_clauses = bind9_parser.clause_statements.setDebug(g_verbosity).setParseAction(myAction2)
 #    my_clauses = my_clauses.enablePackrat()
 
     # pp.__diag__.enable_debug_on_named_expressions = True
@@ -256,16 +259,18 @@ if __name__ == '__main__':
     # pp.__diag__.enable("warn_name_set_on_empty_Forward")
     # pp.__diag__.enable("warn_on_multiple_string_args_to_oneof")
 
+    print("Start: Is the library quiet?")
     result = my_clauses.parseString(toplevel_config, parseAll=True)
+    print("End: Is the library quiet?")
 
-    if g_verbosity:
-        result.pprint()
-        print('result:', result.asDict())
-        import pprint
-        pp = pprint.PrettyPrinter(width=4, compact=False, indent=4)
-        pp.pprint(result.asDict())
-    else:
-        print('len(result):', len(result))
+    print('len(result):', len(result))
+    print('\nPlain print(result):')
+    result.pprint()
+    print('result:', result.asDict())
+    import pprint
+    pp = pprint.PrettyPrinter(width=4, compact=False, indent=4)
+    print('\nprint(result.asDict()):')
+    pp.pprint(result.asDict())
     print('end of result.')
 
     sys.exit(1)
