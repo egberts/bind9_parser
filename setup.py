@@ -30,7 +30,7 @@ setup(  # Distribution meta-data
     author_email='egberts@yahoo.com',
     keywords='bind9 configuration parser isc named.conf',
     url='https://github.com/egberts/bind9_parser/',
-    download_url='https://github.com/egberts/bind9-parser/archive/0.9.8.tar.gz',
+    download_url='https://github.com/egberts/bind9_parser/archive/0.9.8.tar.gz',
     license='MIT License',
     packages=packages,
     python_requires='>=3.5',
