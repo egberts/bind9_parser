@@ -25,7 +25,7 @@ setup(  # Distribution meta-data
     version=bind9_parser_version,
     description='Bind9 configuration file parsing module',
     long_description=bind9_parser_main_doc,
-    long_description_content_type='text/x-md',
+    long_description_content_type='text/markdown',
     author='Steve Egbert',
     author_email='egberts@yahoo.com',
     keywords='bind9 configuration parser isc named.conf',
