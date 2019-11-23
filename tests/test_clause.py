@@ -11,7 +11,7 @@ from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
 from isc_clause import \
     optional_clause_stmt_set,\
     optional_clause_stmt_series,\
-    mandatory_clause_stmts,\
+    mandatory_clause_stmt_set,\
     clause_statements
 #   TODO add v9.15.0 new clause_stmt_catalog_zones
 
@@ -28,7 +28,7 @@ class TestClauseALL(unittest.TestCase):
 
 
     def test_isc_clause_optional_clause_stmt_series_empty_passing(self):
-        """ Clause, All; All Statments group; passing """
+        """ Clause, All; All Statements group; passing """
         test_data = [
             '',
         ]
@@ -36,8 +36,84 @@ class TestClauseALL(unittest.TestCase):
         self.assertTrue(result[0])
         # TODO BUG, We cannot test for an empty dictionary here, yet.
 
+    def test_isc_clause_stmt_multiplezone_passing(self):
+        """ Clause, All; Zone Statements group; passing """
+        test_string = """
+    zone "." {
+      type hint;
+      file "root.servers";
+    };
+    zone "example.com" in{
+      type master;
+      file "master/master.example.com";
+      allow-transfer {192.168.23.1;192.168.23.2;};
+    };
+    zone "localhost" in{
+      type master;
+      file "master.localhost";
+      allow-update{none;};
+    };
+    zone "0.0.127.in-addr.arpa" in{
+      type master;
+      file "localhost.rev";
+      allow-update{none;};
+    };
+    zone "0.168.192.IN-ADDR.ARPA" in{
+      type master;
+      file "192.168.0.rev";
+    };"""
+        expected_result = {
+            'zone': [
+                {
+                    'file': '"root.servers"',
+                    'type': 'hint',
+                    'zone_name': '"."'
+                },
+                {
+                    'allow_transfer': {
+                        'aml': [
+                            {'addr': '192.168.23.1'},
+                            {'addr': '192.168.23.2'}
+                        ]
+                    },
+                    'file': '"master/master.example.com"',
+                    'type': 'master',
+                    'zone_name': '"example.com"'
+                },
+                {
+                    'allow_update': {
+                        'aml': [
+                            {'addr': 'none'}
+                        ]
+                    },
+                    'file': '"master.localhost"',
+                    'type': 'master',
+                    'zone_name': '"localhost"'
+                },
+                {
+                    'allow_update': {
+                        'aml': [
+                            {'addr': 'none'}
+                        ]
+                    },
+                    'file': '"localhost.rev"',
+                    'type': 'master',
+                    'zone_name': '"0.0.127.in-addr.arpa"'
+                },
+                {
+                    'file': '"192.168.0.rev"',
+                    'type': 'master',
+                    'zone_name': '"0.168.192.IN-ADDR.ARPA"'}
+            ]
+        }
+        assertParserResultDictTrue(
+            optional_clause_stmt_series,
+            test_string,
+            expected_result
+        )
+
     def test_isc_clause_optional_clause_stmt_series_passing(self):
-        """ Clause, All; All Statments group; passing """
+        """ Clause, All; All Statements group; passing """
         assertParserResultDictTrue(
             optional_clause_stmt_series,
             'acl MY_BASTION_HOSTS { 4.4.4.4; 3.3.3.3; 2.2.2.2; 1.1.1.1; };' +
@@ -50,13 +126,14 @@ class TestClauseALL(unittest.TestCase):
             ' channel badguys { file "/tmp/alert" size 255G; severity debug 77; print-time yes;}; };' +
             'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD=="; };' +
             'masters bastion_host_group { bastion_hosts22; hidden_bastion; };' +
+            'zone red { file "/var/lib/bind9/public/masters/db.example.com"; };' +
             'server 3.4.5.6 { bogus yes; edns no; edns-udp-size 102; edns-version 2;' +
             ' keys my_key_name_to_private_dns; max-udp-size 32768; notify-source *; notify-source-v6 *;' +
             ' padding 53; provide-ixfr yes; query-source *; query-source address *; query-source-v6 *;' +
             ' request-expire yes; request-ixfr yes; request-nsid yes; send-cookie yes; tcp-keepalive yes; ' +
             ' tcp-only yes; transfer-format one-answer; transfer-source *; transfer-source-v6 *; transfers 36; };' +
             'trusted-keys { abc 1 1 1 "ASBASDASD==";};' +
-            'zone red { file "/var/lib/bind9/public/masters/db.example.com"; };' +
+            'zone green { file "/var/lib/bind9/public/masters/db.green.com"; };' +
             'masters dmz_masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
             '',
             {'acl': [{'acl_name': 'MY_BASTION_HOSTS',
@@ -134,8 +211,10 @@ class TestClauseALL(unittest.TestCase):
                                'domain': 'abc',
                                'flags': 1,
                                'protocol_id': 1}],
-             'zone': [{'file': '"/var/lib/bind9/public/masters/db.example.com"',
-                       'zone_name': 'red'}]}
+             'zones': [{'zone': {'file': '"/var/lib/bind9/public/masters/db.example.com"',
+                                 'zone_name': 'red'}},
+                       {'zone': {'file': '"/var/lib/bind9/public/masters/db.green.com"',
+                                 'zone_name': 'green'}}]}
         )
 
 
