@@ -1,7 +1,6 @@
-include bind9_parser.py
-include README.md CHANGES LICENSE modules.rst
-include examples/*.py examples/statemachine/*
-recursive-include docs *
-prune docs/_build/*
-recursive-include tests *
-include setup.py tox.ini
+include bind9_parser/*.py
+include README.md CHANGES LICENSE ARCHITECTURE.txt DESIGN.txt TODO
+include examples/*.py examples/*.conf examples/README examples/try-me.sh
+include docs/README
+recursive-include tests tests/split-horizon-2-bind9-servers
+include setup.py setup.cfg requirements.txt tox.ini
