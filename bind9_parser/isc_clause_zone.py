@@ -8,8 +8,8 @@ Title: Clause Statement for Zone Group
 
 Description:
 """
-from pyparsing import Keyword, ZeroOrMore, Optional, Group, ungroup
-from bind9_parser.isc_utils import lbrack, rbrack, semicolon, parse_me
+from pyparsing import Keyword, ZeroOrMore, Optional, Group, OneOrMore
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon
 from bind9_parser.isc_rr import rr_domain_name
 from bind9_parser.isc_zone import zone_statements_set, zone_name
 from bind9_parser.isc_optviewzone import optviewzone_statements_set
@@ -44,12 +44,12 @@ clause_stmt_zone_standalone = (
             zone_all_stmts_series
         )('')
         + rbrack
-    )('')
+    )('zone')
     + semicolon
-)('zone')
+)('')
 
 clause_stmt_zone_series = (
-    ZeroOrMore(
-        clause_stmt_zone_standalone
-    )
-)('zone')
+    OneOrMore(
+        Group(clause_stmt_zone_standalone)('')
+    )('')
+)('zones')
