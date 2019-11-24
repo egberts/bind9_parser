@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_managed_keys.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
-from isc_clause_managed_keys import clause_stmt_managed_keys_series
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_clause_managed_keys import clause_stmt_managed_keys_series
 
 
 class TestClauseManagedKeys(unittest.TestCase):

@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_optviewserver.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue
-from isc_optviewserver import \
+from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_optviewserver import \
     optviewserver_stmt_edns_udp_size,\
     optviewserver_stmt_provide_ixfr,\
     optviewserver_stmt_request_ixfr,\

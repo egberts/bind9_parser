@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_viewzone.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue, dlz_name_type
-from isc_viewzone import \
+from bind9_parser.isc_utils import assertParserResultDictTrue, dlz_name_type
+from bind9_parser.isc_viewzone import \
     viewzone_stmt_database,\
     viewzone_stmt_dlz,\
     viewzone_statements_set,\

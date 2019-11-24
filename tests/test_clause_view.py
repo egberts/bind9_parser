@@ -11,8 +11,8 @@ Description: Provides view-related grammar in PyParsing engine
 """
 import unittest
 from pyparsing import cppStyleComment, pythonStyleComment
-from isc_utils import assertParserResultDictTrue
-from isc_clause_view import \
+from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_clause_view import \
     clause_stmt_view_standalone,\
     clause_stmt_view_series,\
     view_all_statements_set,\

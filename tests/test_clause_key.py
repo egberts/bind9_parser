@@ -6,9 +6,9 @@ Description:  Performs unit test on the isc_clause_key.py source file.
 """
 
 import unittest
-from isc_utils import key_id_keyword_and_name_pair, key_id_keyword_and_name_element,\
+from bind9_parser.isc_utils import key_id_keyword_and_name_pair, key_id_keyword_and_name_element,\
     assertParserResultDictTrue
-from isc_clause_key import key_secret, key_algorithm_name,\
+from bind9_parser.isc_clause_key import key_secret, key_algorithm_name,\
     key_id, key_algorithm_element, clause_stmt_key_series
 
 

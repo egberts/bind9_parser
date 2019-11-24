@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_zone.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
-from isc_zone import \
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_zone import \
     zone_stmt_delegation_only,\
     zone_stmt_check_names,\
     zone_stmt_file,\
@@ -559,7 +559,7 @@ class TestZone(unittest.TestCase):
         ]
         result = zone_statements_set.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        
+
     def test_isc_zone_statements_set_dict_passing(self):
         assertParserResultDictTrue(
             zone_statements_set,

@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_optviewzoneserver.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue
-from isc_optviewzoneserver import \
+from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_optviewzoneserver import \
     optviewzoneserver_stmt_also_notify, \
     optviewzoneserver_statements_set, \
     optviewzoneserver_statements_series

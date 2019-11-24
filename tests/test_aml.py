@@ -8,11 +8,11 @@ Title: Test Address Match List
 """
 
 import unittest
-from isc_utils import assertParserResultDict, acl_name, \
+from bind9_parser.isc_utils import assertParserResultDict, acl_name, \
     key_id, key_id_list, key_id_list_series, \
     key_id_keyword_and_name_pair, \
     parse_me
-from isc_aml import aml_choices, aml_nesting
+from bind9_parser.isc_aml import aml_choices, aml_nesting
 
 
 class TestAML(unittest.TestCase):
@@ -156,13 +156,13 @@ class TestAML(unittest.TestCase):
         self.assertTrue(result[0])
 
         test_data = """{
-             localhost; 
-             127.0.0.1; 
-             10.0.0.1/8; 
-             { 
-                 master_nameservers; 
+             localhost;
+             127.0.0.1;
+             10.0.0.1/8;
+             {
+                 master_nameservers;
                  slave_bastion_host;
-             }; 
+             };
              {
                  any;
                  none;

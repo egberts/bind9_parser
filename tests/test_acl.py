@@ -8,7 +8,7 @@ Description:  Performs unit test on the isc_acl.py source file.
 """
 
 import unittest
-from isc_acl import acl_geoip_country_element,\
+from bind9_parser.isc_acl import acl_geoip_country_element,\
     acl_geoip_group, acl_geoip_element
 
 

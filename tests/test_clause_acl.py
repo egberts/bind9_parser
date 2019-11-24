@@ -8,8 +8,8 @@ Description:  Performs unit test on the isc_clause_acl.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue
-from isc_clause_acl import clause_stmt_acl_series, clause_stmt_acl_standalone
+from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_clause_acl import clause_stmt_acl_series, clause_stmt_acl_standalone
 
 
 class TestClauseACL(unittest.TestCase):

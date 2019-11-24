@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_clause_dlz.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue
-from isc_clause_dlz import dlz_database_element, dlz_search_element, \
+from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_clause_dlz import dlz_database_element, dlz_search_element, \
     dlz_element_group, clause_stmt_dlz_standalone, clause_stmt_dlz_series
 
 

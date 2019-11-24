@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_optzone.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
-from isc_optzone import \
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_optzone import \
     optzone_stmt_notify_to_soa,\
     optzone_statements_set,\
     optzone_statements_series

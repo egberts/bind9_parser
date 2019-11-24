@@ -12,8 +12,8 @@ Description:  Performs unit test on the isc_clause_logging.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
-from isc_clause_logging import logging_chan_file_path_version_element,\
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_clause_logging import logging_chan_file_path_version_element,\
     logging_chan_file_path_size_element, logging_chan_file_path_element,\
     logging_chan_file_method, logging_chan_syslog_severity_element,\
     logging_chan_syslog_severity_select,\
@@ -507,7 +507,7 @@ class TestClauseLogging(unittest.TestCase):
         assertParserResultDictTrue(logging_stmt_channel_set,
                                    test_string,
                                    expected_result)
-    
+
     def test_isc_logging_stmt_channel2_passing(self):
         test_string = 'channel klaxon { file "/tmp/x" size 38M; };'
         expected_result = { 'channel': [ { 'channel_name': 'klaxon',

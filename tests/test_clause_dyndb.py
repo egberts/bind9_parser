@@ -5,8 +5,8 @@ File: test_clause_dyndb.py
 Title: Unit Test Dynamic Database
 """
 import unittest
-from isc_utils import assertParserResultDict
-from isc_clause_dyndb import dyndb_database_name, dyndb_dynamic_module_name, \
+from bind9_parser.isc_utils import assertParserResultDict
+from bind9_parser.isc_clause_dyndb import dyndb_database_name, dyndb_dynamic_module_name, \
     dyndb_custom_driver_configuration, clause_stmt_dyndb_series
 
 

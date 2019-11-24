@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_clause_controls.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDict
-from isc_clause_controls import controls_inet_addr_and_port, controls_inet_allow_element,\
+from bind9_parser.isc_utils import assertParserResultDict
+from bind9_parser.isc_clause_controls import controls_inet_addr_and_port, controls_inet_allow_element,\
     controls_inet_read_only_element,\
     controls_keys_element, controls_inet_set, clause_stmt_control_series,\
     controls_unix_set
@@ -285,10 +285,10 @@ class TestClauseControls(unittest.TestCase):
     def test_isc_controls_statement_python_list2_passing(self):
         """ Clause controls; Python List, passing mode """
         test_data = """
-controls { 
-    unix "/tmp/x" perm 0770 owner 222 group 333; 
-    inet 128.0.0.13 allow {localhost;}; 
-    inet * port 8008 allow {"rndc-users";} keys {"rndc-remote5";}; 
+controls {
+    unix "/tmp/x" perm 0770 owner 222 group 333;
+    inet 128.0.0.13 allow {localhost;};
+    inet * port 8008 allow {"rndc-users";} keys {"rndc-remote5";};
     unix "/tmp/x" perm 0444 owner 555 group 666;
     };
 """

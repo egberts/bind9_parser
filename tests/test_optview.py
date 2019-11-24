@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_optview.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue
-from isc_optview import \
+from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_optview import \
     optview_stmt_acache_cleaning_interval,\
     optview_stmt_acache_enable,\
     optview_stmt_additional_from_auth, \

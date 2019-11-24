@@ -5,7 +5,7 @@ File: test_utils
 
 import unittest
 from pyparsing import pythonStyleComment, cppStyleComment
-from isc_utils import assertParserResultDictTrue,\
+from bind9_parser.isc_utils import assertParserResultDictTrue,\
     isc_boolean, isc_file_name, \
     acl_name, acl_name_dquotable, acl_name_squotable, \
     key_secret, key_id, key_id_keyword_and_name_pair, \

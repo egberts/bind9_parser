@@ -10,9 +10,9 @@ Description: Provides server-related grammar in PyParsing engine
              for ISC-configuration style
 """
 import unittest
-from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
 
-from isc_server import server_stmt_bogus, server_stmt_edns,\
+from bind9_parser.isc_server import server_stmt_bogus, server_stmt_edns,\
     server_stmt_edns_version,\
     server_stmt_keys, server_stmt_max_udp_size,\
     server_stmt_notify_source, server_stmt_notify_source_v6,\

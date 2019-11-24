@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_rr.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue
-from isc_rr import \
+from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_rr import \
     rr_fqdn_w_absolute,\
     rr_type_list_series,\
     rr_domain_name_or_root,\

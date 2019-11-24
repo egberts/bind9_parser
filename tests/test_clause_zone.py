@@ -11,8 +11,8 @@ Description: Provides zone-related grammar in PyParsing engine
 """
 import unittest
 from pyparsing import cppStyleComment, pythonStyleComment
-from isc_utils import assertParserResultDictFalse, assertParserResultDictTrue
-from isc_clause_zone import \
+from bind9_parser.isc_utils import assertParserResultDictFalse, assertParserResultDictTrue
+from bind9_parser.isc_clause_zone import \
     zone_all_stmts_set,\
     zone_all_stmts_series,\
     clause_stmt_zone_standalone,\

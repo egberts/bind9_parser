@@ -6,11 +6,11 @@ Description:  Performs unit test on the isc_options.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictFalse, assertParserResultDictTrue
-from isc_options import options_statements_set, options_statements_series,\
+from bind9_parser.isc_utils import assertParserResultDictFalse, assertParserResultDictTrue
+from bind9_parser.isc_options import options_statements_set, options_statements_series,\
     options_stmt_avoid_v4_udp_ports
 
-from isc_clause_options import clause_stmt_options, options_all_statements_set,\
+from bind9_parser.isc_clause_options import clause_stmt_options, options_all_statements_set,\
     options_all_statements_series
 
 class TestClauseOptions(unittest.TestCase):

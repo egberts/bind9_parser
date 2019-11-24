@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_inet.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictFalse, assertParserResultDictTrue
-from isc_inet import ip4_addr, ip4s_subnet, ip4s_prefix, ip6_addr,\
+from bind9_parser.isc_utils import assertParserResultDictFalse, assertParserResultDictTrue
+from bind9_parser.isc_inet import ip4_addr, ip4s_subnet, ip4s_prefix, ip6_addr,\
     ip46_addr, ip46_addr_or_prefix, ip46_addr_and_port_list, ip_port, dscp_port,\
     ip4_addr_list, ip46_addr_or_wildcard, ip46_addr_prefix_or_wildcard,\
     ip4_addr_list_series, ip46_addr_list_series,\

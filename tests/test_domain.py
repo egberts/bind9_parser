@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_domain.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
-from isc_domain import tld_label, domain_label, subdomain_label,\
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_domain import tld_label, domain_label, subdomain_label,\
     host_name, domain_fqdn, domain_generic_label,\
     domain_generic_fqdn, rr_domain_name_or_wildcard_type, rr_domain_name_type, rr_fqdn_w_absolute
 

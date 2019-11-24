@@ -7,8 +7,8 @@ Description:  Performs unit test on the isc_clause.py source file.
 
 import unittest
 from pyparsing import ParseException, ParseBaseException
-from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
-from isc_clause import \
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_clause import \
     optional_clause_stmt_set,\
     optional_clause_stmt_series,\
     mandatory_clause_stmt_set,\

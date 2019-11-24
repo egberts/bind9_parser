@@ -244,7 +244,11 @@ if __name__ == '__main__':
     if not bind9_parser.g_expose_secrets:
         bind9_parser.key_secret.addParseAction(suppress_key_secrets)
 
-    my_clauses = bind9_parser.clause_statements.setDebug(g_verbosity).setParseAction(myAction2)
+    my_clauses = bind9_parser.clause_statements \
+                     .setDebug(g_verbosity) \
+                     .setParseAction(myAction2) \
+                     .ignore(pp.cppStyleComment) \
+                     .ignore(pp.pythonStyleComment)
 #    my_clauses = my_clauses.enablePackrat()
 
     # pp.__diag__.enable_debug_on_named_expressions = True
@@ -258,6 +262,7 @@ if __name__ == '__main__':
     # pp.__diag__.enable("warn_ungrouped_named_tokens_in_collection")
     # pp.__diag__.enable("warn_name_set_on_empty_Forward")
     # pp.__diag__.enable("warn_on_multiple_string_args_to_oneof")
+
 
     print("Start: Is the library quiet?")
     result = my_clauses.parseString(toplevel_config, parseAll=True)

@@ -5,8 +5,8 @@ File: test_server.py
 Description:  Performs unit test on the isc_server.py source file.
 """
 import unittest
-from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
-from isc_clause_server import server_all_statements_set, \
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_clause_server import server_all_statements_set, \
     server_all_statements_series,\
     clause_stmt_server_standalone,clause_stmt_server_series
 

@@ -6,9 +6,9 @@ Description:  Performs unit test on the isc_options.py source file.
 """
 
 import unittest
-from isc_utils import unit_test_booleans, assertParserResultDict,\
+from bind9_parser.isc_utils import unit_test_booleans, assertParserResultDict,\
     assertParserResultDictTrue, assertParserResultDictFalse
-from isc_options import \
+from bind9_parser.isc_options import \
     options_stmt_acache_cleaning_interval,options_stmt_acache_enable,\
     options_stmt_answer_cookie, options_stmt_automatic_interface_scan,\
     options_ip_port_series, options_stmt_avoid_v4_udp_ports,\
@@ -325,7 +325,7 @@ class TestOptions(unittest.TestCase):
 
     def test_isc_options_stmt_recursing_file_passing(self):
         assertParserResultDictTrue(
-            options_stmt_recursing_file, 
+            options_stmt_recursing_file,
             'recursing-file "/tmp/recursing-file.dat";',
             {'recursing_file_path_name': '"/tmp/recursing-file.dat"'})
 
@@ -338,7 +338,7 @@ class TestOptions(unittest.TestCase):
     def test_isc_options_stmt_resolver_query_timeout_passing(self):
         assertParserResultDictTrue(
             options_stmt_resolver_query_timeout,
-            'resolver-query-timeout 3608;', 
+            'resolver-query-timeout 3608;',
             {'resolver_query_timeout': 3608})
 
     def test_isc_options_stmt_serial_query_rate_passing(self):
@@ -349,8 +349,8 @@ class TestOptions(unittest.TestCase):
 
     def test_isc_options_stmt_server_id_passing(self):
         assertParserResultDictTrue(
-            options_stmt_server_id, 
-            'server-id "example.com";', 
+            options_stmt_server_id,
+            'server-id "example.com";',
             {'server_id_name': '"example.com"'})
         assertParserResultDictTrue(
             options_stmt_server_id,

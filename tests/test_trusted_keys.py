@@ -10,8 +10,8 @@ Description: Provides trusted_keys-related grammar in PyParsing engine
              for ISC-configuration style
 """
 import unittest
-from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
-from isc_trusted_keys import trusted_keys_statements_set, trusted_keys_statements_series
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_trusted_keys import trusted_keys_statements_set, trusted_keys_statements_series
 
 
 class TestTrustedKeys(unittest.TestCase):

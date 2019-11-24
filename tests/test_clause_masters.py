@@ -6,8 +6,8 @@ Description:  Performs unit test on the isc_clause_masters.py source file.
 """
 
 import unittest
-from isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
-from isc_clause_masters import \
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_clause_masters import \
     master_id, \
     masters_element_series,\
     clause_stmt_masters_standalone, clause_stmt_masters_series
