@@ -31,17 +31,20 @@ Features:
 
 bind9-parser make it so easy to do all of that, and now easier for you.
 
-An example Bind9 config file that contains:
-```
-    options {
-        version "4.1";
-        recursion no;
-    }
-```
-bind9-parser result is:
-```
-    result = { 'options': { 'version': "4.1", 'recursion': 'no' }}
-```
+# Introduction
+Here is a program to parse ``"options { server-id 'example.invalid'; };"`` :
+
+.. code:: python
+
+    from bind9_parser import *
+    test_named_conf_text = "options { server-id 'example.invalid'; };"
+    result = clause_statements.parseString(test_named_conf_text, parseAll=True)
+    print(result.asDict())
+
+The program outputs the following::
+
+    {'options': [{'server_id_name': "'example.invalid'"}]}
+
 
 # Unit Tests
 A massive unit test is supplied (under `tests/` subdirectory) to ensure that future breakage does not occur.
