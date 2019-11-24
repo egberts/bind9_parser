@@ -46,3 +46,5 @@ bind9-parser result is:
 # Unit Tests
 A massive unit test is supplied (under `tests/` subdirectory) to ensure that future breakage does not occur.
 
+# Others
+|Build Status| |Coverage|
