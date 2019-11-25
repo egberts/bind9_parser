@@ -1,0 +1,33 @@
+options
+{
+    directory "/var/named"; // the default
+    };
+view "localhost_resolver"
+{
+    match-clients { localhost; };
+    };
+view "internal"
+{
+    match-clients { localnets; };
+    zone "my.internal.zone" {
+    type master;
+    };
+    zone "my.slave.internal.zone" {
+        type slave;
+        };
+    zone "my.ddns.internal.zone" {
+        type master;
+        };
+    };
+key ddns_key
+{
+    algorithm hmac-md5;
+    secret "togenerateTSIGkeys";
+    };
+view "external"
+{
+    match-clients { !localnets; !localhost; };
+    zone "my.external.zone" {
+    type master;
+    };
+};
