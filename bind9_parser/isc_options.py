@@ -591,8 +591,8 @@ options_statements_set = (
     | options_stmt_interface_interval
     | options_stmt_match_mapped_addresses
     | options_stmt_max_rsa_exponent_size
-    | options_stmt_memstatistics
     | options_stmt_memstatistics_file
+    | options_stmt_memstatistics
     | options_stmt_multiple_cnames
     | options_stmt_named_xfer
     | options_stmt_pid_file
