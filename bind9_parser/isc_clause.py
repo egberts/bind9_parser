@@ -70,4 +70,5 @@ mandatory_clause_stmt_set = clause_stmt_options
 clause_statements = ZeroOrMore(
     optional_clause_stmt_set
     | mandatory_clause_stmt_set
+    | optional_clause_stmt_set
 )
