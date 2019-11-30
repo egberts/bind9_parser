@@ -1,0 +1,31 @@
+options {
+        directory "/var/cache/bind";
+
+        // Exchange port between DNS servers
+        query-source address * port *;
+
+        // Transmit requests to 192.168.1.1 if
+        // this server does not know how to resolve them
+        forward only;
+        forwarders { 192.168.1.1; };
+
+        auth-nxdomain no;    # conform to RFC1035
+
+        // From 9.9.5 ARM, disables interfaces scanning to prevent unwanted stop listening
+        interface-interval 0;
+        // Listen on local interfaces only(IPV4)
+        listen-on-v6 { none; };
+        listen-on { 127.0.0.1; 192.168.0.1; };
+
+        // Do not transfer the zone information to the secondary DNS
+        allow-transfer { none; };
+
+        // Accept requests for internal network only
+        allow-query { internals; };
+
+        // Allow recursive queries to the local hosts
+        allow-recursion { internals; };
+
+        // Do not make public version of BIND
+        version none;
+};

@@ -1,0 +1,30 @@
+// Manage the file logs
+include "/etc/bind/named.conf.log";
+
+// Domain Management example.com
+// ------------------------------
+//  - The server is defined as the master on the domain.
+//  - There are no forwarders for this domain.
+//  - Entries in the domain can be added dynamically
+//    with the key ns-example-com_rndc-key
+zone "example.com" {
+        type master;
+        file "/var/lib/bind/db.example.com";
+        //forwarders {};
+        // If we do not comment the ''forwarders'' "empty" clients of the local subnet in my case don't have access to the upstream DNS ?
+        //allow-update { key ns-example-com_rndc-key; };
+        allow-update { key rndc-key; };
+        //confusion between the file name to import (ns-example-com_rndc-key) and the key label (rndc-key) ?
+};
+zone "0.168.192.in-addr.arpa" {
+        type master;
+        file "/var/lib/bind/db.example.com.inv";
+        //see comment below (zone "example.com")
+        //forwarders {};
+        //allow-update { key ns-example-com_rndc-key; };
+        allow-update { key rndc-key; };
+};
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+include "/etc/bind/zones.rfc1918";
