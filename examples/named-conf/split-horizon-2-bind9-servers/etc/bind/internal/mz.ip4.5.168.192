@@ -1,0 +1,10 @@
+
+zone "5.168.192.in-addr.arpa" IN {
+    type master;
+    file "/var/lib/bind/internal/master/db.ip4.5.168.192";
+    allow-update {
+        key DDNS_UPDATER;
+        };
+    forwarders { };
+    notify no;
+    };

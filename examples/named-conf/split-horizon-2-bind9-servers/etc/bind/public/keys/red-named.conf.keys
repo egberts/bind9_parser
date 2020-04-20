@@ -1,0 +1,10 @@
+
+// Allows nsupdate to update zone database.
+include "/etc/bind/keys/ddns.sha256.dns-arca-a.key";
+
+// Allows rndc tool to control BIND9 server daemon from command line.
+include "/etc/bind/keys/rndc.md5.key";
+
+// Allows master NS to update slave NS(es).
+include "/etc/bind/keys/ddns.md5.master-to-slave.key";
+

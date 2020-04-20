@@ -1,0 +1,21 @@
+// File: /etc/bind/internal/mz.lab
+//
+zone "lab" {
+    type master;
+    file "/var/lib/bind/internal/master/db.lab";
+    allow-transfer { none; };
+
+    // Absolutely no forwarding if .lab zone is touched, it stops here
+    forwarders { };
+
+    allow-update {
+        !{ !localhost; any; };
+        // only localhost got past this point here
+        // no one can update except localhost RNDC
+        key "rndc-key"; // only RNDC on localhost
+
+        //  'allow-update' on a "locally" view is essential for
+        //  communication between ISC-DHCP and BIND9
+        key "DDNS_UPDATER"; // only isc-dhcpd on localhost
+    };
+};

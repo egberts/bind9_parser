@@ -1,0 +1,11 @@
+// File: /etc/bind/internal/view.chaos
+//
+view "chaos" CH {
+    match-clients { any; };
+    zone "bind" CH {
+        type master;
+        file "/var/lib/bind/internal/master/db.bind";
+        allow-update { none; };
+        allow-transfer { none; };
+    };
+};

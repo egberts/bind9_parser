@@ -241,8 +241,10 @@ optview_stmt_dnssec_validation = (
     + semicolon
 )
 
-#  dual-stack-servers [ port pg_num ] { ( "host" [port p_num] |
-#               ipv4 [port p_num] | ipv6 [port p_num] ); ... };
+#  dual-stack-servers [ port <pg_num> ]
+#                     { ( <domain_name> [port <p_num>] |
+#                         <ipv4> [port <p_num>] |
+#                         <ipv6> [port <p_num>] ); ... };
 dual_stack_servers_address_set = (
     (
         # Orderings matter

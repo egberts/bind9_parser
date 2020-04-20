@@ -1,0 +1,76 @@
+view green
+{
+    //// match-clients
+    //// A view clause matches when either or both of its match-clients
+    //// and match-destinations statements match and when the
+    //// match-recursive-only condition is met. If either or both
+    //// of match-clients and match-destinations are missing they
+    //// default to any (all hosts match). The match-clients
+    //// statement defines the address_match_list for the source
+    //// IP address of the incoming messages. Any IP which matches
+    //// will use the defined view clause.
+    //// match-clients statement may only be used in a view clause.
+    match-clients {
+        trusted_residential_network_acl;
+        };
+
+    //// allow-query defines an match list of IP address(es) which are
+    //// allowed to issue queries to the server. If not specified all
+    //// hosts are allowed to make queries (defaults to allow-query {any;};).
+    ////
+    //// allow-query-on defines the server interface(s) from which
+    //// queries are accepted and can be useful where a server
+    //// is multi-homed, perhaps in conjunction with a view clause.
+    //// Defaults to allow-query-on {any;};) meaning that queries
+    //// are accepted on any server interface.
+    ////
+    //// allow-query statements may be used in a zone, view or
+    //// a global options clause.
+    // allow-query is none in named.conf.options
+    allow-query {
+        external_bastion_ip_acl;
+        trusted_residential_network_acl;
+        };
+
+    recursion yes;
+
+    // allow-recursion { internal; }; declared globally in options
+
+    allow-query-cache {
+        trusted_residential_network_acl;
+        };
+
+    //  'allow-update' on a "locally" view is essential for
+    //  communication between ISC-DHCP and BIND9
+    allow-update {
+        localhost;  // TODO: allow-update is only done in mz.lab zone (remove?)
+        };
+
+    forwarders {
+            8.8.8.8;  # Google DNS
+            8.8.4.4;  # Google DNS
+        };
+    empty-zones-enable no;
+    disable-empty-zone yes;
+
+    // non-updateable master zones
+    include "/etc/bind/internal/mz.localhost";
+    include "/etc/bind/internal/mz.ip4.127";
+
+    // updateable master zone(s)
+    include "/etc/bind/internal/mz.ip4.1.168.192";
+    include "/etc/bind/internal/mz.ip4.4.168.192";
+    include "/etc/bind/internal/mz.ip4.5.168.192";
+    include "/etc/bind/internal/mz.ip4.6.168.192";
+    include "/etc/bind/internal/mz.ip4.7.168.192";
+
+    include "/etc/bind/internal/mz.lab";
+
+    include "/etc/bind/internal/hz.cache.lab";
+
+    // slave zone(s), always list those after any master zones
+    include "/etc/bind/internal/sz.example.com";
+
+    // All other types of zones go after 'master' and 'slave' type zones.
+};
+

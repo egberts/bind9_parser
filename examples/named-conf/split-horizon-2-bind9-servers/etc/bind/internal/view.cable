@@ -1,0 +1,38 @@
+view cable
+{
+    match-clients {
+        trusted_cablesupport_acl;
+        };
+        allow-query {
+        trusted_cablesupport_acl;
+                };
+        recursion yes;
+    allow-recursion {
+        trusted_cablesupport_acl;
+        };
+    allow-query-cache {
+        trusted_cablesupport_acl;
+        };
+        allow-transfer { none; };
+    allow-update { none; };
+        empty-zones-enable no;
+        disable-empty-zone yes;
+
+        //  ISP-provided cable-modem must use their OWN DNS servers
+        forwarders {
+            123.123.123.123;
+            123.123.123.124;
+        };
+
+        // Zone files
+        // Master zones
+
+        // ".home" TLD for ISP-provided cablemodem and set-top box(es).
+        include "/etc/bind/internal/mz.home";
+        include "/etc/bind/internal/mz.ip4.1.168.192";
+        include "/etc/bind/internal/mz.localhost";
+        include "/etc/bind/internal/mz.ip4.127";
+
+        // Yes, ordering matters but only at daemon reload-time
+        include "/etc/bind/internal/hz.cache.home";
+};

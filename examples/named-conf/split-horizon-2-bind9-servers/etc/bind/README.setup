@@ -1,0 +1,8 @@
+Setting up hidden DNS server
+
+
+cd /var/lib/bind
+dnssec-keygen -a HMAC-SHA512 -b 512 -n USER in-a-box.example.com
+
+On hidden-master, use general option 'notify-on-soa yes;'
+

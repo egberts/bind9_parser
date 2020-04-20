@@ -1,0 +1,24 @@
+
+This is the /var/lib/bind/internal subdirectory.
+
+This subdirectory contains bind9 zone data files.
+
+Zone data files that used to be in /etc/bind are now in here under master
+subdirectory because they stay together with other zone data files.
+
+Zone files are stored in separate subdirectory by types:
+
+  master -  Contains text-based zone files that are editable and
+            controlled here by this nameserver.
+
+  slave -   Contains binary-based zone files supplied and maintained
+            by other master nameservers
+
+  dynamic - Contains named daemon-generated zone files that contains
+            dynamically created resource records (RRs) such as DNSSEC,
+            NSSEC,  RRSIG.
+
+  root -    Contains the Root (".") DNS zone file that contains all
+            the top-level domain (TLD) names (like .com, .org, or .net).
+            This root zone file is a separate directory from 'master'
+            for added security.

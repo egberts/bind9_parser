@@ -1,0 +1,10 @@
+// File: /etc/bind/internal/hz.cache.home
+//
+// bind9 has root hint built-in, but it give mice and men the willies
+// not to see one in the configuration file so we include it here.
+
+zone "." IN {
+    type hint;
+    delegation-only yes;
+    file "/var/lib/bind/internal/master/db.cache.home";
+};

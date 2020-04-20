@@ -1,0 +1,18 @@
+The following systemd files provide support for
+split-horizon name server topology  in
+running two Bind9 daemons which are:
+
+    1. Public-facing named daemon
+    2. Internal-facing named daemon
+
+Copy the files into their respective /etc/systemd directory.
+
+Then execute:
+
+    systemctl stop bind9
+    systemctl disable bind9
+
+    systemctl enable bind9-internal
+    systemctl enable bind9-public
+    systemctl start bind9-public
+    systemctl start bind9-internal

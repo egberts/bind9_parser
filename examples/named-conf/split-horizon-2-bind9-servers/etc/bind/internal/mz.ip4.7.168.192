@@ -1,0 +1,11 @@
+// File: /etc/bind/internal/mz.ip4.7.168.192
+//
+zone "7.168.192.in-addr.arpa" {
+    type master;
+    file "/var/lib/bind/internal/master/db.ip4.6.168.192";
+    allow-update {
+        key DDNS_UPDATER;
+        };
+    forwarders { };
+    notify no;
+    };

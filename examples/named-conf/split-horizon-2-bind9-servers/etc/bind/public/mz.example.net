@@ -1,0 +1,29 @@
+zone "example.com" IN
+{
+    type master;
+    allow-query {
+        external_bastion_ip_acl;
+        trusted_residential_network_all_acl;
+    };
+    file "/var/lib/bind/public/master/db.example.com";
+    // journal "/var/cache/bind/public/example.com-master.jnl";
+    update-policy {
+    grant ddns-sha256-arca-a-key self arca.example.com A;
+    grant ddns-sha256-arca-a-key self example.com SOA;
+    grant ddns-sha256-arca-a-key self arca.example.com PTR;
+    };
+    allow-transfer {
+        trusted_residential_network_acl;
+        external_downstream_nameservers_acl;
+//        key ddns-sha256-arca-a-key;
+        !{ !localhost; any; };
+//         key master-to-slave-key;
+        localhost;
+        };
+    notify explicit;
+    also-notify { masters_list_secondary_nameservers; };
+    auto-dnssec maintain;
+    dnssec-loadkeys-interval 60;
+    inline-signing yes;
+};
+
