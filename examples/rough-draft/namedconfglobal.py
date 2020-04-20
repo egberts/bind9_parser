@@ -73,6 +73,32 @@ g_nc_keywords['acl'] = \
         'topblock': True,
     }
 
+g_nc_keywords['controls'] = \
+    {
+        'occurs-multiple-times': True,
+        'topblock': True,
+        'found-in': {},
+        'output-order-id': 3,  # controls should be prominently firstly (after keys and ACLs)
+        'introduced': "8.2"
+    }
+
+#  dlz <string> { database <string>; search <boolean>; }; [ DLZ ]
+#  dlz <string>; [ View Zone ]
+g_nc_keywords['dlz'] = \
+    {
+        'default': None,
+        'validity': {'string'},
+        'occurs-multiple-times': True,
+        'introduced': "9.5.0",
+        'topblock': True,
+        'found-in': {'', 'view', 'zone'},  # also at top-statement-level
+        'topic': '',
+        'server-type': '',
+        'comment': """
+Introduced 'search' clause in v9.10.0
+""",
+    }
+
 g_nc_keywords['include'] = \
     {
         'default': None,
@@ -90,62 +116,11 @@ g_nc_keywords['key'] = \
     {
         'occurs-multiple-times': True,
         'topblock': True,
-        'found-in': {'view'}, # also at clause-level
+        'found-in': {'', 'view'}, # also at top-statement-level
         'user-defined-indice': True,  # keyname
         'multi-line-order-id': 2,  # Keys should always be on top, after ACL
         'introduced': "8.1",
         'obsoleted': '9.15.0',  # TODO: for sure, it's gone at 9.15.0
-    }
-
-g_nc_keywords['controls'] = \
-    {
-        'occurs-multiple-times': True,
-        'topblock': True,
-        'found-in': {},
-        'output-order-id': 3,  # controls should be prominently firstly (after keys and ACLs)
-        'introduced': "8.2"
-    }
-
-g_nc_keywords['options'] = \
-    {
-        'occurs-multiple-times': False,
-        'topblock': True,
-        'required': True,  # the only keyword w/ 'required' (nope, logging too)
-        'found-in': {},
-        'output-order-id': 4,  # options should be after keys, ACLs, and controls)
-        'introduced': "4.9.3"  # 1994 Vixie Enterprise
-    }
-
-g_nc_keywords['masters'] = \
-    {
-        'occurs-multiple-times': True,
-        'topblock': True,
-        'found-in': {'zone'},  # Only found in zone-slave/zone-stub
-        'user-defined-indice': True,
-        'output-order-id': 8,  # masters should be after 'view'/'zone'
-        'introduced': "4.8",
-    }
-
-g_nc_keywords['view'] = \
-    {
-        'occurs-multiple-times': True,
-        'topblock': True,
-        'found-in': {},
-        'subordering-matters': True,  # ordering of view is very important
-        'user-defined-indice': True,  # view_name
-        'output-order-id': 6,  # 'view'/'zone' should be before 'trusted-keys'
-        'introduced': "9.0.0",  # A big feature introduction here
-    }
-
-g_nc_keywords['zone'] = \
-    {
-        'occurs-multiple-times': True,
-        'topblock': True,
-        'found-in': {'view'},
-        'subordering-matters': True,  # ordering of zone is very important
-        'user-defined-indice': True,  # zone_name
-        'output-order-id': 6,  # 'zone'/'view' should be before 'trusted-keys'
-        'introduced': "8.1",
     }
 
 g_nc_keywords['logging'] = \
@@ -170,40 +145,55 @@ g_nc_keywords['lwres'] = \
         'obsoleted': '9.13.3',  # TODO Noticed gone at 9.13.3, need exact version for 'lwres'
     }
 
-#  dlz <string> { database <string>; search <boolean>; }; [ DLZ ]
-#  dlz <string>; [ View Zone ]
-g_nc_keywords['dlz'] = \
+g_nc_keywords['managed-keys'] = \
     {
-        'occurs-multiple-times': True,
-        'introduced': "9.10.0",
+        'occurs-multiple-times': True,  # was shocked that this is a multiple entry supported clause
         'topblock': True,
-        'found-in': {'view', 'zone'},
+        'found-in': {'', 'view'},  # also at top-statement-level
+        'introduced': '9.5.0',
+        'topic': '',
+        'server-type': '',
+        'comment': '',
     }
 
-g_nc_keywords['catalog-zones'] = \
+g_nc_keywords['masters'] = \
     {
         'occurs-multiple-times': True,
-        'introduced': "9.13.3",  # TODO First noticed at 9.13.3, need exact value
         'topblock': True,
-        'found-in': {'view'},
+        'found-in': {'', 'zone'},  # Only found in zone-slave/zone-stub
+        'user-defined-indice': True,
+        'output-order-id': 8,  # masters should be after 'view'/'zone'
+        'introduced': "4.8",
     }
 
-g_nc_keywords['dyndb'] = \
+g_nc_keywords['options'] = \
     {
-        'occurs-multiple-times': True,
-        'introduced': "9.13.3",  # TODO First noticed at 9.13.3, need exact value
+        'occurs-multiple-times': False,
         'topblock': True,
-        'found-in': {'view'},
+        'required': True,  # the only keyword w/ 'required' (nope, logging too)
+        'found-in': {},
+        'output-order-id': 4,  # options should be after keys, ACLs, and controls)
+        'introduced': "4.9.3"  # 1994 Vixie Enterprise
     }
 
 g_nc_keywords['server'] = \
     {
         'occurs-multiple-times': True,
         'topblock': True,
-        'found-in': {'view'},
+        'found-in': {'', 'view'},  # also at top-statement-level
         'dict-index-by-name': True,  # indexed by ip46_addr_or_prefix
         'output-order-id': 9,  # 'server' should be AFTER 'masters'
         'introduced': "8.1",
+    }
+
+g_nc_keywords['statistics-channels'] = \
+    {
+        'occurs-multiple-times': False,
+        'topblock': True,
+        'found-in': {},
+        'output-order-id': 9999,
+        'introduced': '9.5.0',
+        'comment': '',
     }
 
 g_nc_keywords['trusted-keys'] = \
@@ -214,6 +204,51 @@ g_nc_keywords['trusted-keys'] = \
         'dict-index-by-name': False,  # but 'trusted-keys string' is indexed
         'output-order-id': 10,
         'introduced': "8.2",  # 1999-09-15
+    }
+
+g_nc_keywords['view'] = \
+    {
+        'occurs-multiple-times': True,
+        'topblock': True,
+        'found-in': {},
+        'subordering-matters': True,  # ordering of view is very important
+        'user-defined-indice': True,  # view_name
+        'output-order-id': 6,  # 'view'/'zone' should be before 'trusted-keys'
+        'introduced': "9.0.0",  # A big feature introduction here
+    }
+
+g_nc_keywords['zone'] = \
+    {
+        'occurs-multiple-times': True,
+        'topblock': True,
+        'found-in': { '', 'view'},
+        'subordering-matters': True,  # ordering of zone is very important
+        'user-defined-indice': True,  # zone_name
+        'output-order-id': 6,  # 'zone'/'view' should be before 'trusted-keys'
+        'introduced': "8.1",
+    }
+
+# End of Top-Level Statement (formerly clause)
+
+# Begin of keywords, builtins and identifiers
+
+g_nc_keywords['catalog-zones'] = \
+    {
+        'occurs-multiple-times': True,
+        'introduced': "9.11.0",
+        'topblock': False,
+        'found-in': {'options', 'view'},  # added 'options' around 9.15.
+    }
+
+g_nc_keywords['dyndb'] = \
+    {
+        'occurs-multiple-times': True,
+        'introduced': "9.11.0",  # TODO, when intro into 'view'?
+        'topblock': True,
+        'found-in': {'', 'view'},
+        'comment': """
+Also introduced as top-level statement in v9.11.0'
+""",
     }
 
 g_nc_keywords['default-server'] = \
@@ -233,27 +268,6 @@ g_nc_keywords['default-key'] = \
         'found-in': {'options'},
         'introduced': "9.1.0",  # TODO it is not in 9.0.0
         'obsoleted': "9.8",  # TODO 'default-key' first noticed obsoleted 9.8
-    }
-
-g_nc_keywords['managed-keys'] = \
-    {
-        'occurs-multiple-times': True,  # was shocked that this is a multiple entry supported clause
-        'topblock': True,
-        'found-in': {'view'},
-        'introduced': '9.5.0',
-        'topic': '',
-        'server-type': '',
-        'comment': '',
-    }
-
-g_nc_keywords['statistics-channels'] = \
-    {
-        'occurs-multiple-times': False,
-        'topblock': True,
-        'found-in': {},
-        'output-order-id': 9999,
-        'introduced': '9.5.0',
-        'comment': '',
     }
 
 g_nc_keywords['acache-cleaning-interval'] = \
@@ -433,7 +447,7 @@ g_nc_keywords['allow-new-zones'] = \
         'default': "no",
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'topic': 'rndc, zone, ddns',
         'server-type': 'slave',
         'comment-copyright': 'Copyright (C) 2004-2016 Internet Systems Consortium, Inc. ("ISC");'
@@ -476,15 +490,16 @@ g_nc_keywords['allow-query'] = \
         'server-type': 'active, public, master, slave, stub',
         'comment-copyright': 'Copyright (C) 2004-2016 Internet Systems Consortium, Inc. ("ISC");'
                              'Copyright (C) 2009 Zytrax, Inc.',
-        'comment': """
-Specifies which hosts are allowed to ask ordinary DNS questions. allow-query may also
-be specified in the zone statement, in which case it overrides the options allow-query
-statement.
+        'comment': """Specifies which hosts are allowed to ask ordinary
+DNS questions. allow-query may also be specified in the
+zone statement, in which case it overrides the options
+allow-query statement.
 
-If not specified, the default is to allow queries from all hosts.
+If not specified, the default is to allow queries from
+all hosts.
 
-NOTE: allow-query-cache is now used to specify access to the cache.
-""",
+NOTE: allow-query-cache is now used to specify access
+to the cache.""",
     }
 
 g_nc_keywords['allow-query-cache'] = \
@@ -513,8 +528,9 @@ g_nc_keywords['allow-query-cache-on'] = \
         'introduced': '9.5.0',
         'topic': 'active',
         'server-type': 'access control',
-        'comment': """Specifies which local addresses can give answers from the cache.
-If not specified, the default is to allow cache queries on any address, localnets and localhost.""",
+        'comment': """Specifies which local addresses can give answers
+from the cache.  If not specified, the default is to allow
+cache queries on any address, localnets and localhost.""",
     }
 
 g_nc_keywords['allow-query-on'] = \
@@ -525,22 +541,26 @@ g_nc_keywords['allow-query-on'] = \
         'introduced': '9.5.0',
         'topic': 'access control',
         'server-type': '',
-        'comment': """
-Specifies which local addresses can accept ordinary DNS questions. This makes it possible,
-for instance, to allow queries on internal-facing interfaces but disallow them on
-external-facing ones, without necessarily knowing the internal networks addresses.
+        'comment': """Specifies which local addresses can accept ordinary
+DNS questions. This makes it possible, for instance, to
+allow queries on internal-facing interfaces but disallow
+them on external-facing ones, without necessarily knowing
+the internal networks addresses.
 
-Note that allow-query-on is only checked for queries that are permitted by allow-query.
+Note that allow-query-on is only checked for queries that
+are permitted by allow-query.
 
 A query must be allowed by both ACLs, or it will be refused.
 
-allow-query-on may also be specified in the zone statement, in which case it overrides
-the options allow-query-on statement.
+allow-query-on may also be specified in the zone
+statement, in which case it overrides the options
+allow-query-on statement.
 
-If not specified, the default is to allow queries on all addresses.
+If not specified, the default is to allow queries on
+all addresses.
 
-NOTE: allow-query-cache is used to specify access to the cache.
-""",
+NOTE: allow-query-cache is used to specify access
+      to the cache.""",
     }
 
 g_nc_keywords['allow-recursion'] = \
@@ -552,8 +572,9 @@ g_nc_keywords['allow-recursion'] = \
         'introduced': '9.0.0',
         'topic': '',
         'server-type': 'access control',
-        'comment': """Specifies which local addresses can give answers from the cache.
-If not specified, the default is to allow cache queries on any address, localnets and localhost.""",
+        'comment': """Specifies which local addresses can give answers from
+the cache.  If not specified, the default is to allow
+cache queries on any address, localnets and localhost.""",
     }
 
 g_nc_keywords['allow-recursion-on'] = \
@@ -564,9 +585,9 @@ g_nc_keywords['allow-recursion-on'] = \
         'introduced': '9.5.0',
         'topic': '',
         'server-type': 'access control',
-        'comment': """Specifies which local addresses can accept recursive queries.
-
-If not specified, the default is to allow recursive queries on all addresses."""
+        'comment': """Specifies which local addresses can accept
+recursive queries.  If not specified, the default is to
+allow recursive queries on all addresses."""
     }
 
 g_nc_keywords['allow-transfer'] = \
@@ -580,11 +601,13 @@ g_nc_keywords['allow-transfer'] = \
         # In 8.2, only found in ['zone']['type']['stub']
         'topic': 'server-zone-transfer-permission, access control',
         'server-type': 'authoritative, master, slave, stub',
-        'comment': """Specifies which hosts are allowed to receive zone transfers from the server.
-allow-transfer may also be specified in the zone statement, in
-which case it overrides the options allow-transfer statement.
+        'comment': """Specifies which hosts are allowed to receive zone
+transfers from the server.  allow-transfer may also be
+specified in the zone statement, in which case it
+overrides the options allow-transfer statement.
 
-If not specified, the default is to allow transfers to all hosts.""",
+If not specified, the default is to allow transfers to
+all hosts.""",
     }
 
 g_nc_keywords['allow-update'] = \
@@ -598,13 +621,12 @@ g_nc_keywords['allow-update'] = \
         # In 8.2, not found in ['zone']['type']['stub']
         # In 8.2, not found in ['zone']['type']['forward']
         # In 8.2, not found in ['zone']['type']['hint']
-        'topic': 'dynamic-dns, access control',
+        'topic': 'dynamic-dns, dynamic zone update, access control',
         'server-type': 'authoritative, master',
-        'comment': """Specifies which hosts are allowed to submit Dynamic DNS updates for master zones.
-
-The default is to deny updates from all hosts.
-
-Note that allowing updates based on the requestor's IP address is insecure;"""
+        'comment': """Specifies which hosts are allowed to submit Dynamic
+DNS updates for master zones.  The default is to deny
+updates from all hosts.  Note that allowing updates based
+ on the requestor's IP address is insecure;"""
     }
 
 g_nc_keywords['allow-update-forwarding'] = \
@@ -615,11 +637,13 @@ g_nc_keywords['allow-update-forwarding'] = \
         'introduced': '9.0.0',
         'topic': 'dynamic-dns, access control',
         'server-type': 'authoritative, master',
-        'comment': """Specifies which hosts are allowed to submit Dynamic DNS updates for master zones.
+        'comment': """Specifies which hosts are allowed to submit Dynamic
+DNS updates for master zones.
 
 The default is to deny updates from all hosts.
 
-Note that allowing updates based on the requestor's IP address is insecure;"""
+Note that allowing updates based on the requestor's IP
+address is insecure;"""
     }
 
 g_nc_keywords['allow-v6-synthesis'] = \
@@ -631,11 +655,12 @@ g_nc_keywords['allow-v6-synthesis'] = \
         'obsoleted': '9.8',
         'topic': 'ignored, obsoleted',
         'server-type': 'access control',
-        'comment': """This option was introduced for the smooth transition from AAAA to A6
-and from "nibble labels" to binary labels.
+        'comment': """This option was introduced for the smooth transition
+from AAAA to A6 and from "nibble labels" to binary labels.
 
-However, since both A6 and binary labels were then deprecated, this option was also
-deprecated. It is now ignored with some warning messages.""",
+However, since both A6 and binary labels were then
+deprecated, this option was also deprecated. It is now
+ignored with some warning messages.""",
     }
 
 g_nc_keywords['also-notify'] = \
@@ -646,21 +671,30 @@ g_nc_keywords['also-notify'] = \
         # In 8.2, only found in ['zone']['type']['master']
         # In 8.2, only found in ['zone']['type']['slave']
         # In 8.2, only found in ['zone']['type']['stub']
+        # TODO 9.15, no longer found under 'server'
         'introduced': '8.2',
         'topic': 'zone transfer, TSIG',
         'server-type': 'master, slave, stub',
-        'comment': """Defines a global list of IP addresses of name servers that are also sent NOTIFY messages
-whenever a fresh copy of the zone is loaded, in addition to the servers listed in the zone's
-NS records. This helps to ensure that copies of the zones will quickly converge on stealth
-servers. Optionally, a port may be specified with each also-notify address to send the
-notify messages to a port other than the default of 53. An optional TSIG key can also be
-specified with each address to cause the notify messages to be signed; this can be useful
-when sending notifies to multiple views. In place of explicit addresses, one or more
-named masters lists can be used.
-If an also-notify list is given in a zone statement, it will override the options also-notify
-statement. When a zone notify statement is set to no, the IP addresses in the global alsonotify
-list will not be sent NOTIFY messages for that zone. The default is the empty list
-(no global notification list).""",
+        'comment': """Defines a global list of IP addresses of name
+servers that are also sent NOTIFY messages whenever a
+fresh copy of the zone is loaded, in addition to the
+servers listed in the zone's NS records. This helps to
+ensure that copies of the zones will quickly converge on
+stealth servers. Optionally, a port may be specified with
+each also-notify address to send the notify messages to a
+port other than the default of 53. An optional TSIG key
+can also be specified with each address to cause the
+notify messages to be signed; this can be useful when
+sending notifies to multiple views. In place of explicit
+addresses, one or more named masters lists can be used.
+If an also-notify list is given in a zone statement, it
+will override the options also-notify statement. When a
+zone notify statement is set to no, the IP addresses in
+the global alsonotify list will not be sent NOTIFY
+messages for that zone. The default is the empty list
+(no global notification list).
+Clause 'key' introduced in v9.9.0.
+Master name permitted in v9.9.0. """,
     }
 
 g_nc_keywords['alt-transfer-source'] = \
@@ -671,18 +705,22 @@ g_nc_keywords['alt-transfer-source'] = \
         # [Opt, View, Zone]
         'introduced': '9.3.0',
         'obsoleted': '9.10',
-        'topic': 'slave',
+        'topic': 'slave, zone transfer',
         'server-type': 'slave',
-        'comment': """Applies to slave zones only.
-Defines an alternative local IP address to be used for inbound zone transfers by the
-server if that defined by transfer-source (transfer-source-v6) fails and
-use-alt-transfer-source is enabled.
+        'comment':
+"""Applies to slave zones only.  Defines an alternative
+local IP address to be used for inbound zone transfers
+by the server if that defined by transfer-source
+(transfer-source-v6) fails and use-alt-transfer-source
+is enabled.
 
-This address must appear in the remote end's allow-transfer statement for the zone being transferred.
+This address must appear in the remote end's
+allow-transfer statement for the zone being transferred.
 
 Syntax: ( ipv4_address | * ) [ port ( integer | * )];
 
-This statement may be used in a zone, view or global options clause."""
+This statement may be used in a zone, view or global
+options clause."""
     }
 
 g_nc_keywords['alt-transfer-source-v6'] = \
@@ -692,16 +730,45 @@ g_nc_keywords['alt-transfer-source-v6'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.3.0',
         'obsoleted': '9.10',
-        'topic': 'slave',
+        'topic': 'slave, zone transfer',
         'server-type': 'slave',
-        'comment': """Applies to slave zones only.
-Defines an alternative local IP address to be used for inbound zone transfers by the
-server if that defined by transfer-source (transfer-source-v6) fails and
-use-alt-transfer-source is enabled.
+        'comment':
+"""Applies to slave zones only.  Defines an alternative
+local IP address to be used for inbound zone transfers
+by the server if that defined by transfer-source
+(transfer-source-v6) fails and use-alt-transfer-source
+is enabled.
 
-This address must appear in the remote end's allow-transfer statement for the zone being transferred.
+This address must appear in the remote end's
+allow-transfer statement for the zone being transferred.
 
-This statement may be used in a zone, view or global options clause."""
+This statement may be used in a zone, view or global
+options clause."""
+    }
+
+g_nc_keywords['answer-cookie'] = \
+    {
+        'default': 'yes',
+        'validity': {'regex': r"(yes|no)"},
+        'found-in': {'options'},
+        'introduced': '9.15.0',   # TODO: First spotted in 9.15
+        'obsoleted': '',
+        'topic': 'edns',
+        'comment': """answer-cookie is indented as a temporary
+measure, for use when named shares an IP address with
+other servers that do not yet support DNS COOKIE.  A
+mismatch between servers on the same address is not expected
+to cause operational problems, but the option to disable
+COOKIE response so that all servers have the same behavior
+is provided out of an abundance of caution.  DNS COOKIE is
+an important security mechanism, and should not be disabled
+unless absolutely necessary.
+
+When set to its default value of 'yes', COOKIE.DNS options
+will be sent when applicable in replies to client queries.
+If set to 'no', COOKIE.EDNS options will not be sent in
+replies. This can only be set at global options level,
+not per-view."""
     }
 
 g_nc_keywords['attach-cache'] = \
@@ -709,7 +776,7 @@ g_nc_keywords['attach-cache'] = \
         'default': "",
         'validity': {'function': "view_name"},
         'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
+        'introduced': '9.7.0',
         'topic': 'view, cache',
         'server-type': '',
         'comment': """Allows multiple views to share a single cache database.
@@ -789,24 +856,32 @@ g_nc_keywords['auto-dnssec'] = \
         'default': "off",
         'validity': {'regex': r"(allow|maintain|off)"},
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '99.99.99',  # TODO When was 'auto-dnssec' introduced?
+        'introduced': '9.7.0', # zone: 9.7.0
         'topic': 'dnssec',
         'server-type': '',
-        'comment': """Zones configured for dynamic DNS may use this option to allow varying levels of automatic
-DNSSEC key management. There are three possible settings:
-auto-dnssec allow; permits keys to be updated and the zone fully re-signed whenever the
-user issues the command rndc sign zonename.
-auto-dnssec maintain; includes the above, but also automatically adjusts the zone's DNSSEC
-keys on schedule, according to the keys' timing metadata (see dnssec-keygen(8) and dnssecsettime(
-8)). The command rndc sign zonename causes named to load keys from the key
-
-repository and sign the zone with all keys that are active. rndc loadkeys zonename causes
-named to load keys from the key repository and schedule key maintenance events to occur
-in the future, but it does not sign the full zone immediately. Note: once keys have
-been loaded for a zone the first time, the repository will be searched for changes periodically,
-regardless of whether rndc loadkeys is used. The recheck interval is defined by
-dnssec-loadkeys-interval.)
-The default setting is auto-dnssec off.""",
+        'comment': """Zones configured for dynamic DNS may use this
+option to allow varying levels of automatic DNSSEC key
+management. There are three possible settings:
+auto-dnssec allow; permits keys to be updated and the
+zone fully re-signed whenever the user issues the command
+rndc sign zonename.  auto-dnssec maintain; includes the
+ above, but also automatically adjusts the zone's DNSSEC
+keys on schedule, according to the keys' timing metadata
+(see dnssec-keygen(8) and dnssecsettime( 8)). The command
+rndc sign zonename causes named to load keys from the key
+repository and sign the zone with all keys that are
+active. rndc loadkeys zonename causes named to load
+keys from the key repository and schedule key
+maintenance events to occur in the future, but it does
+not sign the full zone immediately. Note: once keys
+have been loaded for a zone the first time, the
+repository will be searched for changes periodically,
+regardless of whether rndc loadkeys is used. The
+recheck interval is defined by dnssec-loadkeys-interval.)
+The default setting is auto-dnssec off.
+Added to `options` section in v9.9.9.
+Added to `view` section in v9.9.9.
+Option 'create' removed in v9.9.9.""",
     }
 
 g_nc_keywords['automatic-interface-scan'] = \
@@ -842,7 +917,7 @@ they are provided for backward compatibility and to possibly simplify the
 port specification.""",
     }
 
-g_nc_keywords['avoid-v6-udp_ports'] = \
+g_nc_keywords['avoid-v6-udp-ports'] = \
     {
         'default': {},
         'validity': {'function': 'port_list'},
@@ -885,8 +960,8 @@ g_nc_keywords['blackhole'] = \
         'introduced': '8.1',
         'topic': 'dynamic-dns, access control',
         'server-type': 'authoritative',
-        'comment': """Specifies a list of addresses that the server will not
-accept queries from or use to resolve a query.
+        'comment': """Specifies a list of addresses that the server will
+not accept queries from or use to resolve a query.
 
 Queries from these addresses will not be responded to.
 
@@ -943,7 +1018,9 @@ g_nc_keywords['channel'] = \
         'introduced': '9.0.0',
         'topic': 'logging',
         'server-type': '',
-        'comment': '',
+        'comment': """
+Clause 'buffered' introduced in v9.10.0
+""",
     }
 
 g_nc_keywords['check-dup-records'] = \
@@ -951,7 +1028,7 @@ g_nc_keywords['check-dup-records'] = \
         'default': "warn",
         'validity': {'regex': r'(warn|fail|ignore)'},
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.5.0',
+        'introduced': '9.7.0',
         'topic': 'validation',
         'server-type': '',
         'comment': """Check master zones for records that are treated as different by DNSSEC but are semantically
@@ -1070,8 +1147,9 @@ g_nc_keywords['check-srv-cname'] = \
         'introduced': '9.4.0',
         'topic': 'validation',
         'server-type': 'master',
-        'comment': """If check-integrity is set then fail, warn or ignore SRV records that refer to CNAMES. The
-default is to warn.""",
+        'comment': """If check-integrity is set then fail, warn or
+ignore SRV records that refer to CNAMES.
+The default is to warn.""",
     }
 
 g_nc_keywords['check-wildcard'] = \
@@ -1102,13 +1180,14 @@ g_nc_keywords['class'] = \
 g_nc_keywords['cleaning-interval'] = \
     {
         'default': "60",
-        'validity': None,
-        'found-in': {'options', 'view'},
+        'validity': {'range': {0, 1440}},
+        'found-in': {'options', 'view'},  # used to be in 'zone' as well
         'introduced': '8.2',
-        'obsoleted': '9.0.1',  # TODO wait, found in 9.0
-        'topic': 'obsoleted, inert, server resource, periodic task',
+        'obsoleted': '',  # inert, keyword accepted but no-op
+        'topic': 'inert, server resource, periodic task',
         'server-type': '',
-        'comment': """This interval is effectively obsolete. Previously,
+        'comment':
+"""This interval is effectively obsolete. Previously,
 the server would remove expired resource records from
 the cache every cleaning-interval minutes. Manages
 cache memory in a more sophisticated manner and does
@@ -1125,7 +1204,8 @@ g_nc_keywords['clients-per-query'] = \
         'introduced': '9.5.0',
         'topic': 'server resource',
         'server-type': 'master',
-        'comment': """These set the initial value (minimum) and maximum
+        'comment':
+"""These set the initial value (minimum) and maximum
 number of recursive simultaneous clients for any given
 query (<qname,qtype,qclass>) that the server will
 accept before dropping additional clients. named will
@@ -1149,6 +1229,30 @@ queries will be dropped.
 
 If max-clients-per-query is set to zero, then there
 is no upper bound other than imposed by recursive-clients.""",
+    }
+
+g_nc_keywords['cookie-algorithm'] = \
+    {
+        'default': "aes",
+        'validity': {'regex': "(aes|sha1|sha256)"},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': 'TCP, network',
+        'server-type': '',
+        'comment': """
+""",
+    }
+
+g_nc_keywords['cookie-secret'] = \
+    {
+        'default': None,
+        'validity': {'string'},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': 'TCP, network',
+        'server-type': '',
+        'comment': """
+""",
     }
 
 g_nc_keywords['coresize'] = \
@@ -1213,7 +1317,7 @@ g_nc_keywords['deallocate-on-exit'] = \
 BIND 9 ignores the option and always performs the checks.""",
     }
 
-g_nc_keywords['default_channel'] = \
+g_nc_keywords['default-channel'] = \
     {
         'default': None,  # TODO define 'dfaula_chanoe' default value
         'validity': {'regex': r"(yes|no)"},
@@ -1240,7 +1344,7 @@ g_nc_keywords['deny-answer-addresses'] = \
         'default': None,
         'validity': None,
         'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
+        'introduced': '9.7.0',
         'topic': '',
         'server-type': '',
         'comment': '',
@@ -1251,7 +1355,7 @@ g_nc_keywords['deny-answer-aliases'] = \
         'default': None,
         'validity': None,
         'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
+        'introduced': '9.7.0',
         'topic': '',
         'server-type': '',
         'comment': '',
@@ -1385,7 +1489,7 @@ g_nc_keywords['dns64'] = \
         'default': "no",
         'validity': {'function': "prefix_64"},
         'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'topic': 'dnssec',
         'server-type': '',
         'comment': """This directive instructs named to return mapped IPv4
@@ -1407,24 +1511,31 @@ dns64 supports an optional clients ACL that determines
 which clients are affected by this directive.
 
 If not defined, it defaults to any;.
-Each dns64 supports an optional mapped ACL that selects which IPv4 addresses are to
-be mapped in the corresponding A RRset. If not defined it defaults to any;.
-Normally, DNS64 won't apply to a domain name that owns one or more AAAA records;
-these records will simply be returned. The optional exclude ACL allows specification of
-a list of IPv6 addresses that will be ignored if they appear in a domain name's AAAA
-records, and DNS64 will be applied to any A records the domain name owns. If not
+Each dns64 supports an optional mapped ACL that selects
+which IPv4 addresses are to be mapped in the
+corresponding A RRset. If not defined it defaults to any;.
+Normally, DNS64 won't apply to a domain name that owns one
+or more AAAA records; these records will simply be
+returned. The optional exclude ACL allows specification of
+a list of IPv6 addresses that will be ignored if they
+appear in a domain name's AAAA records, and DNS64 will be
+applied to any A records the domain name owns. If not
 defined, exclude defaults to ::ffff:0.0.0.0/96.
-A optional suffix can also be defined to set the bits trailing the mapped IPv4 address bits.
-By default these bits are set to ::. The bits matching the prefix and mapped IPv4 address
-must be zero.
+A optional suffix can also be defined to set the bits
+trailing the mapped IPv4 address bits.
+By default these bits are set to ::. The bits matching
+the prefix and mapped IPv4 address must be zero.
 
-If recursive-only is set to yes the DNS64 synthesis will only happen for recursive queries.
+If recursive-only is set to yes the DNS64 synthesis will
+only happen for recursive queries.
 
 The default is no.
 
-If break-dnssec is set to yes the DNS64 synthesis will happen even if the result, if validated,
-would cause a DNSSEC validation failure. If this option is set to no (the default),
-the DO is set on the incoming query, and there are RRSIGs on the applicable records, then
+If break-dnssec is set to yes the DNS64 synthesis will
+happen even if the result, if validated, would cause a
+DNSSEC validation failure. If this option is set to no
+(the default), the DO is set on the incoming query, and
+there are RRSIGs on the applicable records, then
 synthesis will not happen.
 acl rfc1918 { 10/8; 192.168/16; 172.16/12; };
 dns64 64:FF9B::/96 {
@@ -1440,7 +1551,7 @@ g_nc_keywords['dns64-contact'] = \
         'default': None,
         'validity': None,
         'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'topic': 'dnssec',
         'server-type': '',
         'comment': '',
@@ -1450,11 +1561,59 @@ g_nc_keywords['dns64-server'] = \
     {
         'default': None,
         'validity': None,
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'found-in': {'options', 'view'},
         'topic': 'dnssec',
         'server-type': '',
         'comment': '',
+    }
+
+g_nc_keywords['dnsrps-enable'] = \
+    {
+        'default': None,
+        'validity': {'regex': r'(yes)|(no)'},
+        'introduced': '9.15.0',  # first found in 9.15
+        'found-in': {'options', 'view'},
+        'topic': 'policy',
+        'server-type': '',
+        'comment': """The dnsrps-enable yes option turns on the DNS Response
+Policy Server (DNSRPS) interface, if it has been compiled
+to named using configure --enable-dnsrps.
+The dnsrps-options block provides additional RPZ
+configuration settings, which are passed throught to the
+DNSRPS proivder library.  Multiple DNSRPS settings in an
+dnsrps-options string should be separated with semi-colons.
+The DNSRPS provider librpz, is passed a configuration
+string consisting of the dnsrps-options text, concatenated
+with settings derived from the response-policy statement.  """,
+    }
+
+g_nc_keywords['dnsrps-options'] = \
+    {
+        'default': None,
+        'validity': { 'string' },
+        'introduced': '9.15.0',  # first found in 9.15
+        'found-in': {'options', 'view'},
+        'topic': 'policy',
+        'server-type': '',
+        'comment': '',
+    }
+
+g_nc_keywords['dnskey-validity'] = \
+    {
+        'default': None,
+        'validity': {'regex': '\d+'},
+        'introduced': '9.15.0',  # TODO: first saw in 9.15
+        'found-in': {'options', 'view', 'zone' },
+        'topic': 'dnssec',
+        'server-type': '',
+        'comment': """Specifies the number of days into the future when
+DNSSEC signatures that are automatically generated for
+DNSKEY RRsets as a result of dynamic updates will expire.
+If set to non-zero value, this overrides the value set by
+sig-validity-interval. The default is zero, meaning
+sig-validity-interval is used. The maximum value is 3660
+days (10 years), and higher values will be rejected.""",
     }
 
 g_nc_keywords['dnssec-accept-expired'] = \
@@ -1467,9 +1626,7 @@ g_nc_keywords['dnssec-accept-expired'] = \
         'server-type': '',
         'comment': """Accept expired signatures when verifying DNSSEC
 signatures.
-
 The default is no.
-
 Setting this option to yes leaves named vulnerable to
 replay attacks.""",
     }
@@ -1479,15 +1636,17 @@ g_nc_keywords['dnssec-dnskey-kskonly'] = \
         'default': "no",
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '99.99.99',  # TODO when was 'dnssec-dnskey-kskonly' introduced?
+        'introduced': '9.7.0',
         'topic': 'dnssec',
         'server-type': '',
-        'comment': """When this option and update-check-ksk are both set to yes, only key-signing keys (that
-is, keys with the KSK bit set) will be used to sign the DNSKEY RRset at the zone apex.
-Zone-signing keys (keys without the KSK bit set) will be used to sign the remainder of the
-zone, but not the DNSKEY RRset. This is similar to the dnssec-signzone -x command line
-option.
-The default is no. If update-check-ksk is set to no, this option is ignored.""",
+        'comment': """When this option and update-check-ksk are
+both set to yes, only key-signing keys (that is, keys with
+the KSK bit set) will be used to sign the DNSKEY RRset at
+the zone apex.  Zone-signing keys (keys without the KSK bit
+set) will be used to sign the remainder of the zone, but
+not the DNSKEY RRset. This is similar to the
+dnssec-signzone -x command line option.  The default is no.
+If update-check-ksk is set to no, this option is ignored.""",
     }
 
 g_nc_keywords['dnssec-enable'] = \
@@ -1498,9 +1657,10 @@ g_nc_keywords['dnssec-enable'] = \
         'introduced': '9.3.0',
         'topic': 'dnssec',
         'server-type': '',
-        'comment': """This indicates whether DNSSEC-related resource records are to be returned by named.
-If set to no, named will not return DNSSEC-related resource records unless specifically
-queried for. The default is yes.""",
+        'comment': """This indicates whether DNSSEC-related resource
+records are to be returned by named.  If set to no, named
+will not return DNSSEC-related resource records unless
+specifically queried for. The default is yes.""",
     }
 
 g_nc_keywords['dnssec-loadkeys-interval'] = \
@@ -1508,15 +1668,18 @@ g_nc_keywords['dnssec-loadkeys-interval'] = \
         'default': "60",
         'validity': {'range': {1, 1440}},
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.5.0',
+        'introduced': '9.9.0',
         'topic': 'dnssec',
         'server-type': '',
-        'comment': """When a zone is configured with auto-dnssec maintain; its key repository must be checked
-periodically to see if any new keys have been added or any existing keys' timing metadata
-has been updated (see dnssec-keygen(8) and dnssec-settime(8)). The dnssec-loadkeysinterval
-option sets the frequency of automatic repository checks, in minutes. The default
-is 60 (1 hour), the minimum is 1 (1 minute), and the maximum is 1440 (24 hours); any
-higher value is silently reduced.
+        'comment': """When a zone is configured with auto-dnssec
+maintain; its key repository must be checked periodically
+to see if any new keys have been added or any existing
+keys' timing metadata has been updated (see dnssec-keygen(8)
+and dnssec-settime(8)). The dnssec-loadkeysinterval option
+sets the frequency of automatic repository checks, in
+minutes. The default is 60 (1 hour), the minimum is 1 (1
+minute), and the maximum is 1440 (24 hours); any higher value
+is silently reduced.
 If set to 0, no heartbeat will occur.""",
     }
 
@@ -1527,20 +1690,26 @@ g_nc_keywords['dnssec-lookaside'] = \
             'regex': r"(auto|no|([A-Za-z0-9_\-]+)(\.[A-Za-z0-9_\-])'"
                      r"+\s+(domain)\s+([A-Za-z0-9_\-]+)(\.[A-Za-z0-9_\-])+\))"},
         'found-in': {'options', 'view'},
-        'introduced': '9.3.0',
+        'introduced': '9.3.0',  # 'auto' added in 9.7
         'topic': 'dnssec',
         'server-type': '',
-        'comment': """Syntax: dnssec-lookaside ( auto | no | domain trust-anchor domain ) ; ]
-Disable the specified DS/DLV digest types at and below the specified name. Multiple
-disable-ds-digests statements are allowed. Only the best match disable-ds-digests clause
+        'comment':
+"""Syntax: dnssec-lookaside ( auto | no | domain trust-anchor domain ) ; ]
+Disable the specified DS/DLV digest types at and below the
+specified name. Multiple disable-ds-digests statements are
+allowed. Only the best match disable-ds-digests clause
 will be used to determine which digest types are used.
-If all supported digest types are disabled, the zones covered by the disable-ds-digests
-will be treated as insecure.
+If all supported digest types are disabled, the zones
+covered by the disable-ds-digests will be treated as
+insecure.
 
-NOTE: named now provides feedback to the owners of zones which have trust anchors configured
-(trusted-keys, managed-keys, dnssec-validation auto; and dnssec-lookaside auto;)
-by sending a daily query which encodes the keyids of the configured trust anchors for the
-zone. This is controlled by trust-anchor-telemetry and defaults to yes.""",
+NOTE: named now provides feedback to the owners of zones
+which have trust anchors configured (trusted-keys,
+managed-keys, dnssec-validation auto; and
+dnssec-lookaside auto;) by sending a daily query which
+encodes the keyids of the configured trust anchors for
+the zone. This is controlled by trust-anchor-telemetry
+and defaults to yes.""",
     }
 
 g_nc_keywords['dnssec-must-be-secure'] = \
@@ -1551,11 +1720,14 @@ g_nc_keywords['dnssec-must-be-secure'] = \
         'introduced': '9.3.0',
         'topic': 'dnssec',
         'server-type': '',
-        'comment': """Specify hierarchies which must be or may not be secure (signed and validated). If yes,
-then named will only accept answers if they are secure. If no, then normal DNSSEC
-validation applies allowing for insecure answers to be accepted. The specified domain
-must be under a trusted-keys or managed-keys statement, or dnssec-lookaside must be
-active.""",
+        'comment':
+"""Specify hierarchies which must be or may not be secure
+(signed and validated). If yes, then named will only
+accept answers if they are secure. If no, then normal
+DNSSEC validation applies allowing for insecure answers
+to be accepted. The specified domain must be under a
+trusted-keys or managed-keys statement, or
+dnssec-lookaside must be active.""",
     }
 
 g_nc_keywords['dnssec-secure-to-insecure'] = \
@@ -1563,19 +1735,25 @@ g_nc_keywords['dnssec-secure-to-insecure'] = \
         'default': "no",
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.5.0',
+        'introduced': '9.7.0',
         'topic': 'dnssec',
         'server-type': '',
-        'comment': """Allow a dynamic zone to transition from secure to insecure (i.e., signed to unsigned) by
-deleting all of the DNSKEY records. The default is no. If set to yes, and if the DNSKEY
-RRset at the zone apex is deleted, all RRSIG and NSEC records will be removed from the
-zone as well.
-If the zone uses NSEC3, then it is also necessary to delete the NSEC3PARAM RRset from
-the zone apex; this will cause the removal of all corresponding NSEC3 records. (It is
-expected that this requirement will be eliminated in a future release.)
-Note that if a zone has been configured with auto-dnssec maintain and the private keys
-remain accessible in the key repository, then the zone will be automatically signed again
-the next time named is started.""",
+        'comment':
+"""Allow a dynamic zone to transition from secure to
+insecure (i.e., signed to unsigned) by deleting all of
+the DNSKEY records. The default is no. If set to yes, and
+if the DNSKEY RRset at the zone apex is deleted, all
+RRSIG and NSEC records will be removed from the zone as
+well.
+If the zone uses NSEC3, then it is also necessary to
+delete the NSEC3PARAM RRset from the zone apex; this will
+cause the removal of all corresponding NSEC3 records.
+(It is expected that this requirement will be eliminated
+in a future release.)
+Note that if a zone has been configured with auto-dnssec
+maintain and the private keys remain accessible in the
+key repository, then the zone will be automatically
+signed again the next time named is started.""",
     }
 
 g_nc_keywords['dnssec-update-mode'] = \
@@ -1583,19 +1761,26 @@ g_nc_keywords['dnssec-update-mode'] = \
         'default': "maintain",
         'validity': {'regex': r"(maintain|no\-resign|external)"},
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.5.0',
+        'introduced': '9.9.0',
         'topic': 'dnssec',
         'server-type': '',
-        'comment': """If this option is set to its default value of maintain in a zone of type master which is
-DNSSEC-signed and configured to allow dynamic updates (see Section 6.2), and if named
-has access to the private signing key(s) for the zone, then named will automatically sign
-all new or changed records and maintain signatures for the zone by regenerating RRSIG
-records whenever they approach their expiration date.
-If the option is changed to no-resign, then named will sign all new or changed records,
-but scheduled maintenance of signatures is disabled.
-With either of these settings, named will reject updates to a DNSSEC-signed zone when
-the signing keys are inactive or unavailable to named. (A planned third option, exter
-nal, will disable all automatic signing and allow DNSSEC data to be submitted into a
+        'comment': """If this option is set to its default value of
+maintain in a zone of type master which is
+DNSSEC-signed and configured to allow dynamic
+updates (see Section 6.2), and if named has access
+to the private signing key(s) for the zone, then
+named will automatically sign all new or changed
+records and maintain signatures for the zone by
+regenerating RRSIG records whenever they approach
+their expiration date.
+If the option is changed to no-resign, then named
+will sign all new or changed records, but scheduled
+maintenance of signatures is disabled.
+With either of these settings, named will reject
+updates to a DNSSEC-signed zone when the signing keys
+are inactive or unavailable to named. (A planned
+third option, exter nal, will disable all automatic
+signing and allow DNSSEC data to be submitted into a
 zone via dynamic update; this is not yet implemented.)""",
     }
 
@@ -1607,14 +1792,90 @@ g_nc_keywords['dnssec-validation'] = \
         'introduced': '9.4.0',
         'topic': 'dnssec',
         'server-type': '',
-        'comment': """Enable DNSSEC validation in named. Note dnssec-enable also needs to be set to yes
-to be effective. If set to no, DNSSEC validation is disabled. If set to auto, DNSSEC
-validation is enabled, and a default trust-anchor for the DNS root zone is used. If set
-to yes, DNSSEC validation is enabled, but a trust anchor must be manually configured
-using a trusted-keys or managed-keys statement. The default is yes.
-NOTE: Whenever the resolver sends out queries to an EDNS-compliant server, it always sets
-the DO bit indicating it can support DNSSEC responses even if dnssec-validation is
-off.""",
+        'comment':
+"""Enable DNSSEC validation in named. Note dnssec-enable
+also needs to be set to yes to be effective. If set to
+no, DNSSEC validation is disabled. If set to auto,
+DNSSEC validation is enabled, and a default trust-anchor
+for the DNS root zone is used. If set to yes, DNSSEC
+validation is enabled, but a trust anchor must be
+manually configured using a trusted-keys or managed-keys
+statement. The default is yes.
+NOTE: Whenever the resolver sends out queries to an
+EDNS-compliant server, it always sets the DO bit
+indicating it can support DNSSEC responses even if
+dnssec-validation is off.
+Note: 'auto' option added in v9.8.0.""",
+    }
+
+g_nc_keywords['dnstap'] = \
+    {
+        'default': "",
+        'validity': {'function': 'dnstap_args'},
+        'found-in': {'options', 'view'},
+        'introduced': '9.11.0',
+        'topic': 'capture, operating-system',
+        'server-type': '',
+        'comment':
+"""dnstap is a fast, flexible method for capturing and
+logging DNS traffic.  Developed by Robert Edmonds at
+Farsight Security, Inc. and supported by multiple
+DNS implementation, dnstap uses libfstrm (a lightweight
+high-speed framing library; see
+https://github.com/farsight to send event payloads which
+are encoded using Protocol Buffers (libprotobuf-c; a
+mechanism for serializing structured data developed by
+Google, Inc. (see
+https://developers.google.com/protocolbuffers).
+
+To enable dnstap at compile time, the fstrm and
+protobuf-c libraries must be available, and BIND must be
+configured with --enable-dnstap.
+
+The dnstap option is a bracketed list of message types to
+be logged.  These may be set differently for each view.
+Supported types are client, resolver, forwarder, and
+update.  Specifying type all will cause all dnstap
+messages to be logged, regardless of type.
+Each type may take on an additional argument to indicate
+whether to log query messages or response messages; if
+not specified, both queries and responses are logged.""",
+    }
+
+g_nc_keywords['dnstap-identity'] = \
+    {
+        'default': "",
+        'validity': {'function': 'dscp_identity'},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': 'capture, tap, operating-system',
+        'server-type': '',
+        'comment': '',
+    }
+
+g_nc_keywords['dnstap-output'] = \
+    {
+        'default': "",
+        'validity': {'function': 'dscp_output'},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': 'capture, tap, operating-system',
+        'server-type': '',
+        'comment': '',
+    }
+
+g_nc_keywords['dnstap-version'] = \
+    {
+        'default': "",
+        'validity': {'function': 'dscp_version'},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': 'capture, tap, operating-system',
+        'server-type': '',
+        'comment':
+"""Specifies a version string to send in dnstap messages.
+The default is the version number of the BIND release.
+If set to none, no version string will be sent.""",
     }
 
 g_nc_keywords['dscp'] = \
@@ -1622,7 +1883,7 @@ g_nc_keywords['dscp'] = \
         'default': "",
         'validity': {'range': {0, 63}},
         'found-in': {'options'},
-        'introduced': '99.99.99',  # TODO when was 'dscp' introduced?
+        'introduced': '',  # TODO when was dscp introduced?
         'topic': 'operating-system, DSCP',
         'server-type': '',
         'comment': """The global Differentiated Services Code Point (DSCP) value to classify outgoing DNS traffic
@@ -1699,8 +1960,9 @@ g_nc_keywords['edns-udp-size'] = \
     {
         'default': "4096",
         'validity': {'range': {512, 4096}},
-        'found-in': {'options', 'view', 'server'},
+        'found-in': {'options', 'server', 'view'},
         'introduced': '8.4',
+        'obsoleted': '9.15',  # TODO: edns-udp-size obsoleted between 9.3 and 9.15
         'topic': 'EDNS, udp, transport layer, tuning',
         'server-type': '',
         'comment': """Sets the maximum advertised EDNS UDP buffer size in
@@ -1813,65 +2075,85 @@ a response. This is now considered a bad idea and BIND 9 never does it.""",
 
 g_nc_keywords['fetch-quota-params'] = \
     {
-        'default': None,  # Don't provide a default, it's a BIND9 compile-option
+        'default': {100, 0.1, 0.3, 0.7},  # Don't provide a default, it's a BIND9 compile-option
         'validity': {'function': "fetch_quota"},
         'found-in': {'options', 'view'},
-        'introduced': '',
+        'introduced': '9.11.0',
         'topic': 'server resource',
         'server-type': '',
-        'comment': """Sets the parameters to use for dynamic resizing of the fetches-per-server quota in
-response to detected congestion.
-The first argument is an integer value indicating how frequently to recalculate the moving
-average of the ratio of timeouts to responses for each server. The default is 100, meaning
-we recalculate the average ratio after every 100 queries have either been answered or
-timed out.
-The remaining three arguments represent the "low" threshold (defaulting to a timeout
-ratio of 0.1), the "high" threshold (defaulting to a timeout ratio of 0.3), and the discount
-rate for the moving average (defaulting to 0.7). A higher discount rate causes recent events
-to weigh more heavily when calculating the moving average; a lower discount rate causes
-past events to weigh more heavily, smoothing out short-term blips in the timeout ratio.
-These arguments are all fixed-point numbers with precision of 1/100: at most two places
-after the decimal point are significant.
-(Note: This option is only available when BIND is built with configure --enable-fetchlimit.)""",
+        'comment':
+"""Sets the parameters to use for dynamic resizing of the
+fetches-per-server quota in response to detected
+congestion.
+The first argument is an integer value indicating how
+frequently to recalculate the moving average of the ratio
+of timeouts to responses for each server. The default
+is 100, meaning we recalculate the average ratio after
+every 100 queries have either been answered or timed out.
+The remaining three arguments represent the "low"
+threshold (defaulting to a timeout ratio of 0.1), the
+"high" threshold (defaulting to a timeout ratio of 0.3),
+and the discount rate for the moving average (defaulting
+to 0.7). A higher discount rate causes recent events to
+weigh more heavily when calculating the moving average;
+a lower discount rate causes past events to weigh more
+heavily, smoothing out short-term blips in the timeout
+ratio.
+These arguments are all fixed-point numbers with
+precision of 1/100: at most two places after the decimal
+point are significant.
+(Note: This option is only available when BIND is built
+with configure --enable-fetchlimit.)""",
     }
 
 g_nc_keywords['fetches-per-server'] = \
     {
-        'default': None,  # Don't provide a default, it's a bind9 compile-option
+        'default': {'0', 'drop'},  # Don't provide a default, it's a bind9 compile-option
         'validity': None,
         'found-in': {'options', 'view'},
-        'introduced': '',
+        'introduced': '9.11.0',
         'topic': 'server resource',
         'server-type': '',
-        'comment': """The maximum number of simultaneous iterative queries that the server will allow to be
-sent to a single upstream name server before blocking additional queries. This value
-should reflect how many fetches would normally be sent to any one server in the time
-it would take to resolve them. It should be smaller than recursive-clients.
-Optionally, this value may be followed by the keyword drop or fail, indicating whether
-queries will be dropped with no response, or answered with SERVFAIL, when all of the
-servers authoritative for a zone are found to have exceeded the per-server quota. The
-default is fail.
-If fetches-per-server is set to zero, then there is no limit on the number of fetches per
-query and no queries will be dropped. The default is zero.
-The fetches-per-server quota is dynamically adjusted in response to detected congestion.
-As queries are sent to a server and are either answered or time out, an exponentially
-weighted moving average is calculated of the ratio of timeouts to responses. If the current
-average timeout ratio rises above a "high" threshold, then fetches-per-server is reduced
-for that server. If the timeout ratio drops below a "low" threshold, then fetches-per-server
-is increased. The fetch-quota-params options can be used to adjust the parameters for
-this calculation.
-(Note: This option is only available when BIND is built with configure --enable-fetchlimit.)""",
+        'comment':
+"""The maximum number of simultaneous iterative queries
+that the server will allow to be sent to a single
+upstream name server before blocking additional queries.
+This value should reflect how many fetches would normally
+be sent to any one server in the time it would take to
+resolve them. It should be smaller than recursive-clients.
+Optionally, this value may be followed by the keyword drop
+or fail, indicating whether queries will be dropped with
+no response, or answered with SERVFAIL, when all of the
+servers authoritative for a zone are found to have
+exceeded the per-server quota. The default is fail.
+If fetches-per-server is set to zero, then there is no
+limit on the number of fetches per query and no queries
+will be dropped. The default is zero.
+The fetches-per-server quota is dynamically adjusted in
+response to detected congestion.
+As queries are sent to a server and are either answered or
+time out, an exponentially weighted moving average is
+calculated of the ratio of timeouts to responses. If the
+current average timeout ratio rises above a "high"
+threshold, then fetches-per-server is reduced for that
+server. If the timeout ratio drops below a "low"
+threshold, then fetches-per-server is increased. The
+fetch-quota-params options can be used to adjust the
+parameters for this calculation.
+(Note: This option is only available when BIND is built
+with configure --enable-fetchlimit.)""",
     }
 
 g_nc_keywords['fetches-per-zone'] = \
     {
-        'default': None,  # Don't provide a default, it's a bind9 compile-option
+        'default': {'0', 'drop'},  # Don't provide a default, it's a bind9 compile-option
         'validity': None,
         'found-in': {'options', 'view'},
-        'introduced': '',
+        'introduced': '9.11.0',
         'topic': 'server resource',
         'server-type': '',
-        'comment': """The maximum number of simultaneous iterative queries
+        'comment':
+"""The maximum number of simultaneous iterative queries
 to any one domain that the server will permit before
 blocking new queries for data in or beneath that zone.
 This value should reflect how many fetches would
@@ -1894,16 +2176,21 @@ response, or answered with SERVFAIL.
 
 The default is drop.
 
-If fetches-per-zone is set to zero, then there is no limit on the number of fetches per query
-and no queries will be dropped. The default is zero.
-The current list of active fetches can be dumped by running rndc recursing. The list includes
-the number of active fetches for each domain and the number of queries that have
-been passed or dropped as a result of the fetches-per-zone limit. (Note: these counters
-are not cumulative over time; whenever the number of active fetches for a domain
-drops to zero, the counter for that domain is deleted, and the next time a fetch is sent to
+If fetches-per-zone is set to zero, then there is no
+limit on the number of fetches per query and no queries
+will be dropped. The default is zero.
+The current list of active fetches can be dumped by
+running rndc recursing. The list includes the number of
+active fetches for each domain and the number of queries
+that have been passed or dropped as a result of the
+fetches-per-zone limit. (Note: these counters are not
+cumulative over time; whenever the number of active
+fetches for a domain drops to zero, the counter for that
+domain is deleted, and the next time a fetch is sent to
 that domain, it is recreated with the counters set to zero.)
 
-(Note: This option is only available when BIND is built with configure --enable-fetchlimit.)
+(Note: This option is only available when BIND is built
+with configure --enable-fetchlimit.)
 """,
     }
 
@@ -1931,8 +2218,9 @@ g_nc_keywords['files'] = \
         'introduced': '8.1',
         'topic': 'operating-system',
         'server-type': '',
-        'comment': """The maximum number of files the server may have open
-concurrently. The default is unlimited.""",
+        'comment': """The maximum number of files the server may have
+open concurrently. TODO 'zone' stop using 'files' around 9.15
+The default is unlimited.""",
     }
 
 g_nc_keywords['filter-aaaa'] = \
@@ -1940,10 +2228,11 @@ g_nc_keywords['filter-aaaa'] = \
         'default': None,  # Don't provide a default, that too is a compiler-directive
         'validity': {'function': "address_match_nosemicolon"},
         'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'topic': 'filtering',
         'server-type': 'access control',
-        'comment': """Specifies a list of addresses to which filter-aaaa-on-v4 is applies.
+        'comment': """Specifies a list of addresses to which
+filter-aaaa-on-v4 is applies.
 
 The default is any.""",
     }
@@ -1953,33 +2242,43 @@ g_nc_keywords['filter-aaaa-on-v4'] = \
         'default': None,  # Don't provide a default, that too is a compiler-directive
         'validity': {'regex': r"(yes|no|break\-dnssec)"},
         'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'topic': 'filtering',
         'server-type': '',
-        'comment': """This option is only available when BIND 9 is compiled with the --enable-filter-aaaa
-option on the "configure" command line. It is intended to help the transition from IPv4 to
-IPv6 by not giving IPv6 addresses to DNS clients unless they have connections to the IPv6
-Internet. This is not recommended unless absolutely necessary. The default is no. The
-filter-aaaa-on-v4 option may also be specified in view statements to override the global
-filter-aaaa-on-v4 option.
+        'comment': """This option is only available when BIND 9 is
+compiled with the --enable-filter-aaaa option on the
+"configure" command line. It is intended to help the
+transition from IPv4 to IPv6 by not giving IPv6 addresses
+to DNS clients unless they have connections to the IPv6
+Internet. This is not recommended unless absolutely
+necessary. The default is no. The filter-aaaa-on-v4
+option may also be specified in view statements to
+override the global filter-aaaa-on-v4 option.
 
-If yes, the DNS client is at an IPv4 address, in filter-aaaa, and if the response does not
-include DNSSEC signatures, then all AAAA records are deleted from the response. This
-filtering applies to all responses and not only authoritative responses.
-If break-dnssec, then AAAA records are deleted even when DNSSEC is enabled. As
-suggested by the name, this makes the response not verify, because the DNSSEC protocol
-is designed detect deletions.
+If yes, the DNS client is at an IPv4 address, in
+filter-aaaa, and if the response does not include DNSSEC
+signatures, then all AAAA records are deleted from the
+response. This filtering applies to all responses and
+not only authoritative responses.  If break-dnssec,
+then AAAA records are deleted even when DNSSEC is
+enabled. As suggested by the name, this makes the
+response not verify, because the DNSSEC protocol is
+designed detect deletions.
 
-This mechanism can erroneously cause other servers to not give AAAA records to their
-clients. A recursing server with both IPv6 and IPv4 network connections that queries an
-authoritative server using this mechanism via IPv4 will be denied AAAA records even if
-its client is using IPv6.
+This mechanism can erroneously cause other servers to not
+give AAAA records to their clients. A recursing server
+with both IPv6 and IPv4 network connections that queries
+an authoritative server using this mechanism via IPv4 will
+be denied AAAA records even if its client is using IPv6.
 
-This mechanism is applied to authoritative as well as non-authoritative records. A client
-using IPv4 that is not allowed recursion can erroneously be given AAAA records because
-the server is not allowed to check for A records.
-Some AAAA records are given to IPv4 clients in glue records. IPv4 clients that are servers
-can then erroneously answer requests for AAAA records received via IPv4.""",
+This mechanism is applied to authoritative as well as
+non-authoritative records. A client using IPv4 that is
+not allowed recursion can erroneously be given AAAA
+records because the server is not allowed to check for
+A records.  Some AAAA records are given to IPv4 clients
+in glue records. IPv4 clients that are servers can then
+erroneously answer requests for AAAA records received
+via IPv4.""",
     }
 
 g_nc_keywords['filter-aaaa-on-v6'] = \
@@ -1987,7 +2286,7 @@ g_nc_keywords['filter-aaaa-on-v6'] = \
         'default': None,
         'validity': {'regex': r"(yes|no|break\-dnssec)"},
         'found-in': {'options', 'view'},
-        'introduced': '99.99.99',  # TODO when was 'filter-aaaa-on-v6' introduced
+        'introduced': '9.10.0',  # TODO first spotted in 9.10.0
         'topic': 'filtering',
         'server-type': '',
         'comment': """Identical to filter-aaaa-on-v4, except it filters AAAA responses to queries from IPv6 clients
@@ -2036,13 +2335,15 @@ g_nc_keywords['forward'] = \
         'validity': {'regex': r"(first|only)"},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '8.1',
-        'topic': '',
+        'topic': 'forwarding',
         'server-type': 'slave, stub',
-        'comment': """This option is only meaningful if the forwarders list is not empty. A value of first, the
-default, causes the server to query the forwarders first - and if that doesn't answer the
-question, the server will then look for the answer itself. If only is specified, the server
-will only query the forwarders.
-TODO: when setting up 2-process Split-Horizon DNS, this should be 'only'""",
+        'comment': """This option is only meaningful if the forwarders
+list is not empty. A value of first, the default, causes
+the server to query the forwarders first - and if that
+doesn't answer the question, the server will then look for
+the answer itself. If only is specified, the server will
+only query the forwarders.  TODO: when setting up
+2-process Split-Horizon DNS, this should be 'only'""",
     }
 
 g_nc_keywords['forwarders'] = \
@@ -2051,13 +2352,15 @@ g_nc_keywords['forwarders'] = \
         'validity': {'function': "in_addr_list"},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '4.8',  # TODO in 8.1, not yet back in 9.0
-        'topic': '',
+        'topic': 'forwarding',
         'server-type': 'slave, stub',
-        'comment': """Specifies the IP addresses to be used for forwarding. The default is the empty list (no
-forwarding).
-Forwarding can also be configured on a per-domain basis, allowing for the global forwarding
-options to be overridden in a variety of ways. You can set particular domains to use different
-forwarders, or have a different forward only/first behavior, or not forward at all, see Section 6.2.""",
+        'comment': """Specifies the IP addresses to be used for forwarding.
+The default is the empty list (no forwarding).  Forwarding
+can also be configured on a per-domain basis, allowing for
+the global forwarding options to be overridden in a variety
+of ways. You can set particular domains to use different
+forwarders, or have a different forward only/first
+behavior, or not forward at all, see Section 6.2.""",
     }
 
 g_nc_keywords['geoip-directory'] = \
@@ -2065,12 +2368,25 @@ g_nc_keywords['geoip-directory'] = \
         'default': "",
         'validity': {'function': "path_name"},
         'found-in': {'options'},
-        'introduced': '99.99.99',  # TODO when was 'geoip-directory' introduced?
+        'introduced': '9.10.0',  # TODO first spotted in 9.10.0
         'topic': 'operating-system, geoip',
         'server-type': '',
-        'comment': """Specifies the directory containing GeoIP .dat database files for GeoIP initialization. By
-default, this option is unset and the GeoIP support will use libGeoIP's built-in directory.
-(For details, see Section 6.2 about the geoip ACL.)""",
+        'comment': """Specifies the directory containing GeoIP .dat
+database files for GeoIP initialization. By default,
+this option is unset and the GeoIP support will use
+libGeoIP's built-in directory.  (For details, see
+Section 6.2 about the geoip ACL.)""",
+    }
+
+g_nc_keywords['geoip-use-ecs'] = \
+    {
+        'default': "",
+        'validity': {'function': "path_name"},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': 'operating-system, geoip',
+        'server-type': '',
+        'comment': '',
     }
 
 g_nc_keywords['has-old-clients'] = \
@@ -2097,8 +2413,10 @@ g_nc_keywords['heartbeat-interval'] = \
         'introduced': '8.2',
         'topic': 'operating-system, server resource, periodic task',
         'server-type': '',
-        'comment': """The server will perform zone maintenance tasks for all zones
-marked as dialup whenever this interval expires. The default is 60 minutes.
+        'comment':
+"""The server will perform zone maintenance tasks for all
+zones marked as dialup whenever this interval expires.
+The default is 60 minutes.
 Reasonable values are up to 1 day (1440 minutes).
 The maximum value is 28 days (40320 minutes).
 If set to 0, no zone maintenance for these zones will occur.""",
@@ -2161,11 +2479,16 @@ g_nc_keywords['inline-signing'] = \
     {
         'default': None,
         'validity': {'regex': r'(yes|no)'},
-        'found-in': {'zone'},
-        'introduced': '',  # seen in 9.15.
-        'topic': '',
+        'found-in': {'option', 'view', 'zone'},
+        'introduced': '9.9.0',
+        'topic': 'dnssec',
         'server-type': '',
-        'comment': 'If yes, this enables "bump-in-the-wire" signing of a zone, where an unsigned zone is transferred in or loaded from disk and a signed version of the zone is served, with possibly a different serial number.  This behavior is disabled by default.',
+        'comment': """If yes, this enables "bump-in-the-wire" signing
+of a zone, where an unsigned zone is transferred in or
+loaded from disk and a signed version of the zone is
+served, with possibly a different serial number.  This
+behavior is disabled by default.
+Added to 'option' and 'view' section in v9.9.0.""",
     }
 
 g_nc_keywords['interface-interval'] = \
@@ -2176,14 +2499,16 @@ g_nc_keywords['interface-interval'] = \
         'introduced': '8.2',
         'topic': 'operating-system, server resource, periodic interval',
         'server-type': '',
-        'comment': """The server will scan the network interface list every
+        'comment':
+"""The server will scan the network interface list every
 interface-interval minutes. The default is 60 minutes.
 The maximum value is 28 days (40320 minutes).
-If set to 0, interface scanning will only occur when the configuration file
-is loaded. After the scan, the server will begin listening for queries on
-any newly discovered interfaces (provided they are allowed by the
-listen-on configuration), and will stop listening on interfaces that
-have gone away.""",
+If set to 0, interface scanning will only occur when the
+configuration file is loaded. After the scan, the server
+will begin listening for queries on any newly discovered
+interfaces (provided they are allowed by the listen-on
+configuration), and will stop listening on interfaces
+that have gone away.""",
     }
 
 g_nc_keywords['ixfr-base'] = \
@@ -2204,22 +2529,30 @@ g_nc_keywords['ixfr-from-differences'] = \
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
         'introduced': '9.5.0',
-        'topic': '',
+        'topic': 'journal',
         'server-type': '',
-        'comment': """When yes and the server loads a new version of a master zone from its zone file or receives
-a new version of a slave file via zone transfer, it will compare the new version to
-the previous one and calculate a set of differences. The differences are then logged in the
-zone's journal file such that the changes can be transmitted to downstream slaves as an
-incremental zone transfer.
-By allowing incremental zone transfers to be used for non-dynamic zones, this option
-saves bandwidth at the expense of increased CPU and memory consumption at the master.
-In particular, if the new version of a zone is completely different from the previous
-one, the set of differences will be of a size comparable to the combined size of the old and
-new zone version, and the server will need to temporarily allocate memory to hold this
-complete difference set.
-ixfr-from-differences also accepts master and slave at the view and options levels which
-causes ixfr-from-differences to be enabled for all master or slave zones respectively. It is
-off by default.""",
+        'comment':
+"""When yes and the server loads a new version of a master
+zone from its zone file or receives a new version of a
+slave file via zone transfer, it will compare the new
+version to the previous one and calculate a set of
+differences. The differences are then logged in the zone's
+journal file such that the changes can be transmitted to
+downstream slaves as an incremental zone transfer.
+By allowing incremental zone transfers to be used for
+non-dynamic zones, this option saves bandwidth at the
+expense of increased CPU and memory consumption at
+the master.
+In particular, if the new version of a zone is
+completely different from the previous one, the set of
+differences will be of a size comparable to the combined
+size of the old and new zone version, and the server will
+need to temporarily allocate memory to hold this complete
+difference set.
+ixfr-from-differences also accepts master and slave at
+the view and options levels which causes
+ixfr-from-differences to be enabled for all master or
+slave zones respectively. It is off by default.""",
     }
 
 g_nc_keywords['ixfr-from-differences'] = \
@@ -2238,10 +2571,27 @@ g_nc_keywords['journal'] = \
         'default': None,
         'validity': {'function': "path_name"},
         'found-in': {'zone'},
-        'introduced': '',
+        'introduced': '9.15.0',  # first seen in 9.15.0
         'topic': '',
-        'server-type': '',
+        'server-type': 'master,primary',
         'comment': '',
+    }
+
+g_nc_keywords['keep-response-order'] = \
+    {
+        'default': None,
+        'validity': {'function': "aml"},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': 'access control',
+        'server-type': '',
+        'comment':
+"""
+Specifies a list of addresses to which the server will
+send responses to TCP queries in the same order in
+which they were received. This disables the processing
+of TCP queries in parallel.  The default is none.
+""",
     }
 
 g_nc_keywords['lame-ttl'] = \
@@ -2274,19 +2624,25 @@ g_nc_keywords['listen-on'] = \
         'introduced': '8.1',
         'topic': 'interface',
         'server-type': '',
-        'comment': """The interfaces and ports that the server will answer
+        'comment':
+"""The interfaces and ports that the server will answer
 queries from may be specified using the listen-on
 option. listen-on takes an optional port and an
-address_match_nosemicolon of IPv4 addresses. (IPv6 addresses
-are ignored, with a logged warning.) The server will
-listen on all interfaces allowed by the address match
-list. If a port is not specified, port 53 will be used.
+address_match_nosemicolon of IPv4 addresses. (IPv6
+addresses are ignored, with a logged warning.)
+The server will listen on all interfaces allowed by the
+address match list. If a port is not specified, port 53
+will be used.
 Multiple listen-on statements are allowed. For example,
+
 listen-on { 5.6.7.8; };
 listen-on port 1234 { !1.2.3.4; 1.2/16; };
-will enable the name server on port 53 for the IP address 5.6.7.8, and on port 1234 of an address
+
+will enable the name server on port 53 for the IP
+address 5.6.7.8, and on port 1234 of an address
 on the machine in net 1.2 that is not 1.2.3.4.
-If no listen-on is specified, the server will listen on port 53 on all IPv4 interfaces.""",
+If no listen-on is specified, the server will listen on
+port 53 on all IPv4 interfaces.""",
     }
 
 g_nc_keywords['listen-on-v6'] = \
@@ -2327,8 +2683,8 @@ g_nc_keywords['lock-file'] = \
     {
         'default': "",
         'validity': {'function': "path_name"},
-        'found-in': {'options'},  # TODO ???
-        'introduced': '9.15.0',   # TODO Version???
+        'found-in': {'options'},
+        'introduced': '9.11.0',
         'topic': 'operating-system',
         'comment': """""",
     }
@@ -2341,10 +2697,13 @@ g_nc_keywords['key-directory'] = \
         'introduced': '9.3.0',
         'topic': 'operating-system, dnssec',
         'server-type': 'secured',
-        'comment': """The maximum number of files the server may have open
-concurrently.
-
-The default is unlimited.""",
+        'comment': """is a quoted string defining the absolute path,
+for example, "/var/named/keys" where the keys used
+in the dynamic update of secure zones may be found.
+Only required if this directory is different from that
+defined by a directory option.
+This statement may only be used in a global
+options clause.""",
     }
 
 g_nc_keywords['keys'] = \
@@ -2387,17 +2746,21 @@ g_nc_keywords['managed-keys-directory'] = \
         'default': "\".\"",
         'validity': {'function': "managed_key_path_name_quotestring"},
         'found-in': {'options'},
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'topic': 'operating-system, dnssec',
         'server-type': 'secured',
-        'comment': """Specifies the directory in which to store the files that track managed DNSSEC keys. By
-default, this is the working directory.
+        'comment': """Specifies the directory in which to store the files
+that track managed DNSSEC keys.
+By default, this is the working directory.
 
-If named is not configured to use views, then managed keys for the server will be tracked
-in a single file called managed-keys.bind.
+If named is not configured to use views, then managed
+keys for the server will be tracked in a single file
+called managed-keys.bind.
 
-Otherwise, managed keys will be tracked in separate files, one file per view; each file
-name will be the SHA256 hash of the view name, followed by the extension .mkeys.""",
+Otherwise, managed keys will be tracked in separate
+files, one file per view; each file name will be the
+SHA256 hash of the view name, followed by the
+extension .mkeys.""",
     }
 
 g_nc_keywords['masterfile-format'] = \
@@ -2429,6 +2792,17 @@ This statement sets the masterfile-format for all zones,
 but can be overridden on a per-zone or per-view basis by
 including a masterfile-format statement within the zone or
 view block in the configuration file.""",
+    }
+
+g_nc_keywords['masterfile-style'] = \
+    {
+        'default': "full",
+        'validity': {'regex': r"(full|relative)"},
+        'found-in': {'options', 'view', 'zone'},
+        'introduced': '9.11.0',
+        'topic': 'zone file, tuning',
+        'server-type': '',
+        'comment': '',
     }
 
 g_nc_keywords['match-clients'] = \
@@ -2507,13 +2881,18 @@ g_nc_keywords['max-cache-size'] = \
         'introduced': '9.3.0',
         'topic': 'server resource',
         'server-type': '',
-        'comment': """The maximum amount of memory to use for the server's cache, in bytes. When the amount of data
-in the cache reaches this limit, the server will cause records to expire prematurely
-based on an LRU based strategy so that the limit is not exceeded. The keyword
-unlimited, or the value 0, will place no limit on cache size; records will be purged from
-the cache only when their TTLs expire. Any positive values less than 2MB will be ignored
-and reset to 2MB. In a server with multiple views, the limit applies separately to the cache
-of each view. The default is unlimited.""",
+        'comment':
+"""The maximum amount of memory to use for the server's
+cache, in bytes. When the amount of data in the cache
+reaches this limit, the server will cause records to
+expire prematurely based on an LRU based strategy so that
+the limit is not exceeded. The keyword unlimited, or the
+value 0, will place no limit on cache size; records will
+be purged from the cache only when their TTLs expire.
+Any positive values less than 2MB will be ignored and
+reset to 2MB. In a server with multiple views, the limit
+applies separately to the cache of each view.
+The default is unlimited.""",
     }
 
 g_nc_keywords['max-cache-ttl'] = \
@@ -2539,19 +2918,26 @@ g_nc_keywords['max-clients-per-query'] = \
         'introduced': '9.4.0',
         'topic': 'server resource',
         'server-type': 'master',
-        'comment': """These set the initial value (minimum) and maximum number of recursive simultaneous
-clients for any given query (<qname,qtype,qclass>) that the server will accept before dropping
-additional clients. named will attempt to self tune this value and changes will be
-logged. The default values are 10 and 100.
-This value should reflect how many queries come in for a given name in the time it takes to
-resolve that name. If the number of queries exceed this value, named will assume that it is
-dealing with a non-responsive zone and will drop additional queries. If it gets a response
-after dropping queries, it will raise the estimate. The estimate will then be lowered in 20
-minutes if it has remained unchanged.
-If clients-per-query is set to zero, then there is no limit on the number of clients per query
-and no queries will be dropped.
-If max-clients-per-query is set to zero, then there is no upper bound other than imposed
-by recursive-clients.""",
+        'comment':
+"""These set the initial value (minimum) and maximum
+number of recursive simultaneous clients for any given
+query (<qname,qtype,qclass>) that the server will accept
+before dropping additional clients. named will attempt
+to self tune this value and changes will be logged.
+The default values are 10 and 100.
+This value should reflect how many queries come in for a
+given name in the time it takes to resolve that name. If
+the number of queries exceed this value, named will
+assume that it is dealing with a non-responsive zone and
+will drop additional queries. If it gets a response after
+dropping queries, it will raise the estimate.
+The estimate will then be lowered in 20 minutes if it has
+remained unchanged.
+If clients-per-query is set to zero, then there is no
+limit on the number of clients per query and no queries
+will be dropped.
+If max-clients-per-query is set to zero, then there is
+no upper bound other than imposed by recursive-clients.""",
     }
 
 g_nc_keywords['max-ixfr-log-size'] = \
@@ -2562,8 +2948,10 @@ g_nc_keywords['max-ixfr-log-size'] = \
         'introduced': '9.0.0',  # TODO, Wait, also found in 9.2
         'topic': 'server resource',
         'server-type': 'obsoleted, inert',
-        'comment': """This option is obsolete; it is accepted and ignored for BIND 8 compatibility. The option
-max-journal-size performs a similar function in BIND 9.""",
+        'comment':
+"""This option is obsolete; it is accepted and ignored
+for BIND 8 compatibility. The option max-journal-size
+performs a similar function in BIND 9.""",
     }
 
 g_nc_keywords['max-journal-size'] = \
@@ -2572,9 +2960,10 @@ g_nc_keywords['max-journal-size'] = \
         'validity': {'function': "size_spec"},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.3.0',
-        'topic': 'server resource',
+        'topic': 'journal, server resource',
         'server-type': '',
-        'comment': """Sets a maximum size for each journal file (see
+        'comment':
+"""Sets a maximum size for each journal file (see
 Section 4.2). When the journal file approaches the
 specified size, some of the oldest transactions in the
 journal will be automatically removed.
@@ -2611,9 +3000,9 @@ g_nc_keywords['max-records'] = \
         'obsoleted': '9.10.3',
         'topic': 'server resource',
         'server-type': '',
-        'comment': """max-records
-The maximum number of records permitted in a zone. The default is zero which means
-unlimited.""",
+        'comment':
+"""The maximum number of records permitted in a zone.
+The default is zero which means unlimited.""",
     }
 
 g_nc_keywords['max-recursion-depth'] = \
@@ -2621,7 +3010,7 @@ g_nc_keywords['max-recursion-depth'] = \
         'default': "7",
         'validity': {'range': {0, 1024}},  # TODO Find range limit for 'max-recursion-depth'
         'found-in': {'options', 'view'},
-        'introduced': '99.99.99',  # TODO when was 'max-recursion-depth' introduced?
+        'introduced': '9.11.0',
         'topic': 'tuning',
         'server-type': '',
         'comment': """Sets the maximum number of levels of recursion that are
@@ -2637,7 +3026,7 @@ g_nc_keywords['max-recursion-queries'] = \
         'default': "75",
         'validity': {'range': {0, 1024}},  # TODO Find range limit to 'max-recursion-queries'
         'found-in': {'options', 'view'},
-        'introduced': '99.99.99',  # TODO when was 'max-recursion-depth' introduced?
+        'introduced': '9.11.0',
         'topic': 'tuning',
         'server-type': '',
         'comment': """Sets the maximum number of iterative queries that may be
@@ -2718,10 +3107,13 @@ g_nc_keywords['max-transfer-idle-in'] = \
                      'function': "time_spec"},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.0.0',
+        'obsoleted': '',
         'topic': 'zone transfer',
         'server-type': '',
-        'comment': """Inbound zone transfers making no progress in this many minutes will be terminated. The
-default is 60 minutes (1 hour). The maximum value is 28 days (40320 minutes).""",
+        'comment':
+"""Inbound zone transfers making no progress in this many
+minutes will be terminated. The default is 60 minutes
+(1 hour). The maximum value is 28 days (40320 minutes).""",
     }
 
 g_nc_keywords['max-transfer-idle-out'] = \
@@ -2731,10 +3123,13 @@ g_nc_keywords['max-transfer-idle-out'] = \
                      'function': "time_spec"},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.0.0',
+        'obsoleted': '',
         'topic': 'zone transfer',
         'server-type': 'secured',
-        'comment': """Outbound zone transfers making no progress in this many minutes will be terminated.
-The default is 60 minutes (1 hour). The maximum value is 28 days (40320 minutes).""",
+        'comment':
+"""Outbound zone transfers making no progress in this many
+minutes will be terminated.  The default is 60 minutes
+(1 hour). The maximum value is 28 days (40320 minutes).""",
     }
 
 g_nc_keywords['max-transfer-time-in'] = \
@@ -2744,10 +3139,13 @@ g_nc_keywords['max-transfer-time-in'] = \
                      'function': "time_spec"},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '8.1',
+        'obsoleted': '',
         'topic': 'zone transfer',
         'server-type': 'secured',
-        'comment': """Inbound zone transfers running longer than this many minutes will be terminated. The
-default is 120 minutes (2 hours). The maximum value is 28 days (40320 minutes).""",
+        'comment':
+"""Inbound zone transfers running longer than this many
+minutes will be terminated. The default is 120 minutes
+(2 hours). The maximum value is 28 days (40320 minutes).""",
     }
 
 g_nc_keywords['max-transfer-time-out'] = \
@@ -2757,10 +3155,13 @@ g_nc_keywords['max-transfer-time-out'] = \
                      'function': "time_spec"},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.0.0',
+        'obsoleted': '',
         'topic': 'zone transfer',
         'server-type': 'secured',
-        'comment': """Outbound zone transfers running longer than this many minutes will be terminated. The
-default is 120 minutes (2 hours). The maximum value is 28 days (40320 minutes).""",
+        'comment':
+"""Outbound zone transfers running longer than this many
+minutes will be terminated. The default is 120 minutes
+(2 hours). The maximum value is 28 days (40320 minutes).""",
     }
 
 g_nc_keywords['max-udp-size'] = \
@@ -2835,6 +3236,17 @@ g_nc_keywords['memstatistics-file'] = \
 If not specified, the default is named.memstats.""",
     }
 
+g_nc_keywords['message-compression'] = \
+    {
+        'default': "no",
+        'validity': {'regex': r"(yes|no)"},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': '',
+        'server-type': '',
+        'comment': '',
+    }
+
 g_nc_keywords['min-refresh-time'] = \
     {
         'default': "300",
@@ -2896,7 +3308,7 @@ the root servers to be accepted.
 The default is 2.""",
     }
 
-g_nc_keywords['minimal-responses'] = \
+g_nc_keywords['minimal-any'] = \
     {
         'default': "no",
         'validity': {'regex': r"(yes|no)"},
@@ -2906,7 +3318,19 @@ g_nc_keywords['minimal-responses'] = \
         'server-type': '',
         'comment': """If yes, then when generating responses the server will only add records to the authority
 and additional data sections when they are required (e.g. delegations, negative responses).
-This may improve the performance of the server. The default is no.""",
+This may improve the performance of the server. The default is no.
+Note: Was renamed from 'minimal-responses' in v9.11.0.""",
+    }
+
+g_nc_keywords['minimal-response'] = \
+    {
+        'default': "no",
+        'validity': {'regex': r"(yes|no|no-auth|no-auth-recursive)"},
+        'found-in': {'options', 'view'},
+        'introduced': '9.11.0',
+        'topic': 'operating-system, privacy',
+        'server-type': '',
+        'comment': '',
     }
 
 g_nc_keywords['multiple-cnames'] = \
@@ -2959,7 +3383,8 @@ g_nc_keywords['no-case-compress'] = \
         'introduced': '99.99.99',  # TODO when was 'no-case-compress' introduced?
         'topic': 'filtering, access control',
         'server-type': '',
-        'comment': """Specifies a list of addresses which require responses
+        'comment':
+"""Specifies a list of addresses which require responses
 to use case-insensitive compression.
 This ACL can be used when named needs to work with
 clients that do not comply with the requirement in
@@ -3001,6 +3426,17 @@ However, domain names specified in the rdata of
 resource records (i.e., records of type NS, MX, CNAME,
 etc) will always have their case preserved unless the
 client matches this ACL.""",
+    }
+
+g_nc_keywords['nocookie-udp-size'] = \
+    {
+        'default': None,
+        'validity': {'range': {128, 32767}}, # TODO verify
+        'found-in': {'options', 'view'},
+        'introduced': '9.11.0',
+        'topic': '',
+        'server-type': '',
+        'comment': '',
     }
 
 g_nc_keywords['nosit-udp-size'] = \
@@ -3057,6 +3493,23 @@ The overall rate that NOTIFY messages are sent for all
 zones is controlled by serial-query-rate.""",
     }
 
+g_nc_keywords['notify-rate'] = \
+    {
+        'default': "20",
+        'validity': {'range': {0, 2100000000}},  # TODO upper range of 'notify-delay'
+        'found-in': {'options' },
+        'introduced': '9.11.0',
+        'topic': 'tuning, zone transfer',
+        'server-type': '',
+        'comment':
+"""The rate at which NOTIFY request will be sent during
+normal zone maintenance operation. (NOTIFY requests due
+to initial zone loading are subject to a separate rate
+limit; see startup-notify-rate.) The default is 20 per
+second.  The lowest possible rate is one per secon;
+when set to zero, it will silently be raised to one.""",
+    }
+
 g_nc_keywords['notify-source'] = \
     {
         'default': None,
@@ -3065,13 +3518,18 @@ g_nc_keywords['notify-source'] = \
         'introduced': '9.1.0',
         'topic': 'zone transfer, interface, data layer',
         'server-type': '',
-        'comment': """notify-source determines which local source address, and optionally UDP port, will be
-used to send NOTIFY messages. This address must appear in the slave server's masters
-zone clause or in an allow-notify clause. This statement sets the notify-source for all
-zones, but can be overridden on a per-zone or per-view basis by including a notify-source
-statement within the zone or view block in the configuration file.
+        'comment':
+"""notify-source determines which local source address,
+and optionally UDP port, will be used to send NOTIFY
+messages. This address must appear in the slave server's
+masters zone clause or in an allow-notify clause.
+This statement sets the notify-source for all zones, but
+can be overridden on a per-zone or per-view basis by
+including a notify-source statement within the zone or
+view block in the configuration file.
 NOTE
-Solaris 2.5.1 and earlier does not support setting the source address for TCP sockets.""",
+Solaris 2.5.1 and earlier does not support setting the
+source address for TCP sockets.""",
     }
 
 g_nc_keywords['notify-source-v6'] = \
@@ -3082,14 +3540,20 @@ g_nc_keywords['notify-source-v6'] = \
         'introduced': '9.1.0',
         'topic': 'zone transfer, interface, data layer',
         'server-type': '',
-        'comment': """Like notify-source, but applies to notify messages sent to IPv6 addresses.
-notify-source determines which local source address, and optionally UDP port, will be
-used to send NOTIFY messages. This address must appear in the slave server's masters
-zone clause or in an allow-notify clause. This statement sets the notify-source for all
-zones, but can be overridden on a per-zone or per-view basis by including a notify-source
-statement within the zone or view block in the configuration file.
+        'comment':
+"""Like notify-source, but applies to notify messages
+sent to IPv6 addresses.  notify-source determines which
+local source address, and optionally UDP port, will be
+used to send NOTIFY messages. This address must appear in
+the slave server's masters zone clause or in an
+allow-notify clause. This statement sets the
+notify-source for all zones, but can be overridden on a
+per-zone or per-view basis by including a notify-source
+statement within the zone or view block in the
+configuration file.
 NOTE
-Solaris 2.5.1 and earlier does not support setting the source address for TCP sockets.""",
+Solaris 2.5.1 and earlier does not support setting the
+source address for TCP sockets.""",
     }
 
 g_nc_keywords['notify-to-soa'] = \
@@ -3100,11 +3564,48 @@ g_nc_keywords['notify-to-soa'] = \
         'introduced': '9.5.0',
         'topic': 'hidden-master',
         'server-type': 'hidden-master',
-        'comment': """If yes do not check the nameservers in the NS RRset against the SOA MNAME. Normally
-a NOTIFY message is not sent to the SOA MNAME (SOA ORIGIN) as it is supposed to
-contain the name of the ultimate master. Sometimes, however, a slave is listed as the SOA
-MNAME in hidden master configurations and in that case you would want the ultimate
-master to still send NOTIFY messages to all the nameservers listed in the NS RRset.""",
+        'comment': """If yes do not check the nameservers in the
+NS RRset against the SOA MNAME. Normally a NOTIFY
+message is not sent to the SOA MNAME (SOA ORIGIN) as
+it is supposed to contain the name of the ultimate
+master. Sometimes, however, a slave is listed as the
+SOA MNAME in hidden master configurations and in that
+case you would want the ultimate master to still send
+NOTIFY messages to all the nameservers listed in the
+NS RRset.""",
+    }
+
+g_nc_keywords['nta-lifetime'] = \
+    {
+        'default': None,
+        'validity': {'range': {0,65535}},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': '',
+        'server-type': '',
+        'comment': '',
+    }
+
+g_nc_keywords['nta-recheck'] = \
+    {
+        'default': None,
+        'validity': {'range': {0,65535}},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': '',
+        'server-type': '',
+        'comment': '',
+    }
+
+g_nc_keywords['nxdomain-redirect'] = \
+    {
+        'default': None,
+        'validity': {'string'},
+        'found-in': {'options'},
+        'introduced': '9.11.0',
+        'topic': '',
+        'server-type': '',
+        'comment': '',
     }
 
 g_nc_keywords['pid-file'] = \
@@ -3233,8 +3734,9 @@ g_nc_keywords['queryport-pool-ports'] = \
         'default': None,  # TODO 'queryport_pool_ports' default value?
         'validity': {'regex': "(yes|no)"},  # TODO 'queryport_pool_ports' validity?
         'found-in': {'options', 'view'},
-        'introduced': '99.99.99',  # TODO when was 'queryport-pool-ports' introduced?
-        'topic': '',
+        'introduced': '9.5',  # TODO when was 'queryport-pool-ports' introduced?
+        'obsoleted': '9.10.5',
+        'topic': 'inert, query address',
         'server-type': '',
         'comment': '',  # TODO comment on 'queryport_pool_ports'
     }
@@ -3244,8 +3746,9 @@ g_nc_keywords['queryport-pool-updateinterval'] = \
         'default': None,  # TODO 'queryport_pool_updateinterval' default value?
         'validity': {'regex': "(yes|no)"},  # TODO 'queryport_pool_updateinterval' validity?
         'found-in': {'options', 'view'},
-        'introduced': '99.99.99',  # TODO when was 'queryport-pool-updateinterval' introduced?
-        'topic': '',
+        'introduced': '9.5',  # TODO when was 'queryport-pool-updateinterval' introduced?
+        'obsoleted': '9.10.5',
+        'topic': 'inert, query address',
         'server-type': '',
         'comment': '',  # TODO comment on 'queryport_pool_updateinterval'
     }
@@ -3257,9 +3760,10 @@ g_nc_keywords['query-source'] = \
         'validity': {'function': "ip_addr_port"},
         'found-in': {'options', 'view'},
         'introduced': '8.1',
-        'topic': '',
+        'topic': 'query address',
         'server-type': '',
-        'comment': """If the server doesn't know the answer to a question,
+        'comment':
+"""If the server doesn't know the answer to a question,
 it will query other nameservers. query-source specifies
 the address and port used for such queries.
 For queries sent over IPv6, there is a separate
@@ -3282,7 +3786,7 @@ g_nc_keywords['query-source-v6'] = \
         'validity': {'regex': "(yes|no)"},  # TODO 'query-source-v6' validity?
         'found-in': {'options', 'view'},
         'introduced': '8.4',
-        'topic': '',
+        'topic': 'query address',
         'server-type': '',
         'comment': '',  # TODO comment on 'query-source-v6'
     }
@@ -3381,7 +3885,8 @@ g_nc_keywords['recursive-clients'] = \
         'introduced': '9.0.0',
         'topic': 'operating-system, server resource',
         'server-type': '',
-        'comment': """The maximum number ("hard quota") of simultaneous
+        'comment':
+"""The maximum number ("hard quota") of simultaneous
 recursive lookups the server will perform on behalf of
 clients.
 
@@ -3411,8 +3916,13 @@ g_nc_keywords['request-ixfr'] = \
     {
         'default': 'yes',
         'validity': {'regex': r"(yes|no)"},
-        'found-in': {'server'},
+        'found-in': {'server', 'zone'},
         'introduced': "9.1.0",
+        'topic': 'transfer',
+        'server-type': '',
+        'comment': """
+Introduced to 'zone' section in v9.9.0.
+""",
     }
 
 g_nc_keywords['request-nsid'] = \
@@ -3423,10 +3933,12 @@ g_nc_keywords['request-nsid'] = \
         'introduced': '99.99.99',  # TODO when was 'request-nsid' introduced?
         'topic': 'NSID',
         'server-type': '',
-        'comment': """If yes, then an empty EDNS(0) NSID (Name Server Identifier) option is sent with all
-queries to authoritative name servers during iterative resolution. If the authoritative
-server returns an NSID option in its response, then its contents are logged in the resolver
-category at level info. The default is no.""",
+        'comment': """If yes, then an empty EDNS(0) NSID (Name
+Server Identifier) option is sent with all queries to
+authoritative name servers during iterative resolution.
+If the authoritative server returns an NSID option in
+its response, then its contents are logged in the
+resolver category at level info. The default is no.""",
     }
 
 g_nc_keywords['request-sit'] = \
@@ -3453,15 +3965,19 @@ g_nc_keywords['reserved-sockets'] = \
         'validity': {'range': {128, 65535}},  # TODO Upper limit to 'reserved-sockets'
         'found-in': {'options'},
         'introduced': '9.5.0',
-        'topic': 'filtering, access control',
+        'obsoleted': '',
+        'topic': 'server resource',
         'server-type': '',
-        'comment': """The number of file descriptors reserved for TCP, stdio, etc. This needs to be big enough
-to cover the number of interfaces named listens on, tcp-clients as well as to provide room
-for outgoing TCP queries and incoming zone transfers. The default is 512. The minimum
-value is 128 and the maximum value is 128 less than maxsockets (-S). This option may
-be removed in the future.
+        'comment':
+"""The number of file descriptors reserved for TCP, stdio,
+etc. This needs to be big enough to cover the number of
+interfaces named listens on, tcp-clients as well as to
+provide room for outgoing TCP queries and incoming zone
+transfers. The default is 512. The minimum value is 128
+and the maximum value is 128 less than maxsockets (-S).
+This option may be removed in the future.
 
-This option has little effect onWindows.""",
+This option has little effect on Windows.""",
     }
 
 g_nc_keywords['resolver-query-timeout'] = \
@@ -3469,11 +3985,12 @@ g_nc_keywords['resolver-query-timeout'] = \
         'default': "60",
         'validity': {'range': (0, 30)},
         'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'topic': 'filtering, access control',
         'server-type': '',
-        'comment': """The amount of time the resolver will spend attempting to resolve a recursive query before
-failing.
+        'comment':
+"""The amount of time the resolver will spend attempting to
+resolve a recursive query before failing.
 
 The default and minimum is 10 and the maximum is 30.
 
@@ -3485,10 +4002,12 @@ g_nc_keywords['response-policy'] = \
         'default': None,  # TODO define 'response-policy' keyword
         'validity': None,
         'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'topic': '',
         'server-type': '',
-        'comment': '',
+        'comment': """
+Option 'passthru' and 'disable' added in v9.9.0.
+""",
     }
 
 g_nc_keywords['rfc2308-type1'] = \
@@ -3551,7 +4070,7 @@ g_nc_keywords['secroots-file'] = \
         'default': "\"named.secroots\"",
         'validity': {'function': "path_name"},
         'found-in': {'options'},
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'topic': 'operating-system, dnssec, rndc',
         'server-type': '',
         'comment': """The pathname of the file the server dumps security roots to when
@@ -3582,14 +4101,22 @@ g_nc_keywords['serial-query-rate'] = \
         'introduced': '9.2.0',
         'topic': 'zone transfer',
         'server-type': 'slave',
-        'comment': """Slave servers will periodically query master servers to find out if zone serial numbers have
-changed. Each such query uses a minute amount of the slave server's network bandwidth.
-To limit the amount of bandwidth used, BIND 9 limits the rate at which queries are sent.
-The value of the serial-query-rate option, an integer, is the maximum number of queries
-sent per second. The default is 20 per second. The lowest possible rate is one per second;
-when set to zero, it will be silently raised to one.
-In addition to controlling the rate SOA refresh queries are issued at, serial-query-rate also
-controls the rate at which NOTIFY messages are sent from both master and slave zones.""",
+        'comment':
+"""Slave servers will periodically query master servers to
+find out if zone serial numbers have changed. Each such
+query uses a minute amount of the slave server's
+network bandwidth.
+To limit the amount of bandwidth used, BIND 9 limits the
+rate at which queries are sent.
+The value of the serial-query-rate option, an integer, is
+the maximum number of queries sent per second.
+The default is 20 per second.
+The lowest possible rate is one per second; when set to
+zero, it will be silently raised to one.
+In addition to controlling the rate SOA refresh queries
+are issued at, serial-query-rate also controls the rate
+at which NOTIFY messages are sent from both master and
+slave zones.""",
     }
 
 g_nc_keywords['serial-update-method'] = \
@@ -3597,7 +4124,7 @@ g_nc_keywords['serial-update-method'] = \
         'default': "increment",
         'validity': {'regex': r"(increment|unixtime)"},
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '99.99.99',  # TODO when was 'serial-update-method' introduced?
+        'introduced': '9.9.0',
         'topic': 'dynamic dns, ddns, SOA',
         'server-type': '',
         'comment': """Zones configured for dynamic DNS may use this option
@@ -3648,7 +4175,9 @@ server-id none; disables processing of the queries.
 Specifying server-id hostname; will cause named to use the
 hostname as found by the gethostname() function.
 
-The default server-id is none.""",
+The default server-id is none.
+
+Note: Option 'hostname' was added in v9.8.0.""",
     }
 
 g_nc_keywords['server-names'] = \
@@ -3669,7 +4198,7 @@ g_nc_keywords['session-keyfile'] = \
         'default': "\"/var/run/named/session.key\"",
         'validity': {'function': "path_name_qstring_or_none"},
         'found-in': {'options'},
-        'introduced': '9.5.0',
+        'introduced': '9.7.0',
         'topic': 'operating-system, dnssec, rndc, TSIG',
         'server-type': '',
         'comment': """The pathname of the file into which to write a TSIG
@@ -3687,7 +4216,7 @@ g_nc_keywords['session-keyalg'] = \
         'default': "hmac-sha256",
         'validity': {'regex': r"hmac\-(sha1|sha224|sha256|sha384|sha512|md5)"},
         'found-in': {'options'},
-        'introduced': '9.5.0',
+        'introduced': '9.7.0',
         'topic': 'operating-system, dnssec, rndc, TSIG',
         'server-type': '',
         'comment': """The algorithm to use for the TSIG session key.
@@ -3702,7 +4231,7 @@ g_nc_keywords['session-keyname'] = \
         'default': "localddns",
         'validity': {'regex': r"[A-Za-z0-9]+"},
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.5.0',
+        'introduced': '9.7.0',
         'topic': 'operating-system, dnssec, rndc, TSIG',
         'server-type': '',
         'comment': """The key name to use for the TSIG session key. If not
@@ -3849,6 +4378,22 @@ g_nc_keywords['stacksize'] = \
 The default is default.""",
     }
 
+g_nc_keywords['startup-notify-rate'] = \
+    {
+        'default': "20",
+        'validity': {'range': {0, 2100000000}},  # TODO upper range of 'notify-delay'
+        'found-in': {'options' },
+        'introduced': '9.15.0',  # TODO first found in 9.15
+        'topic': 'tuning, zone transfer',
+        'server-type': '',
+        'comment':
+"""The rate at which NOTIFY requests will be sent when the
+name server is first starting up, or when zones have been
+newly added to the nameserver.  The default is 20 per
+second. The lowest possible rate is one per second; when
+set to zero, it will be silently raised to one.""",
+    }
+
 g_nc_keywords['statistics-file'] = \
     {
         'default': "\"named.stats\"",
@@ -3909,27 +4454,117 @@ g_nc_keywords['suppress-initial-notify'] = \
 
 g_nc_keywords['tcp-clients'] = \
     {
-        'default': "100",
+        'default': "150",  # was 100
         'validity': {'range': {1, 32768}},  # TODO upper limit of 'tcp-clients'?
         'found-in': {'options'},
         'introduced': '9.0.0',
         'topic': 'network layer, server resource',
         'server-type': '',
-        'comment': """The maximum number of simultaneous client TCP
+        'comment':
+"""The maximum number of simultaneous client TCP
 connections that the server will accept.
 
-The default is 100.""",
+The default is 150.""",
+    }
+
+g_nc_keywords['tcp-advertised-timeout'] = \
+    {
+        'default': 300,
+        'validity': {'range': {0, 65535}},
+        'found-in': {'options'},
+        'introduced': '9.15.0',  # TODO first spotted in 9.15.0???
+        'topic': 'server resource',
+        'server-type': '',
+        'comment':
+"""The amount of time (in millisecond) the server will
+send in respones containing the EDNS TCP keepalive
+option.  This informs a client of the amount of time it
+may keep the session open.
+The default is 300 (30 seconds), the minimum is 0, and
+the maximum is 65535 (about 1.8 hours).
+Values above the maximum or below the minimum will be
+adjusted with a logged warning.  (Note: This value must
+be greater than expected round trip delay time;
+otherwise no client will ever have enough time to submit
+a message.)  This value can be updated at runtime by
+using rndc tcp-timeouts.""",
+    }
+
+g_nc_keywords['tcp-initial-timeout'] = \
+    {
+        'default': 30,
+        'validity': {'range': {25, 1200}},  # TODO upper range of 'notify-delay'
+        'found-in': {'options'},
+        'introduced': '9.15.0',  # TODO first spotted in 9.15.0???
+        'topic': 'server resource',
+        'server-type': '',
+        'comment':
+"""The amount of time (in millisecond) the server waits
+on a new TCP connection for the first message from the
+client.  The default is 300 (30 seconds), the minimum is
+25 (2.5 seconds), and the maximum is 1200 (two minutes).
+Values above the maximum or below the minimum will be
+adjusted with a logged warning.  (Note: This value must
+be greater than expected round trip delay time;
+otherwise no client will ever have enough time to submit
+a message.)  This value can be updated at runtime by
+using rndc tcp-timeouts.""",
+    }
+
+g_nc_keywords['tcp-idle-timeout'] = \
+    {
+        'default': 300,
+        'validity': {'range': {1, 1200}},
+        'found-in': {'options'},
+        'introduced': '9.15.0',  # TODO first spotted in 9.15.0???
+        'topic': 'server resource',
+        'server-type': '',
+        'comment':
+"""The amount of time (in millisecond) the server waits
+on an idle TCP connection before closing it when the
+client is not using the EDNS TCP keepalive option. The
+default is 300 (30 seconds), the maximum is 1200 (two
+minutes), and the minimum is 1 (one tenth of a second).
+Values above the maximum or below the minimum will be
+adjusted with a logged warning.  (Note: This value must
+be greater than expected round trip delay time;
+otherwise no client will ever have enough time to submit
+a message.)  This value can be updated at runtime by
+using rndc tcp-timeouts.""",
+    }
+
+g_nc_keywords['tcp-keepalive-timeout'] = \
+    {
+        'default': 300,
+        'validity': {'range': {1, 65535}},
+        'found-in': {'options'},
+        'introduced': '9.15.0',  # TODO first spotted in 9.15.0???
+        'topic': 'server resource',
+        'server-type': '',
+        'comment':
+"""The amount of time (in millisecond) the server waits
+on an idle TCP connection before closing it when the
+client is using the EDNS TCP keepalive option. The
+default is 300 (30 seconds), the maximum is 65535 (1.8
+hours), and the minimum is 1 (one tenth of a second).
+Values above the maximum or below the minimum will be
+adjusted with a logged warning.  (Note: This value must
+be greater than expected round trip delay time;
+otherwise no client will ever have enough time to submit
+a message.)  This value can be updated at runtime by
+using rndc tcp-timeouts.""",
     }
 
 g_nc_keywords['tcp-listen-queue'] = \
     {
         'default': "10",
-        'validity': {'range': {0, 65535}},  # TODO upper limit to 'tcp-listen-queue'?
+        'validity': {'range': {10, 65535}},  # TODO upper limit to 'tcp-listen-queue'?
         'found-in': {'options'},
         'introduced': '9.3.0',
         'topic': 'network layer, server resource',
         'server-type': '',
-        'comment': """The listen queue depth. The default and minimum is 10.
+        'comment':
+"""The listen queue depth. The default and minimum is 10.
 If the kernel supports the accept filter "dataready"
 this also controls how many TCP connections that will
 be queued in kernel space waiting for some data before
@@ -3995,7 +4630,7 @@ g_nc_keywords['tkey-gssapi-credential'] = \
         'default': None,
         'validity': {'regex': r"\w/\w"},
         'found-in': {'options'},
-        'introduced': '9.5.0',
+        'introduced': '9.4.0',
         'topic': 'operating-system, authentication, GSS, KRB5',
         'server-type': '',
         'comment': """The security credential with which the server should
@@ -4019,7 +4654,7 @@ g_nc_keywords['tkey-gssapi-keytab'] = \
         'default': "\"/etc/krb5.keytab\"",
         'validity': {'function': "path_name"},
         'found-in': {'options'},
-        'introduced': '9.5.0',
+        'introduced': '9.8.0',
         'topic': 'operating-system, authentication, GSS, KRB5',
         'server-type': '',
         'comment': """The KRB5 keytab file to use for GSS-TSIG updates.
@@ -4055,7 +4690,8 @@ g_nc_keywords['transfer-format'] = \
         'introduced': '8.1',
         'topic': 'zone transfer',
         'server-type': '',
-        'comment': """Zone transfers can be sent using two different formats,
+        'comment':
+"""Zone transfers can be sent using two different formats,
 one-answer and many-answers.
 
 The transfer-format option is used on the master server
@@ -4076,6 +4712,43 @@ transfer-format may be overridden on a per-server basis
 by using the server statement.""",
     }
 
+g_nc_keywords['transfer-per-ns'] = \
+    {
+        'default': "2",
+        'validity': {'range': {1, 65535}},
+        'found-in': {'options'},
+        'introduced': '8.1',
+        'obsoleted': '',
+        'topic': 'zone transfer',
+        'server-type': '',
+        'comment':
+"""The maximum number of inbound zone transfers that can
+be running concurrently.  The default value is 10.
+Increasing transfer-in may speed up the convergence of
+slave zones, but it also increases the load of a local
+system.""",
+    }
+
+g_nc_keywords['transfer-message-size'] = \
+    {
+        'default': "20480",
+        'validity': {'range': {512, 65535}},
+        'found-in': {'options'},
+        'introduced': '8.1',
+        'obsoleted': '',
+        'topic': 'zone transfer',
+        'server-type': '',
+        'comment':
+"""This is the upper bound on the uncompressed size of DNS
+messages used in zone transfers over TCP.  If the message
+grows larger than this size, additional messages will be
+used to complete the zone transfer.  (Note, however, that
+this is a hint, not a hard limit, if a message contain a
+single resource record whose RDATA does not fit within
+the size limit, a larger message will be permitted so the
+record can be transferred.)""",
+    }
+
 g_nc_keywords['transfers-in'] = \
     {
         'default': "10",
@@ -4084,14 +4757,12 @@ g_nc_keywords['transfers-in'] = \
         'introduced': '8.1',
         'topic': 'zone transfer',
         'server-type': '',
-        'comment': """The maximum number of inbound zone transfers that can
-be running concurrently.
-
-The default value is 10.
-
-Increasing transfers-in may speed up the convergence of
-slave zones, but it also may increase the load on the
-local system.""",
+        'comment':
+"""The maximum number of inbound zone transfers that can
+be running concurrently.  The default value is 10.
+Increasing transfer-in may speed up the convergence of
+slave zones, but it also increases the load of a local
+system.""",
     }
 
 g_nc_keywords['transfers-out'] = \
@@ -4113,13 +4784,14 @@ The default value is 10.""",
 
 g_nc_keywords['transfers-per-ns'] = \
     {
-        'default': "10",
+        'default': "2",
         'validity': {'function': "time_duration"},
         'found-in': {'options'},
         'introduced': '8.1',
         'topic': 'zone transfer',
         'server-type': '',
-        'comment': """The maximum number of inbound zone transfers that can
+        'comment':
+"""The maximum number of inbound zone transfers that can
 be concurrently transferring from a given remote name
 server.
 
@@ -4141,7 +4813,8 @@ g_nc_keywords['transfer-source'] = \
         'introduced': '8.2',
         'topic': 'zone transfer, data layer, interface',
         'server-type': 'slave, stub',
-        'comment': """transfer-source determines which local address will be
+        'comment':
+"""transfer-source determines which local address will be
 bound to IPv4 TCP connections used to fetch zones
 transferred inbound by the server. It also determines
 the source IPv4 address, and optionally the UDP port,
@@ -4261,7 +4934,10 @@ g_nc_keywords['type'] = \
         'introduced': '8.1',
         'topic': '',
         'server-type': '',
-        'comment': '',
+        'comment': """
+Option 'static-stub' added in v9.8.0.
+Option 'redirect' added in v9.9.0.
+""",
     }
 
 g_nc_keywords['update-check-ksk'] = \
@@ -4300,9 +4976,12 @@ g_nc_keywords['update-policy'] = \
         'validity': None,
         'found-in': {'zone'},
         'introduced': '9.0.0',
-        'topic': '',
+        'topic': 'dynamic zone update',
         'server-type': '',
-        'comment': '',
+        'comment': """
+Option "local" and "zonesub" introduced in 9.7.0.
+Option "external" introduced in 9.8.0.
+""",
     }
 
 g_nc_keywords['use-alt-transfer-source'] = \
@@ -4325,7 +5004,7 @@ g_nc_keywords['use-id-pool'] = \
         'validity': {'regex': r'(yes|no)'},
         'found-in': {'zone'},
         'introduced': '8.2',
-        'obsoleted': '9.7.0',  # TODO wait, still notice it at 9.6.3
+        'obsoleted': '9.6.3',
         'topic': 'inert',
         'server-type': '',
         'comment': """This option is obsolete.
@@ -4352,7 +5031,7 @@ g_nc_keywords['use-queryport-pool'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.5',
         'obsoleted': '9.10.5',
-        'topic': '',
+        'topic': 'inert, query address',
         'server-type': '',
         'comment': '',
     }
