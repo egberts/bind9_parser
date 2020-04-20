@@ -1,0 +1,418 @@
+v9.5.0
+acl <string> { <address_match_element>; ... };
+controls { inet ( <ipv4_address> | <ipv6_address> | * ) [ port ( <integer> | *) ] allow { <address_match_element>; ... } [ keys { <string>; ... } ]; unix <quoted_string> perm <integer> owner <integer> group <integer> [ keys { <string>; ... } ]; };
+dlz <string> { database <string>; };
+key <string> { algorithm <string>; secret <string>; };
+logging { category <string> { <string>; ... }; channel <string> { file <quoted_string> [ versions ( "unlimited" | <integer> ) ] [ size <size> ]; null; print-category <boolean>; print-severity <boolean>; print-time <boolean>; severity <log_severity>; stderr; syslog <optional_facility>; }; };
+lwres { listen-on [ port <integer> ] { ( <ipv4_address> | <ipv6_address> ) [ port <integer> ]; ... }; ndots <integer>; search { <string>; ... }; view <string> <optional_class>; };
+masters <string> [ port <integer> ] { ( <masters> | <ipv4_address> [ port <integer> ] | <ipv6_address> [ port <integer> ] ) [ key <string> ]; ... };
+options {
+options - acache-cleaning-interval <integer>;
+options - acache-enable <boolean>;
+options - additional-from-auth <boolean>;
+options - additional-from-cache <boolean>;
+options - allow-notify { <address_match_element>; ... };
+options - allow-query { <address_match_element>; ... };
+options - allow-query-cache { <address_match_element>; ... };
+options - allow-query-cache-on { <address_match_element>; ... };
+options - allow-query-on { <address_match_element>; ... };
+options - allow-recursion { <address_match_element>; ... };
+options - allow-recursion-on { <address_match_element>; ... };
+options - allow-transfer { <address_match_element>; ... };
+options - allow-update { <address_match_element>; ... };
+options - allow-update-forwarding { <address_match_element>; ... };
+options - allow-v6-synthesis { <address_match_element>; ... }; // obsolete
+options - also-notify [ port <integer> ] { ( <ipv4_address> | <ipv6_address>) [ port <integer> ]; ... };
+options - alt-transfer-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+options - alt-transfer-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+options - auth-nxdomain <boolean>; // default changed
+options - avoid-v4-udp-ports { <port>; ... };
+options - avoid-v6-udp-ports { <port>; ... };
+options - blackhole { <address_match_element>; ... };
+options - cache-file <quoted_string>;
+options - check-integrity <boolean>;
+options - check-mx ( fail | warn | ignore );
+options - check-mx-cname ( fail | warn | ignore );
+options - check-names ( master | slave | response ) ( fail | warn | ignore );
+options - check-sibling <boolean>;
+options - check-srv-cname ( fail | warn | ignore );
+options - check-wildcard <boolean>;
+options - cleaning-interval <integer>;
+options - clients-per-query <integer>;
+options - coresize <size>;
+options - datasize <size>;
+options - deallocate-on-exit <boolean>; // obsolete
+options - dialup <dialuptype>;
+options - directory <quoted_string>;
+options - disable-algorithms <string> { <string>; ... };
+options - disable-empty-zone <string>;
+options - dnssec-accept-expired <boolean>;
+options - dnssec-enable <boolean>;
+options - dnssec-lookaside <string> trust-anchor <string>;
+options - dnssec-must-be-secure <string> <boolean>;
+options - dnssec-validation <boolean>;
+options - dual-stack-servers [ port <integer> ] { ( <quoted_string> [ port <integer> ] | <ipv4_address> [ port <integer> ] | <ipv6_address> [ port <integer> ] ); ... };
+options - dump-file <quoted_string>;
+options - edns-udp-size <integer>;
+options - empty-contact <string>;
+options - empty-server <string>;
+options - empty-zones-enable <boolean>;
+options - fake-iquery <boolean>; // obsolete
+options - fetch-glue <boolean>; // obsolete
+options - files <size>;
+options - flush-zones-on-shutdown <boolean>;
+options - forward ( first | only );
+options - forwarders [ port <integer> ] { ( <ipv4_address> | <ipv6_address> ) [ port <integer> ]; ... };
+options - has-old-clients <boolean>; // obsolete
+options - heartbeat-interval <integer>;
+options - host-statistics <boolean>; // not implemented
+options - host-statistics-max <integer>; // not implemented
+options - hostname ( <quoted_string> | none );
+options - interface-interval <integer>;
+options - ixfr-from-differences <ixfrdiff>;
+options - key-directory <quoted_string>;
+options - lame-ttl <integer>;
+options - listen-on [ port <integer> ] { <address_match_element>; ... };
+options - listen-on-v6 [ port <integer> ] { <address_match_element>; ... };
+options - maintain-ixfr-base <boolean>; // obsolete
+options - masterfile-format ( text | raw );
+options - match-mapped-addresses <boolean>;
+options - max-acache-size <size_no_default>;
+options - max-cache-size <size>;
+options - max-cache-ttl <integer>;
+options - max-clients-per-query <integer>;
+options - max-ixfr-log-size <size>; // obsolete
+options - max-journal-size <size_no_default>;
+options - max-ncache-ttl <integer>;
+options - max-refresh-time <integer>;
+options - max-retry-time <integer>;
+options - max-transfer-idle-in <integer>;
+options - max-transfer-idle-out <integer>;
+options - max-transfer-time-in <integer>;
+options - max-transfer-time-out <integer>;
+options - max-udp-size <integer>;
+options - memstatistics <boolean>;
+options - memstatistics-file <quoted_string>;
+options - min-refresh-time <integer>;
+options - min-retry-time <integer>;
+options - min-roots <integer>; // not implemented
+options - minimal-responses <boolean>;
+options - multi-master <boolean>;
+options - multiple-cnames <boolean>; // obsolete
+options - named-xfer <quoted_string>; // obsolete
+options - notify <notifytype>;
+options - notify-delay <integer>;
+options - notify-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+options - notify-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+options - notify-to-soa <boolean>;
+options - pid-file ( <quoted_string> | none );
+options - port <integer>;
+options - preferred-glue <string>;
+options - provide-ixfr <boolean>;
+options - query-source <querysource4>;
+options - query-source-v6 <querysource6>;
+options - querylog <boolean>;
+options - queryport-pool-ports <integer>;
+options - queryport-pool-updateinterval <integer>;
+options - random-device <quoted_string>;
+options - recursing-file <quoted_string>;
+options - recursion <boolean>;
+options - recursive-clients <integer>;
+options - request-ixfr <boolean>;
+options - request-nsid <boolean>;
+options - rfc2308-type1 <boolean>; // not yet implemented
+options - root-delegation-only [ exclude { <quoted_string>; ... } ];
+options - rrset-order { [ class <string> ] [ type <string> ] [ name <quoted_string> ] <string> <string>; ... };
+options - serial-queries <integer>; // obsolete
+options - serial-query-rate <integer>;
+options - server-id ( <quoted_string> | none |;
+options - sig-validity-interval <integer>;
+options - sortlist { <address_match_element>; ... };
+options - stacksize <size>;
+options - statistics-file <quoted_string>;
+options - statistics-interval <integer>; // not yet implemented
+options - suppress-initial-notify <boolean>; // not yet implemented
+options - tcp-clients <integer>;
+options - tcp-listen-queue <integer>;
+options - tkey-dhkey <quoted_string> <integer>;
+options - tkey-domain <quoted_string>;
+options - tkey-gssapi-credential <quoted_string>;
+options - topology { <address_match_element>; ... }; // not implemented
+options - transfer-format ( many-answers | one-answer );
+options - transfer-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+options - transfer-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+options - transfers-in <integer>;
+options - transfers-out <integer>;
+options - transfers-per-ns <integer>;
+options - treat-cr-as-space <boolean>; // obsolete
+options - try-tcp-refresh <boolean>;
+options - update-check-ksk <boolean>;
+options - use-alt-transfer-source <boolean>;
+options - use-id-pool <boolean>; // obsolete
+options - use-ixfr <boolean>;
+options - use-queryport-pool <boolean>;
+options - version ( <quoted_string> | none );
+options - zero-no-soa-ttl <boolean>;
+options - zero-no-soa-ttl-cache <boolean>;
+options - zone-statistics <boolean>;
+server <netprefix> {
+server - bogus <boolean>;
+server - edns <boolean>;
+server - edns-udp-size <integer>;
+server - keys <server_key>;
+server - max-udp-size <integer>;
+server - notify-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+server - notify-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+server - provide-ixfr <boolean>;
+server - query-source <querysource4>;
+server - query-source-v6 <querysource6>;
+server - request-ixfr <boolean>;
+server - support-ixfr <boolean>; // obsolete
+server - transfer-format ( many-answers | one-answer );
+server - transfer-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+server - transfer-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+server - transfers <integer>;
+statistics-channels { inet ( <ipv4_address> | <ipv6_address> | * ) [ port ( <integer> | *) ] [ allow { <address_match_element>; ... } ]; };
+trusted-keys { <string> <integer> <integer> <integer> <quoted_string>; ... };
+view <string> <optional_class> {
+view - acache-cleaning-interval <integer>;
+view - acache-enable <boolean>;
+view - additional-from-auth <boolean>;
+view - additional-from-cache <boolean>;
+view - allow-notify { <address_match_element>; ... };
+view - allow-query { <address_match_element>; ... };
+view - allow-query-cache { <address_match_element>; ... };
+view - allow-query-cache-on { <address_match_element>; ... };
+view - allow-query-on { <address_match_element>; ... };
+view - allow-recursion { <address_match_element>; ... };
+view - allow-recursion-on { <address_match_element>; ... };
+view - allow-transfer { <address_match_element>; ... };
+view - allow-update { <address_match_element>; ... };
+view - allow-update-forwarding { <address_match_element>; ... };
+view - allow-v6-synthesis { <address_match_element>; ... }; // obsolete
+view - also-notify [ port <integer> ] { ( <ipv4_address> | <ipv6_address>) [ port <integer> ]; ... };
+view - alt-transfer-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+view - alt-transfer-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+view - auth-nxdomain <boolean>; // default changed
+view - cache-file <quoted_string>;
+view - check-integrity <boolean>;
+view - check-mx ( fail | warn | ignore );
+view - check-mx-cname ( fail | warn | ignore );
+view - check-names ( master | slave | response ) ( fail | warn | ignore );
+view - check-sibling <boolean>;
+view - check-srv-cname ( fail | warn | ignore );
+view - check-wildcard <boolean>;
+view - cleaning-interval <integer>;
+view - clients-per-query <integer>;
+view - database <string>;
+view - dialup <dialuptype>;
+view - disable-algorithms <string> { <string>; ... };
+view - disable-empty-zone <string>;
+view - dlz <string> { database <string>; };
+view - dnssec-accept-expired <boolean>;
+view - dnssec-enable <boolean>;
+view - dnssec-lookaside <string> trust-anchor <string>;
+view - dnssec-must-be-secure <string> <boolean>;
+view - dnssec-validation <boolean>;
+view - dual-stack-servers [ port <integer> ] { ( <quoted_string> [ port <integer> ] | <ipv4_address> [ port <integer> ] | <ipv6_address> [ port <integer> ] ); ... };
+view - edns-udp-size <integer>;
+view - empty-contact <string>;
+view - empty-server <string>;
+view - empty-zones-enable <boolean>;
+view - fetch-glue <boolean>; // obsolete
+view - forward ( first | only );
+view - forwarders [ port <integer> ] { ( <ipv4_address> | <ipv6_address> ) [ port <integer> ]; ... };
+view - ixfr-from-differences <ixfrdiff>;
+view - key <string> { algorithm <string>; secret <string>; };
+view - key-directory <quoted_string>;
+view - lame-ttl <integer>;
+view - maintain-ixfr-base <boolean>; // obsolete
+view - masterfile-format ( text | raw );
+view - match-clients { <address_match_element>; ... };
+view - match-destinations { <address_match_element>; ... };
+view - match-recursive-only <boolean>;
+view - max-acache-size <size_no_default>;
+view - max-cache-size <size>;
+view - max-cache-ttl <integer>;
+view - max-clients-per-query <integer>;
+view - max-ixfr-log-size <size>; // obsolete
+view - max-journal-size <size_no_default>;
+view - max-ncache-ttl <integer>;
+view - max-refresh-time <integer>;
+view - max-retry-time <integer>;
+view - max-transfer-idle-in <integer>;
+view - max-transfer-idle-out <integer>;
+view - max-transfer-time-in <integer>;
+view - max-transfer-time-out <integer>;
+view - max-udp-size <integer>;
+view - min-refresh-time <integer>;
+view - min-retry-time <integer>;
+view - min-roots <integer>; // not implemented
+view - minimal-responses <boolean>;
+view - multi-master <boolean>;
+view - notify <notifytype>;
+view - notify-delay <integer>;
+view - notify-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+view - notify-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+view - notify-to-soa <boolean>;
+view - preferred-glue <string>;
+view - provide-ixfr <boolean>;
+view - query-source <querysource4>;
+view - query-source-v6 <querysource6>;
+view - queryport-pool-ports <integer>;
+view - queryport-pool-updateinterval <integer>;
+view - recursion <boolean>;
+view - request-ixfr <boolean>;
+view - request-nsid <boolean>;
+view - rfc2308-type1 <boolean>; // not yet implemented
+view - root-delegation-only [ exclude { <quoted_string>; ... } ];
+view - rrset-order { [ class <string> ] [ type <string> ] [ name <quoted_string> ] <string> <string>; ... };
+view - server <netprefix> {
+view server - bogus <boolean>;
+view server - edns <boolean>;
+view server - edns-udp-size <integer>;
+view server - keys <server_key>;
+view server - max-udp-size <integer>;
+view server - notify-source ( <ipv4_address> | * ) [ port ( <integer> | *) ];
+view server - notify-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+view server - provide-ixfr <boolean>;
+view server - query-source <querysource4>;
+view server - query-source-v6 <querysource6>;
+view server - request-ixfr <boolean>;
+view server - support-ixfr <boolean>; // obsolete
+view server - transfer-format ( many-answers | one-answer );
+view server - transfer-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+view server - transfer-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+view server - transfers <integer>;
+view - sig-validity-interval <integer>;
+view - sortlist { <address_match_element>; ... };
+view - suppress-initial-notify <boolean>; // not yet implemented
+view - topology { <address_match_element>; ... }; // not implemented
+view - transfer-format ( many-answers | one-answer );
+view - transfer-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+view - transfer-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+view - trusted-keys { <string> <integer> <integer> <integer> <quoted_string>; ... };
+view - try-tcp-refresh <boolean>;
+view - update-check-ksk <boolean>;
+view - use-alt-transfer-source <boolean>;
+view - use-queryport-pool <boolean>;
+view - zero-no-soa-ttl <boolean>;
+view - zero-no-soa-ttl-cache <boolean>;
+view - zone <string> <optional_class> {
+view zone -  allow-notify { <address_match_element>; ... };
+view zone -  allow-query { <address_match_element>; ... };
+view zone -  allow-query-on { <address_match_element>; ... };
+view zone -  allow-transfer { <address_match_element>; ... };
+view zone -  allow-update { <address_match_element>; ... };
+view zone -  allow-update-forwarding { <address_match_element>; ... };
+view zone -  also-notify [ port <integer> ] { ( <ipv4_address> | <ipv6_address> ) [ port <integer> ]; ... };
+view zone -  alt-transfer-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+view zone -  alt-transfer-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+view zone -  check-integrity <boolean>;
+view zone -  check-mx ( fail | warn | ignore );
+view zone -  check-mx-cname ( fail | warn | ignore );
+view zone -  check-names ( fail | warn | ignore );
+view zone -  check-sibling <boolean>;
+view zone -  check-srv-cname ( fail | warn | ignore );
+view zone -  check-wildcard <boolean>;
+view zone -  database <string>;
+view zone -  delegation-only <boolean>;
+view zone -  dialup <dialuptype>;
+view zone -  file <quoted_string>;
+view zone -  forward ( first | only );
+view zone -  forwarders [ port <integer> ] { ( <ipv4_address> | <ipv6_address> ) [ port <integer> ]; ... };
+view zone -  ixfr-base <quoted_string>; // obsolete
+view zone -  ixfr-from-differences <boolean>;
+view zone -  ixfr-tmp-file <quoted_string>; // obsolete
+view zone -  journal <quoted_string>;
+view zone -  key-directory <quoted_string>;
+view zone -  maintain-ixfr-base <boolean>; // obsolete
+view zone -  masterfile-format ( text | raw );
+view zone -  masters [ port <integer> ] { ( <masters> | <ipv4_address> [ port <integer> ] | <ipv6_address> [ port <integer> ] ) [ key <string> ]; ... };
+view zone -  max-ixfr-log-size <size>; // obsolete
+view zone -  max-journal-size <size_no_default>;
+view zone -  max-refresh-time <integer>;
+view zone -  max-retry-time <integer>;
+view zone -  max-transfer-idle-in <integer>;
+view zone -  max-transfer-idle-out <integer>;
+view zone -  max-transfer-time-in <integer>;
+view zone -  max-transfer-time-out <integer>;
+view zone -  min-refresh-time <integer>;
+view zone -  min-retry-time <integer>;
+view zone -  multi-master <boolean>;
+view zone -  notify <notifytype>;
+view zone -  notify-delay <integer>;
+view zone -  notify-source ( <ipv4_address> | * ) [ port ( <integer> | *) ];
+view zone -  notify-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+view zone -  notify-to-soa <boolean>;
+view zone -  pubkey <integer> <integer> <integer> <quoted_string>; // obsolete
+view zone -  sig-validity-interval <integer>;
+view zone -  transfer-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+view zone -  transfer-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+view zone -  try-tcp-refresh <boolean>;
+view zone -  type ( master | slave | stub | hint | forward | delegation-only );
+view zone -  update-check-ksk <boolean>;
+view zone -  update-policy { ( grant | deny ) <string> ( name | subdomain | wildcard | self | selfsub | selfwild | krb5-self | ms-self | krb5-subdomain | ms-subdomain ) <string> <rrtypelist>; ... };
+view zone -  use-alt-transfer-source <boolean>;
+view zone -  zero-no-soa-ttl <boolean>;
+view zone -  zone-statistics <boolean>;
+view - zone-statistics <boolean>;
+zone <string> <optional_class> {
+zone - allow-notify { <address_match_element>; ... };
+zone - allow-query { <address_match_element>; ... };
+zone - allow-query-on { <address_match_element>; ... };
+zone - allow-transfer { <address_match_element>; ... };
+zone - allow-update { <address_match_element>; ... };
+zone - allow-update-forwarding { <address_match_element>; ... };
+zone - also-notify [ port <integer> ] { ( <ipv4_address> | <ipv6_address>) [ port <integer> ]; ... };
+zone - alt-transfer-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+zone - alt-transfer-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+zone - check-integrity <boolean>;
+zone - check-mx ( fail | warn | ignore );
+zone - check-mx-cname ( fail | warn | ignore );
+zone - check-names ( fail | warn | ignore );
+zone - check-sibling <boolean>;
+zone - check-srv-cname ( fail | warn | ignore );
+zone - check-wildcard <boolean>;
+zone - database <string>;
+zone - delegation-only <boolean>;
+zone - dialup <dialuptype>;
+zone - file <quoted_string>;
+zone - forward ( first | only );
+zone - forwarders [ port <integer> ] { ( <ipv4_address> | <ipv6_address> ) [ port <integer> ]; ... };
+zone - ixfr-base <quoted_string>; // obsolete
+zone - ixfr-from-differences <boolean>;
+zone - ixfr-tmp-file <quoted_string>; // obsolete
+zone - journal <quoted_string>;
+zone - key-directory <quoted_string>;
+zone - maintain-ixfr-base <boolean>; // obsolete
+zone - masterfile-format ( text | raw );
+zone - masters [ port <integer> ] { ( <masters> | <ipv4_address> [ port <integer> ] | <ipv6_address> [ port <integer> ] ) [ key <string> ]; ... };
+zone - max-ixfr-log-size <size>; // obsolete
+zone - max-journal-size <size_no_default>;
+zone - max-refresh-time <integer>;
+zone - max-retry-time <integer>;
+zone - max-transfer-idle-in <integer>;
+zone - max-transfer-idle-out <integer>;
+zone - max-transfer-time-in <integer>;
+zone - max-transfer-time-out <integer>;
+zone - min-refresh-time <integer>;
+zone - min-retry-time <integer>;
+zone - multi-master <boolean>;
+zone - notify <notifytype>;
+zone - notify-delay <integer>;
+zone - notify-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+zone - notify-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+zone - notify-to-soa <boolean>;
+zone - pubkey <integer> <integer> <integer> <quoted_string>; // obsolete
+zone - sig-validity-interval <integer>;
+zone - transfer-source ( <ipv4_address> | * ) [ port ( <integer> | * ) ];
+zone - transfer-source-v6 ( <ipv6_address> | * ) [ port ( <integer> | * ) ];
+zone - try-tcp-refresh <boolean>;
+zone - type ( master | slave | stub | hint | forward | delegation-only );
+zone - update-check-ksk <boolean>;
+zone - update-policy { ( grant | deny ) <string> ( name | subdomain | wildcard | self | selfsub | selfwild | krb5-self | ms-self | krb5-subdomain | ms-subdomain ) <string> <rrtypelist>; ... };
+zone - use-alt-transfer-source <boolean>;
+zone - zero-no-soa-ttl <boolean>;
+zone - zone-statistics <boolean>;
+
