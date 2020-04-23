@@ -1424,7 +1424,7 @@ g_nc_keywords['deny-answer-addresses'] = \
 g_nc_keywords['deny-answer-aliases'] = \
     {
         'default': None,
-        'validity': {'function': 'address_match_list'},
+        'validity': {'function': 'domain_list'},
         'found-in': {'options', 'view'},
         'introduced': '9.7.0',
         'topic': 'content filtering',
