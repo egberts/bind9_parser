@@ -633,6 +633,21 @@ class TestZone(unittest.TestCase):
         result = zone_statements_series.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
+    def test_isc_zone_stmt_statements_github_issue1(self):
+        """ Clause zone; Statement statements_series; failing """
+        test_string = [
+"""
+type slave;
+file "slaves/my.slave.internal.zone.db";
+masters { 127.0.0.1; } ;
+// put slave zones in the slaves/ directory so named can update them
+""",
+# masters { /* put master nameserver IPs here */ 127.0.0.1; } ;
+        ]
+        result = zone_statements_series.runTests(test_string,
+                                                 failureTests=False)
+        self.assertTrue(result[0])
+
 
 if __name__ == '__main__':
     unittest.main()

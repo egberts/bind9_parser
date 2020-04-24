@@ -8,10 +8,10 @@ zone "example.com" IN
     file "/var/lib/bind/public/master/db.example.com";
     // journal "/var/cache/bind/public/example.com-master.jnl";
     update-policy {
-    grant ddns-sha256-arca-a-key self arca.example.com A;
-    grant ddns-sha256-arca-a-key self example.com SOA;
-    grant ddns-sha256-arca-a-key self arca.example.com PTR;
-    };
+        grant ddns-sha256-arca-a-key self arca.example.com A;
+        grant ddns-sha256-arca-a-key self example.com SOA;
+        grant ddns-sha256-arca-a-key self arca.example.com PTR;
+        };
     allow-transfer {
         trusted_residential_network_acl;
         external_downstream_nameservers_acl;

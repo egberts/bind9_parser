@@ -24,7 +24,7 @@ from bind9_parser.isc_rr import rr_type_series, rr_type_list_series
 from bind9_parser.isc_domain import domain_generic_fqdn,\
     quotable_domain_generic_fqdn, quoted_domain_generic_fqdn, rr_fqdn_w_absolute
 from bind9_parser.isc_viewzone import viewzone_stmt_database, viewzone_stmt_dlz
-from bind9_parser.isc_clause_masters import clause_stmt_masters_standalone
+# from bind9_parser.isc_clause_masters import clause_stmt_masters_standalone
 
 
 
@@ -137,9 +137,9 @@ zone_stmt_masters = (
     Group(
         Keyword('masters').suppress()
         + Optional(inet_ip_port_keyword_and_number_element)
-        - Optional(inet_dscp_port_keyword_and_number_element)
+        + Optional(inet_dscp_port_keyword_and_number_element)
         - lbrack
-        - zone_masters_series
+        + OneOrMore(zone_masters_set)
         + rbrack
     )('masters')
     + semicolon
@@ -370,14 +370,13 @@ zone_statements_set = (
     | zone_stmt_ixfr_base
     | zone_stmt_ixfr_from_differences
     | zone_stmt_journal
-###    | zone_stmt_masters
+    | zone_stmt_masters
     | zone_stmt_pubkey
     | zone_stmt_server_addresses
     | zone_stmt_server_names
     | zone_stmt_type
     | zone_stmt_update_policy
     | zone_stmt_use_id_pool
-    | clause_stmt_masters_standalone('masters')  # exactly ONE 'masters' allowed within each zone.
 )
 
 zone_statements_series = (

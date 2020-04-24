@@ -239,7 +239,7 @@ if __name__ == '__main__':
 
     if args.debug:
         print("Debugging PyParsing enabled.")
-        clause_statements.setDebug()
+        bind9_parser.clause_statements.setDebug()
 
     if not bind9_parser.g_expose_secrets:
         bind9_parser.key_secret.addParseAction(suppress_key_secrets)
@@ -247,21 +247,22 @@ if __name__ == '__main__':
     my_clauses = bind9_parser.clause_statements \
                      .setDebug(g_verbosity) \
                      .setParseAction(myAction2) \
+                     .ignore(pp.cStyleComment) \
                      .ignore(pp.cppStyleComment) \
                      .ignore(pp.pythonStyleComment)
 #    my_clauses = my_clauses.enablePackrat()
 
-    # pp.__diag__.enable_debug_on_named_expressions = True
-    # pp.__diag__.warn_multiple_tokens_in_named_alternation = True
-    # pp.__diag__.warn_ungrouped_named_tokens_in_collection = True
-    # pp.__diag__.warn_name_set_on_empty_Forward = True
-    # pp.__diag__.warn_on_multiple_string_args_to_oneof = True
+#    pp.__diag__.enable_debug_on_named_expressions = True
+#    pp.__diag__.warn_multiple_tokens_in_named_alternation = True
+#    pp.__diag__.warn_ungrouped_named_tokens_in_collection = True
+#    pp.__diag__.warn_name_set_on_empty_Forward = True
+#    pp.__diag__.warn_on_multiple_string_args_to_oneof = True
 
-    # pp.__diag__.enable("enable_debug_on_named_expressions")
-    # pp.__diag__.enable("warn_multiple_tokens_in_named_alternation")
-    # pp.__diag__.enable("warn_ungrouped_named_tokens_in_collection")
-    # pp.__diag__.enable("warn_name_set_on_empty_Forward")
-    # pp.__diag__.enable("warn_on_multiple_string_args_to_oneof")
+#    pp.__diag__.enable("enable_debug_on_named_expressions")
+#    pp.__diag__.enable("warn_multiple_tokens_in_named_alternation")
+#    pp.__diag__.enable("warn_ungrouped_named_tokens_in_collection")
+#    pp.__diag__.enable("warn_name_set_on_empty_Forward")
+#    pp.__diag__.enable("warn_on_multiple_string_args_to_oneof")
 
 
     print("Start: Is the library quiet?")
