@@ -12,7 +12,7 @@ Description: Provides inet-related grammar in PyParsing engine
 """
 from pyparsing import Word, nums, Combine, Group, \
     pyparsing_common, ZeroOrMore, Literal, Keyword,\
-    ungroup, OneOrMore, Optional
+    ungroup, OneOrMore, Optional, Regex, Char, alphanums, hexnums
 from bind9_parser.isc_utils import semicolon, squote, dquote
 
 
@@ -50,7 +50,192 @@ ip4s_subnet.setName('<ip4_or_ip4_subnet>')
 ip4s_prefix = Combine(ip4_addr + '/' - ip4s_subnet)
 ip4s_prefix.setName('<ip4subnet>')
 
-ip6_addr = pyparsing_common.ipv6_address
+# Device Index (aka Unix sin6_scope_id) can be 32-bit integer or 64-char readable device name
+# _ip6_device_index = r'%([0-9]{1,10})|([a-zA-Z0-9\.\-_]{1,64})'
+_ip6_device_index = r'%' + \
+                    Combine(
+                        Word(nums, min=1, max=10)
+                        | Word(alphanums, min=1, max=63)
+                    )
+# Apparently, pyparsing_common.ipv6_address cannot the followingz:
+#  - do device index suffix of "%eth0" or "%1"
+#  - Support IPv4 notation after short or mixed IPv6
+#  so we roll our own IPv6 parser
+########ip6_addr = pyparsing_common.ipv6_address
+# " ip6_addr  should match:
+# "  IPv6 addresses
+# "    zero compressed IPv6 addresses (section 2.2 of rfc5952)
+# "    link-local IPv6 addresses with zone index (section 11 of rfc4007)
+# "    IPv4-Embedded IPv6 Address (section 2 of rfc6052)
+# "    IPv4-mapped IPv6 addresses (section 2.1 of rfc2765)
+# "    IPv4-translated addresses (section 2.1 of rfc2765)
+# "  IPv4 addresses
+
+_ip6_part = r'[0-9a-fA-F]{1,4}'
+ip6_part = Regex(_ip6_part).setName('4-hex')
+_ip6_full_addr = r'(' + _ip6_part + r':' + r'){7}:' + _ip6_part
+ip6_full_addr = Regex(_ip6_full_addr).setName('<full_ip6_addr>')
+
+# ::
+_ip6_0_0_addr = r'::'
+ip6_0_0_addr = Regex(_ip6_0_0_addr)
+# ::8
+_ip6_0_1_addr = r'::' + _ip6_part
+ip6_0_1_addr = Regex(_ip6_0_1_addr)
+# ::2:3:4:5:6:7:8
+_ip6_0_7_addr = r':(:' + _ip6_part + r'){7}'
+ip6_0_7_addr = Regex(_ip6_0_7_addr)
+
+# 1::
+_ip6_1_0_addr = _ip6_part + r'::'
+ip6_1_0_addr = Regex(_ip6_1_0_addr)
+# 1::8
+_ip6_1_1_addr = _ip6_part + r'::' + _ip6_part
+ip6_1_1_addr = Regex(_ip6_1_1_addr)
+# 1::7:8
+_ip6_1_2_addr = _ip6_part + r':(:' + _ip6_part + r'){2}'
+ip6_1_2_addr = Regex(_ip6_1_2_addr)
+# 1::6:7:8
+_ip6_1_3_addr = _ip6_part + r':(:' + _ip6_part + r'){3}'
+ip6_1_3_addr = Regex(_ip6_1_3_addr)
+# 1::5:6:7:8
+_ip6_1_4_addr = _ip6_part + r':(:' + _ip6_part + r'){4}'
+ip6_1_4_addr = Regex(_ip6_1_4_addr)
+# 1::4:5:6:7:8
+_ip6_1_5_addr = _ip6_part + r':(:' + _ip6_part + r'){5}'
+ip6_1_5_addr = Regex(_ip6_1_5_addr)
+# 1::3:4:5:6:7:8
+_ip6_1_6_addr = _ip6_part + r':(:' + _ip6_part + r'){6}'
+ip6_1_6_addr = Regex(_ip6_1_6_addr)
+
+# 1:2::8
+_ip6_2_1_addr = r'(' + _ip6_part + ':){2}:' + _ip6_part
+ip6_2_1_addr = Regex(_ip6_2_1_addr)
+# 1:2::4:5:6:7:8
+_ip6_2_5_addr = r'(' + _ip6_part + ':){2}(:' + _ip6_part + r'){5}'
+ip6_2_5_addr = Regex(_ip6_2_5_addr)
+
+# 1:2:3::8
+_ip6_3_1_addr = r'(' + _ip6_part + ':){3}:' + _ip6_part
+ip6_3_1_addr = Regex(_ip6_3_1_addr)
+# 1:2:3::5:6:7:8
+_ip6_3_4_addr = r'(' + _ip6_part + ':){3}(:' + _ip6_part + r'){4}'
+ip6_3_4_addr = Regex(_ip6_3_4_addr)
+
+# 1:2:3:4::8
+_ip6_4_1_addr = r'(' + _ip6_part + ':){4}:' + _ip6_part
+ip6_4_1_addr = Regex(_ip6_4_1_addr)
+# 1:2:3:4::6:7:8
+_ip6_4_3_addr = r'(' + _ip6_part + ':){4}(:' + _ip6_part + r'){3}'
+ip6_4_3_addr = Regex(_ip6_4_3_addr)
+
+# 1:2:3:4:5::8
+_ip6_5_1_addr = r'(' + _ip6_part + ':){5}:' + _ip6_part
+ip6_5_1_addr = Regex(_ip6_5_1_addr)
+# 1:2:3:4:5::7:8
+_ip6_5_2_addr = r'(' + _ip6_part + ':){5}(:' + _ip6_part + r'){2}'
+ip6_5_2_addr = Regex(_ip6_5_2_addr)
+
+# 1:2:3:4:5:6::8
+_ip6_6_1_addr = r'(' + _ip6_part + ':){6}:' + _ip6_part
+ip6_6_1_addr = Regex(_ip6_6_1_addr)
+
+# 1:2:3:4:5:6:7::
+_ip6_7_0_addr = r'(' + _ip6_part + r':){7}:'
+ip6_7_0_addr = Regex(_ip6_7_0_addr)
+
+# fe80::7:8%eth0   (link-local IPv6 addresses with zone index)
+# fe80::7:8%1     (link-local IPv6 addresses with zone index)
+_ip6_ll_zone_index_addr = _ip6_part + r':(:' + _ip6_part + r'){2}' + _ip6_device_index
+ip6_ll_zone_index_addr = _ip6_ll_zone_index_addr
+
+# 2001:db8:3:4::192.0.2.33  64:ff9b::192.0.2.33 (IPv4-Embedded IPv6 Address)
+_ip6_4_0_ip4_addr = r'(' + _ip6_part + r':){4}:([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_4_0_ip4_addr = Regex(_ip6_4_0_ip4_addr)
+_ip6_3_0_ip4_addr = r'(' + _ip6_part + r':){3}:([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_3_0_ip4_addr = Regex(_ip6_3_0_ip4_addr)
+_ip6_2_0_ip4_addr = r'(' + _ip6_part + r':){2}:([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_2_0_ip4_addr = Regex(_ip6_2_0_ip4_addr)
+# ::ffff:255.255.255.255 (IPv4-mapped IPv6 addresses and IPv4-translated addresses)
+_ip6_0_3_ip4_addr = r':(:' + _ip6_part + r'){3}:([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_0_3_ip4_addr = Regex(_ip6_0_3_ip4_addr)
+_ip6_0_2_ip4_addr = r':(:' + _ip6_part + r'){2}:([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_0_2_ip4_addr = Regex(_ip6_0_2_ip4_addr)
+_ip6_0_1_ip4_addr = r':(:' + _ip6_part + r'){1}:([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_0_1_ip4_addr = Regex(_ip6_0_1_ip4_addr)
+# ::255.255.255.255 (IPv4-mapped IPv6 addresses and IPv4-translated addresses)
+_ip6_0_0_ip4_addr = r'::([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_0_0_ip4_addr = Regex(_ip6_0_0_ip4_addr)
+# 2001:db8::2:192.0.2.33  (unknown 2-1 combo)
+_ip6_2_1_ip4_addr = _ip6_part + r':' + _ip6_part + r'::' + _ip6_part + r':([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_2_1_ip4_addr = Regex(_ip6_2_1_ip4_addr)
+# 2001::13f:9:192.8.1.16  (unknown 1-2 combo)
+_ip6_1_2_ip4_addr = _ip6_part + r'::' + _ip6_part + r':' + _ip6_part + ':([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_1_2_ip4_addr = Regex(_ip6_1_2_ip4_addr)
+# 2001::13f:192.8.1.16  (unknown 1-1 combo)
+_ip6_1_1_ip4_addr = _ip6_part + r'::' + _ip6_part + ':([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_1_1_ip4_addr = Regex(_ip6_1_1_ip4_addr)
+# 2001::192.8.1.16  (unknown 1-0 combo)
+_ip6_1_0_ip4_addr = _ip6_part + r'::([0-9]{1,3}\.){3}[0-9]{1,3}'
+ip6_1_0_ip4_addr = Regex(_ip6_1_0_ip4_addr)
+
+_ip6_addr = Combine(
+    ip6_4_0_ip4_addr
+    | ip6_3_0_ip4_addr
+    | ip6_2_1_ip4_addr
+    | ip6_2_0_ip4_addr
+    | ip6_1_2_ip4_addr
+    | ip6_1_1_ip4_addr
+    | ip6_1_0_ip4_addr
+    | ip6_0_3_ip4_addr
+    | ip6_0_2_ip4_addr
+    | ip6_0_1_ip4_addr
+    | ip6_0_0_ip4_addr
+    | ip6_7_0_addr
+    | ip6_6_1_addr
+    | ip6_5_2_addr
+    | ip6_5_1_addr
+    | ip6_4_3_addr
+    | ip6_4_1_addr
+    | ip6_3_4_addr
+    | ip6_3_1_addr
+    | ip6_2_5_addr
+    | ip6_2_1_addr
+    | ip6_1_6_addr
+    | ip6_1_5_addr
+    | ip6_1_4_addr
+    | ip6_1_3_addr
+    | ip6_1_2_addr
+    | ip6_1_1_addr
+    | ip6_1_0_addr
+    | ip6_0_7_addr
+    | ip6_0_1_addr
+    | ip6_0_0_addr
+)
+
+ip6_addr = Combine(_ip6_addr + _ip6_device_index) | _ip6_addr
+
+
+#_ip6_addr = _ipv6_part = Regex(r'[0-9a-fA-F]{1,4}').setName("hex_integer")
+#_full_ipv6_address = (_ipv6_part + (':' + _ipv6_part) * 7).setName("full IPv6 address")
+#_short_ipv6_address = (Optional(_ipv6_part + (':' + _ipv6_part) * (0, 6))
+#                       + "::"
+#                       + Optional(_ipv6_part + (':' + _ipv6_part) * (0, 6))
+#                       ).setName("short IPv6 address")
+#_short_ipv6_address.addCondition(lambda t: sum(1 for tt in t if pyparsing_common.ipv6_part.matches(tt)) < 8)
+#_mixed_ipv6_address = ("::ffff:" + ip4_addr).setName("mixed IPv6 address")
+
+
+#    Group(
+#    Combine(
+#        (
+#            _short_ipv6_address
+#            _mixed_ipv6_address |
+#            _full_ipv6_address
+#        ).setName("IPv6 address")
+#    ).setName('<ip6_addr')
+#    + Optional(ip6_device_index)
+#).setName('<ip6_full_addr>')
 ip6_addr.setName('<ip6_addr>')
 
 # ip46_addr is just plain addressing (without subnet suffix) for IPv4 and IPv6

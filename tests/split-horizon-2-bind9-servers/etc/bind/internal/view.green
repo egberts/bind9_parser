@@ -49,6 +49,7 @@ view green
     forwarders {
             8.8.8.8;  # Google DNS
             8.8.4.4;  # Google DNS
+            2001:1:2::128.0.0.1;
         };
     empty-zones-enable no;
     disable-empty-zone yes;
