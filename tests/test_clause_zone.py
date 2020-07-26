@@ -45,7 +45,7 @@ class TestClauseZone(unittest.TestCase):
         )
 
     def test_isc_clause_zone__clause_zone_standalone_passing(self):
-        test_data = [""" zone "home" IN { type master; file "/var/lib/bind/internal/master/db.home"; allow-update { none; }; };"""]
+        test_data = [""" zone "home" IN { type main; file "/var/lib/bind/internal/main/db.home"; allow-update { none; }; };"""]
         test_clause_stmt_zone = clause_stmt_zone_standalone.copy()
         test_clause_stmt_zone = test_clause_stmt_zone.setWhitespaceChars(' \t')
         test_clause_stmt_zone = test_clause_stmt_zone.ignore(pythonStyleComment)
@@ -56,7 +56,7 @@ class TestClauseZone(unittest.TestCase):
         self.assertTrue(result[0])
         assertParserResultDictTrue(
             clause_stmt_zone_standalone,
-            'zone "home" IN { type master; file "/var/lib/bind/internal/master/db.home"; allow-update { none; }; };',
+            'zone "home" IN { type main; file "/var/lib/bind/internal/main/db.home"; allow-update { none; }; };',
             {
                 'zone': {
                     'allow_update': {
@@ -64,8 +64,8 @@ class TestClauseZone(unittest.TestCase):
                             {'addr': 'none'}
                         ]
                     },
-                   'file': '"/var/lib/bind/internal/master/db.home"',
-                   'type': 'master',
+                   'file': '"/var/lib/bind/internal/main/db.home"',
+                   'type': 'main',
                    'zone_name': '"home"'
                 }
             }
@@ -74,13 +74,13 @@ class TestClauseZone(unittest.TestCase):
     def test_isc_clause_stmt_zone_series_passing(self):
         test_data = """
     zone "home" IN {
-        type master;
-        file "/var/lib/bind/internal/master/db.home";
+        type main;
+        file "/var/lib/bind/internal/main/db.home";
         allow-update { none; };
         };
     zone "1.168.192.in-addr.arpa" IN {
-        type master;
-        file "/var/lib/bind/internal/master/db.ip4.1.168.192";
+        type main;
+        file "/var/lib/bind/internal/main/db.ip4.1.168.192";
         allow-update {
             key DDNS_UPDATER;
             };
@@ -88,15 +88,15 @@ class TestClauseZone(unittest.TestCase):
         notify no;
         };
     zone "localhost" IN {
-        type master;
-        file "/var/lib/bind/internal/master/db.localhost";
+        type main;
+        file "/var/lib/bind/internal/main/db.localhost";
         allow-update { none; };
         forwarders { };
         notify no;
         };
     zone "0.0.127.in-addr.arpa" IN {
-        type master;
-        file "/var/lib/bind/internal/master/db.ip4.127";
+        type main;
+        file "/var/lib/bind/internal/main/db.ip4.127";
         allow-update { none; };
         forwarders { };
         notify no;
@@ -104,7 +104,7 @@ class TestClauseZone(unittest.TestCase):
     zone "." IN {
         type hint;
         delegation-only yes;
-        file "/var/lib/bind/internal/master/db.cache.home";
+        file "/var/lib/bind/internal/main/db.cache.home";
         };
     """
     # zone_all_statements_series.
@@ -112,29 +112,29 @@ class TestClauseZone(unittest.TestCase):
             clause_stmt_zone_series,
             test_data,
             {'zones': [{'zone': {'allow_update': {'aml': [{'addr': 'none'}]},
-                                 'file': '"/var/lib/bind/internal/master/db.home"',
-                                 'type': 'master',
+                                 'file': '"/var/lib/bind/internal/main/db.home"',
+                                 'type': 'main',
                                  'zone_name': '"home"'}},
                        {'zone': {'allow_update': {'aml': [{'key_id': ['DDNS_UPDATER']}]},
-                                 'file': '"/var/lib/bind/internal/master/db.ip4.1.168.192"',
+                                 'file': '"/var/lib/bind/internal/main/db.ip4.1.168.192"',
                                  'fowarders': [[]],
                                  'notify': 'no',
-                                 'type': 'master',
+                                 'type': 'main',
                                  'zone_name': '"1.168.192.in-addr.arpa"'}},
                        {'zone': {'allow_update': {'aml': [{'addr': 'none'}]},
-                                 'file': '"/var/lib/bind/internal/master/db.localhost"',
+                                 'file': '"/var/lib/bind/internal/main/db.localhost"',
                                  'fowarders': [[]],
                                  'notify': 'no',
-                                 'type': 'master',
+                                 'type': 'main',
                                  'zone_name': '"localhost"'}},
                        {'zone': {'allow_update': {'aml': [{'addr': 'none'}]},
-                                 'file': '"/var/lib/bind/internal/master/db.ip4.127"',
+                                 'file': '"/var/lib/bind/internal/main/db.ip4.127"',
                                  'fowarders': [[]],
                                  'notify': 'no',
-                                 'type': 'master',
+                                 'type': 'main',
                                  'zone_name': '"0.0.127.in-addr.arpa"'}},
                        {'zone': {'delegation-only': 'yes',
-                                 'file': '"/var/lib/bind/internal/master/db.cache.home"',
+                                 'file': '"/var/lib/bind/internal/main/db.cache.home"',
                                  'type': 'hint',
                                  'zone_name': '"."'}}]}
         )
@@ -147,22 +147,22 @@ zone "." {
   file "root.servers";
 };
 zone "example.com" in{
-  type master;
-  file "master/master.example.com";
+  type main;
+  file "main/main.example.com";
   allow-transfer {192.168.23.1;192.168.23.2;};
 };
 zone "localhost" in{
-  type master;
-  file "master.localhost";
+  type main;
+  file "main.localhost";
   allow-update{none;};
 };
 zone "0.0.127.in-addr.arpa" in{
-  type master;
+  type main;
   file "localhost.rev";
   allow-update{none;};
 };
 zone "0.168.192.IN-ADDR.ARPA" in{
-  type master;
+  type main;
   file "192.168.0.rev";
 };"""
         expected_result = { 'zones': [ { 'zone': { 'file': '"root.servers"',
@@ -170,19 +170,19 @@ zone "0.168.192.IN-ADDR.ARPA" in{
                          'zone_name': '"."'}},
              { 'zone': { 'allow_transfer': { 'aml': [ { 'addr': '192.168.23.1'},
                                                       { 'addr': '192.168.23.2'}]},
-                         'file': '"master/master.example.com"',
-                         'type': 'master',
+                         'file': '"main/main.example.com"',
+                         'type': 'main',
                          'zone_name': '"example.com"'}},
              { 'zone': { 'allow_update': { 'aml': [ { 'addr': 'none'}]},
-                         'file': '"master.localhost"',
-                         'type': 'master',
+                         'file': '"main.localhost"',
+                         'type': 'main',
                          'zone_name': '"localhost"'}},
              { 'zone': { 'allow_update': { 'aml': [ { 'addr': 'none'}]},
                          'file': '"localhost.rev"',
-                         'type': 'master',
+                         'type': 'main',
                          'zone_name': '"0.0.127.in-addr.arpa"'}},
              { 'zone': { 'file': '"192.168.0.rev"',
-                         'type': 'master',
+                         'type': 'main',
                          'zone_name': '"0.168.192.IN-ADDR.ARPA"'}}]}
         assertParserResultDictTrue(
             clause_stmt_zone_series,

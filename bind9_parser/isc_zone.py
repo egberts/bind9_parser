@@ -24,7 +24,7 @@ from bind9_parser.isc_rr import rr_type_series, rr_type_list_series
 from bind9_parser.isc_domain import domain_generic_fqdn,\
     quotable_domain_generic_fqdn, quoted_domain_generic_fqdn, rr_fqdn_w_absolute
 from bind9_parser.isc_viewzone import viewzone_stmt_database, viewzone_stmt_dlz
-# from bind9_parser.isc_clause_masters import clause_stmt_masters_standalone
+# from bind9_parser.isc_clause_mains import clause_stmt_mains_standalone
 
 
 
@@ -90,13 +90,13 @@ zone_stmt_journal = (
     + semicolon
 )
 
-# masters
-# Note: Not the same syntax as clause_stmt_masters_series
+# mains
+# Note: Not the same syntax as clause_stmt_mains_series
 #
-# Only found in zone-stub or zone-slave
-# masters [ port integer ] [ dscp integer ]
+# Only found in zone-stub or zone-subordinate
+# mains [ port integer ] [ dscp integer ]
 #         {
-#             ( masters
+#             ( mains
 #               | ipv4_address [ port integer ]
 #               | ipv6_address [ port integer ]
 #             )
@@ -104,8 +104,8 @@ zone_stmt_journal = (
 #             ;
 #             ...
 #         };
-master_name = key_id  # TODO make a master type here (instead of key_id)
-zone_masters_set = (
+main_name = key_id  # TODO make a main type here (instead of key_id)
+zone_mains_set = (
     (
         (
             ungroup(
@@ -116,32 +116,32 @@ zone_masters_set = (
                     ip6_addr
                     - Optional(inet_ip_port_keyword_and_number_element('ip_port'))
             )('ip6')
-            ^ master_name('master_name')
+            ^ main_name('main_name')
         )('')
         - Optional(key_id_keyword_and_name_pair)
     )('')
     + semicolon
 )('')
 
-zone_masters_series = (
+zone_mains_series = (
     OneOrMore(
         Group(
-            zone_masters_set('')
+            zone_mains_set('')
         )('')
-    )('masters_group')
+    )('mains_group')
 )
 
-# 'masters' clause has a name field for the 1st argument;
-#     'masters' statement in the zone clause does not
-zone_stmt_masters = (
+# 'mains' clause has a name field for the 1st argument;
+#     'mains' statement in the zone clause does not
+zone_stmt_mains = (
     Group(
-        Keyword('masters').suppress()
+        Keyword('mains').suppress()
         + Optional(inet_ip_port_keyword_and_number_element)
         + Optional(inet_dscp_port_keyword_and_number_element)
         - lbrack
-        + OneOrMore(zone_masters_set)
+        + OneOrMore(zone_mains_set)
         + rbrack
-    )('masters')
+    )('mains')
     + semicolon
 )
 
@@ -215,12 +215,12 @@ zone_stmt_type = (
         | Literal('hint')
         | Literal('in-view')  # Not < 9.1
         | (
-            Literal('master')
+            Literal('main')
             | Literal('primary')
         )
         | Literal('redirect')
         | (
-            Literal('slave')
+            Literal('subordinate')
             | Literal('secondary')
         )
         | Literal('static-stub')
@@ -352,12 +352,12 @@ zone_stmt_use_id_pool = (
 )
 
 ################### Multiple-statement ##########################
-zone_multiple_stmt_masters = (
+zone_multiple_stmt_mains = (
     ZeroOrMore(
         (
-            zone_stmt_masters('')  # blank this label so that a multiple group can assume this label
+            zone_stmt_mains('')  # blank this label so that a multiple group can assume this label
         )('')
-    )('masters')
+    )('mains')
 )
 
 # Keywords are in dictionary-order, but with longest pattern as having been listed firstly
@@ -370,7 +370,7 @@ zone_statements_set = (
     | zone_stmt_ixfr_base
     | zone_stmt_ixfr_from_differences
     | zone_stmt_journal
-    | zone_stmt_masters
+    | zone_stmt_mains
     | zone_stmt_pubkey
     | zone_stmt_server_addresses
     | zone_stmt_server_names

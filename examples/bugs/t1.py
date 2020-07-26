@@ -313,7 +313,7 @@ mandatory_clause_stmt_set = clause_stmt_options
 # TODO: Unable to enforce mixed mode 1-* and 1-1 clauses (external logic required here?)
 # TODO: BUG https://github.com/pyparsing/pyparsing/issues/167
 
-# clause_statements: Bind9 master Pyparsing element
+# clause_statements: Bind9 main Pyparsing element
 clause_statements = ZeroOrMore(
     optional_clause_stmt_set
     | mandatory_clause_stmt_set

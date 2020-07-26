@@ -17,7 +17,7 @@ from bind9_parser.isc_clause_dyndb import clause_stmt_dyndb_standalone
 from bind9_parser.isc_clause_key import clause_stmt_key_standalone
 from bind9_parser.isc_clause_logging import clause_stmt_logging_standalone
 from bind9_parser.isc_clause_managed_keys import clause_stmt_managed_keys_standalone
-from bind9_parser.isc_clause_masters import clause_stmt_masters_standalone
+from bind9_parser.isc_clause_mains import clause_stmt_mains_standalone
 from bind9_parser.isc_clause_options import clause_stmt_options
 from bind9_parser.isc_clause_server import clause_stmt_server_standalone
 from bind9_parser.isc_clause_trusted_keys import clause_stmt_trusted_keys_standalone
@@ -37,7 +37,7 @@ optional_clause_stmt_set = (
         | clause_stmt_logging_standalone
         #    | (clause_lwres + semicolon)
         | clause_stmt_managed_keys_standalone
-        | clause_stmt_masters_standalone
+        | clause_stmt_mains_standalone
         | clause_stmt_server_standalone
         | clause_stmt_trusted_keys_standalone
         | clause_stmt_view_standalone

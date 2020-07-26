@@ -42,7 +42,7 @@ class TestClauseView(unittest.TestCase):
 
     def test_isc_clause_view_passing(self):
         test_data = [
-            """ view chaos { match-clients { any; }; zone "bind" { type master; file "/var/lib/bind/internal/master/db.bind"; allow-update { none; }; allow-transfer { none; }; }; };""",
+            """ view chaos { match-clients { any; }; zone "bind" { type main; file "/var/lib/bind/internal/main/db.bind"; allow-update { none; }; allow-transfer { none; }; }; };""",
             'view xyz { database this_one; dlz that_one; };'
             ]
         test_clause_stmt_view = clause_stmt_view_standalone.copy()
@@ -65,7 +65,7 @@ class TestClauseView(unittest.TestCase):
                        'view_name': 'green'}]}
         )
     def test_isc_clause_view_statements_series_passing(self):
-        test_data = [""" zone "home" IN { type master; file "/var/lib/bind/internal/master/db.home"; allow-update { none; }; };"""]
+        test_data = [""" zone "home" IN { type main; file "/var/lib/bind/internal/main/db.home"; allow-update { none; }; };"""]
         result = view_all_statements_series.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
@@ -90,13 +90,13 @@ class TestClauseView(unittest.TestCase):
         };
     trusted-keys { "example.net." 243 1 3 "ASDASDASDASD+ASDASDASDASD/ASDASDASSD=="; };
     zone "home" IN {
-        type master;
-        file "/var/lib/bind/internal/master/db.home";
+        type main;
+        file "/var/lib/bind/internal/main/db.home";
         allow-update { none; };
         };
     zone "1.168.192.in-addr.arpa" IN {
-        type master;
-        file "/var/lib/bind/internal/master/db.ip4.1.168.192";
+        type main;
+        file "/var/lib/bind/internal/main/db.ip4.1.168.192";
         allow-update {
             key DDNS_UPDATER;
             };
@@ -104,15 +104,15 @@ class TestClauseView(unittest.TestCase):
         notify no;
         };
     zone "localhost" IN {
-        type master;
-        file "/var/lib/bind/internal/master/db.localhost";
+        type main;
+        file "/var/lib/bind/internal/main/db.localhost";
         allow-update { none; };
         forwarders { };
         notify no;
         };
     zone "0.0.127.in-addr.arpa" IN {
-        type master;
-        file "/var/lib/bind/internal/master/db.ip4.127";
+        type main;
+        file "/var/lib/bind/internal/main/db.ip4.127";
         allow-update { none; };
         forwarders { };
         notify no;
@@ -120,7 +120,7 @@ class TestClauseView(unittest.TestCase):
     zone "." IN {
         type hint;
         delegation-only yes;
-        file "/var/lib/bind/internal/master/db.cache.home";
+        file "/var/lib/bind/internal/main/db.cache.home";
         };
     """
     # view_all_statements_series.
@@ -145,7 +145,7 @@ class TestClauseView(unittest.TestCase):
                                'flags': 243,
                                'protocol_id': 1}],
              'zone': [{'delegation-only': 'yes',
-                       'file': '"/var/lib/bind/internal/master/db.cache.home"',
+                       'file': '"/var/lib/bind/internal/main/db.cache.home"',
                        'type': 'hint',
                        'zone_name': '"."'}]}
         )

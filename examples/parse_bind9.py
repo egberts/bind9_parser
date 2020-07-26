@@ -71,9 +71,9 @@ def process_entire_file_content(a_content_data):
     g_include_directive.addParseAction(read_include_contents)
 
     # Now perform the parsing action against that large string
-    master_config_content = g_include_directive.transformString(a_content_data)
+    main_config_content = g_include_directive.transformString(a_content_data)
 
-    return master_config_content
+    return main_config_content
 
 
 def suppress_key_secrets(st, locn, toks):
@@ -110,7 +110,7 @@ def read_include_contents(st, locn, toks):
         print('Found:', include_file_ref)
     g_include_depth = g_include_depth + 1
 
-    # Add a comment line into expanded master include file
+    # Add a comment line into expanded main include file
     # for later post-error analysis
     # Do not wrap C-style comment ourselves of this same line because
     #   original line may too have this "/* ... */"

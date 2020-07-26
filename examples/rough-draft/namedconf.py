@@ -31,7 +31,7 @@ class NamedConf(object):
                 {
                     'version': 'Still a funky DNS, no?',
                     'listen-on': None,
-                    'type': 'master',
+                    'type': 'main',
                     'notify': 'explicit',
                     'test_default_none': None,
                     'test_default': "usable",
@@ -233,7 +233,7 @@ class NamedConf(object):
                           "specify '%s' clause exactly once", user_defined_topblock)
                     return False
 
-        # Master scan, collect all info
+        # Main scan, collect all info
         found_zone = False
         found_view = False
         if 'zone' in config:
@@ -247,7 +247,7 @@ class NamedConf(object):
         view_supported = self.ncgv.is_current_version_keyword('view')
 
         if view_supported and zone_supported:
-            # If a master/slave/stub/hint, then enforce a presence of either 'zone' or 'view'
+            # If a main/subordinate/stub/hint, then enforce a presence of either 'zone' or 'view'
             if not found_zone and not found_view:
                 print("ERROR6: NamedConf.integrity_check: Need at least one 'view' or 'zone' keyword.")
                 return False
@@ -657,7 +657,7 @@ if __name__ == "__main__":
     for a in clause['options']['listen_on']:
         print("    listen_on:", a)
     print("2nd listen:", clause['options']['listen_on'][1])
-    clause['view']['red'] = {'type': 'slave'}
+    clause['view']['red'] = {'type': 'subordinate'}
     print("red_type:", clause['view']['red']['type'])
     print("clause:", clause)
     print("operator?:", clause['options']['listen_on'][0]['not_operator'])

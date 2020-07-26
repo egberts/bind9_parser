@@ -139,7 +139,7 @@ class TestClauseControls(unittest.TestCase):
             '* * port 954 disallow { 127.0.0.2; 127.0.0.3;} keys { public-rndc-key; };',
             '* * port 954 allow 127.0.0.2; 127.0.0.3; keys { public-rndc-key; };',
             '* * port 954 allow { hostname; 127.0.0.3;} keys { public-rndc-key; };',
-            '* * port 954 allow { 127.0.0.2; 127.0.0.3;} masterkeys { public-rndc-key; };',
+            '* * port 954 allow { 127.0.0.2; 127.0.0.3;} mainkeys { public-rndc-key; };',
             '* * port 954 allow { 127.0.0.2; 127.0.0.3;} keys { public&-rndc-key; };',
             '* * port 954 allow { 127.0.0.2; 127.0.0.3;} keys { public&-rndc-key; }',
         ]

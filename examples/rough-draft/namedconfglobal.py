@@ -33,7 +33,7 @@ abc = {
           'introduced': '9.5',  # introduced ON that version, string-format-only, dotted notation
           'obsoleted': '',  # obsoleted ON that version, presense means immediately obsoleted
           'topic': 'recursive-follow',  # free-format
-          'server-type': 'master'|'slave'|  # TODO a work-in-progress
+          'server-type': 'main'|'subordinate'|  # TODO a work-in-progress
                          'authoritative-or-noncaching-only' |
                          'caching' |
                          'authoritative' |
@@ -111,7 +111,7 @@ g_nc_keywords['dlz'] = \
         'topblock': False,
         'found-in': {'view', 'zone'},  # also at top-statement-level
         'topic': 'dlz, redirect',
-        'server-type': 'master, slave, redirect, primary, secondary',
+        'server-type': 'main, subordinate, redirect, primary, secondary',
         'comment': """
 """,
     }
@@ -138,7 +138,7 @@ g_nc_keywords['include'] = \
         'validity': {'function': 'path_name'},
         'occurs-multiple-times': True,
         'topblock': True,
-        'found-in': {'options', 'view', 'zone', 'server', 'masters', 'key'},
+        'found-in': {'options', 'view', 'zone', 'server', 'mains', 'key'},
         'introduced': '8.1',
         'topic': '',
         'server-type': '',
@@ -191,15 +191,15 @@ g_nc_keywords['managed-keys'] = \
         'comment': '',
     }
 
-# This is top-level 'masters' only which is
-# not to be confused with 'zone' 'masters' option.
-g_nc_keywords['masters'] = \
+# This is top-level 'mains' only which is
+# not to be confused with 'zone' 'mains' option.
+g_nc_keywords['mains'] = \
     {
         'occurs-multiple-times': True,
         'topblock': True,
-        'found-in': {'', 'zone'},  # Only found in zone-slave/zone-stub
+        'found-in': {'', 'zone'},  # Only found in zone-subordinate/zone-stub
         'user-defined-indice': True,
-        'output-order-id': 8,  # masters should be after 'view'/'zone'
+        'output-order-id': 8,  # mains should be after 'view'/'zone'
         'topic': 'zone transfer',
         'introduced': "4.8",
     }
@@ -220,7 +220,7 @@ g_nc_keywords['server'] = \
         'topblock': True,
         'found-in': {'', 'view'},  # also at top-statement-level
         'dict-index-by-name': True,  # indexed by ip46_addr_or_prefix
-        'output-order-id': 9,  # 'server' should be AFTER 'masters'
+        'output-order-id': 9,  # 'server' should be AFTER 'mains'
         'topic': 'view, server',
         'introduced': "8.1",
     }
@@ -371,7 +371,7 @@ data section of the reply will be filled in using data
 from other authoritative zones and from the cache. In
 some situations this is undesirable, such as when there
 is concern over the correctness of the cache, or in
-servers where slave zones may be added and modified by
+servers where subordinate zones may be added and modified by
 untrusted third parties. Also, avoiding the search
 for this additional data will speed up server
 operations at the possible expense of additional
@@ -422,12 +422,12 @@ auth    cache   BIND Behaviour
 yes     yes     BIND will follow out of zone records e.g. it will
             follow the MX record specifying mail.example.net
             for zone example.com for which it is authoritative
-            (master or slave). Default behaviour.
+            (main or subordinate). Default behaviour.
 no      no      Cache disabled. BIND will NOT follow out-of-zone
             records even if it is in the cache e.g. it will NOT
             follow the MX record specifying mail.example.net for
             zone example.com for which it is authoritative
-            (master or slave). It will return REFUSED for the
+            (main or subordinate). It will return REFUSED for the
             out-of-zone record.
 yes     no      Cache disabled. BIND will follow out-of-zone records
             but since this requires the cache (which is disabled)
@@ -473,12 +473,12 @@ auth    cache   BIND Behaviour
 yes     yes     BIND will follow out of zone records e.g. it will
             follow the MX record specifying mail.example.net
             for zone example.com for which it is authoritative
-            (master or slave). Default behaviour.
+            (main or subordinate). Default behaviour.
 no      no      Cache disabled. BIND will NOT follow out-of-zone
             records even if it is in the cache e.g. it will NOT
             follow the MX record specifying mail.example.net for
             zone example.com for which it is authoritative
-            (master or slave). It will return REFUSED for the
+            (main or subordinate). It will return REFUSED for the
             out-of-zone record.
 yes     no      Cache disabled. BIND will follow out-of-zone records
             but since this requires the cache (which is disabled)
@@ -502,7 +502,7 @@ g_nc_keywords['allow-new-zones'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.8.0',
         'topic': 'rndc, zone, ddns',
-        'server-type': 'slave',
+        'server-type': 'subordinate',
         'comment-copyright': 'Copyright (C) 2004-2016 Internet Systems Consortium, Inc. ("ISC");'
                              'Copyright (C) 2009 Zytrax, Inc.',
         'comment': """If yes, then zones can be added at runtime via 'rndc addzone', 'rndc modzone' or deleted via 'rndc delzone'. The default is no.""",
@@ -510,23 +510,23 @@ g_nc_keywords['allow-new-zones'] = \
 
 g_nc_keywords['allow-notify'] = \
     {
-        'default': {0: {'masters': 'any', 'operator_not': False}, },
+        'default': {0: {'mains': 'any', 'operator_not': False}, },
         'validity': {'function': "address_match_nosemicolon"},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.1.0',
         'topic': 'access control, recursive-follow',
-        'server-type': 'slave, mirror, secondary',
+        'server-type': 'subordinate, mirror, secondary',
         'comment-copyright': 'Copyright (C) 2004-2016 Internet Systems Consortium, Inc. ("ISC");'
                              'Copyright (C) 2009 Zytrax, Inc.',
         'comment': """Specifies which hosts are allowed to notify this
-server, a slave, of zone changes in addition to the
-zone masters. allow-notify may also be specified in
+server, a subordinate, of zone changes in addition to the
+zone mains. allow-notify may also be specified in
 the zone statement, in which case it overrides the
 options allow-notify statement. It is only meaningful
-for a slave zone.
+for a subordinate zone.
 
 If not specified, the default is to process notify
-messages only from a zones master.
+messages only from a zones main.
 """,
     }
 
@@ -536,11 +536,11 @@ g_nc_keywords['allow-query'] = \
         'validity': {'function': "address_match_list"},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '8.1',
-        # In 8.2, only found in ['zone']['type']['master']
-        # In 8.2, only found in ['zone']['type']['slave']
+        # In 8.2, only found in ['zone']['type']['main']
+        # In 8.2, only found in ['zone']['type']['subordinate']
         # In 8.2, only found in ['zone']['type']['stub']
         'topic': 'active, access control, redirect',
-        'server-type': 'active, public, master, slave, mirror, stub, static-stub, redirect, primary, secondary',
+        'server-type': 'active, public, main, subordinate, mirror, stub, static-stub, redirect, primary, secondary',
         'comment-copyright': """Copyright (C) 2004-2016 Internet Systems Consortium,
 Inc. ("ISC"); Copyright (C) 2009 Zytrax, Inc.'""",
         'comment': """Specifies which hosts are allowed to ask ordinary
@@ -590,7 +590,7 @@ g_nc_keywords['allow-query-on'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.5.0',
         'topic': 'access control, redirect',
-        'server-type': 'master, slave, mirror, stub, static-stub, redirect, primary, secondary',
+        'server-type': 'main, subordinate, mirror, stub, static-stub, redirect, primary, secondary',
         'comment': """Specifies which local addresses can accept ordinary
 DNS questions. This makes it possible, for instance, to
 allow queries on internal-facing interfaces but disallow
@@ -645,11 +645,11 @@ g_nc_keywords['allow-transfer'] = \
         'validity': {'function': 'address_match_list'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '8.1',
-        # In 8.2, only found in ['zone']['type']['master']
-        # In 8.2, only found in ['zone']['type']['slave']
+        # In 8.2, only found in ['zone']['type']['main']
+        # In 8.2, only found in ['zone']['type']['subordinate']
         # In 8.2, only found in ['zone']['type']['stub']
         'topic': 'server-zone-transfer-permission, access control',
-        'server-type': 'authoritative, master, slave, mirror, stub, primary, secondary',
+        'server-type': 'authoritative, main, subordinate, mirror, stub, primary, secondary',
         'comment': """Specifies which hosts are allowed to receive zone
 transfers from the server.  allow-transfer may also be
 specified in the zone statement, in which case it
@@ -665,15 +665,15 @@ g_nc_keywords['allow-update'] = \
         'validity': {'function': 'address_match_list'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '8.2',  # TODO earliest detected 8.2
-        # In 8.2, only found in ['zone']['type']['master']
-        # In 8.2, not found in ['zone']['type']['slave']
+        # In 8.2, only found in ['zone']['type']['main']
+        # In 8.2, not found in ['zone']['type']['subordinate']
         # In 8.2, not found in ['zone']['type']['stub']
         # In 8.2, not found in ['zone']['type']['forward']
         # In 8.2, not found in ['zone']['type']['hint']
         'topic': 'dynamic-dns, dynamic zone update, access control',
-        'server-type': 'authoritative, master, mirror, primary',
+        'server-type': 'authoritative, main, mirror, primary',
         'comment': """Specifies which hosts are allowed to submit Dynamic
-DNS updates for master zones.  The default is to deny
+DNS updates for main zones.  The default is to deny
 updates from all hosts.  Note that allowing updates
 based on the requestor's IP address is insecure;"""
     }
@@ -685,9 +685,9 @@ g_nc_keywords['allow-update-forwarding'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.0.0',
         'topic': 'dynamic-dns, access control',
-        'server-type': 'authoritative, master, slave, mirror, primary, secondary',
+        'server-type': 'authoritative, main, subordinate, mirror, primary, secondary',
         'comment': """Specifies which hosts are allowed to submit Dynamic
-DNS updates for master zones.
+DNS updates for main zones.
 
 The default is to deny updates from all hosts.
 
@@ -717,13 +717,13 @@ g_nc_keywords['also-notify'] = \
         'default': {},
         'validity': {'function': "ip_addr_list"},
         'found-in': {'options', 'view', 'zone', 'server'},
-        # In 8.2, only found in ['zone']['type']['master']
-        # In 8.2, only found in ['zone']['type']['slave']
+        # In 8.2, only found in ['zone']['type']['main']
+        # In 8.2, only found in ['zone']['type']['subordinate']
         # In 8.2, only found in ['zone']['type']['stub']
         # TODO 9.15, no longer found under 'server'
         'introduced': '8.2',
         'topic': 'zone transfer, TSIG, DSCP',
-        'server-type': 'master, slave, mirror, stub, primary, secondary',
+        'server-type': 'main, subordinate, mirror, stub, primary, secondary',
         'comment': """Defines a global list of IP addresses of name
 servers that are also sent NOTIFY messages whenever a
 fresh copy of the zone is loaded, in addition to the
@@ -735,7 +735,7 @@ port other than the default of 53. An optional TSIG key
 can also be specified with each address to cause the
 notify messages to be signed; this can be useful when
 sending notifies to multiple views. In place of explicit
-addresses, one or more named masters lists can be used.
+addresses, one or more named mains lists can be used.
 If an also-notify list is given in a zone statement, it
 will override the options also-notify statement. When a
 zone notify statement is set to no, the IP addresses in
@@ -743,7 +743,7 @@ the global alsonotify list will not be sent NOTIFY
 messages for that zone. The default is the empty list
 (no global notification list).
 Clause 'key' introduced in v9.9.0.
-Master name permitted in v9.9.0. """,
+Main name permitted in v9.9.0. """,
     }
 
 g_nc_keywords['alt-transfer-source'] = \
@@ -754,10 +754,10 @@ g_nc_keywords['alt-transfer-source'] = \
         # [Opt, View, Zone]
         'introduced': '9.3.0',
         'obsoleted': '9.10',
-        'topic': 'slave, zone transfer, DSCP',
-        'server-type': 'master, slave, mirror, primary, secondary',
+        'topic': 'subordinate, zone transfer, DSCP',
+        'server-type': 'main, subordinate, mirror, primary, secondary',
         'comment':
-"""Applies to slave zones only.  Defines an alternative
+"""Applies to subordinate zones only.  Defines an alternative
 local IP address to be used for inbound zone transfers
 by the server if that defined by transfer-source
 (transfer-source-v6) fails and use-alt-transfer-source
@@ -779,10 +779,10 @@ g_nc_keywords['alt-transfer-source-v6'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.3.0',
         'obsoleted': '9.10',
-        'topic': 'slave, zone transfer',
-        'server-type': 'master, slave, mirror, primary, secondary',
+        'topic': 'subordinate, zone transfer',
+        'server-type': 'main, subordinate, mirror, primary, secondary',
         'comment':
-"""Applies to slave zones only.  Defines an alternative
+"""Applies to subordinate zones only.  Defines an alternative
 local IP address to be used for inbound zone transfers
 by the server if that defined by transfer-source
 (transfer-source-v6) fails and use-alt-transfer-source
@@ -907,7 +907,7 @@ g_nc_keywords['auto-dnssec'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.7.0', # zone: 9.7.0
         'topic': 'dnssec',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': """Zones configured for dynamic DNS may use this
 option to allow varying levels of automatic DNSSEC key
 management. There are three possible settings:
@@ -1081,8 +1081,8 @@ g_nc_keywords['check-dup-records'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.7.0',
         'topic': 'validation',
-        'server-type': 'master, primary',
-        'comment': """Check master zones for records that are treated as different by DNSSEC but are semantically
+        'server-type': 'main, primary',
+        'comment': """Check main zones for records that are treated as different by DNSSEC but are semantically
 equal in plain DNS. The default is to warn. Other possible values are fail and
 ignore.""",
     }
@@ -1094,8 +1094,8 @@ g_nc_keywords['check-integrity'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'validation',
-        'server-type': 'master, primary',
-        'comment': """Perform post load zone integrity checks on master
+        'server-type': 'main, primary',
+        'comment': """Perform post load zone integrity checks on main
 zones. This checks that MX and SRV records refer to
 address (A or AAAA) records and that glue address
 records exist for delegated zones. For MX and SRV
@@ -1122,7 +1122,7 @@ g_nc_keywords['check-mx'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'SMTP, validation',
-        'server-type': 'master, primary',
+        'server-type': 'main, primary',
         'comment': """Check whether the MX record appears to refer to a IP
 address. The default is to warn.
 Other possible values are fail and ignore.""",
@@ -1135,7 +1135,7 @@ g_nc_keywords['check-mx-cname'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'SMTP, validation',
-        'server-type': 'master, primary',
+        'server-type': 'main, primary',
         'comment': """If check-integrity is set then fail, warn or ignore
 MX records that refer to CNAMES.
 The default is to warn.""",
@@ -1143,24 +1143,24 @@ The default is to warn.""",
 
 g_nc_keywords['check-names'] = \
     {
-        'default': 'primary',  # change from 'master' in v9.13
-        'validity': {'regex': r"(primary|master|slave|secondary|response)\s+(warn|fail|ignore)"},
+        'default': 'primary',  # change from 'main' in v9.13
+        'validity': {'regex': r"(primary|main|subordinate|secondary|response)\s+(warn|fail|ignore)"},
         'found-in': {'options', 'view', 'zone'},
         'occurs-multiple-times': True,
-        # In 8.2, found in ['zone']['type']['master']
-        # In 8.2, found in ['zone']['type']['slave']
+        # In 8.2, found in ['zone']['type']['main']
+        # In 8.2, found in ['zone']['type']['subordinate']
         # In 8.2, found in ['zone']['type']['stub']
         # In 8.2, found in ['zone']['type']['hint']
         'introduced': '8.1',
         'topic': 'validation',
-        'server-type': 'master, slave, mirror, hint, stub, primary, secondary',
+        'server-type': 'main, subordinate, mirror, hint, stub, primary, secondary',
         'comment': """This option is used to restrict the character set and
-syntax of certain domain names in master files and/or
+syntax of certain domain names in main files and/or
 DNS responses received from the network.
 The default varies according to usage area.
 
-For master zones the default is fail.
-For slave zones the default is warn.
+For main zones the default is fail.
+For subordinate zones the default is warn.
 For answers received from the network (response) the
 default is ignore.
 
@@ -1183,7 +1183,7 @@ g_nc_keywords['check-sibling'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'validation',
-        'server-type': 'master, primary',
+        'server-type': 'main, primary',
         'comment': """When performing integrity checks, also check that
 sibling glue exists. The default is yes.""",
     }
@@ -1195,7 +1195,7 @@ g_nc_keywords['check-spf'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '',
         'topic': 'validation',
-        'server-type': 'master, primary',
+        'server-type': 'main, primary',
         'comment': """If check-integrity is set then check that there is a
 TXT Sender Policy Framework record present (starts
 with "v=spf1") if there is an SPF record present.
@@ -1209,7 +1209,7 @@ g_nc_keywords['check-srv-cname'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'validation',
-        'server-type': 'master, primary',
+        'server-type': 'main, primary',
         'comment': """If check-integrity is set then fail, warn or
 ignore SRV records that refer to CNAMES.
 The default is to warn.""",
@@ -1222,12 +1222,12 @@ g_nc_keywords['check-wildcard'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'validation',
-        'server-type': 'master, primary',
+        'server-type': 'main, primary',
         'comment': """This option is used to check for non-terminal
 wildcards. The use of non-terminal wildcards is
 almost always as a result of a failure to understand
 the wildcard matching algorithm (RFC 1034). This
-option affects master zones. The default (yes) is to
+option affects main zones. The default (yes) is to
 check for non-terminal wildcards and issue a warning.""",
     }
 
@@ -1269,7 +1269,7 @@ g_nc_keywords['clients-per-query'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.5.0',
         'topic': 'server resource',
-        'server-type': 'master',
+        'server-type': 'main',
         'comment':
 """These set the initial value (minimum) and maximum
 number of recursive simultaneous clients for any given
@@ -1343,7 +1343,7 @@ g_nc_keywords['database'] = \
         'introduced': '9.1.0',
         'obsoleted': '9.11.0',
         'topic': 'operating-system, database',
-        'server-type': 'master, slave, mirror, stub, primary, secondary',
+        'server-type': 'main, subordinate, mirror, stub, primary, secondary',
         'comment': '',
     }
 
@@ -1438,10 +1438,10 @@ g_nc_keywords['dialup'] = \
         'validity': {'regex': r'(yes|no|notify|refresh|passive|notify\-passive)'},
         # In 8.2 to 9.0, 'validity': r'(yes|no)'
         'found-in': {'options', 'view', 'zone'},
-        # In 8.2, only found in ['zone']['type']['master']
+        # In 8.2, only found in ['zone']['type']['main']
         'introduced': '8.2',
         'topic': 'operating-system, slow-modem',
-        'server-type': 'master, slave, stub, primary, secondary',
+        'server-type': 'main, subordinate, stub, primary, secondary',
         'comment': """If yes, then the server treats all zones as if they
 are doing zone transfers across a dial-ondemand
 dialup link, which can be brought up by traffic
@@ -1458,17 +1458,17 @@ The dialup option may also be specified in the view
 and zone statements, in which case it overrides the
 global dialup option.
 
-If the zone is a master zone, then the server will
-send out a NOTIFY request to all the slaves (default).
+If the zone is a main zone, then the server will
+send out a NOTIFY request to all the subordinates (default).
 This should trigger the zone serial number check in
-the slave (providing it supports NOTIFY) allowing
-the slave to verify the zone while the connection
+the subordinate (providing it supports NOTIFY) allowing
+the subordinate to verify the zone while the connection
 is active.
 
 The set of servers to which NOTIFY is sent can be
 controlled by notify and also-notify.
 
-If the zone is a slave or stub zone, then the server
+If the zone is a subordinate or stub zone, then the server
 will suppress the regular "zone up to date" (refresh)
 queries and only perform them when the
 heartbeat-interval expires in addition to sending
@@ -1695,7 +1695,7 @@ g_nc_keywords['dnskey-sig-validity'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.13',
         'topic': 'dnssec, tuning',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': '',
     }
 
@@ -1738,7 +1738,7 @@ g_nc_keywords['dnssec-dnskey-kskonly'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.7.0',
         'topic': 'dnssec',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': """When this option and update-check-ksk are
 both set to yes, only key-signing keys (that is, keys with
 the KSK bit set) will be used to sign the DNSKEY RRset at
@@ -1771,7 +1771,7 @@ g_nc_keywords['dnssec-loadkeys-interval'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.9.0',
         'topic': 'dnssec',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': """When a zone is configured with auto-dnssec
 maintain; its key repository must be checked periodically
 to see if any new keys have been added or any existing
@@ -1859,7 +1859,7 @@ g_nc_keywords['dnssec-policy'] = \
         'found-in': {'zone'},
         'introduced': '9.17.0',
         'topic': 'dnssec',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': '',
     }
 
@@ -1870,7 +1870,7 @@ g_nc_keywords['dnssec-secure-to-insecure'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.7.0',
         'topic': 'dnssec',
-        'server-type': 'master, primary',
+        'server-type': 'main, primary',
         'comment':
 """Allow a dynamic zone to transition from secure to
 insecure (i.e., signed to unsigned) by deleting all of
@@ -1896,9 +1896,9 @@ g_nc_keywords['dnssec-update-mode'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.9.0',
         'topic': 'dnssec',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': """If this option is set to its default value of
-maintain in a zone of type master which is
+maintain in a zone of type main which is
 DNSSEC-signed and configured to allow dynamic
 updates (see Section 6.2), and if named has access
 to the private signing key(s) for the zone, then
@@ -2344,7 +2344,7 @@ g_nc_keywords['file'] = \
         # In 8.2, not found in ['zone']['type']['hint']
         'introduced': '8.2',
         'topic': 'zone data, redirect',
-        'server-type': 'master, slave, mirror, hint, stub, redirect, primary, secondary',
+        'server-type': 'main, subordinate, mirror, hint, stub, redirect, primary, secondary',
         'comment': '',
     }
 
@@ -2353,8 +2353,8 @@ g_nc_keywords['files'] = \
         'default': 'default',  # changed from 'unlimited' in v9.12
         'validity': {'regex': '(default|unlimited|[0-9]*)'},
         'found-in': {'options', 'zone'},
-        # In 8.2, only found in ['zone']['type']['master']
-        # In 8.2, only found in ['zone']['type']['slave']
+        # In 8.2, only found in ['zone']['type']['main']
+        # In 8.2, only found in ['zone']['type']['subordinate']
         # In 8.2, only found in ['zone']['type']['stub']
         'introduced': '8.1',
         'topic': 'operating-system',
@@ -2499,7 +2499,7 @@ g_nc_keywords['forward'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '8.1',
         'topic': 'forwarding',
-        'server-type': 'master, slave, stub, static-stub, forward, primary, secondary',
+        'server-type': 'main, subordinate, stub, static-stub, forward, primary, secondary',
         'comment': """This option is only meaningful if the forwarders
 list is not empty. A value of first, the default, causes
 the server to query the forwarders first - and if that
@@ -2516,7 +2516,7 @@ g_nc_keywords['forwarders'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.2',  # Intro in 4.8, 8.1, not yet back in 9.0
         'topic': 'forwarding, dscp',
-        'server-type': 'master, slave, stub, static-stub, forward, primary, secondary',
+        'server-type': 'main, subordinate, stub, static-stub, forward, primary, secondary',
         'comment': """Specifies the IP addresses to be used for forwarding.
 The default is the empty list (no forwarding).  Forwarding
 can also be configured on a per-domain basis, allowing for
@@ -2663,7 +2663,7 @@ g_nc_keywords['inline-signing'] = \
         'found-in': {'option', 'view', 'zone'},
         'introduced': '9.9.0',
         'topic': 'dnssec',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': """If yes, this enables "bump-in-the-wire" signing
 of a zone, where an unsigned zone is transferred in or
 loaded from disk and a signed version of the zone is
@@ -2712,33 +2712,33 @@ name of the zone file.""",
 g_nc_keywords['ixfr-from-differences'] = \
     {
         'default': 'primary',  # changed from 'yes' in v9.13
-        'validity': {'regex': r'(primary|master|yes|no|slave|secondary)'},
+        'validity': {'regex': r'(primary|main|yes|no|subordinate|secondary)'},
         'found-in': {'options', 'view'},
         'introduced': '9.5.0',
         'topic': 'journal',
-        'server-type': 'master, slave, mirror, primary, secondary',
+        'server-type': 'main, subordinate, mirror, primary, secondary',
         'comment':
-"""When yes and the server loads a new version of a master
+"""When yes and the server loads a new version of a main
 zone from its zone file or receives a new version of a
-slave file via zone transfer, it will compare the new
+subordinate file via zone transfer, it will compare the new
 version to the previous one and calculate a set of
 differences. The differences are then logged in the zone's
 journal file such that the changes can be transmitted to
-downstream slaves as an incremental zone transfer.
+downstream subordinates as an incremental zone transfer.
 By allowing incremental zone transfers to be used for
 non-dynamic zones, this option saves bandwidth at the
 expense of increased CPU and memory consumption at
-the master.
+the main.
 In particular, if the new version of a zone is
 completely different from the previous one, the set of
 differences will be of a size comparable to the combined
 size of the old and new zone version, and the server will
 need to temporarily allocate memory to hold this complete
 difference set.
-ixfr-from-differences also accepts master and slave at
+ixfr-from-differences also accepts main and subordinate at
 the view and options levels which causes
-ixfr-from-differences to be enabled for all master or
-slave zones respectively. It is off by default.""",
+ixfr-from-differences to be enabled for all main or
+subordinate zones respectively. It is off by default.""",
     }
 
 g_nc_keywords['ixfr-from-differences'] = \
@@ -2771,7 +2771,7 @@ g_nc_keywords['journal'] = \
         'found-in': {'zone'},
         'introduced': '9.3.0',
         'topic': '',
-        'server-type': 'master, slave, mirror, primary, secondary',
+        'server-type': 'main, subordinate, mirror, primary, secondary',
         'comment': '',
     }
 
@@ -2931,7 +2931,7 @@ g_nc_keywords['key-directory'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.3.0',
         'topic': 'operating-system, dnssec',
-        'server-type': 'secured, master, slave, primary, secondary',
+        'server-type': 'secured, main, subordinate, primary, secondary',
         'comment': """is a quoted string defining the absolute path,
 for example, "/var/named/keys" where the keys used
 in the dynamic update of secure zones may be found.
@@ -3012,17 +3012,17 @@ SHA256 hash of the view name, followed by the
 extension .mkeys.""",
     }
 
-g_nc_keywords['masterfile-format'] = \
+g_nc_keywords['mainfile-format'] = \
     {
         'default': 'map',  # change from 'text' in v9.12
         'validity': {'regex': r'(map|text|raw)'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'zone file, tuning',
-        'server-type': 'master, slave, mirror, stub, redirect, primary, secondary',
+        'server-type': 'main, subordinate, mirror, stub, redirect, primary, secondary',
         'comment': """Specifies the file format of zone files (see Section
 6.3.7).  The default value is text, which is the
-standard textual representation, except for slave
+standard textual representation, except for subordinate
 zones, in which the default value is raw. Files in
 other formats than text are typically expected to be
 generated by the named- compilezone tool, or dumped
@@ -3038,39 +3038,39 @@ level as that specified in the named configuration
 file. Also, map format files are loaded directly into
 memory via memory mapping, with only minimal checking.
 
-This statement sets the masterfile-format for all
+This statement sets the mainfile-format for all
 zones, but can be overridden on a per-zone or
-per-view basis by including a masterfile-format
+per-view basis by including a mainfile-format
 statement within the zone or view block in the
 configuration file.  Note that zones using 'map'
 cannot be used as policy zones.
 """,
     }
 
-g_nc_keywords['masterfile-style'] = \
+g_nc_keywords['mainfile-style'] = \
     {
         'default': 'full',
         'validity': {'regex': r'(full|relative)'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.11.0',
         'topic': 'zone file, tuning',
-        'server-type': 'master, slave, mirror, stub, redirect, primary, secondary',
-        'comment': 'slave, secondary',
+        'server-type': 'main, subordinate, mirror, stub, redirect, primary, secondary',
+        'comment': 'subordinate, secondary',
     }
 
-# This is 'zone' 'masters' option which is
-# not to be confused with top-level 'masters' statement.
-g_nc_keywords['masters'] = \
+# This is 'zone' 'mains' option which is
+# not to be confused with top-level 'mains' statement.
+g_nc_keywords['mains'] = \
     {
         'default': None,
-        'validity': {'function': 'masters_zone'},
+        'validity': {'function': 'mains_zone'},
         'found-in': {'zone'},
         'introduced': '9.0.0',
-        'topic': 'masters',
-        'server-type': 'slave, mirror, stub, redirect, secondary',
+        'topic': 'mains',
+        'server-type': 'subordinate, mirror, stub, redirect, secondary',
         'occurs-multiple-times': False,
         'topblock': False,
-        'comment': 'slave, secondary',
+        'comment': 'subordinate, secondary',
     }
 
 g_nc_keywords['match-clients'] = \
@@ -3194,7 +3194,7 @@ g_nc_keywords['max-clients-per-query'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.4.0',
         'topic': 'server resource',
-        'server-type': 'master',
+        'server-type': 'main',
         'comment':
 """These set the initial value (minimum) and maximum
 number of recursive simultaneous clients for any given
@@ -3240,7 +3240,7 @@ g_nc_keywords['max-journal-size'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.3.0',
         'topic': 'journal, server resource',
-        'server-type': 'master, slave, mirror, primary, secondary',
+        'server-type': 'main, subordinate, mirror, primary, secondary',
         'comment':
 """Sets a maximum size for each journal file (see
 Section 4.2). When the journal file approaches the
@@ -3281,7 +3281,7 @@ g_nc_keywords['max-records'] = \
         'introduced': '9.12',
         'obsoleted': '',
         'topic': 'server resource',
-        'server-type': 'master, slave, mirror, stub, static-stub, redirect, primary, secondary',
+        'server-type': 'main, subordinate, mirror, stub, static-stub, redirect, primary, secondary',
         'comment':
 """The maximum number of records permitted in a zone.
 The default is zero which means unlimited.""",
@@ -3330,16 +3330,16 @@ g_nc_keywords['max-refresh-time'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.1.0',  # TODO was 9.0.0
         'topic': 'tuning, obsoleted, inert',
-        'server-type': 'slave, mirror, secondary',
+        'server-type': 'subordinate, mirror, secondary',
         'comment': """These options control the server's behavior on refreshing
 a zone (querying for SOA changes) or retrying failed transfers.
 Usually the SOA values for the zone are used, but these values are
-set by the master, giving slave server administrators little control
+set by the main, giving subordinate server administrators little control
 over their contents.
 NOTE: Not implemented in BIND 9.
 These options allow the administrator to set a minimum and maximum
 refresh and retry time either per-zone, per-view, or globally.
-These options are valid for slave and stub zones, and clamp the
+These options are valid for subordinate and stub zones, and clamp the
 SOA refresh and retry times to the specified values.
 The following defaults apply. min-refresh-time 300 seconds,
 max-refresh-time 2419200 seconds (4 weeks),
@@ -3355,18 +3355,18 @@ g_nc_keywords['max-retry-time'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.1.0',  # TODO was 9.0.0
         'topic': 'tuning, obsoleted, inert',
-        'server-type': 'slave, mirror, stub, secondary',
+        'server-type': 'subordinate, mirror, stub, secondary',
         'comment': """These options control the server's behavior on
 refreshing a zone (querying for SOA changes) or
 retrying failed transfers.  Usually the SOA values
 for the zone are used, but these values are set by
-the master, giving slave server administrators little
+the main, giving subordinate server administrators little
 control over their contents.
 NOTE: Not implemented in BIND 9.
 These options allow the administrator to set a
 minimum and maximum refresh and retry time either
 per-zone, per-view, or globally.  These options are
-valid for slave and stub zones, and clamp the SOA
+valid for subordinate and stub zones, and clamp the SOA
 refresh and retry times to the specified values.
 The following defaults apply. min-refresh-time 300
 seconds, max-refresh-time 2419200 seconds (4 weeks),
@@ -3410,7 +3410,7 @@ g_nc_keywords['max-transfer-idle-in'] = \
         'introduced': '9.0.0',
         'obsoleted': '',
         'topic': 'zone transfer',
-        'server-type': 'slave, mirror, stub, secondary',
+        'server-type': 'subordinate, mirror, stub, secondary',
         'comment':
 """Inbound zone transfers making no progress in this many
 minutes will be terminated. The default is 60 minutes
@@ -3426,7 +3426,7 @@ g_nc_keywords['max-transfer-idle-out'] = \
         'introduced': '9.0.0',
         'obsoleted': '',
         'topic': 'zone transfer',
-        'server-type': 'master, slave, mirror, secured, primary, secondary',
+        'server-type': 'main, subordinate, mirror, secured, primary, secondary',
         'comment':
 """Outbound zone transfers making no progress in this many
 minutes will be terminated.  The default is 60 minutes
@@ -3442,7 +3442,7 @@ g_nc_keywords['max-transfer-time-in'] = \
         'introduced': '8.1',
         'obsoleted': '',
         'topic': 'zone transfer',
-        'server-type': 'slave, mirror, stub, secured, secondary',
+        'server-type': 'subordinate, mirror, stub, secured, secondary',
         'comment':
 """Inbound zone transfers running longer than this many
 minutes will be terminated. The default is 120 minutes
@@ -3458,7 +3458,7 @@ g_nc_keywords['max-transfer-time-out'] = \
         'introduced': '9.0.0',
         'obsoleted': '',
         'topic': 'zone transfer',
-        'server-type': 'master, slave, mirror, secured, primary, secondary',
+        'server-type': 'main, subordinate, mirror, secured, primary, secondary',
         'comment':
 """Outbound zone transfers running longer than this many
 minutes will be terminated. The default is 120 minutes
@@ -3501,9 +3501,9 @@ g_nc_keywords['max-zone-ttl'] = \
         'unit': 'second',
         'introduced': '9.10.0',
         'topic': 'dnssec',
-        'server-type': 'master, primary, redirect, secured',
+        'server-type': 'main, primary, redirect, secured',
         'comment': """Specifies a maximum permissible TTL value. '
-When loading a zone file using a masterfile-format of
+When loading a zone file using a mainfile-format of
 text or raw, any record encountered with a TTL higher
 than maxzone-ttl will cause the zone to be rejected.
 This is useful in DNSSEC-signed zones because when
@@ -3585,16 +3585,16 @@ g_nc_keywords['min-refresh-time'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.1.0',  # TODO was 9.0.0/??
         'topic': 'tuning, obsoleted, inert',
-        'server-type': 'slave, mirror, stub, zone, secondary',
+        'server-type': 'subordinate, mirror, stub, zone, secondary',
         'comment': """These options control the server's behavior on refreshing
 a zone (querying for SOA changes) or retrying failed transfers.
 Usually the SOA values for the zone are used, but these values are
-set by the master, giving slave server administrators little control
+set by the main, giving subordinate server administrators little control
 over their contents.
 NOTE: Not implemented in BIND 9.
 These options allow the administrator to set a minimum and maximum
 refresh and retry time either per-zone, per-view, or globally.
-These options are valid for slave and stub zones, and clamp the
+These options are valid for subordinate and stub zones, and clamp the
 SOA refresh and retry times to the specified values.
 The following defaults apply. min-refresh-time 300 seconds,
 max-refresh-time 2419200 seconds (4 weeks),
@@ -3610,18 +3610,18 @@ g_nc_keywords['min-retry-time'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.1.0',  # TODO was 9.0.0
         'topic': 'tuning, obsoleted, inert',
-        'server-type': 'slave, mirror, stub, secondary',
+        'server-type': 'subordinate, mirror, stub, secondary',
         'comment': """These options control the server's behavior on
 refreshing a zone (querying for SOA changes) or
 retrying failed transfers.  Usually the SOA values
 for the zone are used, but these values are set by
-the master, giving slave server administrators little
+the main, giving subordinate server administrators little
 control over their contents.
 NOTE: Not implemented in BIND 9.
 These options allow the administrator to set a
 minimum and maximum refresh and retry time either
 per-zone, per-view, or globally.  These options are
-valid for slave and stub zones, and clamp the SOA
+valid for subordinate and stub zones, and clamp the SOA
 refresh and retry times to the specified values.
 The following defaults apply. min-refresh-time 300
 seconds, max-refresh-time 2419200 seconds (4 weeks),
@@ -3679,21 +3679,21 @@ g_nc_keywords['multiple-cnames'] = \
         'server-type': '',
         'comment': """This option was used in BIND 8 to allow a domain name to have multiple CNAME records
 in violation of the DNS standards. BIND 9.2 onwards always strictly enforces the CNAME
-rules both in master files and dynamic updates.""",
+rules both in main files and dynamic updates.""",
     }
 
-g_nc_keywords['multi-master'] = \
+g_nc_keywords['multi-main'] = \
     {
         'default': 'no',
         'validity': {'regex': r'(yes|no)'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.3.0',
         'topic': '',
-        'server-type': 'slave, mirror, stub, secondary',
-        'comment': """This should be set when you have multiple masters for
+        'server-type': 'subordinate, mirror, stub, secondary',
+        'comment': """This should be set when you have multiple mains for
 a zone and the addresses refer to different machines.
 If yes, named will not log when the serial number on
-the master is less than what named currently has.
+the main is less than what named currently has.
 The default is no.""",
     }
 
@@ -3803,33 +3803,33 @@ is 4096, but the max-udp-size option may further limit the response size.""",
 g_nc_keywords['notify'] = \
     {
         'default': 'yes',
-        'validity': {'regex': r'(yes|no|master\-only|explicit)'},
-        # In 8.2 to 9.6.3?, yes/no   TODO: when did 'master-only' and 'explicit' got introduced to 'notify'?
+        'validity': {'regex': r'(yes|no|main\-only|explicit)'},
+        # In 8.2 to 9.6.3?, yes/no   TODO: when did 'main-only' and 'explicit' got introduced to 'notify'?
         'found-in': {'options', 'view', 'zone'},
-        # In 8.2, only found in ['zone']['type']['master']
-        # In 8.2, only found in ['zone']['type']['slave']
+        # In 8.2, only found in ['zone']['type']['main']
+        # In 8.2, only found in ['zone']['type']['subordinate']
         # In 8.2, only found in ['zone']['type']['stub']
         'introduced': '8.1',
         'topic': 'zone transfer',
-        'server-type': 'master, slave, mirror, stub, primary, secondary',
-        # not found in ['zone']['slave']
+        'server-type': 'main, subordinate, mirror, stub, primary, secondary',
+        # not found in ['zone']['subordinate']
         # not found in ['zone']['stub']
         # not found in ['zone']['forward']
         # not found in ['zone']['hint']
         'comment': """If yes (the default), DNS NOTIFY messages are sent
 when a zone the server is authoritative for changes,
 see Section 4.1. The messages are sent to the servers
-listed in the zone's NS records (except the master
+listed in the zone's NS records (except the main
 server identified in the SOA MNAME field), and to any
 servers listed in the also-notify option.
-If master-only, notifies are only sent for master
+If main-only, notifies are only sent for main
 zones. If explicit, notifies are sent only to servers
 explicitly listed using also-notify. If no, no
 notifies are sent.
 The notify option may also be specified in the zone
 statement, in which case it overrides the options
 notify statement. It would only be necessary to turn
-off this option if it caused slaves to crash.""",
+off this option if it caused subordinates to crash.""",
     }
 
 g_nc_keywords['notify-delay'] = \
@@ -3840,7 +3840,7 @@ g_nc_keywords['notify-delay'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.5.0',
         'topic': 'tuning',
-        'server-type': 'master, slave, mirror, primary, secondary',
+        'server-type': 'main, subordinate, mirror, primary, secondary',
         'comment': """The delay, in seconds, between sending sets of notify
 messages for a zone. The default is five (5) seconds.
 The overall rate that NOTIFY messages are sent for all
@@ -3872,12 +3872,12 @@ g_nc_keywords['notify-source'] = \
         'found-in': {'options', 'view', 'zone', 'server'},
         'introduced': '9.1.0',
         'topic': 'zone transfer, interface, data layer, DSCP, query address',
-        'server-type': 'master, slave, mirror, primary, secondary',
+        'server-type': 'main, subordinate, mirror, primary, secondary',
         'comment':
 """notify-source determines which local source address,
 and optionally UDP port, will be used to send NOTIFY
-messages. This address must appear in the slave server's
-masters zone clause or in an allow-notify clause.
+messages. This address must appear in the subordinate server's
+mains zone clause or in an allow-notify clause.
 This statement sets the notify-source for all zones, but
 can be overridden on a per-zone or per-view basis by
 including a notify-source statement within the zone or
@@ -3894,13 +3894,13 @@ g_nc_keywords['notify-source-v6'] = \
         'found-in': {'options', 'view', 'zone', 'server'},
         'introduced': '9.1.0',
         'topic': 'zone transfer, interface, data layer, DSCP',
-        'server-type': 'master, slave, mirror, primary, secondary',
+        'server-type': 'main, subordinate, mirror, primary, secondary',
         'comment':
 """Like notify-source, but applies to notify messages
 sent to IPv6 addresses.  notify-source determines which
 local source address, and optionally UDP port, will be
 used to send NOTIFY messages. This address must appear in
-the slave server's masters zone clause or in an
+the subordinate server's mains zone clause or in an
 allow-notify clause. This statement sets the
 notify-source for all zones, but can be overridden on a
 per-zone or per-view basis by including a notify-source
@@ -3917,15 +3917,15 @@ g_nc_keywords['notify-to-soa'] = \
         'validity': {'regex': r'(yes|no)'},
         'found-in': {'options', 'view', 'zone', 'server'},
         'introduced': '9.5.0',
-        'topic': 'hidden-master',
-        'server-type': 'hidden-master, master, slave, primary, secondary',
+        'topic': 'hidden-main',
+        'server-type': 'hidden-main, main, subordinate, primary, secondary',
         'comment': """If yes do not check the nameservers in the
 NS RRset against the SOA MNAME. Normally a NOTIFY
 message is not sent to the SOA MNAME (SOA ORIGIN) as
 it is supposed to contain the name of the ultimate
-master. Sometimes, however, a slave is listed as the
-SOA MNAME in hidden master configurations and in that
-case you would want the ultimate master to still send
+main. Sometimes, however, a subordinate is listed as the
+SOA MNAME in hidden main configurations and in that
+case you would want the ultimate main to still send
 NOTIFY messages to all the nameservers listed in the
 NS RRset.""",
     }
@@ -4077,11 +4077,11 @@ g_nc_keywords['provide-ixfr'] = \
         # moved from 'server' to 'options' on 9.2.0
         'introduced': '9.0.0',
         'topic': 'transfer, server',
-        'server-type': 'master, local',
+        'server-type': 'main, local',
         'comment': """The provide-ixfr clause determines whether the local
-server, acting as master, will respond with an
+server, acting as main, will respond with an
 incremental zone transfer when the given remote
-server, a slave, requests it. If set to yes ,
+server, a subordinate, requests it. If set to yes ,
 incremental transfer will be provided whenever
 possible. If set to no , all transfers to the remote
 server will be nonincremental. If not set, the value
@@ -4095,13 +4095,13 @@ g_nc_keywords['pubkey'] = \
         'occurs-multiple-times': True,
         'validity': {'function': "pubkey"},
         'found-in': {'zone'},
-        # In 8.2, only in ['zone']['type']['master']
-        # In 8.2, only in ['zone']['type']['slave']
+        # In 8.2, only in ['zone']['type']['main']
+        # In 8.2, only in ['zone']['type']['subordinate']
         # In 8.2, only in ['zone']['type']['stub']
         'introduced': '8.2',
         'obsoleted': '9.0',   # Still taking syntax in @ v9.15.0
         'topic': '',
-        'server-type': 'master, slave, stub',
+        'server-type': 'main, subordinate, stub',
         'comment': """A pubkey represents a private key for this zone. It
 is needed when this is the top level authoritative
 zone served by this server and there is no chain of
@@ -4314,7 +4314,7 @@ g_nc_keywords['request-expire'] = \
         'found-in': {'server', 'zone'},
         'introduced': '9.11.0',
         'topic': 'transfer, server',
-        'server-type': 'slave, mirror, local, secondary',
+        'server-type': 'subordinate, mirror, local, secondary',
         'comment': """
 """,
     }
@@ -4326,7 +4326,7 @@ g_nc_keywords['request-ixfr'] = \
         'found-in': {'server', 'zone'},
         'introduced': "9.1.0",
         'topic': 'transfer, server',
-        'server-type': 'slave, mirror, secondary',
+        'server-type': 'subordinate, mirror, secondary',
         'comment': """
 Introduced to 'zone' section in v9.9.0.
 """,
@@ -4579,11 +4579,11 @@ g_nc_keywords['serial-query-rate'] = \
         'found-in': {'options'},
         'introduced': '9.2.0',
         'topic': 'zone transfer',
-        'server-type': 'slave',
+        'server-type': 'subordinate',
         'comment':
-"""Slave servers will periodically query master servers to
+"""Subordinate servers will periodically query main servers to
 find out if zone serial numbers have changed. Each such
-query uses a minute amount of the slave server's
+query uses a minute amount of the subordinate server's
 network bandwidth.
 To limit the amount of bandwidth used, BIND 9 limits the
 rate at which queries are sent.
@@ -4594,8 +4594,8 @@ The lowest possible rate is one per second; when set to
 zero, it will be silently raised to one.
 In addition to controlling the rate SOA refresh queries
 are issued at, serial-query-rate also controls the rate
-at which NOTIFY messages are sent from both master and
-slave zones.""",
+at which NOTIFY messages are sent from both main and
+subordinate zones.""",
     }
 
 g_nc_keywords['serial-update-method'] = \
@@ -4605,7 +4605,7 @@ g_nc_keywords['serial-update-method'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.9.0',
         'topic': 'dynamic dns, ddns, SOA',
-        'server-type': 'master, primary',
+        'server-type': 'main, primary',
         'comment': """Zones configured for dynamic DNS may use this option
 to set the update method that will be used for the zone
 serial number in the SOA record.
@@ -4734,7 +4734,7 @@ g_nc_keywords['sig-signing-nodes'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.5.0',
         'topic': 'dnssec',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': """Specify the maximum number of nodes to be examined in
 each quantum when signing a zone with a new DNSKEY.
 
@@ -4749,7 +4749,7 @@ g_nc_keywords['sig-signing-signatures'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.5.0',
         'topic': 'dnssec, tuning',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': """Specify at hreshold number of signatures that will
 terminate processing a quantum when signing a zone with a new DNSKEY.
 
@@ -4764,7 +4764,7 @@ g_nc_keywords['sig-signing-type'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.5.0',
         'topic': 'dnssec, tuning',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': """Specify a private RDATA type to be used when generating
 signing state records.
 
@@ -4801,7 +4801,7 @@ g_nc_keywords['sig-validity-interval'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.0.0',
         'topic': 'dnssec, tuning',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': """Specifies the number of days into the future when
 DNSSEC signatures automatically generated as a result
 of dynamic updates (Section 4.2) will expire.
@@ -5263,13 +5263,13 @@ g_nc_keywords['transfer-format'] = \
 """Zone transfers can be sent using two different formats,
 one-answer and many-answers.
 
-The transfer-format option is used on the master server
+The transfer-format option is used on the main server
 to determine which format it sends. one-answer uses one
 DNS message per resource record transferred.
 
 many-answers packs as many resource records as possible
 into a message. many-answers is more efficient, but is
-only supported by relatively new slave servers, such as
+only supported by relatively new subordinate servers, such as
 BIND 9, BIND 8.x and BIND 4.9.5 onwards.
 
 The many-answers format is also supported by recent
@@ -5295,7 +5295,7 @@ g_nc_keywords['transfer-per-ns'] = \
 """The maximum number of inbound zone transfers that can
 be running concurrently.  The default value is 10.
 Increasing transfer-in may speed up the convergence of
-slave zones, but it also increases the load of a local
+subordinate zones, but it also increases the load of a local
 system.""",
     }
 
@@ -5329,7 +5329,7 @@ g_nc_keywords['transfer-source'] = \
         # was in 9.3 'server', now???
         'introduced': '8.2',
         'topic': 'zone transfer, data layer, interface, DSCP, query address',
-        'server-type': 'slave, mirror, stub, secondary',
+        'server-type': 'subordinate, mirror, stub, secondary',
         'comment':
 """transfer-source determines which local address will be
 bound to IPv4 TCP connections used to fetch zones
@@ -5359,7 +5359,7 @@ g_nc_keywords['transfer-source-v6'] = \
         'found-in': {'options', 'view', 'zone', 'server'},
         'introduced': '9.0.0',
         'topic': 'zone transfer, DSCP, server',
-        'server-type': 'slave, mirror, stub, secondary',
+        'server-type': 'subordinate, mirror, stub, secondary',
         'comment': """The same as transfer-source, except zone transfers are
 performed using IPv6. transfer-source determines which
 local address will be bound to IPv4 TCP connections
@@ -5396,7 +5396,7 @@ g_nc_keywords['transfers-in'] = \
 """The maximum number of inbound zone transfers that can
 be running concurrently.  The default value is 10.
 Increasing transfer-in may speed up the convergence of
-slave zones, but it also increases the load of a local
+subordinate zones, but it also increases the load of a local
 system.""",
     }
 
@@ -5435,7 +5435,7 @@ server.
 The default value is 2.
 
 Increasing transfers-per-ns may speed up the
-convergence of slave zones, but it also may increase
+convergence of subordinate zones, but it also may increase
 the load on the remote name server. transfers-per-ns
 may be overridden on a per-server basis by using the
 transfers phrase of the server statement.""",
@@ -5498,17 +5498,17 @@ g_nc_keywords['try-tcp-refresh'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.5.0',
         'topic': 'transport layer',
-        'server-type': 'slave, mirror, secondary',
+        'server-type': 'subordinate, mirror, secondary',
         'comment': """Try to refresh the zone using TCP if UDP queries fail.
 For BIND 8 compatibility, the default is yes.""",
     }
 
 g_nc_keywords['type'] = \
     {
-        # 'default': 'delegation-only',  # change from 'master' in v9.12
+        # 'default': 'delegation-only',  # change from 'main' in v9.12
         'default': 'primary',  # change from 'delegation-only' in v9.13
         # 'mirror' added in v9.15
-        'validity': {'regex': r"(delegation\-only|master|primary|slave|secondary|stub|static\-stub|hint|forward|redirect|mirror)"},
+        'validity': {'regex': r"(delegation\-only|main|primary|subordinate|secondary|stub|static\-stub|hint|forward|redirect|mirror)"},
         'found-in': {'zone'},
         'introduced': '8.1',
         'topic': '',
@@ -5526,7 +5526,7 @@ g_nc_keywords['update-check-ksk'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'KSK, dnssec, RRSIG',
-        'server-type': 'master, slave, primary, secondary',
+        'server-type': 'main, subordinate, primary, secondary',
         'comment': """When set to the default value of yes, check the KSK
 bit in each key to determine how the key should be used
 when generating RRSIGs for a secure zone.
@@ -5556,7 +5556,7 @@ g_nc_keywords['update-policy'] = \
         'found-in': {'zone'},
         'introduced': '9.0.0',
         'topic': 'dynamic zone update',
-        'server-type': 'master, primary',
+        'server-type': 'main, primary',
         'comment': """
 Option "local" and "zonesub" introduced in 9.7.0.
 Option "external" introduced in 9.8.0.
@@ -5570,7 +5570,7 @@ g_nc_keywords['use-alt-transfer-source'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.3.0',
         'topic': 'zone transfer',
-        'server-type': 'slave, mirror, stub, secondary',
+        'server-type': 'subordinate, mirror, stub, secondary',
         'comment': """Use the alternate transfer sources or not. If views
 are specified this defaults to no otherwise it defaults
 to yes (for BIND 8 compatibility).""",
@@ -5778,7 +5778,7 @@ g_nc_keywords['zero-no-soa-ttl'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'SOA',
-        'server-type': 'master, slave, mirror, primary, secondary',
+        'server-type': 'main, subordinate, mirror, primary, secondary',
         'comment': """When returning authoritative negative responses to SOA
 queries set the TTL of the SOA record returned in the
 authority section to zero. The default is yes.""",
@@ -5803,7 +5803,7 @@ g_nc_keywords['zone-statistics'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.3.0',
         'topic': 'operating-system',
-        'server-type': 'master, slave, mirror, stub, static-stub, redirect, primary, secondary',
+        'server-type': 'main, subordinate, mirror, stub, static-stub, redirect, primary, secondary',
         'comment': """If full, the server will collect statistical data on
 all zones (unless specifically turned off on a per-zone
 basis by specifying 'zone-statistics terse;' or
@@ -6002,7 +6002,7 @@ class NamedConfGlobal(object):
 
 # class-less functions goes afterward at this point
 
-def validate_master_keywords_dictionary():
+def validate_main_keywords_dictionary():
     # There is no minimum presence of keywords in each entry of the g_ncg_keywords[] dict array
     # So what should I be validating?
     #
@@ -6010,16 +6010,16 @@ def validate_master_keywords_dictionary():
     for this_kw in g_nc_keywords.keys():
         this_kw_value = g_nc_keywords[this_kw]
         if 'introduced' not in g_nc_keywords[this_kw]:
-            print("validate_master_keywords_dictionary: 'introduced' not found in '%s' keyword." % this_kw)
+            print("validate_main_keywords_dictionary: 'introduced' not found in '%s' keyword." % this_kw)
             return False
         if 'topblock' not in this_kw_value:
             if 'found-in' not in g_nc_keywords[this_kw]:
-                print("validate_master_keywords_dictionary: 'found-in' not found in '%s' keyword." % this_kw)
+                print("validate_main_keywords_dictionary: 'found-in' not found in '%s' keyword." % this_kw)
                 return False
             if 'validity' not in g_nc_keywords[this_kw]:
-                print("validate_master_keywords_dictionary: 'validate' not found in '%s' keyword." % this_kw)
+                print("validate_main_keywords_dictionary: 'validate' not found in '%s' keyword." % this_kw)
                 return False
-    print("validate_master_keywords_dictionary: validated.")
+    print("validate_main_keywords_dictionary: validated.")
     return True
 
 #@profile
@@ -6052,8 +6052,8 @@ def normalize_version_int(myobject: str) -> str:
     return version
 
 
-def print_master_dictionary():
-#    print("print_master_dictionary: Keywords:")
+def print_main_dictionary():
+#    print("print_main_dictionary: Keywords:")
 #    for this_keyword in g_nc_keywords:
 #        print("    %s:" % this_keyword)
     return

@@ -16,7 +16,7 @@ from bind9_parser.isc_clause_key import key_id
 from bind9_parser.isc_inet import ip46_addr, \
     inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element
-from bind9_parser.isc_clause_masters import master_id
+from bind9_parser.isc_clause_mains import main_id
 
 
 #  Note:  Be careful of deleting any options/view/zone/server
@@ -27,19 +27,19 @@ from bind9_parser.isc_clause_masters import master_id
 #         exactly all four clauses (options, view, zone, and server).
 
 # also-notify [port gp-num] [dscp gd-num] {
-#     ( masters-list|IP-address )
+#     ( mains-list|IP-address )
 #     [port p-num]
 #     [dscp d-num]
 #     [key key-name]
 #     ;
 #   [... ;]
 # };
-#  Note: no more 'masters-list' since 9.9+
+#  Note: no more 'mains-list' since 9.9+
 optviewzoneserver_stmt_also_notify_element_set = (
         (
             (
                 ip46_addr('addr')
-                | master_id('addr')
+                | main_id('addr')
             )
             + Optional(inet_ip_port_keyword_and_number_element)
             - Optional(inet_dscp_port_keyword_and_number_element)
@@ -56,7 +56,7 @@ optviewzoneserver_also_notify_element_series = OneOrMore(
 # also-notify [ port integer ]
 #             [ dscp integer ]
 #             {
-#                 ( masters
+#                 ( mains
 #                   | ipv4_address [ port integer ]
 #                   | ipv6_address [ port integer ]
 #                 )

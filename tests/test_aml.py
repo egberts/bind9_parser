@@ -32,9 +32,9 @@ class TestAML(unittest.TestCase):
         """ Type ACL Name; failing """
         assertParserResultDict(acl_name, 'example.com!', {}, False)
         assertParserResultDict(acl_name, 'ex;mple', {},
-                               False)  # obviously cannot use semicolon in acl_name/master_id/aml
+                               False)  # obviously cannot use semicolon in acl_name/main_id/aml
         assertParserResultDict(acl_name, 'subdir/example', {}, False)
-        assertParserResultDict(acl_name, 'ex#mple', {}, False)  # obviously cannot use hash in acl_name/master_id/aml
+        assertParserResultDict(acl_name, 'ex#mple', {}, False)  # obviously cannot use hash in acl_name/main_id/aml
 
     def test_isc_aml_key_id_passing(self):
         """ Element AML; Type key_id; passing """
@@ -71,8 +71,8 @@ class TestAML(unittest.TestCase):
         assertParserResultDict(aml_choices, '1.1.1.1', {'addr': '1.1.1.1'}, True)
         assertParserResultDict(aml_choices, '2.2.2.2/2', {'addr': '2.2.2.2/2'}, True)
         assertParserResultDict(aml_choices, 'fe03::3', {'addr': 'fe03::3'}, True)
-        assertParserResultDict(aml_choices, 'master_nameservers_acl',
-                               {'acl_name': 'master_nameservers_acl'}, True)
+        assertParserResultDict(aml_choices, 'main_nameservers_acl',
+                               {'acl_name': 'main_nameservers_acl'}, True)
         assertParserResultDict(aml_choices, 'example', {'acl_name': 'example'}, True)
         assertParserResultDict(aml_choices, 'key MyKeyId', {'key_id': ['MyKeyId']}, True)
         test_datas = [
@@ -84,16 +84,16 @@ class TestAML(unittest.TestCase):
             ['localhost', {'addr': 'localhost'}],
             ['10.0.0.1/8', {'addr': '10.0.0.1/8'}],
             ['example.com', {'acl_name': 'example.com'}]
-            # FQDN-style are valid master name, but treated lik a hostname
+            # FQDN-style are valid main name, but treated lik a hostname
         ]
         for this_test_data, this_expected_result in test_datas:
             assertParserResultDict(aml_choices, this_test_data, this_expected_result, True)
 
     def test_aml_choices_failing(self):
         """ Element AML; Choices AML; failing """
-        assertParserResultDict(aml_choices, 'master/nameservers_acl', {}, False)
-        assertParserResultDict(aml_choices, 'master_nameservers#acl', {}, False)
-        assertParserResultDict(aml_choices, 'master;nameservers_acl', {}, False)
+        assertParserResultDict(aml_choices, 'main/nameservers_acl', {}, False)
+        assertParserResultDict(aml_choices, 'main_nameservers#acl', {}, False)
+        assertParserResultDict(aml_choices, 'main;nameservers_acl', {}, False)
 
     def test_isc_aml_ip4s_prefix_passing(self):
         """ Element AML; Type ip4s_prefix; passing"""
@@ -160,8 +160,8 @@ class TestAML(unittest.TestCase):
              127.0.0.1;
              10.0.0.1/8;
              {
-                 master_nameservers;
-                 slave_bastion_host;
+                 main_nameservers;
+                 subordinate_bastion_host;
              };
              {
                  any;
@@ -176,8 +176,8 @@ class TestAML(unittest.TestCase):
                 {'addr': '127.0.0.1'},
                 {'addr': '10.0.0.1/8'},
                 {'aml': [
-                    {'acl_name_WRONG': 'master_nameservers'},
-                    {'acl_name': 'slave_bastion_host'}
+                    {'acl_name_WRONG': 'main_nameservers'},
+                    {'acl_name': 'subordinate_bastion_host'}
                 ]},
                 {'aml': [
                     {'addr': 'any'},
@@ -197,7 +197,7 @@ class TestAML(unittest.TestCase):
         assertParserResultDict(aml_choices, '2.2.2.2/2', {'addr': '2.2.2.2/2'}, True)
         assertParserResultDict(aml_choices, 'fe03::3', {'addr': 'fe03::3'}, True)
         assertParserResultDict(aml_choices, 'key my_own_key_id', {'key_id': ['my_own_key_id']}, True)
-        assertParserResultDict(aml_choices, 'master_nameservers_acl', {'acl_name': 'master_nameservers_acl'}, True)
+        assertParserResultDict(aml_choices, 'main_nameservers_acl', {'acl_name': 'main_nameservers_acl'}, True)
 
     def test_isc_aml_aml_choices_finer(self):
         parse_me(aml_choices, 'key\nA8', True)
@@ -211,9 +211,9 @@ class TestAML(unittest.TestCase):
         # aml_choices('!localhost;' == [['!', 'localhost']] because no exclamation '"' mark
 
     def test_aml_choices2_failing(self):
-        assertParserResultDict(aml_choices, 'master/nameservers_acl;', {}, False)
-        assertParserResultDict(aml_choices, 'master_nameservers#acl;', {}, False)
-        assertParserResultDict(aml_choices, 'master;nameservers_acl;', {}, False)
+        assertParserResultDict(aml_choices, 'main/nameservers_acl;', {}, False)
+        assertParserResultDict(aml_choices, 'main_nameservers#acl;', {}, False)
+        assertParserResultDict(aml_choices, 'main;nameservers_acl;', {}, False)
 
     def test_aml_nesting_forward_passing(self):
         assertParserResultDict(aml_nesting,
@@ -349,13 +349,13 @@ class TestAML(unittest.TestCase):
             '{ localhost; };',
             '{ localnets; };',
             '{ 4.4.4.4; ma1ster_nameservers; };',
-            '{ 4.4.4.4; master_nameservers; };',
-            '{ 14.14.14.14; master_nameservers; 15.15.15.15/15; };',
+            '{ 4.4.4.4; main_nameservers; };',
+            '{ 14.14.14.14; main_nameservers; 15.15.15.15/15; };',
             '{ 5.5.5.5; fe02::1; };',
             '{ fe02::1; 6.6.6.6; };',
-            '{ 7.7.7.7; fe03::1; slave_nameservers; };',
-            '{ fe01::1; master_nameservers; };',
-            '{ master_nameservers; };',
+            '{ 7.7.7.7; fe03::1; subordinate_nameservers; };',
+            '{ fe01::1; main_nameservers; };',
+            '{ main_nameservers; };',
             '{ "rndc-remote5" ; };'
         ]
         aml_nesting.runTests(test_data, failureTests=True)

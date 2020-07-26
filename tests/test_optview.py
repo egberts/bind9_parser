@@ -287,17 +287,17 @@ class TestOptionsView(unittest.TestCase):
     def test_isc_optview_stmt_check_names_passing(self):
         """ Clause options/view; Statement check-names; passing """
         test_string = [
-            'check-names master warn;',
-            'check-names slave fail;',
+            'check-names main warn;',
+            'check-names subordinate fail;',
             'check-names response ignore;',
         ]
         result = optview_stmt_check_names.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
         assertParserResultDictTrue(
             optview_stmt_check_names,
-            'check-names slave ignore;',
+            'check-names subordinate ignore;',
             {'check_names': [{'result_status': 'ignore',
-                              'zone_type': 'slave'}]}
+                              'zone_type': 'subordinate'}]}
         )
 
     def test_isc_optview_stmt_check_sibling_passing(self):
@@ -1002,7 +1002,7 @@ class TestOptionsView(unittest.TestCase):
             'files default;',
             'check-dup-records ignore;',
             'hostname example.com;',
-            'check-names slave ignore;',
+            'check-names subordinate ignore;',
             'cleaning-interval 480;',
             'lame-ttl 32;',
             'max-cache-size 2048000;',
@@ -1074,7 +1074,7 @@ class TestOptionsView(unittest.TestCase):
             'files default;' +
             'check-dup-records ignore;' +
             'hostname example.com;' +
-            'check-names slave ignore;' +
+            'check-names subordinate ignore;' +
             'cleaning-interval 480;' +
             'lame-ttl 32;' +
             'max-cache-size 2048000;' +
@@ -1114,7 +1114,7 @@ class TestOptionsView(unittest.TestCase):
              'check_mx': 'warn',
              'check_mx_cname': 'fail',
              'check_names': [{'result_status': 'ignore',
-                              'zone_type': 'slave'}],
+                              'zone_type': 'subordinate'}],
              'check_sibling': 'warn',
              'check_spf': 'fail',
              'check_srv_cname': 'warn',

@@ -187,13 +187,13 @@ optviewzone_stmt_forwarders = (
     )('')
 )('fowarders')
 
-# ixfr-from-differences ( master | slave | <boolean> );
+# ixfr-from-differences ( main | subordinate | <boolean> );
 optviewzone_stmt_ixfr_from_differences = (
     Keyword('ixfr-from-differences').suppress()
     + (
-            Literal('master')
+            Literal('main')
             | Literal('primary')
-            | Literal('slave')
+            | Literal('subordinate')
             | Literal('secondary')
             | isc_boolean
     )('ixfr_from_differences')
@@ -221,15 +221,15 @@ optviewzone_stmt_maintain_ixfr_base = (
     + semicolon
 )
 
-# masterfile-format text | raw | map;
-# masterfile-format map;
-optviewzone_stmt_masterfile_format = (
-    Keyword('masterfile-format').suppress()
+# mainfile-format text | raw | map;
+# mainfile-format map;
+optviewzone_stmt_mainfile_format = (
+    Keyword('mainfile-format').suppress()
     + (
             Literal('text')
             | Literal('raw')
             | Literal('map')
-    )('masterfile_format')
+    )('mainfile_format')
     + semicolon
 )
 
@@ -296,21 +296,21 @@ optviewzone_stmt_min_retry_time = (
     + semicolon
 )
 
-#   multi-master ( yes | no ) ; [ Opt, View, Zone ]
-optviewzone_stmt_multi_master = (
-    Keyword('multi-master').suppress()
-    - isc_boolean('multi_master')
+#   multi-main ( yes | no ) ; [ Opt, View, Zone ]
+optviewzone_stmt_multi_main = (
+    Keyword('multi-main').suppress()
+    - isc_boolean('multi_main')
     + semicolon
 )
 
-#   notify ( yes | no | explicit | master-only ); [ Opt, View, Zone ]
-#  'master-only' is a seen in 9.9.7, not in 9.0
+#   notify ( yes | no | explicit | main-only ); [ Opt, View, Zone ]
+#  'main-only' is a seen in 9.9.7, not in 9.0
 optviewzone_stmt_notify = (
     Keyword('notify').suppress()
     + (
             isc_boolean
             | Literal('explicit')
-            | Literal('master-only')
+            | Literal('main-only')
     )('notify')
     + semicolon
 )
@@ -435,7 +435,7 @@ optviewzone_statements_set = (
         | optviewzone_stmt_ixfr_tmp_file
         | optviewzone_stmt_key_directory
         | optviewzone_stmt_maintain_ixfr_base
-        | optviewzone_stmt_masterfile_format
+        | optviewzone_stmt_mainfile_format
         | optviewzone_stmt_max_journal_size
         | optviewzone_stmt_max_refresh_time
         | optviewzone_stmt_max_retry_time
@@ -445,7 +445,7 @@ optviewzone_statements_set = (
         | optviewzone_stmt_max_transfer_time_out
         | optviewzone_stmt_min_refresh_time
         | optviewzone_stmt_min_retry_time
-        | optviewzone_stmt_multi_master
+        | optviewzone_stmt_multi_main
         | optviewzone_stmt_notify_source_v6
         | optviewzone_stmt_notify_source
         | optviewzone_stmt_notify

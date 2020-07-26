@@ -399,7 +399,7 @@ class TestConfigUtils(unittest.TestCase):
             "\'janet@quoted.fqdn.org\'",
             '\"admin@john.rocks\"',
             '"sales@dquoted.fqdn.us"',
-            "'webmaster@squoted.fqdn.eu'",
+            "'webmain@squoted.fqdn.eu'",
             'root@absolute.fqdn.nz.',
             'admin/mymachine.home@absolute.fqdn.nz.',
         ]

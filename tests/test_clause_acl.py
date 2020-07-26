@@ -24,12 +24,12 @@ class TestClauseACL(unittest.TestCase):
             'acl a { }; ',
             'acl a { b; };',
             'acl unquoted-key_id { 127.0.0.1; };',
-            'acl master-nameservers { 8.8.8.8; 9.9.9.9; };',
-            'acl master_nameservers { any; };',
-            'acl master_nameservers { none; };',
-            'acl master_nameservers { localhost; };',
-            'acl master_nameservers { localnets; };',
-            'acl master_nameservers { 1.1.1.1; };',
+            'acl main-nameservers { 8.8.8.8; 9.9.9.9; };',
+            'acl main_nameservers { any; };',
+            'acl main_nameservers { none; };',
+            'acl main_nameservers { localhost; };',
+            'acl main_nameservers { localnets; };',
+            'acl main_nameservers { 1.1.1.1; };',
             ]
         #            'acl "dquoted-key_id" { 128.1.1.2; };',          # TODO double-quote fails here
         #            'acl \'squoted-key_id\' { 129.2.2.3; };',        # TODO single-quote fails here
@@ -43,10 +43,10 @@ class TestClauseACL(unittest.TestCase):
             'acl a { b; }',  # missing outside semicolon
             'acl FunkY/name { }; ',
             'acl weird_aml { all }; ',  # 'all' works, but it is missing a semicolon
-            'acl master-nameservers {{8.8.8.8; 9.9.9.9; };',
-            'acl master-nameservers 8.8.8.8; 9.9.9.9; };',
-            'acl master-nameservers { 8.8.8,8; 9.9.9.9; };',  # comma, not period
-            'acl master-nameservers { 8.8.8.8: 9.9.9.9; };',  # colon, not semicolon
+            'acl main-nameservers {{8.8.8.8; 9.9.9.9; };',
+            'acl main-nameservers 8.8.8.8; 9.9.9.9; };',
+            'acl main-nameservers { 8.8.8,8; 9.9.9.9; };',  # comma, not period
+            'acl main-nameservers { 8.8.8.8: 9.9.9.9; };',  # colon, not semicolon
         ]
         result = clause_stmt_acl_series.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])

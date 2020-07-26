@@ -44,22 +44,22 @@ class TestClauseALL(unittest.TestCase):
       file "root.servers";
     };
     zone "example.com" in{
-      type master;
-      file "master/master.example.com";
+      type main;
+      file "main/main.example.com";
       allow-transfer {192.168.23.1;192.168.23.2;};
     };
     zone "localhost" in{
-      type master;
-      file "master.localhost";
+      type main;
+      file "main.localhost";
       allow-update{none;};
     };
     zone "0.0.127.in-addr.arpa" in{
-      type master;
+      type main;
       file "localhost.rev";
       allow-update{none;};
     };
     zone "0.168.192.IN-ADDR.ARPA" in{
-      type master;
+      type main;
       file "192.168.0.rev";
     };"""
         expected_result = {
@@ -76,8 +76,8 @@ class TestClauseALL(unittest.TestCase):
                             {'addr': '192.168.23.2'}
                         ]
                     },
-                    'file': '"master/master.example.com"',
-                    'type': 'master',
+                    'file': '"main/main.example.com"',
+                    'type': 'main',
                     'zone_name': '"example.com"'
                 },
                 {
@@ -86,8 +86,8 @@ class TestClauseALL(unittest.TestCase):
                             {'addr': 'none'}
                         ]
                     },
-                    'file': '"master.localhost"',
-                    'type': 'master',
+                    'file': '"main.localhost"',
+                    'type': 'main',
                     'zone_name': '"localhost"'
                 },
                 {
@@ -97,12 +97,12 @@ class TestClauseALL(unittest.TestCase):
                         ]
                     },
                     'file': '"localhost.rev"',
-                    'type': 'master',
+                    'type': 'main',
                     'zone_name': '"0.0.127.in-addr.arpa"'
                 },
                 {
                     'file': '"192.168.0.rev"',
-                    'type': 'master',
+                    'type': 'main',
                     'zone_name': '"0.168.192.IN-ADDR.ARPA"'}
             ]
         }
@@ -125,16 +125,16 @@ class TestClauseALL(unittest.TestCase):
             ' channel accounting { file "/tmp/acct.log" size 30M; severity info; print-time no; };' +
             ' channel badguys { file "/tmp/alert" size 255G; severity debug 77; print-time yes;}; };' +
             'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD=="; };' +
-            'masters bastion_host_group { bastion_hosts22; hidden_bastion; };' +
-            'zone red { file "/var/lib/bind9/public/masters/db.example.com"; };' +
+            'mains bastion_host_group { bastion_hosts22; hidden_bastion; };' +
+            'zone red { file "/var/lib/bind9/public/mains/db.example.com"; };' +
             'server 3.4.5.6 { bogus yes; edns no; edns-udp-size 102; edns-version 2;' +
             ' keys my_key_name_to_private_dns; max-udp-size 32768; notify-source *; notify-source-v6 *;' +
             ' padding 53; provide-ixfr yes; query-source *; query-source address *; query-source-v6 *;' +
             ' request-expire yes; request-ixfr yes; request-nsid yes; send-cookie yes; tcp-keepalive yes; ' +
             ' tcp-only yes; transfer-format one-answer; transfer-source *; transfer-source-v6 *; transfers 36; };' +
             'trusted-keys { abc 1 1 1 "ASBASDASD==";};' +
-            'zone green { file "/var/lib/bind9/public/masters/db.green.com"; };' +
-            'masters dmz_masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
+            'zone green { file "/var/lib/bind9/public/mains/db.green.com"; };' +
+            'mains dmz_mains port 7553 dscp 5 { yellow_mains key priv_dns_chan_key5; };'
             '',
             {'acl': [{'acl_name': 'MY_BASTION_HOSTS',
                       'aml_series': [{'aml': [{'addr': '4.4.4.4'},
@@ -179,10 +179,10 @@ class TestClauseALL(unittest.TestCase):
                                'key_secret': '"ASBASDASD=="',
                                'protocol_id': 1,
                                'rr_domain': 'www1.www.example.com'}],
-             'masters': [{'dscp_port': 5,
+             'mains': [{'dscp_port': 5,
                           'ip_port': 7553,
-                          'master_id': 'dmz_masters',
-                          'master_list': [{'addr': 'yellow_masters',
+                          'main_id': 'dmz_mains',
+                          'main_list': [{'addr': 'yellow_mains',
                                            'key_id': 'priv_dns_chan_key5'}]}],
              'server': [{'addr': '3.4.5.6',
                          'configs': {'bogus': 'yes',
@@ -211,9 +211,9 @@ class TestClauseALL(unittest.TestCase):
                                'domain': 'abc',
                                'flags': 1,
                                'protocol_id': 1}],
-             'zones': [{'zone': {'file': '"/var/lib/bind9/public/masters/db.example.com"',
+             'zones': [{'zone': {'file': '"/var/lib/bind9/public/mains/db.example.com"',
                                  'zone_name': 'red'}},
-                       {'zone': {'file': '"/var/lib/bind9/public/masters/db.green.com"',
+                       {'zone': {'file': '"/var/lib/bind9/public/mains/db.green.com"',
                                  'zone_name': 'green'}}]}
         )
 

@@ -130,16 +130,16 @@ optview_stmt_check_mx_cname = (
         + semicolon
 )  # [ Opt View Zone ] v9.4+
 
-#  check-names (master |slave| response) (warn|fail|ignore) ; [ Opt View (Zone) ]
+#  check-names (main |subordinate| response) (warn|fail|ignore) ; [ Opt View (Zone) ]
 #  Zone-variant of check-names is more simplified syntax than OptView-variant
 #  check-names response warn;
 optview_stmt_check_names = (
     Keyword('check-names').suppress()
     - Group(
         (
-            Literal('master')('')
+            Literal('main')('')
             | Literal('primary')('')
-            | Literal('slave')('')
+            | Literal('subordinate')('')
             | Literal('secondary')('')
             | Literal('response')('')
         )('zone_type')
@@ -257,7 +257,7 @@ dual_stack_servers_address_set = (
             + Optional(inet_ip_port_keyword_and_number_element)
         )
         ^ Group(
-            quoted_domain_generic_fqdn('domain')  # TODO is 'masters_name' the correct type for dual-stack-servers?
+            quoted_domain_generic_fqdn('domain')  # TODO is 'mains_name' the correct type for dual-stack-servers?
             + Optional(inet_ip_port_keyword_and_number_element)
         )
     )

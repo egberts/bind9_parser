@@ -31,7 +31,7 @@ from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_notify_source, \
     optviewzone_stmt_notify, \
     optviewzone_stmt_maintain_ixfr_base, \
-    optviewzone_stmt_masterfile_format, \
+    optviewzone_stmt_mainfile_format, \
     optviewzone_stmt_max_journal_size, \
     optviewzone_stmt_max_refresh_time, \
     optviewzone_stmt_max_retry_time, \
@@ -41,7 +41,7 @@ from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_max_transfer_idle_out, \
     optviewzone_stmt_min_refresh_time, \
     optviewzone_stmt_min_retry_time, \
-    optviewzone_stmt_multi_master, \
+    optviewzone_stmt_multi_main, \
     optviewzone_stmt_provide_ixfr, \
     optviewzone_stmt_request_ixfr, \
     optviewzone_stmt_request_nsid, \
@@ -307,8 +307,8 @@ class TestOptionsViewZone(unittest.TestCase):
     def test_isc_optviewzone_stmt_ixfr_from_differences_passing(self):
         """ Clause options/view/zone; Statement ixfr-from-differences; passing """
         test_string = [
-            'ixfr-from-differences master;',
-            'ixfr-from-differences slave;',
+            'ixfr-from-differences main;',
+            'ixfr-from-differences subordinate;',
             'ixfr-from-differences yes;',
             'ixfr-from-differences no;',
         ]
@@ -316,8 +316,8 @@ class TestOptionsViewZone(unittest.TestCase):
         self.assertTrue(result[0])
         assertParserResultDictTrue(
             optviewzone_stmt_ixfr_from_differences,
-            'ixfr-from-differences master;',
-            {'ixfr_from_differences': 'master'}
+            'ixfr-from-differences main;',
+            {'ixfr_from_differences': 'main'}
         )
 
     def test_isc_optviewzone_stmt_ixfr_tmp_file_passing(self):
@@ -415,7 +415,7 @@ class TestOptionsViewZone(unittest.TestCase):
         """ Clause options/view/zone; Statement notify; passing """
         test_string = [
             'notify explicit;',
-            'notify master-only;',
+            'notify main-only;',
             'notify yes;',
             'notify no;',
         ]
@@ -423,8 +423,8 @@ class TestOptionsViewZone(unittest.TestCase):
         self.assertTrue(result[0])
         assertParserResultDictTrue(
             optviewzone_stmt_notify,
-            'notify master-only;',
-            {'notify': 'master-only'}
+            'notify main-only;',
+            {'notify': 'main-only'}
         )
 
     def test_isc_optviewzone_stmt_maintain_ixfr_base_passing(self):
@@ -440,19 +440,19 @@ class TestOptionsViewZone(unittest.TestCase):
             {'maintain_ixfr_base': 'no'}
         )
 
-    def test_isc_optviewzone_stmt_masterfile_format_passing(self):
-        """ Clause options/view/zone; Statement masterfile-format; passing """
+    def test_isc_optviewzone_stmt_mainfile_format_passing(self):
+        """ Clause options/view/zone; Statement mainfile-format; passing """
         test_string = [
-            'masterfile-format raw;',
-            'masterfile-format text;',
-            'masterfile-format map;',
+            'mainfile-format raw;',
+            'mainfile-format text;',
+            'mainfile-format map;',
         ]
-        result = optviewzone_stmt_masterfile_format.runTests(test_string, failureTests=False)
+        result = optviewzone_stmt_mainfile_format.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
         assertParserResultDictTrue(
-            optviewzone_stmt_masterfile_format,
-            'masterfile-format map;',
-            {'masterfile_format': 'map'}
+            optviewzone_stmt_mainfile_format,
+            'mainfile-format map;',
+            {'mainfile_format': 'map'}
         )
 
     def test_isc_optviewzone_stmt_max_journal_size_passing(self):
@@ -572,17 +572,17 @@ class TestOptionsViewZone(unittest.TestCase):
             {'min_retry_time': 3600}
         )
 
-    def test_isc_optviewzone_stmt_multi_master_passing(self):
-        """ Clause options/view/zone; Statement multi-master; passing """
+    def test_isc_optviewzone_stmt_multi_main_passing(self):
+        """ Clause options/view/zone; Statement multi-main; passing """
         test_string = [
-            'multi-master yes;'
+            'multi-main yes;'
         ]
-        result = optviewzone_stmt_multi_master.runTests(test_string, failureTests=False)
+        result = optviewzone_stmt_multi_main.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
         assertParserResultDictTrue(
-            optviewzone_stmt_multi_master,
-            'multi-master no;',
-            {'multi_master': 'no'}
+            optviewzone_stmt_multi_main,
+            'multi-main no;',
+            {'multi_main': 'no'}
         )
 
     #     optviewzone_stmt_provide_ixfr, \
@@ -741,8 +741,8 @@ class TestOptionsViewZone(unittest.TestCase):
             'max-transfer-idle-out 3600;',
             'transfer-source-v6 fe12::4 port 53 dscp 1;',
             'max-journal-size 30000;',
-            'notify master-only;',
-            'masterfile-format text;',
+            'notify main-only;',
+            'mainfile-format text;',
             'max-refresh-time 3600;',
             'maintain-ixfr-base yes;',
             'dnssec-loadkeys-interval 3600;',
@@ -752,10 +752,10 @@ class TestOptionsViewZone(unittest.TestCase):
             'notify-source-v6 * port 53;',
             'sig-validity-interval 7;',
             'forwarders port 53 { 1.1.1.1; };',
-            'multi-master yes;',
+            'multi-main yes;',
             'provide-ixfr yes;',
             'dialup yes;',
-            'ixfr-from-differences slave;',
+            'ixfr-from-differences subordinate;',
             'max-transfer-time-in 3600;',
             'key-directory "/tmp/keydir/";',
             'min-retry-time 3600;',
@@ -811,8 +811,8 @@ class TestOptionsViewZone(unittest.TestCase):
             'max-transfer-idle-out 3600;' +
             'transfer-source-v6 fe12::4 port 53 dscp 1;' +
             'max-journal-size 30000;' +
-            'notify master-only;' +
-            'masterfile-format text;' +
+            'notify main-only;' +
+            'mainfile-format text;' +
             'max-refresh-time 3600;' +
             'maintain-ixfr-base yes;' +
             'dnssec-loadkeys-interval 3600;' +
@@ -822,10 +822,10 @@ class TestOptionsViewZone(unittest.TestCase):
             'notify-source-v6 * port 53;' +
             'sig-validity-interval 7;' +
             'forwarders port 53 { 1.1.1.1; };' +
-            'multi-master yes;' +
+            'multi-main yes;' +
             'provide-ixfr yes;' +
             'dialup yes;' +
-            'ixfr-from-differences slave;' +
+            'ixfr-from-differences subordinate;' +
             'max-transfer-time-in 3600;' +
             'key-directory "/tmp/keydir/";' +
             'min-retry-time 3600;' +
@@ -872,11 +872,11 @@ class TestOptionsViewZone(unittest.TestCase):
              'dnssec_loadkeys_interval': 3600,
              'forward': 'only',
              'fowarders': [{'fwdr2': [{'addr': '1.1.1.1'}], 'ip_port': 53}],
-             'ixfr_from_differences': 'slave',
+             'ixfr_from_differences': 'subordinate',
              'ixfr_tmp_file': '/tmp/junk.dat',
              'key_directory': '"/tmp/keydir/"',
              'maintain_ixfr_base': 'yes',
-             'masterfile_format': 'text',
+             'mainfile_format': 'text',
              'max_journal_size': [30000],
              'max_refresh_time': 3600,
              'max_retry_time': 3600,
@@ -886,8 +886,8 @@ class TestOptionsViewZone(unittest.TestCase):
              'max_transfer_time_out': 3600,
              'min_refresh_time': 3600,
              'min_retry_time': 3600,
-             'multi_master': 'yes',
-             'notify': 'master-only',
+             'multi_main': 'yes',
+             'notify': 'main-only',
              'notify_source': {'addr': '3.3.3.3', 'ip_port_w': 253},
              'notify_source_v6': {'addr': '*', 'ip_port_w': 53},
              'provide_ixfr': 'yes',

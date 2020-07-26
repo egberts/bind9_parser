@@ -42,7 +42,7 @@ class TestView(unittest.TestCase):
             'match-destinations { 129.0.0.1; };',
             'match-destinations { 129.0.0.1/24; };',
             'match-destinations { fe0a::1; };',
-            'match-destinations { acl_master_nameservers; };',
+            'match-destinations { acl_main_nameservers; };',
             'match-destinations { any; };',
             'match-destinations { none; };',
             'match-destinations { localhost; };',
