@@ -1,0 +1,14 @@
+;
+; BIND data file for local loopback interface
+;
+$TTL	604800
+@	IN	SOA	localhost. root.localhost. (
+			9
+			604800
+			86400
+			2419200
+			604800 )
+;
+@	IN	NS	localhost.
+@	IN	A	127.0.0.1
+@	IN	AAAA	::1

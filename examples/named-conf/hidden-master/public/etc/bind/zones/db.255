@@ -1,0 +1,12 @@
+;
+; BIND reverse data file for broadcast zone
+;
+$TTL	604800
+@	IN	SOA	localhost. root.localhost. (
+			17
+			604800
+			86400
+			2419200
+			604800 )
+;
+@	IN	NS	localhost.

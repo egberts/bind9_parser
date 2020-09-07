@@ -1,0 +1,5 @@
+
+
+/etc/bind/rndc.conf
+/etc/bind/keys
+/etc/bind/trusted-keys-named.conf

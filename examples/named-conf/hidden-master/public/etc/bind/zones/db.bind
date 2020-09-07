@@ -1,0 +1,12 @@
+$TTL    3600
+@       86400       CH   SOA     localhost. root.localhost. ( 
+                    2013050801      ; serial 
+                    3600            ; refresh 
+                    3600            ; retry 
+                    604800          ; expiry 
+                    86400 )         ; minimum 
+;  
+@                   CH  NS  localhost.
+
+version             CH  TXT "Microsoft DNS 6.0.6100 (2AEF76E)" 
+authors             CH  TXT "Microsoft" 

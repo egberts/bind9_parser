@@ -1,0 +1,12 @@
+////
+//// File: view.chaos
+//// Title: View for CHAOS zones
+view "chaos" CH {
+  match-clients { any; };
+  zone "bind" CH {
+    type master;
+    file "/etc/bind/zones/db.bind";
+    allow-update { none; };
+    allow-transfer { none; };
+  };
+};
