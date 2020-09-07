@@ -10,7 +10,7 @@
 
 from pprint import PrettyPrinter
 from typing import Dict, Any
-import line_profiler
+# import line_profiler
 
 """
 Bind9 named.conf global settings
@@ -1381,7 +1381,7 @@ g_nc_keywords['deallocate-on-exit'] = \
         'validity': {'regex': r'(yes|no)'},
         'found-in': {'options'},
         'introduced': '8.2',
-        'obsoleted': '???',   # it's no longer in 9.11
+        'obsoleted': '',   # It's ancient, but ignored
         'topic': 'operating-system, ignored',
         'server-type': '',
         'comment': """This option was used in BIND 8 to enable checking for memory leaks on exit.
@@ -1645,7 +1645,7 @@ g_nc_keywords['dnsrps-enable'] = \
     {
         'default': None,
         'validity': {'regex': r'(yes)|(no)'},
-        'introduced': '9.12'
+        'introduced': '9.12',
         'found-in': {'options', 'view'},
         'topic': 'policy, RPZ rewriting',
         'server-type': '',
@@ -1690,7 +1690,7 @@ The default is 1 hour (3660 seconds).
 g_nc_keywords['dnskey-sig-validity'] = \
     {
         'default': '0',
-        'validity': {'range', {0, 3660}},
+        'validity': {'range': {0, 3660}},
         'unit': 'day',
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.13',
@@ -2630,7 +2630,8 @@ g_nc_keywords['hostname'] = \
     {
         'default': '',
         'validity': {'options': 'none',
-                     'regex': r'[A-Za-z0-9\-_]{1-64}(\.[A-Za-z0-9\-_]{1-64})*"}',
+                     'regex': r'[A-Za-z0-9\-_]{1-64}(\.[A-Za-z0-9\-_]{1-64})*"',
+                    },
         'found-in': {'options'},
         'introduced': '8.3',
         'topic': 'server info',
@@ -2642,7 +2643,7 @@ name server as found by the gethostname() function. The
 primary purpose of such queries is to identify which of a
 group of anycast servers is actually answering your queries.
 
-Specifying hostname none; disables processing of the queries.""",
+Specifying hostname none; disables processing of the queries."""
     }
 
 g_nc_keywords['in-view'] = \
@@ -2660,7 +2661,7 @@ g_nc_keywords['inline-signing'] = \
     {
         'default': None,
         'validity': {'regex': r'(yes|no)'},
-        'found-in': {'option', 'view', 'zone'},
+        'found-in': {'options', 'view', 'zone'},
         'introduced': '9.9.0',
         'topic': 'dnssec',
         'server-type': 'master, slave, primary, secondary',
@@ -2669,7 +2670,7 @@ of a zone, where an unsigned zone is transferred in or
 loaded from disk and a signed version of the zone is
 served, with possibly a different serial number.  This
 behavior is disabled by default.
-Added to 'option' and 'view' section in v9.9.0.""",
+Added to 'options' and 'view' section in v9.9.0.""",
     }
 
 g_nc_keywords['interface-interval'] = \
@@ -2944,7 +2945,7 @@ options clause.""",
 g_nc_keywords['keys'] = \
     {
         'default': None,
-        'validity': {'function': 'key_name',
+        'validity': {'function': 'key_name'},
         'found-in': {'server'},
         'introduced': '9.2.0',
         'topic': '',
@@ -3998,7 +3999,7 @@ keyword, not a filename, and therefore is not enclosed in double quotes.""",
 g_nc_keywords['plugin'] = \
     {
         'default': None,
-        'validity': 'function': 'plugin',
+        'validity': {'function': 'plugin'},
         'found-in': {'', 'view'},
         'topblock': True,
         'occurs-multiple-times': True,
@@ -4975,7 +4976,7 @@ g_nc_keywords['suppress-initial-notify'] = \
 g_nc_keywords['synth-from-dnssec'] = \
     {
         'default': '',
-        'validity': {'regex': '(yes|no)',
+        'validity': {'regex': '(yes|no)'},
         'found-in': {'options', 'view'},
         'introduced': '9.12',
         'topic': '',
@@ -5981,9 +5982,13 @@ class NamedConfGlobal(object):
     def print_versioned_dictionary(self):
         print("options {")
         for this_option in self.versioned_keywords_dictionary['options']:
+            print("going into options clause, %s block item" % this_option)
             this_kw = self.versioned_keywords_dictionary['options'][this_option]
+            print('dir(this_kw): %s' % type(this_kw))
             if type(this_kw) is not dict:
                 continue
+            print("going into options clause, %s block item, value %s" %
+                this_option, this_kw)
             # Is there a "'default': something" in that keyword?
             default_is = this_kw.get('default')
             if default_is:
@@ -6019,7 +6024,7 @@ def validate_master_keywords_dictionary():
             if 'validity' not in g_nc_keywords[this_kw]:
                 print("validate_master_keywords_dictionary: 'validate' not found in '%s' keyword." % this_kw)
                 return False
-    print("validate_master_keywords_dictionary: validated.")
+    # print("validate_master_keywords_dictionary: validated.")
     return True
 
 #@profile
@@ -6048,17 +6053,27 @@ def normalize_version_int(myobject: str) -> str:
         version += int(bang[1]) * 100
     if bang_len >= 1:
         if bang != ['']:
-            version += int(bang[0]) * 10000
+            tmp_version = int(bang[0])
+            version += tmp_version * 10000
     return version
 
 
 def print_master_dictionary():
-#    print("print_master_dictionary: Keywords:")
-#    for this_keyword in g_nc_keywords:
-#        print("    %s:" % this_keyword)
+    print("print_master_dictionary: Keywords:")
+    for this_keyword in g_nc_keywords:
+        print("    %s:" % this_keyword)
     return
 
 
+def find_all_found_in():
+    for kw in g_nc_keywords:
+        print("find_all_found_in: %s" % kw)
+        if 'found-in'  not in g_nc_keywords[kw]:
+            print("ERROR: 'found-in' not found in fikw: %s" % kw)
+            continue
+        this_fikw = g_nc_keywords[kw]['found-in']
+        for fikw in this_fikw:
+            print("  fikw: %s" % fikw)
 #####################################################################
 
 # keyword history
@@ -6094,8 +6109,16 @@ def print_master_dictionary():
 # };
 
 if __name__ == "__main__":
-    ncg = NamedConfGlobal(version='8.1', debug=5)
+    ncg = NamedConfGlobal(version='8.1.0', debug=5)
 
-#    print("##############################################")
-#    pp = PrettyPrinter(indent=4)
-#    ncg.print_versioned_dictionary()
+    valid = validate_master_keywords_dictionary()
+    if valid:
+        print('master keyword dictionary validated.')
+    else:
+        print('master keyword dictionary is not validated.')
+        print_master_dictionary()
+
+    print("##############################################")
+    ## pp = PrettyPrinter(indent=4)
+    ## ncg.print_versioned_dictionary()
+    find_all_found_in()
