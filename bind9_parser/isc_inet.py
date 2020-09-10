@@ -16,18 +16,18 @@ from pyparsing import Word, nums, Combine, Group, \
 from bind9_parser.isc_utils import semicolon, squote, dquote
 
 
-def ip4_subnet_range_check(strg, loc, toks):
-    """
-    s = the original string being parsed
-    loc = the location of the matching substring
-    toks = a list of the matched tokens, packaged as a ParseResults object
-    """
-    value = int(toks[0])
-    if (value < 1) or (value > 31):
-        print("IPv4 subnet is out of range: %d" % value)
-        print("strg: %s" % strg)
-        print("loc: %s" % loc)
-    return None
+# def ip4_subnet_range_check(strg, loc, toks):
+#     """
+#     s = the original string being parsed
+#     loc = the location of the matching substring
+#     toks = a list of the matched tokens, packaged as a ParseResults object
+#     """
+#     value = int(toks[0])
+#     if (value < 1) or (value > 31):
+#         print("IPv4 subnet is out of range: %d" % value)
+#         print("strg: %s" % strg)
+#         print("loc: %s" % loc)
+#     return None
 
 
 dotted_decimal = Combine(
@@ -70,6 +70,9 @@ _ip6_device_index = r'%' + \
 # "    IPv4-mapped IPv6 addresses (section 2.1 of rfc2765)
 # "    IPv4-translated addresses (section 2.1 of rfc2765)
 # "  IPv4 addresses
+
+_ip6_prefix = r'/' + Word(nums, min=1, max=3)
+_ip6_prefix.setName('<ip6_prefix>')
 
 _ip6_part = r'[0-9a-fA-F]{1,4}'
 ip6_part = Regex(_ip6_part).setName('4-hex')
@@ -213,30 +216,19 @@ _ip6_addr = Combine(
     | ip6_0_0_addr
 )
 
-ip6_addr = Combine(_ip6_addr + _ip6_device_index) | _ip6_addr
+ip6_addr_index = Combine(_ip6_addr + _ip6_device_index)
+ip6_addr_index.setName('<ip6_addr_index>')
 
+ip6_addr_prefix = Combine(_ip6_addr + _ip6_prefix)
+ip6_addr_prefix.setName('<ip6_addr_prefix>')
 
-#_ip6_addr = _ipv6_part = Regex(r'[0-9a-fA-F]{1,4}').setName("hex_integer")
-#_full_ipv6_address = (_ipv6_part + (':' + _ipv6_part) * 7).setName("full IPv6 address")
-#_short_ipv6_address = (Optional(_ipv6_part + (':' + _ipv6_part) * (0, 6))
-#                       + "::"
-#                       + Optional(_ipv6_part + (':' + _ipv6_part) * (0, 6))
-#                       ).setName("short IPv6 address")
-#_short_ipv6_address.addCondition(lambda t: sum(1 for tt in t if pyparsing_common.ipv6_part.matches(tt)) < 8)
-#_mixed_ipv6_address = ("::ffff:" + ip4_addr).setName("mixed IPv6 address")
+ip6_addr = Combine(
+    ip6_addr_index
+    | ip6_addr_index
+    | _ip6_addr
+)
+ip6_addr.setName('<ip6_addr_only>')
 
-
-#    Group(
-#    Combine(
-#        (
-#            _short_ipv6_address
-#            _mixed_ipv6_address |
-#            _full_ipv6_address
-#        ).setName("IPv6 address")
-#    ).setName('<ip6_addr')
-#    + Optional(ip6_device_index)
-#).setName('<ip6_full_addr>')
-ip6_addr.setName('<ip6_addr>')
 
 # ip46_addr is just plain addressing (without subnet suffix) for IPv4 and IPv6
 ip46_addr = (
@@ -246,7 +238,8 @@ ip46_addr.setName('<ip46_addr>')
 
 # ip46_addr_or_prefix is just about every possible IP addressing methods out there
 ip46_addr_or_prefix = (
-        ip4s_prefix   # Lookahead via '/'
+        ip6_addr_prefix   # Lookahead via ':'
+        | ip4s_prefix   # Lookahead via '/'
         | ip4_addr    # Lookahead via 'non-hex'
         | ip6_addr
 )

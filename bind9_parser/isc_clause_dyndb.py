@@ -45,5 +45,5 @@ clause_stmt_dyndb_series = (
     )
 )('dyndb')
 
-if __name__ == '__main__':
-    unittest.main()
+# if __name__ == '__main__':
+#     unittest.main()

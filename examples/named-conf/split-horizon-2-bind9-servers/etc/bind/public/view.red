@@ -1,6 +1,5 @@
-//// view.red
-////
-//// view red
+//// 
+//// File: view.red
 ////
 //// view red is the bad guys view or public IP.
 ////
@@ -42,7 +41,11 @@
 
 view "red"
 {
-    recursion yes;
+    match-clients { any; };
+    match-recursive-only no;
+    allow-query { any; };
+
+    recursion yes;  // turn that off on hidden-master
 
     allow-recursion {
         external_bastion_ip_acl; // that public DNS server

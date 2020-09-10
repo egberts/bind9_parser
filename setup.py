@@ -18,7 +18,7 @@ packages = [
     'bind9_parser',
 ]
 
-bind9_parser_version = '0.9.8'
+bind9_parser_version = '0.9.8.1'
 
 setup(  # Distribution meta-data
     name='bind9_parser',
@@ -39,7 +39,7 @@ setup(  # Distribution meta-data
     install_requires=['pyparsing'],
     platforms='any',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Intended Audience :: System Administrators',
         'Intended Audience :: Information Technology',

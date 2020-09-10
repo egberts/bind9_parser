@@ -176,18 +176,36 @@ class TestINET(unittest.TestCase):
         ]
         result = ip6_addr.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
-        
-    def test_isc_inet_ip6_addr_list_series(self):
+
         """INET object, ip6_addr_list_series passing
         Full IPv6 (without the trailing '/') with trailing semicolon
-
         """
         test_data = [
-            '2001:610:210::;',
-            '2001:67c:2e8::;',
+            '::1;',
+            '1:2::8; 2:3::7; ',  # two IP6 in a series
+            '1:2::8; 2:3::7; ::1;',  # three IP6 in a series
+            '1:2::8; 2:3::7; 3:4::6; ::1;',
         ]
         result = ip6_addr_list_series.runTests(test_data, failureTests=False)
+        print("result: ", result)
         self.assertTrue(result[0])
+
+    def test_isc_inet_ip6_addr_list_series_failing(self):
+        """
+        INET object, ip6_addr_list_series failing
+        Full IPv6 (without the trailing '/') with trailing semicolon
+        """
+        test_data = [
+            '1:2::',  # missing semicolon
+            '1:2:;',  # missing colon
+            '1:::;',  # too many colons
+            '1:2::; 2:3::7; ::1;',  # missing ending digit in 1st item of series
+            '1:2::8, 2:3::7; ::1;',  # comma used instead of semicolon
+            '1:2::8; 2:3::; ::1;',  # missing ending digit in 2nd item of series
+            '1:2::; 2:3::7; :7:1;',  # missing double colon in 3rd item of series
+        ]
+        result = ip6_addr_list_series.runTests(test_data, failureTests=False)
+        self.assertFalse(result[0])
 
     def test_isc_inet_ip46_addr_passing(self):
         """INET clause, ip46_addr passing"""
