@@ -24,6 +24,8 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+share/python-wheels/
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -46,6 +48,10 @@ coverage.xml
 *.cover
 .hypothesis/
 .pytest_cache/
+.nox/
+*.py,cover
+cover/
+
 
 # Translations
 *.mo
@@ -55,6 +61,7 @@ coverage.xml
 *.log
 local_settings.py
 db.sqlite3
+db.sqlite3-journal
 
 # Flask stuff:
 instance/
@@ -68,6 +75,8 @@ docs/_build/
 
 # PyBuilder
 target/
+.pybuilder/
+
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -102,3 +111,15 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+/.idea/bind9_parser.iml
+/tests/coverage/bind9_parser___init___py.html
+/tests/coverage/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+#   For a library or package, you might want to ignore these files since the code is
+#   intended to run in multiple environments; otherwise, check them in:
+# .python-version
