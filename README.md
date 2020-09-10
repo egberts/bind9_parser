@@ -56,3 +56,8 @@ A massive unit test is supplied (under `tests/` subdirectory) to ensure that fut
 
 # Coverages
 * [![Coverage Status (master)](https://coveralls.io/repos/github/egberts/bind9_parser/badge.svg?branch=master)](https://coveralls.io/github/egberts/bind9_parser?branch=master)
+|  |license| |versions| |status|
+|  |ci-status| |win-ci-status| |docs| |codecov|
+|  |kit| |format| |repos| |downloads|
+|  |stars| |forks| |contributors|
+|  |tidelift| |twitter-coveragepy| |twitter-nedbat|
