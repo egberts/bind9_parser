@@ -1,0 +1,61 @@
+ fccagou commented May 13, 2020
+
+Hello,
+
+First of all, thanks a lot for your work !
+
+I'm looking a way to make a network graph representation of the bind configuration.
+I began to make it using python regex it's not good enough.
+Searching for existing bind9 parser, I've found yours and I'm testing it now.
+
+I know the code is beta, I've found something looking like a bug.
+
+$ cat test_view.conf
+
+view "red" {
+    zone "z1.com" { };
+    zone "z2.com" { };
+};
+
+view "green" {
+    zone "z3.com" { };
+    zone "z4.com" { };
+};
+
+Running parser $ ~/src/bind9_parser/examples/parse_bind9.py test_view.conf
+
+Start: Is the library quiet?
+End: Is the library quiet?
+len(result): 2
+
+Plain print(result):
+[['"red"', [['"z1.com"'], ['"z2.com"']]],
+ ['"green"', [['"z3.com"'], ['"z4.com"']]]]
+result: {'view': [{'view_name': '"green"', 'configs': {'zone': {'zone_name': '"z4.com"'}}}]}
+
+print(result.asDict()):
+{   'view': [   {   'configs': {   'zone': {   'zone_name': '"z4.com"'}},
+                    'view_name': '"green"'}]}
+end of result.
+
+The red view is present in result but absent in the dict format.
+
+Thanks in advance for informations.
+
+-- François
+
+
+SUMMARY
+=======
+So, I goofed on the multiple view support as dict() type can only handle one
+unique view.
+
+A couple ways to fix this would be:
+
+1.  Support namedconf['view']['red'] dictionary.  Bind9 does not support
+    reuse of view names within each of its view and zone, so that'll work.
+
+2.  Support namedconf['view'][0] dictionary.  This is easiest on pyparsing
+    module.   We would prefer option 1 above.
+
+3.  
