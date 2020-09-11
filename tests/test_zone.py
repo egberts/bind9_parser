@@ -213,23 +213,19 @@ class TestZone(unittest.TestCase):
         ]
         result = zone_stmt_journal.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
+        pass
 
-
-    def test_isc_zone_stmt_masters_name_passing(self):
-        """ Clause zone; Name, masters; passing """
-        assertParserResultDictTrue(
-            zone_stmt_masters,
-            'masters { another_bastion_host_group key priv_dns_chan_key0; };',
-            {'masters': {
-                'key_id': 'priv_dns_chan_key0',
-                'master_name': 'another_bastion_host_group' }
-            }
-        )
+    # zone_masters_set
+    def test_isc_zone_stmt_masters_name_by_ipv6_passing(self):
+        """ Clause zone; Name, masters; by IPv6; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             'fe02::1 key priv_dns_chan_key0;',
             {'ip6': 'fe02::1', 'key_id': 'priv_dns_chan_key0'}
         )
+
+    def test_isc_zone_stmt_masters_name_by_ipv4_passing(self):
+        """ Clause zone; Name, masters; by IPv4; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             '4.4.4.4 key priv_dns_chan_key0;',
@@ -237,37 +233,205 @@ class TestZone(unittest.TestCase):
         )
 
     #    @unittest.skip("skipping zone's masters_series passing")
+    def test_isc_zone_stmt_masters_set_simple_passing(self):
+        assertParserResultDictTrue(
+            zone_masters_set,
+            'red_masters key priv_dns_chan_key1;',
+            {
+                'key_id': 'priv_dns_chan_key1',
+                'master_name': 'red_masters'
+            }
+        )
+
+    def test_isc_zone_stmt_masters_set_simple1_passing(self):
+        assertParserResultDictTrue(
+            zone_masters_set,
+            'red_masters;',
+            {'master_name': 'red_masters'}
+        )
+
+    def test_isc_zone_stmt_masters_set_simple2_passing(self):
+        assertParserResultDictTrue(
+            zone_masters_set,
+            '127.0.0.1;',
+            {'ip4': '127.0.0.1'}
+        )
+
+    def test_isc_zone_stmt_masters_set_simple3_passing(self):
+        assertParserResultDictTrue(
+            zone_masters_set,
+            '::1;',
+            {'ip6': '::1'}
+        )
+
+    def test_isc_zone_stmt_masters_set_simple4_passing(self):
+        assertParserResultDictTrue(
+            zone_masters_set,
+            'red_masters key secret_ring_decoder;',
+            {'key_id': 'secret_ring_decoder', 'master_name': 'red_masters'}
+        )
+
+    def test_isc_zone_stmt_masters_set_simple5_passing(self):
+        assertParserResultDictTrue(
+            zone_masters_set,
+            '127.0.0.1 key vinegrete;',
+            {'ip4': '127.0.0.1',
+             'key_id': 'vinegrete'}
+        )
+
+    def test_isc_zone_stmt_masters_set_simple6_passing(self):
+        assertParserResultDictTrue(
+            zone_masters_set,
+            '::1 key treasure_island;',
+            {'ip6': '::1',
+             'key_id': 'treasure_island'}
+        )
+
+    # zone_masters_series
+    def test_isc_zone_stmt_masters_series_singleset_passing(self):
+        """ Clause zone; Series, masters; Single set; passing """
+        assertParserResultDictTrue(
+            zone_masters_series,
+            'another_bastion_host_group ;',
+            {'zone_master_list': [{'master_name': 'another_bastion_host_group'}]}
+        )
+
+    def test_isc_zone_stmt_masters_series_singleset2_passing(self):
+        """ Clause zone; Series, masters; Single set with key; passing """
+        assertParserResultDictTrue(
+            zone_masters_series,
+            'another_bastion_host_group key priv_dns_chan_key0;',
+            {'zone_master_list': [{'key_id': 'priv_dns_chan_key0',
+                                'master_name': 'another_bastion_host_group'},
+                               ]
+             }
+        )
+
+    def test_isc_zone_stmt_masters_series_two_same_passing(self):
+        """ Clause zone; Series, masters; Single set with key; passing """
+        assertParserResultDictTrue(
+            zone_masters_series,
+            'another_bastion_host_group; internal_bastion_host_group;',
+            {'zone_master_list':
+                [
+                    {'master_name': 'another_bastion_host_group'},
+                    {'master_name': 'internal_bastion_host_group'}
+                ]
+            }
+        )
+
+    def test_isc_zone_stmt_masters_series_two_mixed_passing(self):
+        """ Clause zone; Series, masters set; Two set, mixed; passing """
+        assertParserResultDictTrue(
+            zone_masters_series,
+            'another_bastion_host_group; 128.0.0.1;',
+            {'zone_master_list': [{'master_name': 'another_bastion_host_group'},
+                               {'ip4': '128.0.0.1'}]}
+        )
+
+    def test_isc_zone_stmt_masters_series_two_mixed_w_key_passing(self):
+        """ Clause zone; Series, masters set; Two set, mixed; passing """
+        assertParserResultDictTrue(
+            zone_masters_series,
+            'another_bastion_host_group; 128.0.0.1 key ring_decoder;',
+            {'zone_master_list': [{'master_name': 'another_bastion_host_group'},
+                               {'ip4': '128.0.0.1',
+                                'key_id': 'ring_decoder'}]}
+        )
+
     def test_isc_zone_stmt_masters_series_passing(self):
         """ Clause zone; Series, masters; passing """
         assertParserResultDictTrue(
             zone_masters_series,
             'another_bastion_host_group key priv_dns_chan_key0; 5.5.5.5 port 6553 key secret_dmz_key;',
-            {'masters_group': [{'key_id': 'priv_dns_chan_key0',
+            {'zone_master_list': [{'key_id': 'priv_dns_chan_key0',
                                 'master_name': 'another_bastion_host_group'},
                                {'ip4': '5.5.5.5',
                                 'key_id': 'secret_dmz_key'}]}
         )
 
+    # zone_stmt_masters
     def test_isc_zone_stmt_masters_passing(self):
         """ Clause zone; Statement masters; passing """
         test_string = [
-            'masters port 553 dscp 7 { red_masters key priv_dns_chan_key1; };',
-            'masters port 563 dscp 7 { ffe1::1 port 5583; };',
-            'masters port 573 dscp 6 { 12.13.14.15 port 5553 key priv_dns_chan_key2; };',
+            'masters { red_masters key priv_dns_chan_key1; };',
+            'masters port 563 { ffe1::1 port 5583; };',
+            'masters dscp 6 { 12.13.14.15 port 5553 key priv_dns_chan_key2; };',
         ]
         result = zone_stmt_masters.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
 
     def test_isc_zone_stmt_masters_dict_passing(self):
+        """ Clause zone; Statement masters; passing """
         assertParserResultDictTrue(
             zone_stmt_masters,
-            'masters port 553 dscp 7 { red_masters key priv_dns_chan_key1; };',
-            {'masters': {'dscp_port': 7,
-                         'ip_port': 553,
-                         'masters_group': [{'key_id': 'priv_dns_chan_key1',
-                                           'master_name': 'red_masters'}],
-                         }
-             }
+            'masters  { red_masters ;  };',
+            {'masters_zone': {'zone_master_list': [{'master_name': 'red_masters'}]}}
+        )
+
+    def test_isc_zone_stmt_masters_dict2_passing(self):
+        """ Clause zone; Statement masters; Dict2; passing """
+        assertParserResultDictTrue(
+            zone_stmt_masters,
+            'masters { yellow_masters key priv_dns_chan_key5; };',
+            {'masters_zone': {'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
+                                                    'master_name': 'yellow_masters'}]}}
+        )
+
+    # zone_stmt_masters
+    def test_isc_zone_stmt_masters_port_passing(self):
+        """ Clause zone; Statement masters; Port; passing """
+        assertParserResultDictTrue(
+            zone_stmt_masters,
+            'masters port 7553 { black_primary; };',
+            {'masters_zone': {'ip_port': 7553,
+                              'zone_master_list': [{'master_name': 'black_primary'}]}}
+        )
+
+    def test_isc_zone_stmt_masters_dscp_passing(self):
+        """ Clause zone; Statement masters; Dict series; passing """
+        assertParserResultDictTrue(
+            zone_stmt_masters,
+            'masters dscp 12 { yellow_masters key priv_dns_chan_key5; dmz_public; };',
+            {'masters_zone': {'dscp_port': 12,
+                              'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
+                                                    'master_name': 'yellow_masters'},
+                                                   {'master_name': 'dmz_public'}]}}
+        )
+
+    def test_isc_zone_stmt_masters_port_dscp_passing(self):
+        """ Clause zone; Statement masters; Dict series; passing """
+        assertParserResultDictTrue(
+            zone_stmt_masters,
+            'masters port 54 dscp 11 { yellow_masters key priv_dns_chan_key5; dmz_public; };',
+            {'masters_zone': {'dscp_port': 11,
+                              'ip_port': 54,
+                              'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
+                                                    'master_name': 'yellow_masters'},
+                                                   {'master_name': 'dmz_public'}]}}
+        )
+
+    def test_isc_zone_stmt_masters_port_dscp_reversed_passing(self):
+        """ Clause zone; Statement masters; Dict series; passing """
+        assertParserResultDictTrue(
+            zone_stmt_masters,
+            'masters dscp 12 port 55 { yellow_masters key priv_dns_chan_key5; dmz_public; };',
+            {'masters_zone': {'dscp_port': 12,
+                              'ip_port': 55,
+                              'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
+                                                    'master_name': 'yellow_masters'},
+                                                   {'master_name': 'dmz_public'}]}}
+        )
+
+    def test_isc_zone_stmt_masters_dict_series2_passing(self):
+        """ Clause zone; Statement masters; Dict series; passing """
+        assertParserResultDictTrue(
+            zone_stmt_masters,
+            'masters { yellow_masters; dmz_public2 key priv_dns_chan_key5; dmz_public1; };',
+            {'masters_zone': {'zone_master_list': [{'master_name': 'yellow_masters'},
+                                                   {'key_id': 'priv_dns_chan_key5',
+                                                    'master_name': 'dmz_public2'},
+                                                   {'master_name': 'dmz_public1'}]}}
         )
 
     def test_isc_zone_stmt_masters_failing(self):
@@ -285,14 +449,22 @@ class TestZone(unittest.TestCase):
         # Only one masters statement is allowed in zone clause, so get the last one
         assertParserResultDictFalse(
             zone_statements_series,
-            'masters dmz_masters port 7552 dscp 5 { yellow_masters key priv_dns_chan_key5; }; ' +
-            'masters bastion_hosts port 1024 dscp 6 { fe08::1 port 77; };',
+            'masters port 7552 dscp 5 { yellow_masters key priv_dns_chan_key5; }; ' +
+            'masters port 1024 dscp 6 { fe08::1 port 77; };',
             {'masters': [{'dscp_port': 6,
                           'ip_port': 1025,
-                          'master_id': 'bastion_hosts',
                           'master_list': [{'addr': 'fe08::1',
                                            'ip_port': 77}]}]}
         )
+
+    def test_isc_zone_stmt_masters_name_by_name_passing(self):
+        """ Clause zone; Name, masters; by name; passing """
+        assertParserResultDictTrue(
+            zone_stmt_masters,
+            'masters { another_bastion_host_group; };',
+            {'masters_zone': {'zone_master_list': [{'master_name': 'another_bastion_host_group'}]}}
+        )
+
 
     def test_isc_zone_stmt_pubkey_passing(self):
         """ Clause zone; Statement pubkey; passing """
@@ -543,11 +715,10 @@ class TestZone(unittest.TestCase):
         """ Clause zone; Statement zone_statements_series; passing """
         assertParserResultDictTrue(
             zone_statements_series,
-            'masters dmz_masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
+            'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
             ,
             {'masters': [{'dscp_port': 5,
                          'ip_port': 7553,
-                         'master_id': 'dmz_masters',
                          'master_list': [{'addr': 'yellow_masters',
                                           'key_id': 'priv_dns_chan_key5'}]}],
              }
@@ -564,7 +735,7 @@ class TestZone(unittest.TestCase):
             'ixfr-base custom_file_basename_goes_here;',
             'ixfr-from-differences yes;',
             'journal "/tmp/junk";',
-            'masters dmz_masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };',
+            'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };',
             'pubkey 53 251 7 "asdfasddfasdfasdf";',
             'server-addresses { fb03::7 port 9553; 9.9.9.9; };',
             'server-names { "example.com"; };',
@@ -596,14 +767,11 @@ class TestZone(unittest.TestCase):
         """ Clause zone; Statement zone_statements_series; passing """
         assertParserResultDictTrue(
             zone_statements_series,
-            'masters dmz_masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
-            ,
-            {'masters': [{'dscp_port': 5,
-                         'ip_port': 7553,
-                         'master_id': 'dmz_masters',
-                         'master_list': [{'addr': 'yellow_masters',
-                                          'key_id': 'priv_dns_chan_key5'}]}],
-             }
+            'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };',
+            {'masters_zone': {'dscp_port': 5,
+                              'ip_port': 7553,
+                              'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
+                                                    'master_name': 'yellow_masters'}]}}
         )
 
     def test_isc_zone_statements_series_passing(self):
@@ -614,45 +782,41 @@ class TestZone(unittest.TestCase):
             'delegation-only yes;'
             'file "/var/lib/bind9/public/masters/db.example.org";'
             'in-view dmz_view;'
-            'inline-signing no;'
-            'ixfr-base custom_file_basename_goes_here;'
             'ixfr-from-differences yes;'
             'journal "/tmp/x";'
-            'masters dmz_masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
+            'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
             'pubkey 53 251 7 "asdfasddfasdfasdf";'
             'server-addresses { fb03::7 port 9553; 9.9.9.9; };'
             'server-names { "example.com"; };'
             'type forward;'
             'update-policy {grant hidden-master.ADMIN.EXAMPLE.COM ms-self EXAMPLE.COM A AAAA;};'
-            'use-id-pool yes;'
+            'use-id-pool yes;'  # obsoleted in 9.6.3 but here as a test
         ,
-            {'check_names': 'fail',
-             'delegation-only': 'yes',
-             'file': '"/var/lib/bind9/public/masters/db.example.org"',
-             'in_view': 'dmz_view',
-             'inline-signing': 'no',
-             'ixfr_base': 'custom_file_basename_goes_here',
-             'ixfr_from_differences': 'yes',
-             'journal': '"/tmp/x"',
-             'masters': [{'dscp_port': 5,
-                          'ip_port': 7553,
-                          'master_id': 'dmz_masters',
-                          'master_list': [{'addr': 'yellow_masters',
-                                           'key_id': 'priv_dns_chan_key5'}]}],
-             'pubkey': {'algorithms': 7,
-                        'flags': 53,
-                        'key_secret': 'asdfasddfasdfasdf',
-                        'protocol': 251},
-             'server_addresses': [{'addr': 'fb03::7', 'ip_port': 9553},
-                                  {'addr': '9.9.9.9'}],
-             'server_names': ['example.com'],
-             'type': 'forward',
-             'update_policy': [{'impacting_realm': 'EXAMPLE.COM',
-                                'permission': 'grant',
-                                'policy': 'ms-self',
-                                'requestor_domain': 'hidden-master.ADMIN.EXAMPLE.COM',
-                                'rr_types': ['A', 'AAAA']}],
-             'use_id_pool': 'yes'}
+            {
+            'check_names': 'fail',
+            'delegation-only': 'yes',
+            'file': '"/var/lib/bind9/public/masters/db.example.org"',
+            'in_view': 'dmz_view',
+            'ixfr_from_differences': 'yes',
+            'journal': '"/tmp/x"',
+            'masters_zone': {'dscp_port': 5,
+                             'ip_port': 7553,
+                             'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
+                                                   'master_name': 'yellow_masters'}]},
+            'pubkey': {'algorithms': 7,
+                       'flags': 53,
+                       'key_secret': 'asdfasddfasdfasdf',
+                       'protocol': 251},
+            'server_addresses': [{'addr': 'fb03::7', 'ip_port': 9553},
+                                 {'addr': '9.9.9.9'}],
+            'server_names': ['example.com'],
+            'type': 'forward',
+            'update_policy': [{'impacting_realm': 'EXAMPLE.COM',
+                               'permission': 'grant',
+                               'policy': 'ms-self',
+                               'requestor_domain': 'hidden-master.ADMIN.EXAMPLE.COM',
+                               'rr_types': ['A', 'AAAA']}],
+            'use_id_pool': 'yes'}
     )
 
     def test_isc_zone_stmt_statements_series_failing(self):
@@ -664,20 +828,18 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_stmt_statements_github_issue1(self):
-        """ Clause zone; Statement statements_series; failing """
-        test_string = [
-"""
-type slave;
-file "slaves/my.slave.internal.zone.db";
-masters { 127.0.0.1; } ;
-// put slave zones in the slaves/ directory so named can update them
-""",
-# masters { /* put master nameserver IPs here */ 127.0.0.1; } ;
-        ]
-        result = zone_statements_series.runTests(test_string,
-                                                 failureTests=False)
-        self.assertTrue(result[0])
-
+        """ Clause zone; Statement statements_series; GitHub issue #1; failing """
+        assertParserResultDictTrue(
+            zone_statements_series,
+            """
+            type slave;
+            file "slaves/my.slave.internal.zone.db";
+            masters { 127.0.0.1; } ;
+            """,
+            {'file': '"slaves/my.slave.internal.zone.db"',
+             'masters_zone': {'zone_master_list': [{'ip4': '127.0.0.1'}]},
+             'type': 'slave'}
+        )
 
 if __name__ == '__main__':
     unittest.main()

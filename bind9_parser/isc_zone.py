@@ -129,7 +129,7 @@ zone_masters_series = (
         Group(
             zone_masters_set('')
         )('')
-    )('masters_group')
+    )('zone_master_list')  # without that PyParsing label, we cannot get standalone grouping, must be labeled.
 )
 
 # 'masters' clause has a name field for the 1st argument;
@@ -137,12 +137,29 @@ zone_masters_series = (
 zone_stmt_masters = (
     Group(
         Keyword('masters').suppress()  # if we could have a lookahead of 'masters {';
-        + Optional(inet_ip_port_keyword_and_number_element)
-        + Optional(inet_dscp_port_keyword_and_number_element)
-        - lbrack
-        + OneOrMore(zone_masters_set)
-        + rbrack
-    )('masters')
+        - (
+            (
+                lbrack
+                + zone_masters_series
+                + rbrack
+            )
+            | (
+                inet_ip_port_keyword_and_number_element
+                + Optional(inet_dscp_port_keyword_and_number_element)
+                - lbrack
+                - zone_masters_series
+                + rbrack
+            )
+            | (
+                inet_dscp_port_keyword_and_number_element
+                + Optional(inet_ip_port_keyword_and_number_element)
+                - lbrack
+                + zone_masters_series
+                + rbrack
+            )
+        )
+    # Had to break out the permutation of port/dscp due to compete with top-level 'masters' clause
+    )('masters_zone')
     + semicolon
 )
 
