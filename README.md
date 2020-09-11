@@ -48,7 +48,7 @@ The program outputs the following::
     {'options': [{'server_id_name': "'example.invalid'"}]}
 
 # Parse Everthing here
-One issue #11 asked to provide an example to parse the whole named.conf thing.
+One issue #10 asked to provide an example to parse the whole named.conf thing.
 
 We start with the supplied `named.conf` below:
 ```nginx
