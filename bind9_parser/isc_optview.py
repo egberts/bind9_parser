@@ -15,7 +15,7 @@ from pyparsing import Group, Keyword, OneOrMore, Literal, \
     ungroup
 from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     squote, dquote, number_type, name_type, minute_type, seconds_type, \
-    byte_type, parse_me, run_me, path_name, check_options, \
+    byte_type, run_me, path_name, check_options, \
     quoted_path_name, size_spec, exclamation
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, \

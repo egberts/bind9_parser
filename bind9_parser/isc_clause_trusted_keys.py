@@ -10,7 +10,7 @@ Description: Provides trusted-key-related grammar in
              PyParsing engine for ISC-configuration style
 """
 from pyparsing import Word, alphanums, Group, Keyword, Literal, ZeroOrMore
-from bind9_parser.isc_utils import semicolon, parse_me, lbrack, \
+from bind9_parser.isc_utils import semicolon, lbrack, \
     rbrack, number_type,\
     squote, dquote, Combine
 from bind9_parser.isc_domain import rr_domain_name_or_wildcard_type

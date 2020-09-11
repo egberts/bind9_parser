@@ -10,8 +10,8 @@ Description: Provides statement support for ones found in all
              four clauses: options, view, zone, server
              PyParsing engine for ISC-configuration style
 """
-from pyparsing import Group, Keyword, OneOrMore, ZeroOrMore, Optional, ungroup
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, parse_me
+from pyparsing import Group, Keyword, OneOrMore, Optional
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack
 from bind9_parser.isc_clause_key import key_id
 from bind9_parser.isc_inet import ip46_addr, \
     inet_ip_port_keyword_and_number_element,\

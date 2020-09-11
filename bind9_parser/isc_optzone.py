@@ -9,8 +9,8 @@ Title: Statements Used Only By options And zone Clauses.
 Description: isc_optzone contains all parse elements pertaining
              to both options and zone (but not view)
 """
-from pyparsing import Group, Keyword, OneOrMore
-from bind9_parser.isc_utils import isc_boolean, semicolon, parse_me
+from pyparsing import Keyword, OneOrMore
+from bind9_parser.isc_utils import isc_boolean, semicolon
 
 
 optzone_stmt_notify_to_soa = (

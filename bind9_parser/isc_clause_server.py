@@ -8,8 +8,8 @@ Title: Clause Statement for Server Definitions
 
 Description:
 """
-from pyparsing import OneOrMore, Keyword, ZeroOrMore, Group
-from bind9_parser.isc_utils import lbrack, rbrack, semicolon, parse_me
+from pyparsing import Keyword, ZeroOrMore, Group
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon
 from bind9_parser.isc_inet import ip46_addr_or_prefix
 from bind9_parser.isc_server import server_statement_set
 from bind9_parser.isc_optviewserver import optviewserver_statements_set

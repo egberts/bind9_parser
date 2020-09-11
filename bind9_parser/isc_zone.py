@@ -10,12 +10,12 @@ Description: Provides Zone-related grammar in PyParsing engine
              for ISC-configuration style
 """
 from pyparsing import Keyword, Group, Literal, CaselessLiteral, OneOrMore,\
-    ZeroOrMore, Word, Optional, ungroup, Combine
-from bind9_parser.isc_utils import parse_me, semicolon, lbrack, rbrack, path_name,\
+    ZeroOrMore, Word, Optional, ungroup, Combine, alphanums
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, path_name,\
     isc_boolean, view_name, isc_file_name,\
     number_type, key_id, check_options, zone_name, acl_name,\
     key_id_keyword_and_name_pair, squote, dquote, dlz_name_type,\
-    database_name_type, krb5_realm_name
+    database_name_type, krb5_realm_name, master_name
 from bind9_parser.isc_inet import ip46_addr_list_series, ip4_addr,\
     ip6_addr, ip_port, dscp_port, inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element,\
@@ -93,18 +93,19 @@ zone_stmt_journal = (
 # masters
 # Note: Not the same syntax as clause_stmt_masters_series
 #
-# Only found in zone-stub or zone-slave
-# masters [ port integer ] [ dscp integer ]
+# Only found in secondary, slave, mirror, stub, redirect, zone-stub or zone-slave
+# masters [ port <integer> ] [ dscp <integer> ]
 #         {
-#             ( masters
-#               | ipv4_address [ port integer ]
-#               | ipv6_address [ port integer ]
+#             (
+#               <ipv4_address> [ port <integer> ]
+#               | <ipv6_address> [ port <integer> ]
+#               | <masters>
 #             )
-#             [ key string ]
+#             [ key <string> ]
 #             ;
 #             ...
 #         };
-master_name = key_id  # TODO make a master type here (instead of key_id)
+
 zone_masters_set = (
     (
         (
@@ -132,10 +133,10 @@ zone_masters_series = (
 )
 
 # 'masters' clause has a name field for the 1st argument;
-#     'masters' statement in the zone clause does not
+#     'masters' statement in the zone clause does not have a <master_name> field but it has 'port' or 'dscp'
 zone_stmt_masters = (
     Group(
-        Keyword('masters').suppress()
+        Keyword('masters').suppress()  # if we could have a lookahead of 'masters {';
         + Optional(inet_ip_port_keyword_and_number_element)
         + Optional(inet_dscp_port_keyword_and_number_element)
         - lbrack
