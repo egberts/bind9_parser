@@ -47,6 +47,70 @@ The program outputs the following::
 
     {'options': [{'server_id_name': "'example.invalid'"}]}
 
+# Parse Everthing here
+One issue #11 asked to provide an example to parse the whole named.conf thing.
+
+We start with the supplied `named.conf` below:
+```nginx
+view "trusted" {
+
+match-clients { 192.168.23.0/24; };
+recursion yes;
+zone "example.com" {
+type master;
+file "internal/master.example.com";
+};
+zone "example22.com" {
+type master;
+file "internal/master.example22.com";
+};
+};
+view "badguys" {
+match-clients {"any"; };
+recursion no;
+zone "exampleaa.com" {
+type master;
+file "external/master.exampleaa.com";
+};
+};
+
+```
+I didn't reformat it.  But the following snippet of bash execution will 
+parse it just fine:
+```bash
+cd bind9_parser/examples
+python3 parse_bind.py /tmp/github-issue-10.named.conf
+```
+To obtain a Python list variable, the same `parse_bind9.py` will get you this output:
+```python
+[['"trusted"',
+  [[['192.168.23.0/24']],
+   'yes',
+   ['"example.com"', 'master', '"internal/master.example.com"'],
+   ['"example22.com"', 'master', '"internal/master.example22.com"']]],
+ ['"badguys"',
+  [[['"any"']],
+   'no',
+   ['"exampleaa.com"', 'master', '"external/master.exampleaa.com"']]]]
+result: {'view': [{'view_name': '"badguys"', 'configs': {'match_clients': {'aml': [{'acl_name': '"any"'}]}, 'recursion': 'no', 'zone': {'zone_name': '"exampleaa.com"', 'type': 'master', 'file': '"external/master.exampleaa.com"'}}}]}
+```
+To obtain a Python dictionary variable, again the same `bind9_parser.py` will get you this result:
+```python
+print(result.asDict()):
+{ 'view': [ {
+    'configs': {
+        'match_clients': {
+            'aml': [ {
+                'acl_name': '"any"'}]},
+        'recursion': 'no',
+        'zone': {
+            'file': '"external/master.exampleaa.com"',
+            'type': 'master',
+            'zone_name': '"exampleaa.com"'}},
+    'view_name': '"badguys"'}]}
+```
+
+I hope this helps.
 
 # Unit Tests
 A massive unit test is supplied (under `tests/` subdirectory) to ensure that future breakage does not occur.
