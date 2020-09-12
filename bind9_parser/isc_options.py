@@ -119,7 +119,7 @@ options_stmt_deallocate_on_exit = (
     + semicolon
 )
 
-#   deny-answer-addresses { address_match_nosemicolon }
+#   deny-answer-addresses { address_match_list }
 #     [ except-from { name_list } ]; [ Opt ]
 options_stmt_deny_answer_addresses = (
     Keyword('deny-answer-addresses').suppress()

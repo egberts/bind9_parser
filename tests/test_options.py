@@ -145,14 +145,77 @@ class TestOptions(unittest.TestCase):
                                    {'datasize': [256, 'G']})
 
     def test_isc_options_stmt_deny_answer_addresses_passing(self):
-        assertParserResultDictTrue(options_stmt_deny_answer_addresses,
-                                   'deny-answer-addresses { 128.0.0.1; };',
-                                   {
-                                       'deny_answer_addresses': {
-                                           'aml': [
-                                               {'addr': '128.0.0.1'}
-                                           ]
-                                       }})
+        assertParserResultDictTrue(
+            options_stmt_deny_answer_addresses,
+            'deny-answer-addresses { 128.0.0.1; };',
+            {
+                'deny_answer_addresses': {
+                    'aml': [
+                        {'addr': '128.0.0.1'}
+                    ]
+                }})
+
+    def test_isc_options_stmt_deny_answer_addresses2_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_deny_answer_addresses,
+            'deny-answer-addresses { any; } except-from { "string"; };',
+            {'deny_answer_addresses': {'aml': [{'addr': 'any'}],
+                                       'name': '"string"'}}
+        )
+
+    def test_isc_options_stmt_deny_answer_addresses3_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_deny_answer_addresses,
+            'deny-answer-addresses { any; };',
+            {'deny_answer_addresses': {'aml': [{'addr': 'any'}]}}
+        )
+
+    def test_isc_options_stmt_deny_answer_addresses4_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_deny_answer_addresses,
+            'deny-answer-addresses { 192.0.2.0/24; };',
+            {'deny_answer_addresses': {'aml': [{'addr': '192.0.2.0/24'}]}}
+        )
+
+    def test_isc_options_stmt_deny_answer_addresses5_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_deny_answer_addresses,
+            'deny-answer-addresses { 192.0.2.0/24; } except-from { "example.net"; };',
+            {'deny_answer_addresses': {'aml': [{'addr': '192.0.2.0/24'}],
+                                       'name': '"example.net"'}}
+        )
+
+    # Reference: https://superuser.com/a/1332837/415567
+    def test_isc_options_stmt_deny_answer_addresses6_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_deny_answer_addresses,
+            """
+deny-answer-addresses {
+    0.0.0.0; 
+    10.0.0.0/8;
+    172.16.0.0/12;
+    192.168.0.0/16;
+    169.254.0.0/16;
+    ::/80;
+    fe80::/10;
+    64:ff9b::/96;
+} except-from { "Your.Domain"; };""",
+            {
+                'deny_answer_addresses': {
+                    'aml': [
+                        {'addr': '0.0.0.0'},
+                        {'addr': '10.0.0.0/8'},
+                        {'addr': '172.16.0.0/12'},
+                        {'addr': '192.168.0.0/16'},
+                        {'addr': '169.254.0.0/16'},
+                        {'addr': '::/80',
+                         'ip6s_subnet': '80'},
+                        {'addr': 'fe80::/10',
+                         'ip6s_subnet': '10'},
+                        {'addr': '64:ff9b::/96',
+                         'ip6s_subnet': '96'}],
+                    'name': '"Your.Domain"'}}
+        )
 
     def test_isc_options_stmt_deny_answer_aliases_passing(self):
         assertParserResultDictTrue(options_stmt_deny_answer_aliases,
