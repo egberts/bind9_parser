@@ -470,14 +470,14 @@ class TestOptionsView(unittest.TestCase):
                     'addrs': [
                         {
                             'domain': '"dmz.example.com"',
-                            'ip_port': 893
+                            'ip_port': '893'
                         },
                         {
                             'domain': '"hidden-dns.example.com"',
-                            'ip_port': 993
+                            'ip_port': '993'
                         }
                     ],
-                    'ip_port': 593
+                    'ip_port': '593'
                 }
             }
         )
@@ -737,7 +737,7 @@ class TestOptionsView(unittest.TestCase):
         assertParserResultDictTrue(
             optview_stmt_query_source_v6,
             'query-source-v6 address * port 353;',
-            {'query_source_v6': {'ip6_addr': '*', 'ip_port_w': 353}}
+            {'query_source_v6': {'ip6_addr': '*', 'ip_port_w': '353'}}
         )
         assertParserResultDictTrue(
             optview_stmt_query_source_v6,
@@ -763,7 +763,7 @@ class TestOptionsView(unittest.TestCase):
         assertParserResultDictTrue(
             optview_stmt_query_source,
             'query-source address * port 353;',
-            {'query_source': {'ip4_addr': '*', 'ip_port_w': 353}}
+            {'query_source': {'ip4_addr': '*', 'ip_port_w': '353'}}
         )
         assertParserResultDictTrue(
             optview_stmt_query_source,
@@ -1128,8 +1128,8 @@ class TestOptionsView(unittest.TestCase):
                                        'domain': 'www.example.com.'},
              'dnssec_validation': 'auto',
              'dual_stack_servers': {'addrs': [{'domain': '"bastion1.example.com"',
-                                               'ip_port': 693}],
-                                    'ip_port': 593},
+                                               'ip_port': '693'}],
+                                    'ip_port': '593'},
              'empty_contact': {'soa_contact_name': 'admin.example.com'},
              'empty_zones_enable': 'False',
              'fetch_glue': 'no',
@@ -1142,7 +1142,7 @@ class TestOptionsView(unittest.TestCase):
              'max_cache_ttl': 3600,
              'minimal_responses': 'yes',
              'preferred_glue': 'AAAA',
-             'query_source': {'ip4_addr': '5.5.5.5', 'ip_port_w': 53},
+             'query_source': {'ip4_addr': '5.5.5.5', 'ip_port_w': '53'},
              'query_source_v6': {'ip6_addr': 'fe08::08', 'ip_port_w': '*'},
              'rate_limit': [{'qps_scale': 5}],
              'recursion': 'yes',

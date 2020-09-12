@@ -384,7 +384,7 @@ class TestZone(unittest.TestCase):
         assertParserResultDictTrue(
             zone_stmt_masters,
             'masters port 7553 { black_primary; };',
-            {'masters_zone': {'ip_port': 7553,
+            {'masters_zone': {'ip_port': '7553',
                               'zone_master_list': [{'master_name': 'black_primary'}]}}
         )
 
@@ -405,7 +405,7 @@ class TestZone(unittest.TestCase):
             zone_stmt_masters,
             'masters port 54 dscp 11 { yellow_masters key priv_dns_chan_key5; dmz_public; };',
             {'masters_zone': {'dscp_port': 11,
-                              'ip_port': 54,
+                              'ip_port': '54',
                               'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
                                                     'master_name': 'yellow_masters'},
                                                    {'master_name': 'dmz_public'}]}}
@@ -417,7 +417,7 @@ class TestZone(unittest.TestCase):
             zone_stmt_masters,
             'masters dscp 12 port 55 { yellow_masters key priv_dns_chan_key5; dmz_public; };',
             {'masters_zone': {'dscp_port': 12,
-                              'ip_port': 55,
+                              'ip_port': '55',
                               'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
                                                     'master_name': 'yellow_masters'},
                                                    {'master_name': 'dmz_public'}]}}
@@ -452,9 +452,9 @@ class TestZone(unittest.TestCase):
             'masters port 7552 dscp 5 { yellow_masters key priv_dns_chan_key5; }; ' +
             'masters port 1024 dscp 6 { fe08::1 port 77; };',
             {'masters': [{'dscp_port': 6,
-                          'ip_port': 1025,
+                          'ip_port': '1025',
                           'master_list': [{'addr': 'fe08::1',
-                                           'ip_port': 77}]}]}
+                                           'ip_port': '77'}]}]}
         )
 
     def test_isc_zone_stmt_masters_name_by_name_passing(self):
@@ -503,7 +503,7 @@ class TestZone(unittest.TestCase):
         assertParserResultDictTrue(
             zone_stmt_server_addresses,
             'server-addresses { fb03::7 port 9553; 9.9.9.9; };',
-            {'server_addresses': [{'addr': 'fb03::7', 'ip_port': 9553},
+            {'server_addresses': [{'addr': 'fb03::7', 'ip_port': '9553'},
                                    {'addr': '9.9.9.9'}]}
         )
 
@@ -718,7 +718,7 @@ class TestZone(unittest.TestCase):
             'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
             ,
             {'masters': [{'dscp_port': 5,
-                         'ip_port': 7553,
+                         'ip_port': '7553',
                          'master_list': [{'addr': 'yellow_masters',
                                           'key_id': 'priv_dns_chan_key5'}]}],
              }
@@ -769,7 +769,7 @@ class TestZone(unittest.TestCase):
             zone_statements_series,
             'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };',
             {'masters_zone': {'dscp_port': 5,
-                              'ip_port': 7553,
+                              'ip_port': '7553',
                               'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
                                                     'master_name': 'yellow_masters'}]}}
         )
@@ -800,14 +800,14 @@ class TestZone(unittest.TestCase):
             'ixfr_from_differences': 'yes',
             'journal': '"/tmp/x"',
             'masters_zone': {'dscp_port': 5,
-                             'ip_port': 7553,
+                             'ip_port': '7553',
                              'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
                                                    'master_name': 'yellow_masters'}]},
             'pubkey': {'algorithms': 7,
                        'flags': 53,
                        'key_secret': 'asdfasddfasdfasdf',
                        'protocol': 251},
-            'server_addresses': [{'addr': 'fb03::7', 'ip_port': 9553},
+            'server_addresses': [{'addr': 'fb03::7', 'ip_port': '9553'},
                                  {'addr': '9.9.9.9'}],
             'server_names': ['example.com'],
             'type': 'forward',

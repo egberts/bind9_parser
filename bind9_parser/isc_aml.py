@@ -14,7 +14,7 @@ Description: Provides Address Match List (AML)-related grammar in
 from pyparsing import ZeroOrMore, Forward, Group, CaselessLiteral
 from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
         exclamation, acl_name
-from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip4s_prefix
+from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip46_addr_or_prefix
 
 # Address_Match_List (AML)
 # This AML combo is ordered very carefully so that longest pattern
@@ -49,7 +49,7 @@ aml_choices_acl_name = acl_name('')
 
 aml_choices = (
         (aml_choices_key_id('key_id'))
-        | (ip4s_prefix('addr'))
+        | (ip46_addr_or_prefix('addr'))
         | (ip4_addr('addr'))
         | (ip6_addr('addr'))
         | (literal_any('addr'))

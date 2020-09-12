@@ -44,7 +44,7 @@ class TestClauseOptions(unittest.TestCase):
         assertParserResultDictTrue(
             options_all_statements_series,
             'version 5; port 53;',
-            {'ip_port': 53, 'version_string': '5'}
+            {'ip_port': '53', 'version_string': '5'}
         )
         assertParserResultDictTrue(
             options_all_statements_series,
@@ -56,7 +56,7 @@ class TestClauseOptions(unittest.TestCase):
         assertParserResultDictTrue(
             options_all_statements_series,
             'version 5; port 53;',
-            {'ip_port': 53, 'version_string': '5'}
+            {'ip_port': '53', 'version_string': '5'}
         )
 
     def test_isc_options_all_statements_series_failing(self):

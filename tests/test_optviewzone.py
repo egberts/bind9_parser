@@ -203,7 +203,7 @@ class TestOptionsViewZone(unittest.TestCase):
             optviewzone_stmt_alt_transfer_source_v6,
             'alt-transfer-source-v6 fe0f::6 port 56;',
             {'alt_transfer_source_v6': {'ip6_addr': 'fe0f::6',
-                                        'ip_port_w': 56}}
+                                        'ip_port_w': '56'}}
         )
 
     def test_isc_optviewzone_stmt_alt_transfer_source_passing(self):
@@ -284,10 +284,10 @@ class TestOptionsViewZone(unittest.TestCase):
             optviewzone_stmt_forwarders,
             'forwarders port 44  dscp 4 { 2.2.2.2 port 53; fe08::8 dscp 3; };',
             {'fowarders': [{'dscp_port': 4,
-                            'fwdr2': [{'addr': '2.2.2.2', 'ip_port': 53},
+                            'fwdr2': [{'addr': '2.2.2.2', 'ip_port': '53'},
                                       {'addr': 'fe08::8',
                                        'dscp_port': 3}],
-                            'ip_port': 44}]}
+                            'ip_port': '44'}]}
         )
 
     def test_isc_optviewzone_stmt_forward_passing(self):
@@ -408,7 +408,7 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_notify_source,
             'notify-source * port 153 dscp 1;',
-            {'notify_source': {'addr': '*', 'dscp_port': 1, 'ip_port_w': 153}}
+            {'notify_source': {'addr': '*', 'dscp_port': 1, 'ip_port_w': '153'}}
         )
 
     def test_isc_optviewzone_stmt_notify_passing(self):
@@ -701,7 +701,7 @@ class TestOptionsViewZone(unittest.TestCase):
             'transfer-source 4.4.4.4 port 53 dscp 1;',
             {'transfer_source': {'addr': '4.4.4.4',
                                  'dscp_port': 1,
-                                 'ip_port_w': 53}}
+                                 'ip_port_w': '53'}}
         )
 
     def test_isc_optviewzone_stmt_use_alt_transfer_source_passing(self):
@@ -866,12 +866,12 @@ class TestOptionsViewZone(unittest.TestCase):
              'allow_v6_synthesis': {'aml': [{'addr': 'localhost'},
                                             {'addr': 'localnets'}]},
              'alt_transfer_source': ['*'],
-             'alt_transfer_source_v6': {'dscp_port': 7, 'ip_port_w': 53},
+             'alt_transfer_source_v6': {'dscp_port': 7, 'ip_port_w': '53'},
              'auto_dnssec': 'maintain',
              'dialup': 'yes',
              'dnssec_loadkeys_interval': 3600,
              'forward': 'only',
-             'fowarders': [{'fwdr2': [{'addr': '1.1.1.1'}], 'ip_port': 53}],
+             'fowarders': [{'fwdr2': [{'addr': '1.1.1.1'}], 'ip_port': '53'}],
              'ixfr_from_differences': 'slave',
              'ixfr_tmp_file': '/tmp/junk.dat',
              'key_directory': '"/tmp/keydir/"',
@@ -888,8 +888,8 @@ class TestOptionsViewZone(unittest.TestCase):
              'min_retry_time': 3600,
              'multi_master': 'yes',
              'notify': 'master-only',
-             'notify_source': {'addr': '3.3.3.3', 'ip_port_w': 253},
-             'notify_source_v6': {'addr': '*', 'ip_port_w': 53},
+             'notify_source': {'addr': '3.3.3.3', 'ip_port_w': '253'},
+             'notify_source_v6': {'addr': '*', 'ip_port_w': '53'},
              'provide_ixfr': 'yes',
              'request_ixfr': 'yes',
              'request_nsid': 'yes',
@@ -897,10 +897,10 @@ class TestOptionsViewZone(unittest.TestCase):
              'transfer_format': 'many-answers',
              'transfer_source': {'addr': '4.4.4.4',
                                  'dscp_port': 1,
-                                 'ip_port_w': 53},
+                                 'ip_port_w': '53'},
              'transfer_source_v6': {'addr': 'fe12::4',
                                     'dscp_port': 1,
-                                    'ip_port_w': 53},
+                                    'ip_port_w': '53'},
              'use_alt_transfer_source': 'yes',
              'zone_statistics': 'yes'}
         )

@@ -237,8 +237,7 @@ class TestOptions(unittest.TestCase):
         assertParserResultDictTrue(options_stmt_interface_interval,
                                    'interface-interval 3600;',
                                    {'interface_interval': 3600})
-
-    def test_isc_options_stmt_listen_on_passing(self):
+    def test_isc_options_stmt_listen_on1_passing(self):
         assertParserResultDictTrue(
             options_stmt_listen_on,
             'listen-on port 553 { 127.0.0.1;};',
@@ -253,6 +252,9 @@ class TestOptions(unittest.TestCase):
                 ]
             }
         )
+
+
+    def test_isc_options_stmt_listen_on2_passing(self):
         assertParserResultDictTrue(
             options_multiple_stmt_listen_on,
             'listen-on port 553 { 127.0.0.1;}; listen-on port 1553 { 192.168.1.1; };',
@@ -269,6 +271,14 @@ class TestOptions(unittest.TestCase):
                             {'addr': '192.168.1.1'}
                         ],
                         'ip_port': 1553}]}
+        )
+
+    def test_isc_options_stmt_listen_on3_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_listen_on,
+            'listen-on { ! 10.0.1.1; any;};',
+            {'listen_on': [{'aml': [{'addr': '10.0.1.1', 'not': '!'},
+                                    {'addr': 'any'}]}]}
         )
 
     def test_isc_options_stmt_listen_on_v6_passing(self):

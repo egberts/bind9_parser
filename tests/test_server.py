@@ -157,7 +157,7 @@ class TestServer(unittest.TestCase):
                 'notify_source': {
                     'addr': '127.0.0.1',
                     'dscp_port': 1,
-                    'ip_port_w': 15}}
+                    'ip_port_w': '15'}}
         )
 
     def test_isc_server_stmt_notify_source_failing(self):
@@ -187,7 +187,7 @@ class TestServer(unittest.TestCase):
                 'notify_source_v6': {
                     'addr': 'fe09::1',
                     'dscp_port': 2,
-                    'ip_port_w': 19}}
+                    'ip_port_w': '19'}}
         )
 
     def test_isc_server_stmt_notify_source_v6_failing(self):

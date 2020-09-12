@@ -50,7 +50,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
             'also-notify { 1.1.1.1 port 58 dscp 4 key lockbox6_key; fe01::1 dscp 6 key lockbox11_key; };',
             {'also_notify': [{'addr': '1.1.1.1',
                               'dscp_port': 4,
-                              'ip_port': 58,
+                              'ip_port': '58',
                               'key_id': 'lockbox6_key'},
                              {'addr': 'fe01::1',
                               'dscp_port': 6,
@@ -105,7 +105,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
             'also-notify { 1.1.1.1 port 58 dscp 4 key lockbox6_key; };',
             {'also_notify': [{'addr': '1.1.1.1',
                               'dscp_port': 4,
-                              'ip_port': 58,
+                              'ip_port': '58',
                               'key_id': 'lockbox6_key'}]}
         )
 
@@ -128,7 +128,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
             'also-notify { 2.2.2.2 port 52 dscp 2 key lockbox16_key; };',
             {'also_notify': [{'addr': '2.2.2.2',
                               'dscp_port': 2,
-                              'ip_port': 52,
+                              'ip_port': '52',
                               'key_id': 'lockbox16_key'}]}
         )
 

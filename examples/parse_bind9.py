@@ -274,7 +274,7 @@ if __name__ == '__main__':
     result.pprint()
     print('result:', result.asDict())
     import pprint
-    pp = pprint.PrettyPrinter(width=4, compact=False, indent=4)
+    pp = pprint.PrettyPrinter(width=2, compact=False, indent=1)
     print('\nprint(result.asDict()):')
     pp.pprint(result.asDict())
     print('end of result.')

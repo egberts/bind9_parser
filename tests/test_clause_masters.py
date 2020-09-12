@@ -186,7 +186,7 @@ class TestClauseMasters(unittest.TestCase):
         expected_result = {
             'masters': [
                 {
-                    'ip_port': 53,
+                    'ip_port': '53',
                     'master_id': 'example.com',
                     'master_list': [
                         {'addr': 'masters'}
@@ -220,8 +220,8 @@ class TestClauseMasters(unittest.TestCase):
         expected_result = {
             'masters': [
                 {
-                    'dscp_port': 7,
-                    'ip_port': 53,
+                    'dscp_port': '7',
+                    'ip_port': '53',
                     'master_id': 'example.com',
                     'master_list': [
                         {
