@@ -151,7 +151,7 @@ g_nc_keywords['key'] = \
         'validity': {'string': 'key_name'},
         'occurs-multiple-times': True,
         'topblock': True,
-        'found-in': {'', 'view'}, # also at top-statement-level
+        'found-in': {'', 'view', 'masters'},
         'user-defined-indice': True,  # keyname
         'multi-line-order-id': 2,  # Keys should always be on top, after ACL
         'introduced': "8.1",
@@ -495,6 +495,30 @@ no      yes     BIND will NOT follow out-of-zone records but if it is
             BIND 9.5+ such queries are now failed with REFUSED status."""
     }
 
+g_nc_keywords['algorithm'] = \
+    {
+        'default': '',  # insist
+        'validity': {'string': 'hmac_algorithm'},
+        'occurs-multiple-times': False,
+        'topblock': False,
+        'found-in': {'key'}, # also at top-statement-level
+        'user-defined-indice': False,
+        'multi-line-order-id': 1,  # it's before 'secret' within 'key'
+        'introduced': "9.0",  #
+        'obsoleted': '',
+        'comment': """Valid algorithms are:
+   hmac-md5
+   hmac-md5.sig-alg.reg.int
+   hmac-md5.sig-alg.reg.int.
+   hmac-sha1
+   hmac-sha224
+   hmac-sha256
+   hmac-sha384
+   hmac-sha512
+"""
+    }
+
+
 g_nc_keywords['allow-new-zones'] = \
     {
         'default': "no",
@@ -742,7 +766,7 @@ zone notify statement is set to no, the IP addresses in
 the global alsonotify list will not be sent NOTIFY
 messages for that zone. The default is the empty list
 (no global notification list).
-Clause 'key' introduced in v9.9.0.
+'key' directive within 'allow-notify' introduced in v9.9.0.
 Master name permitted in v9.9.0. """,
     }
 
@@ -4537,6 +4561,20 @@ g_nc_keywords['rrset-order'] = \
         'zone-type': '',
         'comment': '',
     }
+
+g_nc_keywords['secret'] = \
+    {
+        'default': '',  # incite
+        'validity': {'string': 'base64'},
+        'occurs-multiple-times': False,
+        'topblock': False,
+        'found-in': {'key'},
+        'user-defined-indice': False,
+        'multi-line-order-id': 999,  # after 'key {algorithm xx;'
+        'introduced': "9.0",
+        'obsoleted': '',
+    }
+
 
 g_nc_keywords['secroots-file'] = \
     {
