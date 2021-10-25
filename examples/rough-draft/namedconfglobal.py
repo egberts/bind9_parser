@@ -214,6 +214,17 @@ g_nc_keywords['options'] = \
         'introduced': "4.9.3"  # 1994 Vixie Enterprise
     }
 
+g_nc_keywords['primaries'] = \
+    {
+        'occurs-multiple-times': True,
+        'topblock': True,
+        'found-in': {'', 'zone'},  # Only found in zone-slave/zone-stub
+        'user-defined-indice': True,
+        'output-order-id': 8,  # masters should be after 'view'/'zone'
+        'topic': 'zone transfer',
+        'introduced': "9.16",
+    }
+
 g_nc_keywords['server'] = \
     {
         'occurs-multiple-times': True,
@@ -740,11 +751,11 @@ g_nc_keywords['also-notify'] = \
     {
         'default': {},
         'validity': {'function': "ip_addr_list"},
-        'found-in': {'options', 'view', 'zone', 'server'},
+        'found-in': {'options', 'view', 'zone'},
         # In 8.2, only found in ['zone']['type']['master']
         # In 8.2, only found in ['zone']['type']['slave']
         # In 8.2, only found in ['zone']['type']['stub']
-        # TODO 9.15, no longer found under 'server'
+        # In 9.15, no longer found under 'server'
         'introduced': '8.2',
         'topic': 'zone transfer, TSIG, DSCP',
         'zone-type': 'master, slave, mirror, stub, primary, secondary',
@@ -4384,8 +4395,8 @@ g_nc_keywords['request-sit'] = \
         'default': None,  # also a compile-time option,
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view', 'server'},
-        'introduced': '9.10.0',  # TODO when was 'request-sit' introduced?
-        'introduced': '9.11.0',
+        'introduced': '9.10.0',
+        'obsoleted': '9.11.0',
         'topic': 'EDNS',
         'zone-type': '',
         'comment': """If yes, then a SIT (Source Identity Token) EDNS option is sent along with the query. If the
@@ -5001,6 +5012,7 @@ g_nc_keywords['support-ixfr'] = \
         'found-in': {'options', 'view', 'server'},
         # In 8.2, not in ['options'], nor ['view']
         'introduced': '8.2',
+        'obsoleted': '9.11',
         'topic': '',
         'zone-type': '',
         'comment': '',
