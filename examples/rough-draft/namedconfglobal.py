@@ -2695,7 +2695,18 @@ g_nc_keywords['in-view'] = \
         'introduced': '',
         'topic': '',
         'zone-type': 'in-view',
-        'comment': '',
+        'comment': """
+Only valid within a zone clause. 
+Allows a zone clause within one view to be used by another view. 
+
+The view-name must refer to a valid view which contains a zone of the same 
+name and the view containing the zone must have been previously defined 
+(only backward references to views are allowed, not forward references).
+The in-view zone uses all the statements in the previously defined zone
+clause and thus is particularly useful if you defined a shed-load of
+stuff in the previous zone clause. Only forward and forwarders 
+statements are allowed in in-view zone clauses.         
+""",
     }
 
 g_nc_keywords['inline-signing'] = \
