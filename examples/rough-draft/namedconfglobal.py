@@ -5567,13 +5567,144 @@ g_nc_keywords['type'] = \
         # 'mirror' added in v9.15
         'validity': {'regex': r"(delegation\-only|master|primary|slave|secondary|stub|static\-stub|hint|forward|redirect|mirror)"},
         'found-in': {'zone'},
-        'zone-type': {'delegation-only','forward','hint','in-view','master','primary', 'slave', 'secondary'},
+        'zone-type': {'delegation-only','forward','hint','in-view','master','primary', 'redirect', 'slave', 'secondary', 
+                      'static-stub', 'stub'},
         'introduced': '8.1',
+        # 'redirect' introduced in v9.9
         'topic': '',
         'zone-type': '',
         'comment': """
 Option 'static-stub' added in v9.8.0.
 Option 'redirect' added in v9.9.0.
+Zone type may take one of the following values:
+
+delegation-only
+  Indicates only referrals (or delegations) will be issued for the zone and 
+  should used for TLDs only not leaf (non TLD) zones. The generation of 
+  referrals in leaf zones is determined by the RRs contained in it 
+  (see ARM Chapter 9 Delegation of Sub-domains).
+
+forward
+  A zone of type forward is simply a way to configure forwarding on a per-domain 
+  or per zone basis. To be effective both a forward and forwarders statement 
+  should be included. If no forwarders statement is present or an empty list is 
+  provided then no forwarding will be done for the domain canceling the effects 
+  of any forwarders in the options clause.
+
+hint
+  The initial set of root-servers is defined using a hint zone. When the server 
+  starts up it uses the hints zone file to find a root name server and get the
+  most recent list of root name servers. If no hint zone is specified for class 
+  IN, the server uses a compiled-in default set of root servers. Classes other
+  than IN have no built-in defaults hints. 'hint' zone files are covered in
+  more detail under required zones.
+
+in-view
+  Not valid for the type statement but removes the need for any type 
+  definition. See in-view statement.
+
+master
+  The server reads the zone data direct from local storage (a zone file) and
+  provides authoritative answers for the zone.
+
+redirect
+  Applicable to recursive servers (resolvers) only. Allows the user to control 
+  the behavior of (to redirect) an NXDOMAIN response received only from a 
+  non-DNSSEC (unsigned) zone (that is, the NXDOMAIN response is not signed - it is
+  not a PNE response) for certain users, controlled by an allow-query statement,
+  or certain zones defined in a normal zone file specified by a file statement.
+  The zone files used are not visible in any normal manner (they cannot be 
+  explicitly queried, addressed for the purposes of zone transfer or from rndc)
+  but are in all other respects normal zone files. This is a very powerful 
+  feature and should be used with caution. For example, if an ISP in 
+  Argentina wished to promote an Argentinian Registration service 
+  (country code .ar) then it could define the following:
+
+// snippet from recursive named.conf
+...
+zone "ar" {
+  type redirect;
+  file "ar.zone";
+  allow-query {any;}; ; all users
+  ; this is not an OPEN resolver since the any 
+  ; applies only to NXDOMAIN responses
+  ; the initial query scope (defined in the options clause)
+  ; determines the OPEN/CLOSED status 
+};
+...
+
+; ar.zone zone file snippet
+; 
+$ORIGIN ar.
+...
+; uses wildcard to soak up all responses for any .ar domain
+*.ar.    A 192.168.2.3  ; web service
+;OR
+*.ar.    NS ns.example.ar.
+...
+
+
+If a web service is configured at 192.168.2.3 then it could, as an 
+example, return a page offering to register this domain name, or it
+could simply make a benign service announcement suggesting some 
+corrective action, or as in the second option it could point at a
+name server which could take some domain name specific action. 
+The scope of the zone file is essentially unlimited thus, a zone "." 
+clause (not to be confused with a hints file which would use type
+hints; not type redirect;) would pick up all NXDOMAINs for any TLD,
+whereas a zone "co.uk" clause would only pick up commercial domain 
+names in the UK.
+
+Only a single redirect zone is allowed or when used with view clauses
+only a single redirect per view. (Only the file, allow-query and
+masterfile-format statements are allowed i redirect zone clauses.)
+
+slave
+  A slave zone is a replica of the master zone and obtains its zone
+  data by zone transfer operations. The slave will respond 
+  authoritatively for the zone as long as it has valid (not timed 
+  out) zone data defined by the expiry parameter of the SOA RR. 
+  The mandatory masters statement specifies one or more IP addresses 
+  of master servers that the slave contacts to refresh or update its
+  copy of the zone data. When the TTL specified by the refresh
+  parameter is reached the slave will query the SOA RR from the zone
+  master. If the sn paramater (serial number) is greater than the
+  current value a zone tansfer is initiated. If the slave cannot 
+  obtain a new copy of the zone data when the SOA expiry value is
+  reached then it will stop responding for the zone. Authentication 
+  between the zone slave and zone master can be performed with
+  per-server TSIG keys (see masters statement). By default zone
+  transfers are made using port 53 but this can be changed using
+  the masters statement. If an optional file statement is defined 
+  then the zone data will be written to this file whenever the zone
+  is changed and reloaded from this file on a server restart. If the 
+  file statement is not present then the slave cannot respond to
+  zone queries until it has carried out a zone transfer, thus, if
+  the zone master is unavailable on a slave load the slave cannot
+  respond to queries for the zone.
+
+static-stub
+  A stub zone is similar to a slave zone except that it replicates 
+  only the NS records of a master zone instead of the entire zone
+  (essentially providing a referral only service). Unlike Stub 
+  zones which take their NS RRs from the real zone master 
+  Static-Stub zones allow the user to configure the NS RRs 
+  (using server-names) or addresses (using server-addresses) 
+  that will be provided in the referral (overriding any valid data
+  in the cache). The net effect of the static-stub is that the
+  user is enabled (in a recursive resolver) to redirect a zone,
+  whether for good or evil purposes is a local decision. (In
+  addition to server-names and server-addresses only allow-query
+  and zone-statistics statements are allowed when type static-stub;
+  is present.)
+
+stub
+  A stub zone is similar to a slave zone except that it replicates 
+  only the NS records of a master zone instead of the entire zone
+  (essentially providing a referral only service). Stub zones are 
+  not a standard part of the DNS they are a feature specific to
+  the BIND implementation and should not be used unless there is
+  a specific requirement.         
 """,
     }
 
