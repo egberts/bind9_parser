@@ -2692,8 +2692,8 @@ g_nc_keywords['in-view'] = \
         'validity': {'function': 'valid_view_name'},
         'found-in': {'zone'},
         'zone-type': {'in-view'},
-        'introduced': '',
-        'topic': '',
+        'introduced': '9.10.0',
+        'topic': 'zone, view',
         'zone-type': 'in-view',
         'comment': """
 Only valid within a zone clause. 
