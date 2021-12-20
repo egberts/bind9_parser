@@ -85,6 +85,21 @@ g_nc_keywords['controls'] = \
         'topic': 'RNDC',
     }
 
+g_nc_keywords['dnssec-keys'] = \
+    {
+        'occurs-multiple-times': True,
+        'topblock': True,
+        'found-in': {'', 'view'},
+        'output-order-id': 11,  # controls should be prominently firstly (after keys and ACLs)
+        'default': '',
+        'validity': { 'function': 'dnskey', },
+        'introduced': '9.15.2',
+        'obsoleted': '9.15.6',  # arguably the shortest-lived 'clause'
+        'topic': 'dnssec',
+        'comment': " ",
+    }
+
+
 #  dlz <string> { database <string>; search <boolean>; }; [ DLZ ]
 g_nc_keywords['dlz'] = \
     {
