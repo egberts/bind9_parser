@@ -977,6 +977,11 @@ have been loaded for a zone the first time, the
 repository will be searched for changes periodically,
 regardless of whether rndc loadkeys is used. The
 recheck interval is defined by dnssec-loadkeys-interval.)
+
+When setting a DNSSEC policy ('dnssec-policy' clause) for
+a zone instead, the behavior will be as if
+`auto-dnssec` was set to `maintain`.
+
 The default setting is auto-dnssec off.
 Added to `options` section in v9.9.9.
 Added to `view` section in v9.9.9.
@@ -1729,7 +1734,7 @@ g_nc_keywords['dnskey-ttl'] = \
         'default': '1h',
         'validity': {'function': 'iso8601_time_duration'},
         'unit': 'second_unless_stated',
-        'introduced': '9.17.0',
+        'introduced': '9.15.6',
         'found-in': {'dnssec-policy'},
         'topic': 'dnssec',
         'zone-type': '',
@@ -1745,17 +1750,21 @@ g_nc_keywords['dnskey-sig-validity'] = \
         'validity': {'range': {0, 3660}},
         'unit': 'day',
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.13',
+        'introduced': '9.13.0',
+        'obsoleted': '9.15.6',
         'topic': 'dnssec, tuning',
         'zone-type': 'master, slave, primary, secondary',
-        'comment': '',
+        'comment': """
+This option will be replaced in favor of the KASP
+configuration value `signatures-validity-dnskey`.
+""",
     }
 
 g_nc_keywords['dnskey-validity'] = \
     {
         'default': None,
         'validity': {'regex': '\d+'},
-        'introduced': '9.15.0',  # TODO: first saw in 9.15
+        'introduced': '9.15.0',  # not in 9.9.0
         'found-in': {'options', 'view', 'zone' },
         'topic': 'dnssec',
         'zone-type': '',
@@ -1789,15 +1798,24 @@ g_nc_keywords['dnssec-dnskey-kskonly'] = \
         'validity': {'regex': r'(yes|no)'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.7.0',
+        'introduced': '9.15.6',
         'topic': 'dnssec',
         'zone-type': 'master, slave, primary, secondary',
-        'comment': """When this option and update-check-ksk are
+        'comment': """
+This option will be removed and the key configuration from
+the policy will be used to determine what RRsets will be
+signed with which keys (Keys will have a role "KSK" and/or "ZSK").
+
+When this option and update-check-ksk are
 both set to yes, only key-signing keys (that is, keys with
 the KSK bit set) will be used to sign the DNSKEY RRset at
 the zone apex.  Zone-signing keys (keys without the KSK bit
 set) will be used to sign the remainder of the zone, but
 not the DNSKEY RRset. This is similar to the
-dnssec-signzone -x command line option.  The default is no.
+dnssec-signzone -x command line option.
+
+The default is no.
+
 If update-check-ksk is set to no, this option is ignored.""",
     }
 
@@ -1830,7 +1848,21 @@ to see if any new keys have been added or any existing
 keys' timing metadata has been updated (see dnssec-keygen(8)
 and dnssec-settime(8)). The dnssec-loadkeysinterval option
 sets the frequency of automatic repository checks, in
-minutes. The default is 60 (1 hour), the minimum is 1 (1
+minutes.
+
+This option will determine how the period that BIND 9
+will check its key repository (default once per hour)
+to see if there are new keys added or if existing keys
+metadata has changed.  This option might go away
+because the entity that performs DNSSEC maintenance
+knows exactly when the next step needs to happen. We
+can set the interval accordingly.  This does mean that
+whenever a new key is added or deprecated manually,
+the interval needs to be set to now.  Alternatively,
+we keep this option and only pick up new keys when at
+a certain interval.
+
+The default is 60 (1 hour), the minimum is 1 (1
 minute), and the maximum is 1440 (24 hours); any higher value
 is silently reduced.
 If set to 0, no heartbeat will occur.""",
@@ -1926,15 +1958,27 @@ g_nc_keywords['dnssec-secure-to-insecure'] = \
         'comment':
 """Allow a dynamic zone to transition from secure to
 insecure (i.e., signed to unsigned) by deleting all of
-the DNSKEY records. The default is no. If set to yes, and
-if the DNSKEY RRset at the zone apex is deleted, all
-RRSIG and NSEC records will be removed from the zone as
-well.
+the DNSKEY records.
+
+The default is no.
+
+If set to yes, and if the DNSKEY RRset at the zone
+apex is deleted, all RRSIG and NSEC records will be
+removed from the zone as well.
+
+This option allows a dynamic zone to transition from
+secure to insecure.  This seems to be a safety check
+when named is not responsible for signing.  This will
+likely go away because explicitly removing the
+dnssec-policy will be the same signal to (safely)
+make the zone insecure.
+
 If the zone uses NSEC3, then it is also necessary to
 delete the NSEC3PARAM RRset from the zone apex; this will
 cause the removal of all corresponding NSEC3 records.
 (It is expected that this requirement will be eliminated
 in a future release.)
+
 Note that if a zone has been configured with auto-dnssec
 maintain and the private keys remain accessible in the
 key repository, then the zone will be automatically
@@ -2711,16 +2755,16 @@ g_nc_keywords['in-view'] = \
         'topic': 'zone, view',
         'zone-type': 'in-view',
         'comment': """
-Only valid within a zone clause. 
-Allows a zone clause within one view to be used by another view. 
+Only valid within a zone clause.
+Allows a zone clause within one view to be used by another view.
 
-The view-name must refer to a valid view which contains a zone of the same 
-name and the view containing the zone must have been previously defined 
+The view-name must refer to a valid view which contains a zone of the same
+name and the view containing the zone must have been previously defined
 (only backward references to views are allowed, not forward references).
 The in-view zone uses all the statements in the previously defined zone
 clause and thus is particularly useful if you defined a shed-load of
-stuff in the previous zone clause. Only forward and forwarders 
-statements are allowed in in-view zone clauses.         
+stuff in the previous zone clause. Only forward and forwarders
+statements are allowed in in-view zone clauses.
 """,
     }
 
@@ -2732,11 +2776,21 @@ g_nc_keywords['inline-signing'] = \
         'introduced': '9.9.0',
         'topic': 'dnssec',
         'zone-type': 'master, slave, primary, secondary',
-        'comment': """If yes, this enables "bump-in-the-wire" signing
+        'comment':
+"""If yes, this enables "bump-in-the-wire" signing
 of a zone, where an unsigned zone is transferred in or
 loaded from disk and a signed version of the zone is
-served, with possibly a different serial number.  This
-behavior is disabled by default.
+served, with possibly a different serial number.
+
+When set to "yes", this option will sign transferred
+unsigned zones, and unsigned zone from file.  This is
+also no longer needed when KASP is introduced because
+when setting a `dnssec-policy` for a secondary zone
+or a zone with zone file, this indicates that
+`inline-signing` is desired.
+
+This behavior is disabled by default.
+
 Added to 'options' and 'view' section in v9.9.0.""",
     }
 
@@ -3000,11 +3054,15 @@ g_nc_keywords['key-directory'] = \
         'introduced': '9.3.0',
         'topic': 'operating-system, dnssec',
         'zone-type': 'secured, master, slave, primary, secondary',
-        'comment': """is a quoted string defining the absolute path,
-for example, "/var/named/keys" where the keys used
-in the dynamic update of secure zones may be found.
-Only required if this directory is different from that
+        'comment':
+"""is a quoted string defining the absolute path, for
+example, "/var/named/keys" where the keys used in the
+dynamic update of secure zones may be found.  Only
+required if this directory is different from that
 defined by a directory option.
+
+`key-directory` is where the DNSKEY key files can be found.
+
 This statement may only be used in a global
 options clause.""",
     }
@@ -3013,7 +3071,7 @@ g_nc_keywords['keys'] = \
     {
         'default': None,
         'validity': {'function': 'key_name'},
-        'found-in': {'server'},
+        'found-in': {'server','dnssec-policy'},
         'introduced': '9.2.0',
         'topic': '',
         'occurs-multiple-times': True,
@@ -3565,7 +3623,7 @@ g_nc_keywords['max-zone-ttl'] = \
     {
         'default': "unlimited",
         'validity': {'regex': r"(unlimited|([0-9]{1,5})"},
-        'found-in': {'options', 'view', 'zone'},
+        'found-in': {'options', 'view', 'zone', 'dnssec-policy'},
         'unit': 'second',
         'introduced': '9.10.0',
         'topic': 'dnssec',
@@ -3577,10 +3635,21 @@ than maxzone-ttl will cause the zone to be rejected.
 This is useful in DNSSEC-signed zones because when
 rolling to a new DNSKEY, the old key needs to remain
 available until RRSIG records have expired from caches
-. Themaxzone- ttl option guarantees that the largest
+. The max-zone-ttl option guarantees that the largest
 TTL in the zone will be no higher the set value.
+
+This will cap all TTLs in a zone file to the
+specified value. Although this option may be used for
+non-DNSSEC zones, it is really only useful for
+DNSSEC-signed zones because when performing key
+rollovers the timing depends on the largest TTL in
+the zone.  The value set in the `dnssec-policy`
+statement will override the existing `max-zone-ttl`
+value.
+
 NOTE: Because map-format files load directly into
 memory, this option cannot be used with them.
+
 The default value is unlimited.
 A max-zone-ttl of zero is treated as unlimited.""",
     }
@@ -4045,6 +4114,36 @@ g_nc_keywords['padding'] = \
         'comment': '',
     }
 
+g_nc_keywords['parent-ds-ttl'] = \
+    {
+        'default': "",
+        'validity': {'range': {0,3660}},
+        'found-in': {'options', 'dnssec-policy'},
+        'introduced': '9.15.6',
+        'topic': 'dnssec',
+        'comment': "",
+    }
+
+g_nc_keywords['parent-propagation-delay'] = \
+    {
+        'default': "",
+        'validity': {'range': {0,3660}},
+        'found-in': {'options', 'dnssec-policy'},
+        'introduced': '9.15.6',
+        'topic': 'dnssec',
+        'comment': "",
+    }
+
+g_nc_keywords['parent-registration-delay'] = \
+    {
+        'default': "",
+        'validity': {'range': {0,3660}},
+        'found-in': {'options', 'dnssec-policy'},
+        'introduced': '9.15.6',
+        'topic': 'dnssec',
+        'comment': "",
+    }
+
 g_nc_keywords['pid-file'] = \
     {
         'default': "\"/var/run/named/named.pid\"",
@@ -4178,6 +4277,16 @@ that data that it signs will be considered secure.
 The DNSSEC flags, protocol, and algorithm are
 specified, as well as a base-64 encoded string
 representing the key. """
+    }
+
+g_nc_keywords['publish-safety'] = \
+    {
+        'default': "",
+        'validity': {'range': {0,3660}},
+        'found-in': {'options', 'dnssec-policy'},
+        'introduced': '9.15.6',
+        'topic': 'dnssec',
+        'comment': "",
     }
 
 g_nc_keywords['qname-minimization'] = \
@@ -4523,6 +4632,16 @@ Option 'passthru' and 'disable' added in v9.9.0.
 """,
     }
 
+g_nc_keywords['retire-safety'] = \
+    {
+        'default': "",
+        'validity': {'range': {0,3660}},
+        'found-in': {'options', 'dnssec-policy'},
+        'introduced': '9.15.6',
+        'topic': 'dnssec',
+        'comment': "",
+    }
+
 g_nc_keywords['rfc2308-type1'] = \
     {
         'default': "no",
@@ -4688,9 +4807,10 @@ g_nc_keywords['serial-update-method'] = \
         'introduced': '9.9.0',
         'topic': 'dynamic dns, ddns, SOA',
         'zone-type': 'master, primary',
-        'comment': """Zones configured for dynamic DNS may use this option
-to set the update method that will be used for the zone
-serial number in the SOA record.
+        'comment':
+"""Zones configured for dynamic DNS may use this
+option to set the update method that will be used for
+the zone serial number in the SOA record.
 
 With the default setting of serial-update-method
 increment;, the SOA serial number will be incremented
@@ -4700,7 +4820,13 @@ When set to serial-update-method unixtime;, the SOA
 serial number will be set to the number of seconds
 since the UNIX epoch, unless the serial number is
 already greater than or equal to that value, in
-which case it is simply incremented by one.""",
+which case it is simply incremented by one.
+
+`serial-update-method` is used for dynamic zones to
+determne how the SOA SERIAL should be updated.  There
+will likely be a separate configuration option for
+the serial update method when resigning a zone.
+""",
     }
 
 g_nc_keywords['server-addresses'] = \
@@ -4820,6 +4946,12 @@ g_nc_keywords['sig-signing-nodes'] = \
         'comment': """Specify the maximum number of nodes to be examined in
 each quantum when signing a zone with a new DNSKEY.
 
+sig-signing-nodes specifies the number of nodes to be
+examined in a quantum when signing a zone with a new
+DNSKEY.  This presumable is to avoid keeping the
+database connection open for a long time.  With the
+current database approach this probably needs to stay.
+
 The default is 100.""",
     }
 
@@ -4834,6 +4966,10 @@ g_nc_keywords['sig-signing-signatures'] = \
         'zone-type': 'master, slave, primary, secondary',
         'comment': """Specify at hreshold number of signatures that will
 terminate processing a quantum when signing a zone with a new DNSKEY.
+
+`sig-signing-signatures` specifies a threshold number
+of how many signatures will be generated in a quantum.
+Similar to `sig-signing-nodes`.
 
 The default is 10.""",
     }
@@ -4854,6 +4990,10 @@ The default is 65534.
 
 It is expected that this parameter may be removed in a
 future version once there is a standard type.
+
+`sig-signing-type` is internal record type number,
+used to track zone signing process.  This likely will
+go away in favor of a new method.
 
 Signing state records are used to internally by named
 to track the current state of a zone-signing process,
@@ -4906,10 +5046,46 @@ The signature inception time is unconditionally set to
 one hour before the current time to allow for a limited
 amount of clock skew.
 
+`sig-validity-interval` specifies the number of days
+a signature is valid.  The second optional value is
+the refresh interval. Thos option will be replaced by
+KASP configuration values "signatures-validity" and
+"signatures-refresh".
+
 The sig-validity-interval should be, at least, several
 multiples of the SOA expire interval to allow for
 reasonable interaction between the various timer and
 expiry dates.""",
+    }
+
+g_nc_keywords['signatures-refresh'] = \
+    {
+        'default': "",
+        'validity': {'range': {0,3660}},
+        'found-in': {'options', 'dnssec-policy'},
+        'introduced': '9.15.6',
+        'topic': 'dnssec',
+        'comment': "",
+    }
+
+g_nc_keywords['signatures-validity'] = \
+    {
+        'default': "",
+        'validity': {'range': {0,3660}},
+        'found-in': {'options', 'dnssec-policy'},
+        'introduced': '9.15.6',
+        'topic': 'dnssec',
+        'comment': "",
+    }
+
+g_nc_keywords['signatures-validity-dnskey'] = \
+    {
+        'default': "",
+        'validity': {'range': {0,3660}},
+        'found-in': {'options', 'dnssec-policy'},
+        'introduced': '9.15.6',
+        'topic': 'dnssec',
+        'comment': "",
     }
 
 g_nc_keywords['sit-secret'] = \
@@ -5593,7 +5769,7 @@ g_nc_keywords['type'] = \
         # 'mirror' added in v9.15
         'validity': {'regex': r"(delegation\-only|master|primary|slave|secondary|stub|static\-stub|hint|forward|redirect|mirror)"},
         'found-in': {'zone'},
-        'zone-type': {'delegation-only','forward','hint','in-view','master','primary', 'redirect', 'slave', 'secondary', 
+        'zone-type': {'delegation-only','forward','hint','in-view','master','primary', 'redirect', 'slave', 'secondary',
                       'static-stub', 'stub'},
         'introduced': '8.1',
         # 'redirect' introduced in v9.9
@@ -5605,28 +5781,28 @@ Option 'redirect' added in v9.9.0.
 Zone type may take one of the following values:
 
 delegation-only
-  Indicates only referrals (or delegations) will be issued for the zone and 
-  should used for TLDs only not leaf (non TLD) zones. The generation of 
-  referrals in leaf zones is determined by the RRs contained in it 
+  Indicates only referrals (or delegations) will be issued for the zone and
+  should used for TLDs only not leaf (non TLD) zones. The generation of
+  referrals in leaf zones is determined by the RRs contained in it
   (see ARM Chapter 9 Delegation of Sub-domains).
 
 forward
-  A zone of type forward is simply a way to configure forwarding on a per-domain 
-  or per zone basis. To be effective both a forward and forwarders statement 
-  should be included. If no forwarders statement is present or an empty list is 
-  provided then no forwarding will be done for the domain canceling the effects 
+  A zone of type forward is simply a way to configure forwarding on a per-domain
+  or per zone basis. To be effective both a forward and forwarders statement
+  should be included. If no forwarders statement is present or an empty list is
+  provided then no forwarding will be done for the domain canceling the effects
   of any forwarders in the options clause.
 
 hint
-  The initial set of root-servers is defined using a hint zone. When the server 
+  The initial set of root-servers is defined using a hint zone. When the server
   starts up it uses the hints zone file to find a root name server and get the
-  most recent list of root name servers. If no hint zone is specified for class 
+  most recent list of root name servers. If no hint zone is specified for class
   IN, the server uses a compiled-in default set of root servers. Classes other
   than IN have no built-in defaults hints. 'hint' zone files are covered in
   more detail under required zones.
 
 in-view
-  Not valid for the type statement but removes the need for any type 
+  Not valid for the type statement but removes the need for any type
   definition. See in-view statement.
 
 master
@@ -5634,16 +5810,16 @@ master
   provides authoritative answers for the zone.
 
 redirect
-  Applicable to recursive servers (resolvers) only. Allows the user to control 
-  the behavior of (to redirect) an NXDOMAIN response received only from a 
+  Applicable to recursive servers (resolvers) only. Allows the user to control
+  the behavior of (to redirect) an NXDOMAIN response received only from a
   non-DNSSEC (unsigned) zone (that is, the NXDOMAIN response is not signed - it is
   not a PNE response) for certain users, controlled by an allow-query statement,
   or certain zones defined in a normal zone file specified by a file statement.
-  The zone files used are not visible in any normal manner (they cannot be 
+  The zone files used are not visible in any normal manner (they cannot be
   explicitly queried, addressed for the purposes of zone transfer or from rndc)
-  but are in all other respects normal zone files. This is a very powerful 
-  feature and should be used with caution. For example, if an ISP in 
-  Argentina wished to promote an Argentinian Registration service 
+  but are in all other respects normal zone files. This is a very powerful
+  feature and should be used with caution. For example, if an ISP in
+  Argentina wished to promote an Argentinian Registration service
   (country code .ar) then it could define the following:
 
 // snippet from recursive named.conf
@@ -5652,15 +5828,15 @@ zone "ar" {
   type redirect;
   file "ar.zone";
   allow-query {any;}; ; all users
-  ; this is not an OPEN resolver since the any 
+  ; this is not an OPEN resolver since the any
   ; applies only to NXDOMAIN responses
   ; the initial query scope (defined in the options clause)
-  ; determines the OPEN/CLOSED status 
+  ; determines the OPEN/CLOSED status
 };
 ...
 
 ; ar.zone zone file snippet
-; 
+;
 $ORIGIN ar.
 ...
 ; uses wildcard to soak up all responses for any .ar domain
@@ -5670,15 +5846,15 @@ $ORIGIN ar.
 ...
 
 
-If a web service is configured at 192.168.2.3 then it could, as an 
+If a web service is configured at 192.168.2.3 then it could, as an
 example, return a page offering to register this domain name, or it
-could simply make a benign service announcement suggesting some 
+could simply make a benign service announcement suggesting some
 corrective action, or as in the second option it could point at a
-name server which could take some domain name specific action. 
-The scope of the zone file is essentially unlimited thus, a zone "." 
+name server which could take some domain name specific action.
+The scope of the zone file is essentially unlimited thus, a zone "."
 clause (not to be confused with a hints file which would use type
 hints; not type redirect;) would pick up all NXDOMAINs for any TLD,
-whereas a zone "co.uk" clause would only pick up commercial domain 
+whereas a zone "co.uk" clause would only pick up commercial domain
 names in the UK.
 
 Only a single redirect zone is allowed or when used with view clauses
@@ -5687,35 +5863,35 @@ masterfile-format statements are allowed i redirect zone clauses.)
 
 slave
   A slave zone is a replica of the master zone and obtains its zone
-  data by zone transfer operations. The slave will respond 
-  authoritatively for the zone as long as it has valid (not timed 
-  out) zone data defined by the expiry parameter of the SOA RR. 
-  The mandatory masters statement specifies one or more IP addresses 
+  data by zone transfer operations. The slave will respond
+  authoritatively for the zone as long as it has valid (not timed
+  out) zone data defined by the expiry parameter of the SOA RR.
+  The mandatory masters statement specifies one or more IP addresses
   of master servers that the slave contacts to refresh or update its
   copy of the zone data. When the TTL specified by the refresh
   parameter is reached the slave will query the SOA RR from the zone
   master. If the sn paramater (serial number) is greater than the
-  current value a zone tansfer is initiated. If the slave cannot 
+  current value a zone tansfer is initiated. If the slave cannot
   obtain a new copy of the zone data when the SOA expiry value is
-  reached then it will stop responding for the zone. Authentication 
+  reached then it will stop responding for the zone. Authentication
   between the zone slave and zone master can be performed with
   per-server TSIG keys (see masters statement). By default zone
   transfers are made using port 53 but this can be changed using
-  the masters statement. If an optional file statement is defined 
+  the masters statement. If an optional file statement is defined
   then the zone data will be written to this file whenever the zone
-  is changed and reloaded from this file on a server restart. If the 
+  is changed and reloaded from this file on a server restart. If the
   file statement is not present then the slave cannot respond to
   zone queries until it has carried out a zone transfer, thus, if
   the zone master is unavailable on a slave load the slave cannot
   respond to queries for the zone.
 
 static-stub
-  A stub zone is similar to a slave zone except that it replicates 
+  A stub zone is similar to a slave zone except that it replicates
   only the NS records of a master zone instead of the entire zone
-  (essentially providing a referral only service). Unlike Stub 
-  zones which take their NS RRs from the real zone master 
-  Static-Stub zones allow the user to configure the NS RRs 
-  (using server-names) or addresses (using server-addresses) 
+  (essentially providing a referral only service). Unlike Stub
+  zones which take their NS RRs from the real zone master
+  Static-Stub zones allow the user to configure the NS RRs
+  (using server-names) or addresses (using server-addresses)
   that will be provided in the referral (overriding any valid data
   in the cache). The net effect of the static-stub is that the
   user is enabled (in a recursive resolver) to redirect a zone,
@@ -5725,12 +5901,12 @@ static-stub
   is present.)
 
 stub
-  A stub zone is similar to a slave zone except that it replicates 
+  A stub zone is similar to a slave zone except that it replicates
   only the NS records of a master zone instead of the entire zone
-  (essentially providing a referral only service). Stub zones are 
+  (essentially providing a referral only service). Stub zones are
   not a standard part of the DNS they are a feature specific to
   the BIND implementation and should not be used unless there is
-  a specific requirement.         
+  a specific requirement.
 """,
     }
 
@@ -5761,7 +5937,14 @@ two active keys for every algorithm represented in the
 DNSKEY RRset: at least one KSK and one ZSK per
 algorithm. If there is any algorithm for which this
 requirement is not met, this option will be ignored
-for that algorithm.""",
+for that algorithm.
+
+`update-check-ksk`: When set to "no", KSK will also
+sign non-DNSKEY RRsets.  This option will go away and
+key roles will be used to determine what keys sign
+which RRsets (A KSK that should sign all RRsets will
+have both the KSK and ZSK role and is referred to as
+a CSK).""",
     }
 
 g_nc_keywords['update-policy'] = \
@@ -6009,6 +6192,16 @@ g_nc_keywords['zero-no-soa-ttl-cache'] = \
         'zone-type': 'SOA',
         'comment': """When caching a negative response to a SOA query set the
 TTL to zero. The default is no.""",
+    }
+
+g_nc_keywords['zone-propagation-delay'] = \
+    {
+        'default': "",
+        'validity': {'range': {0,3660}},
+        'found-in': {'options', 'dnssec-policy'},
+        'introduced': '9.15.6',
+        'topic': 'dnssec',
+        'comment': "",
     }
 
 g_nc_keywords['zone-statistics'] = \
