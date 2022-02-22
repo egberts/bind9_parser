@@ -106,11 +106,12 @@ g_nc_keywords['dlz'] = \
         'default': None,
         'validity': {'function': 'netprefix'},
         'occurs-multiple-times': True,
-        'introduced': "9.5.0",
         'topblock': True,
         'found-in': {''},  # also at top-statement-level
         'topic': 'dlz',
         'zone-type': '',
+        'introduced': "9.5.0",
+        'obsoleted': '9.17.19',
         'comment': """
 Introduced 'search' clause in v9.10.0
 """,
@@ -204,6 +205,8 @@ g_nc_keywords['managed-keys'] = \
         'topic': '',
         'zone-type': '',
         'comment': '',
+        'introduced': "8.2",  # 1999-09-15
+        'obsoleted': "9.15.1",  # replaced by 'dnssec-keys' w/ 'initial-key'
     }
 
 # This is top-level 'masters' only which is
@@ -281,6 +284,7 @@ g_nc_keywords['trusted-keys'] = \
         'occurs-multiple-times': True,
         'output-order-id': 10,
         'introduced': "8.2",  # 1999-09-15
+        'obsoleted': "9.15.1",  # replaced by 'dnssec-keys' w/ 'static-key'
     }
 
 g_nc_keywords['view'] = \
@@ -1305,7 +1309,7 @@ g_nc_keywords['cleaning-interval'] = \
         'unit': 'minute',
         'found-in': {'options', 'view'},
         'introduced': '8.2',
-        'obsoleted': '9.17',
+        'obsoleted': '9.16',
         'topic': 'inert, server resource, periodic task',
         'zone-type': '',
         'comment':
@@ -1356,7 +1360,7 @@ recursive-clients.""",
 
 g_nc_keywords['cookie-algorithm'] = \
     {
-        'default': "aes",
+        'default': "siphash24",  # since 9.12
         'validity': {'regex': "(aes|siphash24|sha1|sha256)"},
         'found-in': {'options'},
         'introduced': '9.11.0',
@@ -1570,11 +1574,17 @@ g_nc_keywords['disable-algorithms'] = \
         'topic': 'dnssec',
         'zone-type': '',
         'comment': """
-        Disable the specified DNSSEC algorithms at and below the specified name. Multiple
-disable-algorithms statements are allowed. Only the best match disable-algorithms clause
-will be used to determine which algorithms are used.
-If all supported algorithms are disabled, the zones covered by the disable-algorithms will
-be treated as insecure.""",
+Disable the specified DNSSEC algorithms at and below
+the specified name.
+
+Multiple disable-algorithms statements are allowed.
+
+Only the best match disable-algorithms clause will be
+used to determine which algorithms are used.
+
+If all supported algorithms are disabled, the zones
+covered by the disable-algorithms will be treated as
+insecure.""",
     }
 
 g_nc_keywords['disable-ds-digests'] = \
@@ -1730,6 +1740,22 @@ g_nc_keywords['dnsrps-options'] = \
         'comment': '',
     }
 
+g_nc_keywords['dnskey-sig-validity'] = \
+    {
+        'default': '0',
+        'validity': {'range': {0, 3660}},
+        'unit': 'day',
+        'found-in': {'options', 'view', 'zone'},
+        'introduced': '9.13.0',
+        'obsoleted': '9.15.6',
+        'topic': 'dnssec, tuning',
+        'zone-type': 'master, slave, primary, secondary',
+        'comment': """
+This option has been replaced in favor of the KASP
+configuration value `signatures-validity-dnskey`.
+""",
+    }
+
 g_nc_keywords['dnskey-ttl'] = \
     {
         'default': '1h',
@@ -1742,22 +1768,6 @@ g_nc_keywords['dnskey-ttl'] = \
         'comment': """
 The TTL to use when generating DNSKEY resource reocrds.
 The default is 1 hour (3660 seconds).
-""",
-    }
-
-g_nc_keywords['dnskey-sig-validity'] = \
-    {
-        'default': '0',
-        'validity': {'range': {0, 3660}},
-        'unit': 'day',
-        'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.13.0',
-        'obsoleted': '9.15.6',
-        'topic': 'dnssec, tuning',
-        'zone-type': 'master, slave, primary, secondary',
-        'comment': """
-This option will be replaced in favor of the KASP
-configuration value `signatures-validity-dnskey`.
 """,
     }
 
@@ -1826,7 +1836,7 @@ g_nc_keywords['dnssec-enable'] = \
         'validity': {'regex': r'(yes|no)'},
         'found-in': {'options', 'view'},
         'introduced': '9.3.0',
-        'obsoleted': '9.15.0',
+        'obsoleted': '9.15.1',
         'topic': 'dnssec',
         'zone-type': '',
         'comment': """This indicates whether DNSSEC-related resource
@@ -1877,6 +1887,7 @@ g_nc_keywords['dnssec-lookaside'] = \
                      r'+\s+(domain)\s+([A-Za-z0-9_\-]+)(\.[A-Za-z0-9_\-])+\))'},
         'found-in': {'options', 'view'},
         'introduced': '9.3.0',  # 'auto' added in 9.7
+        'obsoleted': '9.16.0',
         'topic': 'dnssec',
         'zone-type': '',
         'comment':
