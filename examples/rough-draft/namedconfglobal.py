@@ -1,5 +1,7 @@
 """
 #
+# Many quoted strings are Copyright (C) 2004-2016 Internet Systems Consortium, Inc. ("ISC");
+# Many quoted strings are Copyright (C) 2009 Zytrax, Inc.'
 """
 # Barely any syntax change from 9.17 to 9.19.
 
@@ -13,15 +15,15 @@ Bind9 named.conf global settings
 
 Template is:
 abc = {
-  'required': True, bare minimum keyword
-              required within its subblock context
+  'required': True, bare minimum keyword 
+              required within its subblock context 
               (as pointed to by its presense
-  'default': "yes",   # None, if statement is a
-             presence-trigger type; all int() type
+  'default': "yes",   # None, if statement is a 
+             presence-trigger type; all int() type 
              are in str()type
   'default': {1: {'addr': 'any', 'operator_not': False}, },
-  'occurs-multiple-times': True,  # This keyword can
-                                  # happen more than once
+  'occurs-multiple-times': True,  # This keyword can 
+                                  # happen more than once 
                                   # in a config file
   'validity': { 'range': {0, 4095}, # None, if no validity needed
     'regex': r"(yes|no|[0-9]{1-3})",
@@ -31,9 +33,9 @@ abc = {
   'user-defined-indice': True,  # acl_name_base (useful to skip keyword validation)
   'multi-line-order-id': 1  # determines print order within {}
   'same-line-order-id': 1  # determines print order within same line
-  'introduced': '9.5',  # introduced ON that version,
+  'introduced': '9.5',  # introduced ON that version, 
                         # string-format-only, dotted notation
-  'obsoleted': '',  # obsoleted ON that version,
+  'obsoleted': '',  # obsoleted ON that version, 
                     # presense means immediately obsoleted
   'topic': 'recursive-follow',  # free-format
   'zone-type': 'master'|'slave'|  # TODO a work-in-progress
@@ -41,13 +43,13 @@ abc = {
                          'caching' |
                          'authoritative' |
                          'load-balancing',
-          'comment': """ """  # Comments are less than 55 columns
-    }
+  'comment': """ """  # Comments are less than 55 columns
+}
 """
 
-# Stuff that goes into subdirectory's namedconfglobal.py
+# Stuff that goes into subdirectory's namedconfglobal.py 
 # are defined once at "import namedconf" time.
-# We declare these variables as class instance
+# We declare these variables as class instance 
 # variable: loaded once, shared by many class instances.
 
 # g_nc_keywords is a dict() that contains all
@@ -550,21 +552,9 @@ g_nc_keywords['algorithm'] = \
     }
 
 
-g_nc_keywords['all-per-seconds'] = \
-    {
-        'default': "no",
-        'validity': {'range': 0, 1000},
-        'found-in': {'options', 'view'},
-        'introduced': '9.8.0',
-        'topic': 'rate-limit, defense',
-        'zone-type': '',
-        'comment': ''
-    }
-
-
 g_nc_keywords['allow-new-zones'] = \
     {
-        'default': 'no',
+        'default': "no",
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
         'introduced': '9.8.0',
@@ -573,10 +563,9 @@ g_nc_keywords['allow-new-zones'] = \
         'comment': """If yes, then zones can be added at runtime via 'rndc addzone', 'rndc modzone' or deleted via 'rndc delzone'. The default is no.""",
     }
 
-
 g_nc_keywords['allow-notify'] = \
     {
-        'default': {0: {'masters': 'none', 'operator_not': False}, }, # was 'any' in v9.11
+        'default': {0: {'masters': 'any', 'operator_not': False}, },
         'validity': {'function': "address_match_nosemicolon"},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.1',
@@ -677,9 +666,7 @@ NOTE: allow-query-cache is used to specify access
 
 g_nc_keywords['allow-recursion'] = \
     {
-        'default': {0: {'addr': 'localnets', 'operator_not': False},
-                    1: {'addr': 'localhost', 'operator_not': False}, },
-                    # 'default' was 'any;' in v9.11
+        'default': {0: {'addr': 'any', 'operator_not': False}},
         'validity': {'function': "address_match_nosemicolon"},
         'found-in': {'options', 'view'},
         'introduced': '9.0.0',
@@ -755,8 +742,8 @@ DNS updates for master zones.
 
 The default is to deny updates from all hosts.
 
-Useful when secondary nameserver receives a DHCP
-updates and needs to inform the server having this
+Useful when secondary nameserver receives a DHCP 
+updates and needs to inform the server having this 
 master zone file.
 
 Note that allowing updates based on the requestor's IP
@@ -957,8 +944,8 @@ cause disruption with a shared cache.""",
 
 g_nc_keywords['auth-nxdomain'] = \
     {
-        'default': 'false',  # was 'yes' in 8.1 # was 'no' in v9.11
-        'validity': {'regex': r"(true|false|yes|no)"},
+        'default': "no",  # was 'yes' in 8.1
+        'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
         'introduced': '8.1',
         'topic': '',
@@ -1157,7 +1144,7 @@ Clause 'buffered' introduced in v9.10.0
 
 g_nc_keywords['check-dup-records'] = \
     {
-        'default': 'warn',
+        'default': "warn",
         'validity': {'regex': r'(warn|fail|ignore)'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.7.0',
@@ -1224,10 +1211,7 @@ The default is to warn.""",
 
 g_nc_keywords['check-names'] = \
     {
-        'default': {0: {'primary fail'},
-                    1: {'secondary warn'},
-                    2: {'response ignore'},
-                   }  # change from 'master' in v9.13
+        'default': 'primary',  # change from 'master' in v9.13
         'validity': {'regex': r"(primary|master|slave|secondary|response)\s+(warn|fail|ignore)"},
         'found-in': {'options', 'view', 'zone'},
         'zone-type': {'hint'},
@@ -1349,7 +1333,7 @@ If set to 0, no periodic cleaning will occur.""",
 
 g_nc_keywords['clients-per-query'] = \
     {
-        'default': 10,
+        'default': '10',
         'validity': {'range': {0,300}},
         'found-in': {'options', 'view'},
         'introduced': '9.5.0',
@@ -1729,45 +1713,14 @@ g_nc_keywords['dns64-server'] = \
         'validity': None,
         'introduced': '9.8.0',
         'found-in': {'options', 'view'},
-        'topic': 'dnssec, inert',
-        'zone-type': '',
-        'comment': '',
-    }
-
-g_nc_keywords['dnsrps-enable'] = \
-    {
-        'default': None,
-        'validity': {'regex': r'(yes)|(no)'},
-        'introduced': '9.12',
-        'found-in': {'options', 'view'},
-        'topic': 'policy, RPZ rewriting',
-        'zone-type': '',
-        'comment': """The dnsrps-enable yes option turns on the DNS Response
-Policy Server (DNSRPS) interface, if it has been compiled
-to named using configure --enable-dnsrps.
-The dnsrps-options block provides additional RPZ
-configuration settings, which are passed throught to the
-DNSRPS proivder library.  Multiple DNSRPS settings in an
-dnsrps-options string should be separated with semi-colons.
-The DNSRPS provider librpz, is passed a configuration
-string consisting of the dnsrps-options text, concatenated
-with settings derived from the response-policy statement.  """,
-    }
-
-g_nc_keywords['dnsrps-options'] = \
-    {
-        'default': None,
-        'validity': { 'string' },
-        'introduced': '9.12',
-        'found-in': {'options', 'view'},
-        'topic': 'policy, inert, RPZ rewriting',
+        'topic': 'ip6, dnssec, inert',
         'zone-type': '',
         'comment': '',
     }
 
 g_nc_keywords['dnskey-sig-validity'] = \
     {
-        'default': 0,
+        'default': '0',
         'validity': {'range': {0, 3660}},
         'unit': 'day',
         'found-in': {'options', 'view', 'zone'},
@@ -1820,7 +1773,7 @@ g_nc_keywords['dnsrps-enable'] = \
         'validity': {'regex': r'(yes)|(no)'},
         'introduced': '9.12',
         'found-in': {'options', 'view'},
-        'topic': 'policy, RPZ rewriting',
+        'topic': 'zone, policy, RPZ rewriting',
         'zone-type': '',
         'comment': """The dnsrps-enable yes option turns on the DNS Response
 Policy Server (DNSRPS) interface, if it has been compiled
@@ -1848,7 +1801,22 @@ g_nc_keywords['dnsrps-options'] = \
 g_nc_keywords['dnssec-accept-expired'] = \
     {
         'default': 'no',
-        'validity': {'regex': r"(yes|no)"},
+        'validity': {'regex': r'(yes|no)'},
+        'found-in': {'options', 'view'},
+        'introduced': '9.4.0',
+        'topic': 'DNSSEC',
+        'zone-type': '',
+        'comment': """Accept expired signatures when verifying DNSSEC
+signatures.
+The default is no.
+Setting this option to yes leaves named vulnerable to
+replay attacks.""",
+    }
+
+g_nc_keywords['dnssec-dnskey-kskonly'] = \
+    {
+        'default': 'no',
+        'validity': {'regex': r'(yes|no)'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.7.0',
         'introduced': '9.15.6',   # Ummm, two introduction?  TBD
@@ -1889,9 +1857,8 @@ specifically queried for. The default is yes.""",
 
 g_nc_keywords['dnssec-loadkeys-interval'] = \
     {
-        'default': 60,
+        'default': '60',
         'validity': {'range': {1, 1440}},
-        'unit': 'minute',
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.9.0',
         'topic': 'DNSSEC',
@@ -1974,16 +1941,16 @@ dnssec-lookaside must be active.""",
 g_nc_keywords['dnssec-policy'] = \
     {
         # This is one of those split-syntax/same-name between top-level and options
-        'default': 'none',
-        'validity': {'function': 'dnssec_policy_name',
-                     'regex': '(none|default)'},
+        'default': '',
+        'validity': {'string': 'dnssec_policy_name',
+                     'regex': '(none|insecure|default)'},
         'occurs-multiple-times': False,
-        'topblock': True,
+        'topblock': False,
         'required': False,  # depends on topblock 'dnssec-policy'
-        'found-in': {''},
+        'found-in': {'options', 'zone'},
         'introduced': '9.17.0',
-        'topic': 'dnssec',
-        'zone-type': '',
+        'topic': 'DNSSEC',
+        'zone-type': 'master, slave, primary, secondary',
         'comment': '',
     }
 
@@ -2114,7 +2081,7 @@ Option 'dnstap' series activated in v9.14.0.""",
 
 g_nc_keywords['dnstap-identity'] = \
     {
-        'default': 'hostname',
+        'default': '',
         'validity': {'function': 'dscp_identity'},
         'found-in': {'options'},
         'introduced': '9.11.0',
@@ -2214,7 +2181,7 @@ remote server. The default is yes.""",
 
 g_nc_keywords['edns-udp-size'] = \
     {
-        'default': '1232',
+        'default': '4096',
         'validity': {'range': {512, 4096}},
         'unit': 'udp_buffer_byte_size',
         'found-in': {'options', 'server', 'view'},
@@ -2387,7 +2354,7 @@ with configure --enable-fetchlimit.)""",
 
 g_nc_keywords['fetches-per-server'] = \
     {
-        'default': {'0'},  # used to be '0 drop' in v9.11
+        'default': {'0', 'drop'},  # Don't provide a default, it's a bind9 compile-option
         'validity': None,
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
@@ -2425,7 +2392,7 @@ with configure --enable-fetchlimit.)""",
 
 g_nc_keywords['fetches-per-zone'] = \
     {
-        'default': {'0'},  # used to be '0 drop' in v9.11
+        'default': {'0', 'drop'},  # Don't provide a default, it's a bind9 compile-option
         'validity': None,
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
@@ -2489,8 +2456,7 @@ g_nc_keywords['file'] = \
 
 g_nc_keywords['files'] = \
     {
-        'default': 'unlimited',  # changed from 'unlimited' in v9.12
-                                 # change to 'unlimited' by v9.19
+        'default': 'default',  # changed from 'unlimited' in v9.12
         'validity': {'regex': '(default|unlimited|[0-9]*)'},
         'found-in': {'options'},
         'introduced': '8.1',
@@ -2694,7 +2660,7 @@ g_nc_keywords['geoip-use-ecs'] = \
 
 g_nc_keywords['glue-cache'] = \
     {
-        'default': 'yes',
+        'default': '',
         'validity': {'regex': '(yes|no)'},
         'found-in': {'options', 'view'},  # 'view' added in 9.12?
         'introduced': '9.12',
@@ -2784,50 +2750,6 @@ primary purpose of such queries is to identify which of a
 group of anycast servers is actually answering your queries.
 
 Specifying hostname none; disables processing of the queries."""
-    }
-
-g_nc_keywords['http-listener-clients'] = \
-    {
-        'default': 300,
-        'validity': {'range': {1, 65535}},
-        'found-in': {'options'},
-        'introduced': '9.18',
-        'topic': 'DNS-over-HTTP, DoH',
-        'zone-type': '',
-        'comment': '',
-    }
-
-g_nc_keywords['http-port'] = \
-    {
-        'default': 80,
-        'validity': {'range': {1, 65535}},
-        'found-in': {'options'},
-        'introduced': '9.18',
-        'topic': 'DNS-over-HTTP, DoH',
-        'zone-type': '',
-        'comment': 'An IP port number. The number is limited to 1 through 65535, with values below 1024 typically restricted to use by processes running as root. In some cases, an asterisk (*) character can be used as a placeholder to select a random high-numbered port.',
-    }
-
-g_nc_keywords['http-streams-per-connection'] = \
-    {
-        'default': 100,
-        'validity': {'range': {1, 65535}},
-        'found-in': {'options'},
-        'introduced': '9.18',
-        'topic': 'DNS-over-HTTP, DoH',
-        'zone-type': '',
-        'comment': '',
-    }
-
-g_nc_keywords['https-port'] = \
-    {
-        'default': 443,
-        'validity': {'range': {1, 65535}},
-        'found-in': {'options'},
-        'introduced': '9.18',
-        'topic': 'DNS-over-HTTP, DoH',
-        'zone-type': '',
-        'comment': 'An IP port number. The number is limited to 1 through 65535, with values below 1024 typically restricted to use by processes running as root. In some cases, an asterisk (*) character can be used as a placeholder to select a random high-numbered port.',
     }
 
 g_nc_keywords['in-view'] = \
@@ -3042,7 +2964,7 @@ required to be signed by this key."""
 
 g_nc_keywords['lame-ttl'] = \
     {
-        'default': 0,  # TODO: was 600 in v9.11
+        'default': '600',
         'validity': {'range': {0, 1800}},
         'unit': 'second',
         'found-in': {'options', 'view'},
@@ -3153,7 +3075,7 @@ listen-on-v6 { none; };""",
 
 g_nc_keywords['lmdb-mapsize'] = \
     {
-        'default': '32M',
+        'default': '',
         'validity': {'function': "sizeval"},
         'found-in': {'options', 'view'},
         'introduced': '9.12.0',
@@ -3163,7 +3085,7 @@ g_nc_keywords['lmdb-mapsize'] = \
 
 g_nc_keywords['lock-file'] = \
     {
-        'default': '/run/named/named.lock',
+        'default': "",
         'validity': {'function': "path_name"},
         'found-in': {'options'},
         'introduced': '9.11.0',
@@ -3345,7 +3267,7 @@ The default is 16M.""",
 
 g_nc_keywords['max-cache-size'] = \
     {
-        'default': '90%', # change to 90% at v9.19; from 'unlimited' in v9.12
+        'default': "default", # change from 'unlimited' in v9.12
         'validity': {'function': "size_spec",
                      'function': "percentage",
                      'regex': '(default|unlimited)'},
@@ -3370,7 +3292,7 @@ The default is unlimited.""",
 
 g_nc_keywords['max-cache-ttl'] = \
     {
-        'default': '604800',
+        'default': "604800",
         'validity': {'function': 'iso8601_time_duration'},
         'unit': 'second_unless_stated',
         'found-in': {'options', 'view'},
@@ -3388,7 +3310,7 @@ Units in seconds.""",
 
 g_nc_keywords['max-clients-per-query'] = \
     {
-        'default': 100,
+        'default': "100",
         'validity': {'range': (0, 2147483647)},
         'found-in': {'options', 'view'},
         'introduced': '9.4.0',
@@ -3442,21 +3364,19 @@ g_nc_keywords['max-ixfr-ratio'] = \
         'topic': 'transfer, performance',
         'zone-type': 'master, primary, mirror, slave, secondary',
         'comment':
-"""This sets the size threshold (expressed as a
-percentage of the size of the full zone) beyond which
-named chooses to use an AXFR response rather than
-IXFR when answering zone transfer requests.
+"""This sets the size threshold (expressed as a 
+percentage of the size of the full zone) beyond which 
+named chooses to use an AXFR response rather than 
+IXFR when answering zone transfer requests. 
 
 See Incremental Zone Transfers (IXFR).
 
-The minimum value is 1%.
+The minimum value is 1%. 
 
-The keyword 'unlimited' disables ratio checking and
-allows IXFRs of any size.
+The keyword 'unlimited' disables ratio checking and 
+allows IXFRs of any size. 
 
-The default is 100%.
-
-When a secondary server receives a zone via AXFR, it creates a new copy of the zone database and then swaps it into place; during the loading process, queries continue to be served from the old database with no interference. When receiving a zone via IXFR, however, changes are applied to the running zone, which may degrade query performance during the transfer. If a server receiving an IXFR request determines that the response size would be similar in size to an AXFR response, it may wish to send AXFR instead. The threshold at which this determination is made can be configured using the max-ixfr-ratio option.""",
+The default is 100%.""",
     }
 
 g_nc_keywords['max-journal-size'] = \
@@ -3482,7 +3402,7 @@ This may also be set on a per-zone basis.""",
 
 g_nc_keywords['max-ncache-ttl'] = \
     {
-        'default': '10800',  # 3 hours
+        'default': "10800",
         'validity': {'function': "iso8601_time_duration",
                      'range': {0, 604800},
                      'regex': '(default|unlimited)'},
@@ -3515,7 +3435,7 @@ The default is zero which means unlimited.""",
 
 g_nc_keywords['max-recursion-depth'] = \
     {
-        'default': 7,
+        'default': '7',
         'validity': {'range': {0, 1024}},
         'unit': 'level',
         'found-in': {'options', 'view'},
@@ -3532,7 +3452,7 @@ query is terminated and returns SERVFAIL. The default is 7.""",
 
 g_nc_keywords['max-recursion-queries'] = \
     {
-        'default': 100,  # TODO: was 75 in v9.11
+        'default': '75',
         'validity': {'range': {0, 1024}},
         'unit': 'queries_per_recursion',
         'found-in': {'options', 'view'},
@@ -3602,12 +3522,11 @@ min-retry-time 500 seconds, and max-retry-time
 
 g_nc_keywords['max-rsa-exponent-size'] = \
     {
-        'default': 0, # no limit
-        'validity': {'range': {35, 4096},
-                     'string': '0'},
+        'default': '4096',
+        'validity': {'range': {35, 4096}},
         'unit': 'bits',
         'found-in': {'options'},
-        'introduced': '9.10',  # changed to '0'/no-limit in v9.6
+        'introduced': '9.10',
         'topic': 'RSA, dnssec, tuning',
         'zone-type': '',
         'comment': """The maximum RSA exponent size, in bits, that will be
@@ -3618,7 +3537,7 @@ The default zero (0) is also accepted and is equivalent to 4096.""",
 
 g_nc_keywords['max-stale-ttl'] = \
     {
-        'default': '86400',  # 1 day; was '1w' in v9.12
+        'default': '1w',
         'validity': {'function': 'iso8601_time_duration'},
         'unit': 'second_unless_stated',
         'found-in': {'options', 'view'},
@@ -3630,10 +3549,9 @@ g_nc_keywords['max-stale-ttl'] = \
 
 g_nc_keywords['max-transfer-idle-in'] = \
     {
-        'default': 60,
+        'default': '60',
         'validity': {'range': {0, 40320},
                      'function': 'time_spec'},
-        'unit': 'minute',
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.0.0',
         'topic': 'transfer',
@@ -3664,7 +3582,6 @@ g_nc_keywords['max-transfer-time-in'] = \
         'default': '120',
         'validity': {'range': {0, 40320},
                      'function': 'time_spec'},
-        'unit': 'minute',
         'found-in': {'options', 'view', 'zone'},
         'introduced': '8.1',
         'topic': 'transfer',
@@ -3680,7 +3597,6 @@ g_nc_keywords['max-transfer-time-out'] = \
         'default': "120",
         'validity': {'range': {0, 40320},
                      'function': 'time_spec'},
-        'unit': 'minute',
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.0.0',
         'topic': 'transfer',
@@ -3693,7 +3609,7 @@ minutes will be terminated. The default is 120 minutes
 
 g_nc_keywords['max-udp-size'] = \
     {
-        'default': '1232',  # TODO: changed from 4096 when?
+        'default': '4096',
         'validity': {'range': {512, 4096}},
         'unit': 'udp_buffer_byte_size',
         'found-in': {'options', 'view', 'server'},
@@ -3704,7 +3620,7 @@ g_nc_keywords['max-udp-size'] = \
 Valid values are 512 to 4096 (values outside this range will be
 silently adjusted to the nearest value within it).
 
-The default value is 1232.
+The default value is 4096.
 
 This value applies to responses sent by a server; to set the
 advertised buffer size in queries, see edns-udp-size.
@@ -3768,7 +3684,7 @@ unless '-m record' is specified on the command line in which case it is yes.""",
 
 g_nc_keywords['memstatistics-file'] = \
     {
-        'default': '"named.memstats"',
+        'default': "\"named.memstats\"",
         'validity': {'function': "quoted_path_name"},
         'found-in': {'options'},
         'introduced': '8.1',
@@ -3781,7 +3697,7 @@ If not specified, the default is named.memstats.""",
 
 g_nc_keywords['message-compression'] = \
     {
-        'default': 'yes',  # TODO: was 'no' in v9.14
+        'default': "no",
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
@@ -3792,9 +3708,9 @@ g_nc_keywords['message-compression'] = \
 
 g_nc_keywords['min-cache-ttl'] = \
     {
-        'default': 0,
+        'default': '0',
         'validity': {'range': {0,90}},
-        'unit': 'second',  # code comment says 'hour' for a unit (error?)
+        'unit': 'second',
         'found-in': {'options', 'view'},
         'introduced': '9.14',
         'topic': 'tuning',
@@ -3804,7 +3720,7 @@ g_nc_keywords['min-cache-ttl'] = \
 
 g_nc_keywords['min-ncache-ttl'] = \
     {
-        'default': 0,
+        'default': '0',
         'validity': {'range': {0,90}},
         'unit': 'second',
         'found-in': {'options', 'view'},
@@ -3816,7 +3732,7 @@ g_nc_keywords['min-ncache-ttl'] = \
 
 g_nc_keywords['min-refresh-time'] = \
     {
-        'default': 300,
+        'default': '300',
         'validity': {'min': '1s', 'max': '24w'},
         'unit': 'iso8601_time_duration',
         'found-in': {'options', 'view', 'zone'},
@@ -3880,8 +3796,8 @@ The default is 2.""",
 
 g_nc_keywords['minimal-any'] = \
     {
-        'default': 'false',  # was 'no' in v9.11
-        'validity': {'regex': r"(true|false|yes|no)"},
+        'default': "no",
+        'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
         'introduced': '9.11',
         'topic': 'DNS',
@@ -3894,7 +3810,7 @@ Note: Was renamed from 'minimal-response' in v9.11.0.""",
 
 g_nc_keywords['minimal-response'] = \
     {
-        'default': 'no-auth-recursive',  # was 'no' in v9.11
+        'default': "no",
         'validity': {'regex': r"(yes|no|no-auth|no-auth-recursive)"},
         'found-in': {'options', 'view'},
         'introduced': '9.2',
@@ -4014,7 +3930,7 @@ client matches this ACL.""",
 
 g_nc_keywords['nocookie-udp-size'] = \
     {
-        'default': 4096,  # TODO: changed from 0 when?
+        'default': None,
         'validity': {'range': {128, 32767}}, # TODO verify
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
@@ -4071,7 +3987,7 @@ off this option if it caused slaves to crash.""",
 
 g_nc_keywords['notify-delay'] = \
     {
-        'default': 5,
+        'default': '5',
         'validity': {'range': {0, 1024}},
         'unit': 'second',
         'found-in': {'options', 'view', 'zone'},
@@ -4104,7 +4020,7 @@ when set to zero, it will silently be raised to one.""",
 
 g_nc_keywords['notify-source'] = \
     {
-        'default': '*',  # was 'None' in v9.11
+        'default': None,
         'validity': {'function': 'ip4addr_port_dscp_list'},
         'found-in': {'options', 'view', 'zone', 'server'},
         'introduced': '9.1',
@@ -4126,7 +4042,7 @@ source address for TCP sockets.""",
 
 g_nc_keywords['notify-source-v6'] = \
     {
-        'default': '*',  # was 'None' in v9.11
+        'default': None,
         'validity': {'function': 'ip6addr_port_dscp_list'},
         'found-in': {'options', 'view', 'zone', 'server'},
         'introduced': '9.1',
@@ -4167,20 +4083,9 @@ NOTIFY messages to all the nameservers listed in the
 NS RRset.""",
     }
 
-g_nc_keywords['nsec3-test-zone'] = \
-    {
-        'default': 'no',
-        'validity': {'regex': r'(yes|no)'},
-        'found-in': {'view'},
-        'introduced': '9.19.0',  # TODO verify
-        'topic': 'DNSSEC',
-        'zone-type': '',
-        'comment': '',
-    }
-
 g_nc_keywords['nta-lifetime'] = \
     {
-        'default': 3600,  # TODO: changed from 'None' when?
+        'default': None,
         'validity': {'range': {0,65535}},
         'unit': 'duration',
         'found-in': {'options', 'view'},
@@ -4192,7 +4097,7 @@ g_nc_keywords['nta-lifetime'] = \
 
 g_nc_keywords['nta-recheck'] = \
     {
-        'default': 300,  # TODO: changed from 'None' when?
+        'default': None,
         'validity': {'range': {0,65535}},
         'unit': 'duration',
         'found-in': {'options', 'view'},
@@ -4258,42 +4163,25 @@ g_nc_keywords['parent-registration-delay'] = \
         'comment': "",
     }
 
-g_nc_keywords['parental-source'] = \
-    {
-        'default': '*',
-        'validity': {'function': 'ip4addr_port_dscp_list'},
-        'found-in': {'view'},
-        'introduced': '9.19',  # TODO first seen in v9.19
-        'topic': 'DoH',
-        'comment': "",
-    }
-
-g_nc_keywords['parental-source-v6'] = \
-    {
-        'default': '*',
-        'validity': {'function': 'ip6addr_port_dscp_list'},
-        'found-in': {'view'},
-        'introduced': '9.19',  # TODO first seen in v9.19
-        'topic': 'DoH',
-        'comment': "",
-    }
-
 g_nc_keywords['pid-file'] = \
     {
-        'default': '"/run/named/named.pid"',
+        'default': "\"/var/run/named/named.pid\"",
+        # Debian = /var/run/named/named.pid
+        # RedHat/CentOS = /var/run/named/named.pid
+        # ????? /etc/named.pid
         'validity': {'function': "path_name"},
         'found-in': {'options'},
         'introduced': '8.1',
         'topic': 'operating-system',
         'zone-type': '',
-        'comment': """The pathname of the file the server writes its
-process ID in. If not specified, the default is
-/var/run/named/named.pid. The PID file is used by
-programs that want to send signals to the running
-name server. Specifying pid-file none disables the
-use of a PID file - no file will be written and any
-existing one will be removed.
-Note that none is a keyword, not a filename, and
+        'comment': """The pathname of the file the server writes its 
+process ID in. If not specified, the default is 
+/var/run/named/named.pid. The PID file is used by 
+programs that want to send signals to the running 
+name server. Specifying pid-file none disables the 
+use of a PID file - no file will be written and any 
+existing one will be removed. 
+Note that none is a keyword, not a filename, and 
 therefore is not enclosed in double quotes.""",
     }
 
@@ -4311,7 +4199,7 @@ g_nc_keywords['plugin'] = \
 
 g_nc_keywords['port'] = \
     {
-        'default': 53,
+        'default': "53",
         'validity': {'range': {1, 65535}},
         'found-in': {'options', 'masters', 'also-notify',
                      'alt-transfer-source', 'alt-transfer-source-v6',
@@ -4374,8 +4262,8 @@ The default eligibility TTL is 9.""",
 
 g_nc_keywords['provide-ixfr'] = \
     {
-        'default': 'true',  # was 'yes' in v9.11
-        'validity': {'regex': "(true|false|yes|no)"},
+        'default': 'yes',
+        'validity': {'regex': "(yes|no)"},
         'found-in': {'options', 'view', 'server'},
         # moved from 'server' to 'options' on 9.2
         'introduced': '9.0.0',
@@ -4427,12 +4315,11 @@ g_nc_keywords['publish-safety'] = \
 
 g_nc_keywords['qname-minimization'] = \
     {
-        'default': 'relaxed',
+        'default': '',
         'validity': {'regex': "(strict|relaxed|disabled|off)"},
         'found-in': {'options', 'view'},
-        'introduced': '9.14.0',  # TODO; verify; first seen in v9.14
-        'obsoleted': '',
-        'topic': 'QNAME',
+        'introduced': '9.14.0',
+        'topic': '',
         'zone-type': '',
         'comment': '',
     }
@@ -4549,22 +4436,22 @@ g_nc_keywords['rate-limit'] = \
 
 g_nc_keywords['recursing-file'] = \
     {
-        'default': '"named.recursing"',
+        'default': "\"named.recursing\"",
         'validity': {'function': "path_name"},
         'found-in': {'options'},
         'introduced': '9.5.0',
         'topic': 'operating-system',
         'zone-type': '',
-        'comment': """The pathname of the file the server dumps the queries
-that are currently recursing when instructed to do so
-with rndc recursing.
+        'comment': """The pathname of the file the server dumps the queries 
+that are currently recursing when instructed to do so 
+with rndc recursing. 
 
 If not specified, the default is named.recursing.""", }
 
 g_nc_keywords['recursion'] = \
     {
-        'default': 'true',  # was 'yes' in v9.11
-        'validity': {'regex': r"(true|false|yes|no)"},
+        'default': "yes",
+        'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
         'introduced': '8.1',
         'topic': '',
@@ -4625,8 +4512,8 @@ is set to 90% of recursive-clients.""",
 
 g_nc_keywords['request-expire'] = \
     {
-        'default': 'true',  # was 'yes' in v9.11
-        'validity': {'regex': r'(true|false|yes|no)'},
+        'default': 'yes',
+        'validity': {'regex': r'(yes|no)'},
         'found-in': {'options', 'view', 'server', 'zone'},
         'introduced': '9.11.0',
         'topic': 'transfer, server',
@@ -4637,8 +4524,8 @@ g_nc_keywords['request-expire'] = \
 
 g_nc_keywords['request-ixfr'] = \
     {
-        'default': 'true',  # was 'yes' in v9.11
-        'validity': {'regex': r'(true|false|yes|no)'},
+        'default': 'yes',
+        'validity': {'regex': r'(yes|no)'},
         'found-in': {'options', 'view', 'server', 'zone'},
         'introduced': "9.1",
         'topic': 'transfer, server',
@@ -4651,8 +4538,8 @@ Introduced to 'options' section in v9.12.0?
 
 g_nc_keywords['request-nsid'] = \
     {
-        'default': 'false',
-        'validity': {'regex': r"(true|false|yes|no)"},
+        'default': "no",
+        'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view', 'server'},
         'introduced': '9.5.0',
         'topic': 'NSID, server',
@@ -4672,22 +4559,22 @@ g_nc_keywords['require-server-cookie'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
         'topic': 'cookie',
-        'comment':
-"""If yes, require a valid server cookie before
-sending a full response to a UDP request from a
-cookie-aware client. BADCOOKIE is sent if there is a
+        'comment': 
+"""If yes, require a valid server cookie before 
+sending a full response to a UDP request from a 
+cookie-aware client. BADCOOKIE is sent if there is a 
 bad or nonexistent server cookie.
 
 The default is no.
 
-Users wishing to test that DNS COOKIE clients
-correctly handle BADCOOKIE, or who are getting a lot
-of forged DNS requests with DNS COOKIES present,
-should set this to yes. Setting this to yes results
-in a reduced amplification effect in a reflection
-attack, as the BADCOOKIE response is smaller than a
-full response, while also requiring a legitimate
-client to follow up with a second query with the
+Users wishing to test that DNS COOKIE clients 
+correctly handle BADCOOKIE, or who are getting a lot 
+of forged DNS requests with DNS COOKIES present, 
+should set this to yes. Setting this to yes results 
+in a reduced amplification effect in a reflection 
+attack, as the BADCOOKIE response is smaller than a 
+full response, while also requiring a legitimate 
+client to follow up with a second query with the 
 new, valid, cookie.""",
     }
 
@@ -4700,34 +4587,22 @@ g_nc_keywords['request-sit'] = \
         'obsoleted': '9.11.0',
         'topic': 'EDNS',
         'zone-type': '',
-        'comment': """If yes, then a SIT (Source Identity Token) EDNS
-option is sent along with the query.
+        'comment': """If yes, then a SIT (Source Identity Token) EDNS 
+option is sent along with the query. 
 
-If the resolver has previously talked to the server,
-the SIT returned in the previous transaction is sent.
+If the resolver has previously talked to the server, 
+the SIT returned in the previous transaction is sent. 
 
-This is used by the server to determine whether the
-resolver has talked to it before.  A resolver sending
-the correct SIT is assumed not to be an off-path
-attacker sending a spoofed-source query; the query is
-therefore unlikely to be part of a
-reflection/amplification attack, so resolvers sending
-a correct SIT option are not subject to response rate
-limiting (RRL). Resolvers which do not send a correct
-SIT option may be limited to receiving smaller
+This is used by the server to determine whether the 
+resolver has talked to it before.  A resolver sending 
+the correct SIT is assumed not to be an off-path 
+attacker sending a spoofed-source query; the query is 
+therefore unlikely to be part of a 
+reflection/amplification attack, so resolvers sending 
+a correct SIT option are not subject to response rate 
+limiting (RRL). Resolvers which do not send a correct 
+SIT option may be limited to receiving smaller 
 responses via the nosit-udp-size option.""",
-    }
-
-g_nc_keywords['require-server-cookie'] = \
-    {
-        'default': 'no',
-        'validity': {'regex': r"(yes|no)"},
-        'found-in': {'options', 'view'},
-        'introduced': '9.19.0',  # TODO verify; first seen in v9.19
-        'obsoleted': '',
-        'topic': 'server resource',
-        'zone-type': '',
-        'comment': '',
     }
 
 g_nc_keywords['reserved-sockets'] = \
@@ -4740,18 +4615,18 @@ g_nc_keywords['reserved-sockets'] = \
         'topic': 'server resource',
         'zone-type': '',
         'comment':
-"""The number of file descriptors reserved for TCP,
-stdio, etc.
+"""The number of file descriptors reserved for TCP, 
+stdio, etc. 
 
-This needs to be big enough to cover the number of
-interfaces named listens on, tcp-clients as well as
-to provide room for outgoing TCP queries and incoming
-zone transfers.
+This needs to be big enough to cover the number of 
+interfaces named listens on, tcp-clients as well as 
+to provide room for outgoing TCP queries and incoming 
+zone transfers. 
 
-The default is 512.
+The default is 512. 
 
-The minimum value is 128 and the maximum value is 128
-less than maxsockets (-S).
+The minimum value is 128 and the maximum value is 128 
+less than maxsockets (-S).  
 
 This option may be removed in the future.
 
@@ -4760,7 +4635,7 @@ This option has little effect on Windows.""",
 
 g_nc_keywords['resolver-nonbackoff-tries'] = \
     {
-        'default': 3,
+        'default': '3',
         'validity': {'range': (0, 30)},
         'found-in': {'options', 'view'},
         'introduced': '9.12',
@@ -4771,9 +4646,9 @@ g_nc_keywords['resolver-nonbackoff-tries'] = \
 
 g_nc_keywords['resolver-query-timeout'] = \
     {
-        'default': 800,  # was 10 in v9.15;  was 10000 in v9.11
+        'default': "10000",
         'validity': {'range': (0, 30000)},  # was 0..30 in v9.8.0
-        'unit': 'millisecond',  # was 'second' in v9.8.0
+        'unit': 'millisecond',
         'found-in': {'options', 'view'},
         'introduced': '9.8.0',
         'topic': 'filtering, access control',
@@ -4781,7 +4656,7 @@ g_nc_keywords['resolver-query-timeout'] = \
         'comment':
 """The amount of time in millisecond the resolver will
 spend attempting to resolve a recursive query before
-failing.
+failing.  
 
 Default is 10000.
 
@@ -4789,7 +4664,8 @@ A value of 300 or less are in seconds unit.
 Setting it to 0 will result in the default being used.""",
     }
 
-g_nc_keywords['resolver-retries-interval'] = \
+# was 'resolver-retries-interval'
+g_nc_keywords['resolver-retry-interval'] = \
     {
         'default': '800',
         'validity': 'integer',
@@ -4858,16 +4734,16 @@ g_nc_keywords['root-delegation-only'] = \
         'introduced': '9.3.0',
         'topic': 'TLD',
         'zone-type': '',
-        'comment':
+        'comment': 
 """Turn on enforcement of delegation-only in TLDs (top
 level domains) and root zones with an optional
-exclude list.
+exclude list.  
 
-DS queries are expected to be made to and be answered
-by delegation only zones. Such queries and responses
-are treated as an exception to delegation-only
-processing and are not converted to NXDOMAIN
-responses provided a CNAME is not discovered at the
+DS queries are expected to be made to and be answered 
+by delegation only zones. Such queries and responses 
+are treated as an exception to delegation-only 
+processing and are not converted to NXDOMAIN 
+responses provided a CNAME is not discovered at the 
 query name.
 
 If a delegation only zone server also serves a child
@@ -4910,7 +4786,7 @@ g_nc_keywords['root-key-sentinel'] = \
 g_nc_keywords['rrset-order'] = \
     {
         'default': {'class': 'any', 'type': "any", 'name': "*",
-                    'order': 'random'},  # was 'order': 'cyclic' in v9.11
+                    'order': 'cyclic'},
         'validity': {'function': 'rrset'},
         'found-in': {'options', 'view'},  # TBD moved 'zone' to 'view' in 9.17?
         'introduced': '8.2',
@@ -4935,7 +4811,7 @@ g_nc_keywords['secret'] = \
 
 g_nc_keywords['secroots-file'] = \
     {
-        'default': '"named.secroots"',
+        'default': "\"named.secroots\"",
         'validity': {'function': "path_name"},
         'found-in': {'options'},
         'introduced': '9.8.0',
@@ -4949,9 +4825,8 @@ If not specified, the default is named.secroots.""",
 
 g_nc_keywords['send-cookie'] = \
     {
-        'default': 'true',  # was 'None' in v9.11
-        'validity': {'regex': "(true|false|yes|no)"},
-        'found-in': {'server'},
+        'default': None,
+        'validity': {'regex': "(yes|no)"},
         'found-in': {'options', 'view', 'server'},  # 'options' added in 9.12?
         'introduced': '9.11.0',
         'topic': 'transfer, DSCP, server',
@@ -4968,14 +4843,14 @@ g_nc_keywords['serial-queries'] = \
         'obsoleted': '9.14',
         'topic': 'inert, obsoleted, ignored, zone transfer',
         'zone-type': '',
-        'comment':
-"""In BIND 8, the serial-queries option set the
-maximum number of concurrent serial number queries
-allowed to be outstanding at any given time.
+        'comment': 
+"""In BIND 8, the serial-queries option set the 
+maximum number of concurrent serial number queries 
+allowed to be outstanding at any given time. 
 
-BIND 9 does not limit the number of outstanding
-serial queries and ignores the serial-queries option.
-Instead, it limits the rate at which the queries are
+BIND 9 does not limit the number of outstanding 
+serial queries and ignores the serial-queries option. 
+Instead, it limits the rate at which the queries are 
 sent as defined using the serial-query-rate option.""",
     }
 
@@ -5086,8 +4961,8 @@ g_nc_keywords['server-names'] = \
     }
 g_nc_keywords['servfail-ttl'] = \
     {
-        'default': 1,
-        'validity': {'range': {0, 30}},
+        'default': '1',
+        'validity': { 'range': {0,30}},
         'unit': 'second',
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
@@ -5117,11 +4992,11 @@ Used with 'nsupdate -l' and dhcpd.
 
 g_nc_keywords['session-keyfile'] = \
     {
-        'default': '"/run/named/session.key"',
+        'default': "\"/var/run/named/session.key\"",
         'validity': {'function': "path_name_qstring_or_none"},
         'found-in': {'options'},
         'introduced': '9.7.0',
-        'topic': 'ddns, nsupdate, rndc, TSIG',
+        'topic': 'session, ddns, nsupdate, rndc, TSIG',
         'zone-type': '',
         'comment': """The pathname of the file into which to write a TSIG
 session key generated by named for use by nsupdate -l.
@@ -5135,7 +5010,7 @@ information about this feature.)""",
 
 g_nc_keywords['session-keyname'] = \
     {
-        'default': 'localddns',
+        'default': "localddns",
         'validity': {'regex': r"[A-Za-z0-9]+"},
         'found-in': {'options'},  # TBD 'view'/'zone' removed by 9.17?
         'introduced': '9.7.0',
@@ -5151,7 +5026,7 @@ Used with 'nsupdate -l' and dhcpd.
 
 g_nc_keywords['sig-signing-nodes'] = \
     {
-        'default': 100,
+        'default': '100',
         'validity': {'range': {1, 1024}},  # TODO range limit for 'sig-signing-nodes'?
         'unit': 'nodes_per_quantum',
         'found-in': {'options', 'view', 'zone'},
@@ -5172,7 +5047,7 @@ The default is 100.""",
 
 g_nc_keywords['sig-signing-signatures'] = \
     {
-        'default': 10,
+        'default': '10',
         'validity': {'range': {1, 1024}},  # TODO range limit for 'sig-signing-signatures'?
         'unit': 'signing_per_quantum',
         'found-in': {'options', 'view', 'zone'},
@@ -5191,7 +5066,7 @@ The default is 10.""",
 
 g_nc_keywords['sig-signing-type'] = \
     {
-        'default': 65534,
+        'default': "65534",
         'validity': {'range': {1, 65535}},
         'unit': 'RDATA_type',
         'found-in': {'options', 'view', 'zone'},
@@ -5231,7 +5106,7 @@ for a zone, use:
 
 g_nc_keywords['sig-validity-interval'] = \
     {
-        'default': 30,
+        'default': '30',
         'validity': {'range': {0,3660},
                      'regex': r"[0-9]{1-4}(\s+[0-9]{0-8)"},
         'unit': 'day',
@@ -5282,14 +5157,14 @@ g_nc_keywords['signatures-refresh'] = \
         'found-in': {'dnssec-policy'},  # moved from 'options' in 9.16?
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
-        'comment':
-"""This determines how frequently an RRSIG record needs
-to be refreshed.
+        'comment': 
+"""This determines how frequently an RRSIG record needs 
+to be refreshed. 
 
-The signature is renewed when the time until the
-expiration time is less than the specified interval.
+The signature is renewed when the time until the 
+expiration time is less than the specified interval. 
 
-The default is P5D (5 days), meaning signatures that
+The default is P5D (5 days), meaning signatures that 
 expire in 5 days or sooner are refreshed.""",
     }
 
@@ -5301,9 +5176,9 @@ g_nc_keywords['signatures-validity'] = \
         'found-in': {'dnssec-policy'},  # move from 'options' 9.16?
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
-        'comment':
-"""This indicates the validity period of an RRSIG record
-(subject to inception offset and jitter).
+        'comment': 
+"""This indicates the validity period of an RRSIG record 
+(subject to inception offset and jitter). 
 
 The default is P2W (2 weeks).
 """,
@@ -5317,9 +5192,9 @@ g_nc_keywords['signatures-validity-dnskey'] = \
         'found-in': {'dnssec-policy'},
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
-        'comment':
-"""This is similar to signatures-validity, but for DNSKEY
-records.
+        'comment': 
+"""This is similar to signatures-validity, but for DNSKEY 
+records. 
 
 The default is P2W (2 weeks).""",
     }
@@ -5356,7 +5231,7 @@ g_nc_keywords['sortlist'] = \
 
 g_nc_keywords['stacksize'] = \
     {
-        'default': 'default',  # changed to 'default' in v9.12
+        'default': "default",  # changed to 'default' in v9.12
         'validity': {'function': "size_spec",
                      'regex': '(default|unlimited)'},
         'unit': 'byte',
@@ -5368,21 +5243,10 @@ g_nc_keywords['stacksize'] = \
 The default is default.""",
     }
 
-g_nc_keywords['stale-answer-client-timeout'] = \
-    {
-        'default': 'off',
-        'validity': {'regex': '(on|off)'},
-        'found-in': {'view'},
-        'introduced': '9.18',  # TODO verify; first seen in v9.19
-        'topic': '',
-        'zone-type': '',
-        'comment': '',
-    }
-
 g_nc_keywords['stale-answer-enable'] = \
     {
-        'default': 'false',  # was 'yes' in v9.12
-        'validity': {'regex': '(true|false|yes|no)'},
+        'default': "yes",
+        'validity': {'regex': '(yes|no)'},
         'found-in': {'options', 'view'},  # 'options' added 9.13?
         'introduced': '9.12',
         'topic': 'answer, response',
@@ -5392,9 +5256,9 @@ g_nc_keywords['stale-answer-enable'] = \
 
 g_nc_keywords['stale-answer-ttl'] = \
     {
-        'default': 30,
+        'default': '',
         'validity': {'function': 'ttlval'},
-        'unit': 'delta_second',  # was 'second' in v9.12
+        'unit': 'duration',
         'found-in': {'options', 'view'},  # 'options' added 9.13?
         'introduced': '9.12',
         'topic': 'answer, response',
@@ -5413,32 +5277,9 @@ g_nc_keywords['stale-cache-enable'] = \
         'comment': '',
     }
 
-g_nc_keywords['stale-cache-enable'] = \
-    {
-        'default': 'false',  # was 'yes' in v9.12
-        'validity': {'regex': '(true|false|yes|no)'},
-        'found-in': {'view'},
-        'introduced': '9.19',  # TODO first seen in v9.19
-        'topic': '',
-        'zone-type': '',
-        'comment': '',
-    }
-
-g_nc_keywords['stale-refresh-time'] = \
-    {
-        'default': 30,
-        'validity': {'function': 'ttlval'},
-        'unit': 'delta_second',  # was 'second' in v9.12
-        'found-in': {'view'},
-        'introduced': '9.19',  # TODO first seen in v9.19
-        'topic': '',
-        'zone-type': '',
-        'comment': '',
-    }
-
 g_nc_keywords['startup-notify-rate'] = \
     {
-        'default': 20,
+        'default': "20",
         'validity': {'range': {0, 2100000000}},
         'unit': 'request_per_second',
         'found-in': {'options' },
@@ -5455,7 +5296,7 @@ set to zero, it will be silently raised to one.""",
 
 g_nc_keywords['statistics-file'] = \
     {
-        'default': '"named.stats"',
+        'default': "\"named.stats\"",
         'validity': {'function': "path_name"},
         'found-in': {'options'},
         'introduced': '8.1',
@@ -5522,23 +5363,23 @@ g_nc_keywords['synth-from-dnssec'] = \
         'introduced': '9.12',
         'topic': 'DNSSEC',
         'zone-type': '',
-        'comment':
-"""This option enables support for RFC 8198, Aggressive
-Use of DNSSEC-Validated Cache.
+        'comment': 
+"""This option enables support for RFC 8198, Aggressive 
+Use of DNSSEC-Validated Cache. 
 
-It allows the resolver to send a smaller number of
-queries when resolving queries for DNSSEC-signed
-domains by synthesizing answers from cached NSEC and
-other RRsets that have been proved to be correct
-using DNSSEC.
+It allows the resolver to send a smaller number of 
+queries when resolving queries for DNSSEC-signed 
+domains by synthesizing answers from cached NSEC and 
+other RRsets that have been proved to be correct 
+using DNSSEC. 
 
 The default is yes.
 
-Note: DNSSEC validation must be enabled for this
-      option to be effective. This initial
-      implementation only covers synthesis of answers
-      from NSEC records; synthesis from NSEC3 is
-      planned for the future.
+Note: DNSSEC validation must be enabled for this 
+      option to be effective. This initial 
+      implementation only covers synthesis of answers 
+      from NSEC records; synthesis from NSEC3 is 
+      planned for the future. 
       This will also be controlled by synth-from-dnssec.
 """,
     }
@@ -5555,29 +5396,29 @@ g_nc_keywords['tcp-advertised-timeout'] = \
         'comment':
 """The amount of time (in millisecond) the server will
 send in respones containing the EDNS TCP keepalive
-option.
+option.  
 
-This informs a client of the amount of time it may
+This informs a client of the amount of time it may 
 keep the session open.
 
 The default is 300 (30 seconds), the minimum is 0, and
 the maximum is 65535 (about 1.8 hours).
 
 Values above the maximum or below the minimum will be
-adjusted with a logged warning.
+adjusted with a logged warning.  
 
-Note: This value must be greater than expected round
-      trip delay time; otherwise no client will ever
-      have enough time to submit a message.)
+Note: This value must be greater than expected round 
+      trip delay time; otherwise no client will ever 
+      have enough time to submit a message.)  
 
-This value can be updated at runtime by using
+This value can be updated at runtime by using 
 
     'rndc tcp-timeouts'""",
     }
 
 g_nc_keywords['tcp-clients'] = \
     {
-        'default': 150,  # was 100
+        'default': '150',  # was 100
         'validity': {'range': {1, 32768}}, # TODO Upper limit?
         'unit': 'TCP_connections',
         'found-in': {'options'},
@@ -5616,14 +5457,14 @@ Note: This value must be greater than expected round
       trip delay time; otherwise no client will ever
       have enough time to submit a message.)
 
-This value can be updated at runtime by using
+This value can be updated at runtime by using 
 
    'rndc tcp-timeouts'""",
     }
 
 g_nc_keywords['tcp-initial-timeout'] = \
     {
-        'default': 300,
+        'default': '300',
         'validity': {'range': {25, 1200}},
         'unit': 'centisecond',
         'found-in': {'options'},
@@ -5633,20 +5474,20 @@ g_nc_keywords['tcp-initial-timeout'] = \
         'comment':
 """The amount of time (in centisecond) the server waits
 on a new TCP connection for the first message from the
-client.
+client.  
 
 The default is 300 (30 seconds), the minimum is
-25 (2.5 seconds), and the maximum is
+25 (2.5 seconds), and the maximum is 
 1200 (two minutes).
 
 Values above the maximum or below the minimum will be
 adjusted with a logged warning.
 
-Note: This value must be greater than expected round
-      trip delay time; otherwise no client will ever
+Note: This value must be greater than expected round 
+      trip delay time; otherwise no client will ever 
       have enough time to submit a message.)
 
-This value can be updated at runtime by using
+This value can be updated at runtime by using 
 
     'rndc tcp-timeouts'""",
     }
@@ -5674,10 +5515,10 @@ g_nc_keywords['tcp-keepalive-timeout'] = \
         'comment':
 """The amount of time (in centisecond) the server waits
 on an idle TCP connection before closing it when the
-client is using the EDNS TCP keepalive option.
+client is using the EDNS TCP keepalive option. 
 
-The default is 300 (30 seconds), the maximum is 65535
-(1.8 hours), and the minimum is 1 (one tenth of
+The default is 300 (30 seconds), the maximum is 65535 
+(1.8 hours), and the minimum is 1 (one tenth of 
 a second).
 
 Values above the maximum or below the minimum will be
@@ -5690,7 +5531,7 @@ using rndc tcp-timeouts.""",
 
 g_nc_keywords['tcp-listen-queue'] = \
     {
-        'default': 10,
+        'default': '10',
         'validity': {'range': {10, 65535}},  # TODO upper limit to 'tcp-listen-queue'?
         'unit': 'listen_queue_depth',
         'found-in': {'options'},
@@ -5698,7 +5539,7 @@ g_nc_keywords['tcp-listen-queue'] = \
         'topic': 'network layer, server resource',
         'zone-type': '',
         'comment':
-"""The listen queue depth.
+"""The listen queue depth. 
 
 The default and minimum is 10.
 
@@ -5725,30 +5566,6 @@ g_nc_keywords['tcp-only'] = \
         'comment':'',
     }
 
-g_nc_keywords['tcp-receive-buffer'] = \
-    {
-        'default': 0,
-        'validity': {'range': {0, 65535},
-                     'string': 'unlimited'},
-        'found-in': {'options'},
-        'introduced': '9.17.0',  # TODO ???
-        'topic': 'TCP, buffer, resource',
-        'zone-type': '',
-        'comment':'',
-    }
-
-g_nc_keywords['tcp-send-buffer'] = \
-    {
-        'default': 0,
-        'validity': {'range': {0, 65535},
-                     'string': 'unlimited'},
-        'found-in': {'options'},
-        'introduced': '9.17.0',  # TODO ???
-        'topic': 'TCP, buffer, resource',
-        'zone-type': '',
-        'comment':'',
-    }
-
 g_nc_keywords['tkey-dhkey'] = \
     {
         'default': None,
@@ -5759,10 +5576,10 @@ g_nc_keywords['tkey-dhkey'] = \
         'introduced': '9.0.0',
         'topic': 'operating-system, authentication, GSS, KRB5',
         'zone-type': '',
-        'comment':
+        'comment': 
 """The Diffie-Hellman key used by the server to generate
 shared keys with clients using the Diffie-Hellman mode
-of TKEY.
+of TKEY. 
 
 The server must be able to load the public and
 private keys from files in the working directory.
@@ -5846,20 +5663,9 @@ server can acquire through the default system key
 file, normally /etc/krb5.keytab.""",
     }
 
-g_nc_keywords['tls-port'] = \
-    {
-        'default': 853,
-        'validity': {'range': {1, 65535}},
-        'found-in': {'options'},
-        'introduced': '9.18',
-        'topic': 'DNS-over-HTTP, DoH',
-        'zone-type': '',
-        'comment': 'An IP port number. The number is limited to 1 through 65535, with values below 1024 typically restricted to use by processes running as root. In some cases, an asterisk (*) character can be used as a placeholder to select a random high-numbered port.',
-    }
-
 g_nc_keywords['topology'] = \
     {
-        'default': 'none',
+        'default': '',
         'validity': {'function': 'address_match_list'},
         'found-in': {'options', 'view'},
         'introduced': '9.14',
@@ -5871,7 +5677,7 @@ g_nc_keywords['topology'] = \
 
 g_nc_keywords['transfer-format'] = \
     {
-        'default': 'many-answers',  # was 'one-answer' in 8.1
+        'default': "many-answers",  # was 'one-answer' in 8.1
         'validity': {'regex': r'(one\-answer|many\-answer)'},
         'found-in': {'options', 'view', 'server'},
         'introduced': '8.1',
@@ -5901,7 +5707,7 @@ by using the server statement.""",
 
 g_nc_keywords['transfer-message-size'] = \
     {
-        'default': 20480,
+        'default': "20480",
         'validity': {'range': {512, 65535}},
         'unit': 'uncompressed_byte',
         'found-in': {'options'},
@@ -5919,27 +5725,9 @@ the size limit, a larger message will be permitted so the
 record can be transferred.)""",
     }
 
-g_nc_keywords['transfer-per-ns'] = \
-    {
-        'default': '2',
-        'validity': {'range': {1, 65535}},
-        'unit': 'concurrent_inbound_zone_transfers',
-        'found-in': {'options'},
-        'introduced': '8.1',
-        'obsoleted': '',
-        'topic': 'zone transfer',
-        'zone-type': '',
-        'comment':
-"""The maximum number of inbound zone transfers that can
-be running concurrently.  The default value is 10.
-Increasing transfer-in may speed up the convergence of
-slave zones, but it also increases the load of a local
-system.""",
-    }
-
 g_nc_keywords['transfer-source'] = \
     {
-        'default': '*',  # was 'None' in v9.11
+        'default': None,
         'validity': {'function': 'ip4addr_port_dscp'},
         'unit': 'ip_address',
         'found-in': {'options', 'view', 'zone', 'server'},
@@ -5971,7 +5759,7 @@ setting the source address for TCP sockets.""",
 
 g_nc_keywords['transfer-source-v6'] = \
     {
-        'default': '*',  # was 'None' in v9.11
+        'default': None,
         'validity': {'function': 'ip6addr_port_dscp_list'},
         'found-in': {'options', 'view', 'zone', 'server'},
         'introduced': '9.0.0',
@@ -6009,14 +5797,14 @@ g_nc_keywords['transfers'] = \
         'introduced': '8.2',
         # In 9.0, ['options']['transfers'] supported???
         # In 9.0, ['view']['transfers'] supported???
-        'topic': 'zone transfer, server',
+        'topic': 'transfer, server',
         'zone-type': '',
         'comment': """Zone transfers can be sent using two different formats, """
     }
 
 g_nc_keywords['transfers-in'] = \
     {
-        'default': 10,
+        'default': '10',
         'validity': {'range': {0, 1024}},
         'found-in': {'options'},
         'unit': 'concurrent_inbound_transfers',
@@ -6033,7 +5821,7 @@ system.""",
 
 g_nc_keywords['transfers-out'] = \
     {
-        'default': 10,
+        'default': '10',
         'validity': {'function': "time_duration"},  # faux-checked in 8.1
         'unit': 'concurrent_outbound_transfers',
         'found-in': {'options'},
@@ -6051,8 +5839,7 @@ The default value is 10.""",
 
 g_nc_keywords['transfers-per-ns'] = \
     {
-        'default': 2,
-        'validity': {'function': "time_duration"},
+        'default': '2',   # was 10
         'validity': {'range': {1, 65535}},
         'unit': 'concurrent_inbound_zone_transfers',
         'found-in': {'options'},
@@ -6093,7 +5880,7 @@ option is ignored.""",
 
 g_nc_keywords['trust-anchor-telemetry'] = \
     {
-        'default': 'yes',
+        'default': "yes",
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
         # TODO verify Opt/View/Zone/Server
@@ -6281,30 +6068,6 @@ stub
   the BIND implementation and should not be used unless there is
   a specific requirement.
 """,
-    }
-
-g_nc_keywords['udp-receive-buffer'] = \
-    {
-        'default': 0,
-        'validity': {'range': {0, 65535},
-                     'string': 'unlimited'},
-        'found-in': {'options'},
-        'introduced': '9.17.0',  # TODO ???
-        'topic': 'TCP, buffer, resource',
-        'zone-type': '',
-        'comment':'',
-    }
-
-g_nc_keywords['udp-send-buffer'] = \
-    {
-        'default': 0,
-        'validity': {'range': {0, 65535},
-                     'string': 'unlimited'},
-        'found-in': {'options'},
-        'introduced': '9.17.0',  # TODO ???
-        'topic': 'TCP, buffer, resource',
-        'zone-type': '',
-        'comment':'',
     }
 
 g_nc_keywords['update-check-ksk'] = \
@@ -6529,7 +6292,7 @@ the ranges used by other applications.""",
 
 g_nc_keywords['v6-bias'] = \
     {
-        'default': 50,
+        'default': '50',
         'validity': {'range': {0, 32767}},
         'unit': 'millisecond',
         'found-in': {'options', 'view'},
