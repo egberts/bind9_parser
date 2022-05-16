@@ -180,7 +180,7 @@ g_nc_keywords['key'] = \
         'validity': {'string': 'key_name'},
         'occurs-multiple-times': True,
         'topblock': True,
-        'found-in': {'', 'view', 'masters'},
+        'found-in': {'', 'view', 'primaries', 'masters'},
         'user-defined-indices': True,  # keyname
         'multi-line-order-id': 2,  # Keys should always be on top, after ACL
         'introduced': "8.1",
@@ -272,6 +272,18 @@ g_nc_keywords['statistics-channels'] = \
         'found-in': {''},
         'output-order-id': 9999,
         'introduced': '9.5.0',
+        'comment': '',
+    }
+
+g_nc_keywords['tls'] = \
+    {
+        'topblock': True,
+        'default': None,
+        'validity': {'string'},
+        'found-in': {'', 'primaries', 'masters'},
+        'dict-index-by-name': True,
+        'introduced': '9.18',
+        'topic': 'DNS-over-HTTP, DoH',
         'comment': '',
     }
 
@@ -1099,6 +1111,26 @@ queries to it. The default value of bogus is no . The
 bogus clause is not yet implemented in BIND 9."""
     }
 
+g_nc_keywords['ca-file'] = \
+    {
+        'default': None,
+        'validity': {'quoted_filepath'},
+        'found-in': {'primaries', 'masters'},
+        'introduced': '9.19',  # TODO verify
+        'topic': 'TLS, HTTPS, DoH, server, master, primary',
+        'comment': '',
+    }
+
+g_nc_keywords['cert-file'] = \
+    {
+        'default': None,
+        'validity': {'quoted_filepath'},
+        'found-in': {'primaries', 'masters'},
+        'introduced': '9.19',  # TODO verify
+        'topic': 'TLS, HTTPS, DoH, server, master, primary',
+        'comment': '',
+    }
+
 g_nc_keywords['cache-file'] = \
     {
         'default': "",
@@ -1130,6 +1162,16 @@ g_nc_keywords['category'] = \
         'introduced': '9.0.0',
         'topic': 'logging',
         'zone-type': '',
+        'comment': '',
+    }
+
+g_nc_keywords['cert-file'] = \
+    {
+        'default': None,
+        'validity': {'quoted_filepath'},
+        'found-in': {'primaries', 'masters'},
+        'introduced': '9.19',  # TODO verify
+        'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
     }
 
@@ -1309,6 +1351,16 @@ almost always as a result of a failure to understand
 the wildcard matching algorithm (RFC 1034). This
 option affects master zones. The default (yes) is to
 check for non-terminal wildcards and issue a warning.""",
+    }
+
+g_nc_keywords['ciphers'] = \
+    {
+        'default': None,
+        'validity': {'string'},
+        'found-in': {'primaries', 'masters'},
+        'introduced': '9.19',  # TODO verify
+        'topic': 'TLS, HTTPS, DoH, server, master, primary',
+        'comment': '',
     }
 
 g_nc_keywords['class'] = \
@@ -1510,6 +1562,16 @@ g_nc_keywords['deny-answer-aliases'] = \
         'introduced': '9.7.0',
         'topic': 'query, alias, content filtering',
         'zone-type': '',
+        'comment': '',
+    }
+
+g_nc_keywords['dhparam-file'] = \
+    {
+        'default': None,
+        'validity': {'quoted_filepath'},
+        'found-in': {'primaries', 'masters'},
+        'introduced': '9.19',  # TODO verify
+        'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
     }
 
@@ -2149,7 +2211,7 @@ g_nc_keywords['dscp'] = \
     {
         'default': '',
         'validity': {'range': {0, 63}},
-        'found-in': {'options', 'also-notify',
+        'found-in': {'options', 'also-notify', 'primaries', 'masters',
                      'alt-transfer-source', 'alt-transfer-source-v6',
                      'forwarders'},
         'introduced': '9.10.0',
@@ -2767,7 +2829,7 @@ g_nc_keywords['hostname'] = \
         'validity': {'options': 'none',
                      'regex': r'[A-Za-z0-9\-_]{1-64}(\.[A-Za-z0-9\-_]{1-64})*"',
                      },
-        'found-in': {'options'},
+        'found-in': {'options', 'primaries', 'masters'},  # TODO added 'masters' in v9.???
         'introduced': '8.3',
         'topic': 'CHAOS, server info',
         'zone-type': '',
@@ -3008,11 +3070,21 @@ g_nc_keywords['key-directory'] = \
             dynamic update of secure zones may be found.  Only
             required if this directory is different from that
             defined by a directory option.
-            
+
             `key-directory` is where the DNSKEY key files can be found.
-            
+
             This statement may only be used in a global
             options clause.""",
+    }
+
+g_nc_keywords['key-file'] = \
+    {
+        'default': None,
+        'validity': {'function': 'quoted_filepath'},
+        'found-in': {'primaries', 'masters'},
+        'introduced': '9.19.0',  # TODO verify
+        'topic': 'DoH, TLS, HTTPS',
+        'comment': '',
     }
 
 g_nc_keywords['keys'] = \
@@ -4308,7 +4380,7 @@ g_nc_keywords['port'] = \
     {
         'default': 53,
         'validity': {'range': {1, 65535}},
-        'found-in': {'options', 'masters', 'also-notify',
+        'found-in': {'options', 'primaries', 'masters', 'also-notify',
                      'alt-transfer-source', 'alt-transfer-source-v6',
                      'forwarders'},
         'introduced': '9.1',
@@ -4320,6 +4392,16 @@ The default is 53.
 
 This option is mainly intended for server testing; a server using a
 port other than 53 will not be able to communicate with the global DNS.""",
+    }
+
+g_nc_keywords['prefer-server-ciphers'] = \
+    {
+        'default': 'no',
+        'validity': {'boolean'},
+        'found-in': {'primaries', 'masters'},
+        'introduced': '9.19.0',
+        'topic': 'TLS, HTTPS, DoH',
+        'comment': '',
     }
 
 g_nc_keywords['preferred-glue'] = \
@@ -4365,6 +4447,16 @@ for a record to be eligible for prefetching. The eligibility
 TTL must be at least six seconds longer than the trigger TTL;
 if it isn't, named will silently adjust it upward.
 The default eligibility TTL is 9.""",
+    }
+
+g_nc_keywords['protocols'] = \
+    {
+        'default': 0,  # TODO what is the default of 'protocols'?
+        'validity': {'regex': r'(a|b|c)'},
+        'found-in': {'primaries', 'masters'},
+        'introduced': '9.19.0',
+        'topic': 'TLS, HTTPS, DoH',
+        'comment': '',
     }
 
 g_nc_keywords['provide-ixfr'] = \
@@ -5140,6 +5232,16 @@ If not specified, the default is "local-ddns".
 
 Used with 'nsupdate -l' and dhcpd.
 """,
+    }
+
+g_nc_keywords['session-tickets'] = \
+    {
+        'default': 0,  # TODO what is the default of 'session-tickets'?
+        'validity': {'regex': r'(a|b|c)'},
+        'found-in': {'primaries', 'masters'},
+        'introduced': '9.19.0',
+        'topic': 'TLS, HTTPS, DoH',
+        'comment': '',
     }
 
 g_nc_keywords['sig-signing-nodes'] = \
