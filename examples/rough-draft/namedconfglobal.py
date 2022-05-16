@@ -37,7 +37,7 @@ abc = {
   'obsoleted': '',  # obsoleted ON that version,
                     # presense means immediately obsoleted
   'topic': 'recursive-follow',  # free-format
-  'zone-type': 'master'|'slave'|  # TODO a work-in-progress
+  'zone-type': 'master'|'slave'| 
                          'authoritative-or-noncaching-only' |
                          'caching' |
                          'authoritative' |
@@ -180,11 +180,21 @@ g_nc_keywords['key'] = \
         'validity': {'string': 'key_name'},
         'occurs-multiple-times': True,
         'topblock': True,
-        'found-in': {'', 'view', 'primaries', 'masters'},
+        'found-in': {'', 'view', 'primaries', 'masters', 'also-notify', 'catalog-zones', 'parental-agents'},
+        # found in view since v9.0
         'user-defined-indices': True,  # keyname
         'multi-line-order-id': 2,  # Keys should always be on top, after ACL
         'introduced': "8.1",
-        'obsoleted': '',  # TODO: it's gone from 'view' at 9.15.0
+    }
+
+g_nc_keywords['keys'] = \
+    {
+        'validity': {'function': 'list_of_strings'},
+        'occurs-multiple-times': False,
+        'topblock': False,
+        'found-in': {'inet', 'unix', 'dnssec-policy', 'server'},
+        'multi-line-order-id': 2,  # Keys should always be on top, after ACL
+        'introduced': "9.0",
     }
 
 g_nc_keywords['logging'] = \
@@ -278,11 +288,11 @@ g_nc_keywords['statistics-channels'] = \
 g_nc_keywords['tls'] = \
     {
         'topblock': True,
-        'default': None,
         'validity': {'string'},
-        'found-in': {'', 'primaries', 'masters'},
         'dict-index-by-name': True,
-        'introduced': '9.18',
+        'found-in': {'', 'primaries', 'masters'},
+        'occurs-multiple-times': True,
+        'introduced': '9.18.0',  # TODO verify
         'topic': 'DNS-over-HTTP, DoH',
         'comment': '',
     }
@@ -545,8 +555,7 @@ g_nc_keywords['algorithm'] = \
         'topic': 'algorithm',
         'user-defined-indices': False,
         'multi-line-order-id': 1,  # it's before 'secret' within 'key'
-        'introduced': "9.0",  #
-        'obsoleted': '',
+        'introduced': "9.18.0",  #
         'comment': """Valid algorithms are:
    hmac-md5
    hmac-md5.sig-alg.reg.int
@@ -1116,17 +1125,7 @@ g_nc_keywords['ca-file'] = \
         'default': None,
         'validity': {'quoted_filepath'},
         'found-in': {'primaries', 'masters'},
-        'introduced': '9.19',  # TODO verify
-        'topic': 'TLS, HTTPS, DoH, server, master, primary',
-        'comment': '',
-    }
-
-g_nc_keywords['cert-file'] = \
-    {
-        'default': None,
-        'validity': {'quoted_filepath'},
-        'found-in': {'primaries', 'masters'},
-        'introduced': '9.19',  # TODO verify
+        'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
     }
@@ -1170,7 +1169,7 @@ g_nc_keywords['cert-file'] = \
         'default': None,
         'validity': {'quoted_filepath'},
         'found-in': {'primaries', 'masters'},
-        'introduced': '9.19',  # TODO verify
+        'introduced': '9.19.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
     }
@@ -1358,7 +1357,7 @@ g_nc_keywords['ciphers'] = \
         'default': None,
         'validity': {'string'},
         'found-in': {'primaries', 'masters'},
-        'introduced': '9.19',  # TODO verify
+        'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
     }
@@ -1570,7 +1569,7 @@ g_nc_keywords['dhparam-file'] = \
         'default': None,
         'validity': {'quoted_filepath'},
         'found-in': {'primaries', 'masters'},
-        'introduced': '9.19',  # TODO verify
+        'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
     }
@@ -3082,7 +3081,7 @@ g_nc_keywords['key-file'] = \
         'default': None,
         'validity': {'function': 'quoted_filepath'},
         'found-in': {'primaries', 'masters'},
-        'introduced': '9.19.0',  # TODO verify
+        'introduced': '9.18.0',
         'topic': 'DoH, TLS, HTTPS',
         'comment': '',
     }
@@ -4399,7 +4398,7 @@ g_nc_keywords['prefer-server-ciphers'] = \
         'default': 'no',
         'validity': {'boolean'},
         'found-in': {'primaries', 'masters'},
-        'introduced': '9.19.0',
+        'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
         'comment': '',
     }
@@ -4454,7 +4453,7 @@ g_nc_keywords['protocols'] = \
         'default': 0,  # TODO what is the default of 'protocols'?
         'validity': {'regex': r'(a|b|c)'},
         'found-in': {'primaries', 'masters'},
-        'introduced': '9.19.0',
+        'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
         'comment': '',
     }
@@ -5014,8 +5013,7 @@ g_nc_keywords['secret'] = \
         'found-in': {'key'},
         'user-defined-indices': False,
         'multi-line-order-id': 999,  # after 'key {algorithm xx;'
-        'introduced': "9.0",
-        'obsoleted': '',
+        'introduced': "9.18.0",
     }
 
 g_nc_keywords['secroots-file'] = \
@@ -5239,7 +5237,7 @@ g_nc_keywords['session-tickets'] = \
         'default': 0,  # TODO what is the default of 'session-tickets'?
         'validity': {'regex': r'(a|b|c)'},
         'found-in': {'primaries', 'masters'},
-        'introduced': '9.19.0',
+        'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
         'comment': '',
     }
@@ -7032,7 +7030,7 @@ def print_clause_keywords(gnc_kw):
 # };
 
 if __name__ == "__main__":
-    ncg = NamedConfGlobal(version='9.17.4', debug=5)
+    ncg = NamedConfGlobal(version='9.19.0', debug=5)
 
     valid = validate_master_keywords_dictionary()
     if valid:
