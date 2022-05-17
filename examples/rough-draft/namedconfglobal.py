@@ -5688,12 +5688,12 @@ g_nc_keywords['support-ixfr'] = \
 
 g_nc_keywords['suppress-initial-notify'] = \
     {
-        'default': None,  # TODO define 'suppress-initial-notify' in its entirity
+        'default': 'no',
         'validity': {'boolean'},
         'found-in': {'options', 'view'},
-        'introduced': '8.3',  # not yet implemented
+        'introduced': '8.3',
         'obsoleted': '8.18',  # TBD when was it gone?
-        'topic': '',
+        'topic': 'notify',
         'comment': '',
     }
 
@@ -5761,17 +5761,16 @@ g_nc_keywords['tcp-advertised-timeout'] = \
 g_nc_keywords['tcp-clients'] = \
     {
         'default': 150,  # was 100
-        'validity': {'range': {1, 32768}},  # TODO Upper limit?
+        'validity': {'range': {1, 2**32-1}},
         'unit': 'TCP_connections',
         'found-in': {'options'},
         'introduced': '9.0.0',
         'topic': 'network layer, server resource',
-        'zone-type': '',
         'comment':
             """The maximum number of simultaneous client TCP
-            connections that the server will accept.
+connections that the server will accept.
             
-            The default is 150.""",
+The default is 150.""",
     }
 
 g_nc_keywords['tcp-idle-timeout'] = \
@@ -5874,27 +5873,26 @@ g_nc_keywords['tcp-keepalive-timeout'] = \
 g_nc_keywords['tcp-listen-queue'] = \
     {
         'default': 10,
-        'validity': {'range': {10, 65535}},  # TODO upper limit to 'tcp-listen-queue'?
+        'validity': {'range': {10, 2**32-1}},
         'unit': 'listen_queue_depth',
         'found-in': {'options'},
         'introduced': '9.3.0',
         'topic': 'network layer, server resource',
-        'zone-type': '',
         'comment':
             """The listen queue depth.
-            
-            The default and minimum is 10.
-            
-            If the kernel supports the accept filter "dataready"
-            this also controls how many TCP connections that will
-            be queued in kernel space waiting for some data before
-            being passed to accept.
-            
-            Nonzero values less than 10 will be silently raised.
-            
-            A value of 0 may also be used; on most platforms this
-            sets the listen queue length to a system-defined
-            default value.""",
+
+The default and minimum is 10.
+
+If the kernel supports the accept filter "dataready"
+this also controls how many TCP connections that will
+be queued in kernel space waiting for some data before
+being passed to accept.
+
+Nonzero values less than 10 will be silently raised.
+
+A value of 0 may also be used; on most platforms this
+sets the listen queue length to a system-defined
+default value.""",
     }
 
 g_nc_keywords['tcp-only'] = \
@@ -5914,21 +5912,19 @@ g_nc_keywords['tcp-receive-buffer'] = \
         'validity': {'range': {0, 65535},
                      'string': 'unlimited'},
         'found-in': {'options'},
-        'introduced': '9.17.0',  # TODO ???
+        'introduced': '9.18.0',
         'topic': 'TCP, buffer, resource',
-        'zone-type': '',
         'comment': '',
     }
 
 g_nc_keywords['tcp-send-buffer'] = \
     {
         'default': 0,
-        'validity': {'range': {0, 65535},
+        'validity': {'range': {0, 2**32-1},
                      'string': 'unlimited'},
         'found-in': {'options'},
-        'introduced': '9.17.0',  # TODO ???
+        'introduced': '9.18.0',
         'topic': 'TCP, buffer, resource',
-        'zone-type': '',
         'comment': '',
     }
 
@@ -6473,24 +6469,22 @@ stub
 g_nc_keywords['udp-receive-buffer'] = \
     {
         'default': 0,
-        'validity': {'range': {0, 65535},
+        'validity': {'range': {0, 2**32-1},
                      'string': 'unlimited'},
         'found-in': {'options'},
-        'introduced': '9.17.0',  # TODO ???
+        'introduced': '9.18.0',
         'topic': 'TCP, buffer, resource',
-        'zone-type': '',
         'comment': '',
     }
 
 g_nc_keywords['udp-send-buffer'] = \
     {
         'default': 0,
-        'validity': {'range': {0, 65535},
+        'validity': {'range': {0, 2**32-1},
                      'string': 'unlimited'},
         'found-in': {'options'},
-        'introduced': '9.17.0',  # TODO ???
+        'introduced': '9.18.0',
         'topic': 'TCP, buffer, resource',
-        'zone-type': '',
         'comment': '',
     }
 
@@ -6573,38 +6567,25 @@ BIND 9 always allocates query IDs from a pool.""",
 
 g_nc_keywords['use-ixfr'] = \
     {
-        'default': None,  # TODO check obsolete default value of use-ixfr options (guessed yet)
-        'validity': {'regex': r"(yes|no)"},
+        'default': 'true',
+        'validity': {'boolean'},
         'found-in': {'options'},
         'introduced': '8.2',
-        'obsoleted': '9.11.0',
+        'obsoleted': '9.8.0',
         'topic': 'inert',
         'zone-type': '',
-        'comment': """This option is obsolete. If you need to disable IXFR to a particular server or servers, see the
-information on the provide-ixfr option in Section 6.2. See also Section 4.3.""",
+        'comment': """This option is obsolete. If you need to disable IXFR 
+to a particular server or servers, use 'server' clause.""",
     }
 
 g_nc_keywords['use-queryport-pool'] = \
     {
-        'default': None,  # TODO check obsolete default value of 'use-queryport-pool' options
-        'validity': None,
+        'default': 'no',
+        'validity': {'function': 'boolean'},
         'found-in': {'options', 'view'},
         'introduced': '9.5',
-        'obsoleted': '9.10.5',
-        'topic': 'inert, query address',
-        'zone-type': '',
-        'comment': '',
-    }
-
-g_nc_keywords['use-queryport-updateinterval'] = \
-    {
-        'default': None,  # TODO check obsolete default value of 'use-queryport-pool' options
-        'validity': None,
-        'found-in': {'options', 'view'},
-        'introduced': '9.5',
-        'obsoleted': '9.10.5',
-        'topic': 'query address, inert, obsoleted, ancient',
-        'zone-type': '',
+        'obsoleted': '9.5.0',  # removed in 9.10.7
+        'topic': 'inert, query port, pool, query, port',
         'comment': '',
     }
 
@@ -6770,10 +6751,9 @@ g_nc_keywords['zero-no-soa-ttl-cache'] = \
     {
         'default': 'no',
         'validity': {'regex': r'(yes|no)'},
-        'found-in': {'options', 'view', 'zone'},  # TODO zone added at 9.19???
+        'found-in': {'options', 'view'},
         'introduced': '9.4.0',
-        'topic': '',
-        'zone-type': 'SOA, hidden-master',
+        'topic': 'SOA, hidden-master',
         'comment': """When caching a negative response to a SOA query set the
 TTL to zero. The default is no.""",
     }
