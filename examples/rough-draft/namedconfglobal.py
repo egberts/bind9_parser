@@ -234,7 +234,7 @@ g_nc_keywords['managed-keys'] = \
         'topblock': False,
         'found-in': {'', 'view'},  # also at top-statement-level
         'introduced': '9.5.0',
-        'obsoleted': "9.15.1",  # replaced by 'dnssec-keys' w/ 'initial-key'
+        'deprecated': "9.15.1",  # replaced by 'dnssec-keys' w/ 'initial-key'
         'topic': 'DNSSEC',
         'comment': '',
     }
@@ -260,6 +260,29 @@ g_nc_keywords['options'] = \
         'found-in': {''},
         'output-order-id': 4,  # options should be after keys, ACLs, and controls)
         'introduced': "4.9.3"  # 1994 Vixie Enterprise
+    }
+
+g_nc_keywords['parental-agents'] = \
+    {
+        'occurs-multiple-times': False,
+        'topblock': True,
+        'required': False,
+        'found-in': {''},
+        'introduced': "9.19",
+        'topic': '',
+        'comment': '',
+    }
+
+g_nc_keywords['plugin'] = \
+    {
+        'default': None,
+        'validity': {'function': 'plugin'},
+        'found-in': {'', 'view'},
+        'topblock': True,
+        'occurs-multiple-times': True,
+        'introduced': '9.14.0',
+        'topic': 'plugin',
+        'comment': '',
     }
 
 g_nc_keywords['primaries'] = \
@@ -325,7 +348,8 @@ g_nc_keywords['trusted-keys'] = \
         'occurs-multiple-times': True,
         'output-order-id': 10,
         'introduced': "8.2",  # 1999-09-15
-        'obsoleted': "9.15.1",  # replaced by 'dnssec-keys' w/ 'static-key'
+        'deprecated': "9.15.1",  # replaced by 'dnssec-keys' w/ 'static-key'
+        # 'obsoleted': "9.20?",
     }
 
 g_nc_keywords['view'] = \
@@ -1110,7 +1134,7 @@ g_nc_keywords['ca-file'] = \
     {
         'default': None,
         'validity': {'quoted_filepath'},
-        'found-in': {'primaries', 'masters'},
+        'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
@@ -1155,7 +1179,7 @@ g_nc_keywords['cert-file'] = \
     {
         'default': None,
         'validity': {'quoted_filepath'},
-        'found-in': {'tls', 'primaries', 'masters'},
+        'found-in': {'tls'},  # was in 'primaries'? in v9.18?
         'introduced': '9.19.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
@@ -1342,7 +1366,7 @@ g_nc_keywords['ciphers'] = \
     {
         'default': None,
         'validity': {'string'},
-        'found-in': {'tls', 'primaries', 'masters'},
+        'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
@@ -1541,7 +1565,7 @@ g_nc_keywords['dhparam-file'] = \
     {
         'default': None,
         'validity': {'quoted_filepath'},
-        'found-in': {'tls', 'primaries', 'masters'},
+        'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
@@ -1770,7 +1794,7 @@ g_nc_keywords['dnskey-sig-validity'] = \
         'unit': 'day',
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.13.0',
-        'discontinued': '9.15.6',
+        'deprecated': '9.15.6',
         'topic': 'dnssec, tuning',
         'zone-type': 'master, slave, primary, secondary',
         'comment': """
@@ -2195,7 +2219,7 @@ g_nc_keywords['dscp'] = \
         'found-in': {'options', 'also-notify', 'primaries', 'masters',
                      'alt-transfer-source', 'alt-transfer-source-v6',
                      'forwarders', 'parental-source', 'parental-source-v6',
-                     'query-source', 'query-source-v6'},
+                     'query-source', 'query-source-v6', 'parental-agents'},
         'introduced': '9.10.0',
         'topic': 'operating-system, DSCP',
         'zone-type': '',
@@ -2743,7 +2767,7 @@ g_nc_keywords['glue-cache'] = \
         'validity': {'regex': '(yes|no)'},
         'found-in': {'options', 'view'},  # 'view' added in 9.12?
         'introduced': '9.12',
-        'obsoleted': '9.17',
+        'deprecated': '9.17',
         'topic': '',
         'zone-type': '',
         'comment': '',
@@ -3098,7 +3122,7 @@ g_nc_keywords['key-file'] = \
     {
         'default': None,
         'validity': {'function': 'quoted_filepath'},
-        'found-in': {'tls', 'primaries', 'masters'},
+        'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'DoH, TLS, HTTPS',
         'comment': '',
@@ -4406,18 +4430,6 @@ Note that none is a keyword, not a filename, and
 therefore is not enclosed in double quotes.""",
     }
 
-g_nc_keywords['plugin'] = \
-    {
-        'default': None,
-        'validity': {'function': 'plugin'},
-        'found-in': {'', 'view'},
-        'topblock': True,
-        'occurs-multiple-times': True,
-        'introduced': '9.14.0',
-        'topic': 'plugin',
-        'comment': '',
-    }
-
 g_nc_keywords['port'] = \
     {
         'default': 53,
@@ -4425,7 +4437,8 @@ g_nc_keywords['port'] = \
         'found-in': {'options', 'primaries', 'masters', 'also-notify',
                      'alt-transfer-source', 'alt-transfer-source-v6',
                      'forwarders', 'statistics-channels', 'controls', 'parental-source',
-                     'parental-source-v6', 'query-source', 'query-source-v6'},
+                     'parental-source-v6', 'query-source', 'query-source-v6',
+                     'parental-agents'},
         'introduced': '9.1',
         'topic': 'operating-system, interface, transport layer',
         'zone-type': '',
@@ -4441,7 +4454,7 @@ g_nc_keywords['prefer-server-ciphers'] = \
     {
         'default': 'no',
         'validity': {'boolean'},
-        'found-in': {'tls', 'primaries', 'masters'},
+        'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
         'comment': '',
@@ -4496,7 +4509,7 @@ g_nc_keywords['protocols'] = \
     {
         'default': 'TLSv1.3',
         'validity': {'regex': r'(TLSv1.2|TLSv1.3)'},
-        'found-in': {'tls', 'primaries', 'masters'},
+        'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
         'comment': '',
@@ -5298,7 +5311,7 @@ g_nc_keywords['session-tickets'] = \
     {
         'default': 'no',
         'validity': {'boolean'},
-        'found-in': {'tls', 'primaries', 'masters'},
+        'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
         'comment': '',
@@ -5526,11 +5539,11 @@ The default is default.""",
 g_nc_keywords['stale-answer-client-timeout'] = \
     {
         'default': 'off',
-        'validity': {'regex': '(on|off)'},
-        'found-in': {'view'},
-        'introduced': '9.18',  # TODO verify; first seen in v9.19
+        'validity': {'regex': '(disabled|off)',
+                     'range': {0, 32767}},
+        'found-in': {'options', 'view'},  # added to 'options' in v9.19?
+        'introduced': '9.18',
         'topic': '',
-        'zone-type': '',
         'comment': '',
     }
 
@@ -5541,7 +5554,6 @@ g_nc_keywords['stale-answer-enable'] = \
         'found-in': {'options', 'view'},  # 'options' added 9.13?
         'introduced': '9.12',
         'topic': 'answer, response',
-        'zone-type': '',
         'comment': '',
     }
 
@@ -5553,18 +5565,6 @@ g_nc_keywords['stale-answer-ttl'] = \
         'found-in': {'options', 'view'},  # 'options' added 9.13?
         'introduced': '9.12',
         'topic': 'answer, response',
-        'zone-type': '',
-        'comment': '',
-    }
-
-g_nc_keywords['stale-cache-enable'] = \
-    {
-        'default': '',
-        'validity': {'regex': "(yes|no)"},
-        'found-in': {'options', 'view'},  # 'options' added 9.13?
-        'introduced': '9.12',
-        'topic': 'answer, response',
-        'zone-type': '',
         'comment': '',
     }
 
@@ -5572,10 +5572,9 @@ g_nc_keywords['stale-cache-enable'] = \
     {
         'default': 'false',  # was 'yes' in v9.12
         'validity': {'regex': '(true|false|yes|no)'},
-        'found-in': {'view'},
-        'introduced': '9.19',  # TODO first seen in v9.19
+        'found-in': {'options', 'view'},  # 'options' added 9.13?
+        'introduced': '9.12',  # TODO first seen in v9.19
         'topic': '',
-        'zone-type': '',
         'comment': '',
     }
 
@@ -5583,12 +5582,11 @@ g_nc_keywords['stale-refresh-time'] = \
     {
         'default': 30,
         'validity': {'function': 'ttlval'},
-        'unit': 'delta_second',  # was 'second' in v9.12
-        'found-in': {'view'},
-        'introduced': '9.19',  # TODO first seen in v9.19
+        'unit': 'delta_second',
+        'found-in': {'options', 'view'},
+        'introduced': '9.18',
         'topic': '',
-        'zone-type': '',
-        'comment': '',
+        'comment': """The default ``stale-refresh-time`` is 30 seconds, as :rfc:`8767` recommends""",
     }
 
 g_nc_keywords['startup-notify-rate'] = \
@@ -6028,7 +6026,7 @@ g_nc_keywords['topology'] = \
         'validity': {'function': 'address_match_list'},
         'found-in': {'options', 'view'},
         'introduced': '9.13',
-        'introduced': '9.18.0',
+        'obsoleted': '9.18.0',
         'topic': '',
         'zone-type': '',
         'comment': '',
