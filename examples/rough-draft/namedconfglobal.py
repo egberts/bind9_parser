@@ -566,7 +566,6 @@ g_nc_keywords['all-per-seconds'] = \
         'found-in': {'rate-limit'},
         'introduced': '9.8.0',
         'topic': 'rate-limit, defense',
-        'zone-type': '',
         'comment': ''
     }
 
@@ -825,10 +824,8 @@ g_nc_keywords['alt-transfer-source'] = \
     {
         'default': '',
         'validity': {'function': 'ip_address_port'},
-        'found-in': {'options', 'view', 'zone'},
-        # [Opt, View, Zone]
+        'found-in': {'options', 'view'},  # removed 'zones' in v9.10
         'introduced': '9.3.0',
-        'obsoleted': '9.10',
         'topic': 'slave, transfer, DSCP',
         'zone-type': 'master, slave, mirror, primary, secondary',
         'comment':
@@ -851,9 +848,8 @@ g_nc_keywords['alt-transfer-source-v6'] = \
     {
         'default': '',
         'validity': {'function': 'ip_address_port'},
-        'found-in': {'options', 'view', 'zone'},
+        'found-in': {'options', 'view'},  # removed 'zones' in v9.10
         'introduced': '9.3.0',
-        'obsoleted': '9.10',
         'topic': 'slave, transfer',
         'zone-type': 'master, slave, mirror, primary, secondary',
         'comment':
@@ -876,7 +872,6 @@ g_nc_keywords['answer-cookie'] = \
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options'},
         'introduced': '9.14.0',
-        'obsoleted': '',
         'topic': 'edns',
         'comment': """answer-cookie is indented as a temporary
 measure, for use when named shares an IP address with
@@ -1768,6 +1763,22 @@ g_nc_keywords['dns64-server'] = \
         'comment': '',
     }
 
+g_nc_keywords['dnskey-sig-validity'] = \
+    {
+        'default': 0,
+        'validity': {'range': {0, 3660}},
+        'unit': 'day',
+        'found-in': {'options', 'view', 'zone'},
+        'introduced': '9.13.0',
+        'discontinued': '9.15.6',
+        'topic': 'dnssec, tuning',
+        'zone-type': 'master, slave, primary, secondary',
+        'comment': """
+This option has been replaced in favor of the KASP
+configuration value `signatures-validity-dnskey`.
+""",
+    }
+
 g_nc_keywords['dnsrps-enable'] = \
     {
         'default': None,
@@ -1797,22 +1808,6 @@ g_nc_keywords['dnsrps-options'] = \
         'topic': 'policy, inert, RPZ rewriting',
         'zone-type': '',
         'comment': '',
-    }
-
-g_nc_keywords['dnskey-sig-validity'] = \
-    {
-        'default': 0,
-        'validity': {'range': {0, 3660}},
-        'unit': 'day',
-        'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.13.0',
-        'obsoleted': '9.15.6',
-        'topic': 'dnssec, tuning',
-        'zone-type': 'master, slave, primary, secondary',
-        'comment': """
-This option has been replaced in favor of the KASP
-configuration value `signatures-validity-dnskey`.
-""",
     }
 
 g_nc_keywords['dnskey-ttl'] = \
@@ -1918,6 +1913,16 @@ g_nc_keywords['dnssec-enable'] = \
 records are to be returned by named.  If set to no, named
 will not return DNSSEC-related resource records unless
 specifically queried for. The default is yes.""",
+    }
+
+g_nc_keywords['dnssec-dnskey-kskonly'] = \
+    {
+        'default': 'no',  # TODO verify
+        'validity': {'boolean'},
+        'found-in': {'options', 'view'},
+        'introduced': '9.3.0',  # TODO verify
+        'topic': 'DNSSEC',
+        'comment': '',
     }
 
 g_nc_keywords['dnssec-loadkeys-interval'] = \
@@ -2189,7 +2194,8 @@ g_nc_keywords['dscp'] = \
         'validity': {'range': {0, 63}},
         'found-in': {'options', 'also-notify', 'primaries', 'masters',
                      'alt-transfer-source', 'alt-transfer-source-v6',
-                     'forwarders'},
+                     'forwarders', 'parental-source', 'parental-source-v6',
+                     'query-source', 'query-source-v6'},
         'introduced': '9.10.0',
         'topic': 'operating-system, DSCP',
         'zone-type': '',
@@ -2893,12 +2899,12 @@ statements are allowed in in-view zone clauses.
 
 g_nc_keywords['inline-signing'] = \
     {
-        'default': None,
+        'default': 'no',
         'validity': {'regex': r'(yes|no)'},
-        'found-in': {'options', 'view', 'zone'},
+        'found-in': {'zone'},  # removed 'options', 'view' in 9.19.0
         'introduced': '9.9.0',
         'topic': 'DNSSEC',
-        'zone-type': 'master, slave, primary, secondary',
+        'zone-type': 'primary, secondary, master, slave',
         'comment':
             """If yes, this enables "bump-in-the-wire" signing
             of a zone, where an unsigned zone is transferred in or
@@ -2938,6 +2944,35 @@ g_nc_keywords['interface-interval'] = \
             that have gone away.""",
     }
 
+g_nc_keywords['ipv4only-contact'] = \
+    {
+        'default': None,
+        'validity': {'string'},
+        'found-in': {'options', 'view'},
+        'introduced': '9.18',
+        'topic': 'DNS-over-HTTP, DoH',
+        'comment': ''
+    }
+
+g_nc_keywords['ipv4only-enable'] = \
+    {
+        'default': 'no',
+        'validity': {'function': 'boolean'},
+        'found-in': {'options', 'view'},
+        'introduced': '9.18',
+        'topic': 'DNS-over-HTTP, DoH',
+        'comment': ''
+    }
+
+g_nc_keywords['ipv4only-server'] = \
+    {
+        'default': None,
+        'validity': {'string'},
+        'found-in': {'options', 'view'},
+        'introduced': '9.18',
+        'topic': 'DNS-over-HTTP, DoH',
+        'comment': ''
+    }
 g_nc_keywords['ixfr-base'] = \
     {
         'default': None,
@@ -3026,6 +3061,7 @@ g_nc_keywords['keep-response-order'] = \
         'validity': {'function': "address_match_list"},
         'found-in': {'options'},
         'introduced': '9.11.0',
+        'obsoleted': '9.19.0',
         'topic': 'access control',
         'zone-type': '',
         'comment':
@@ -4233,11 +4269,22 @@ g_nc_keywords['nsec3-test-zone'] = \
 
 g_nc_keywords['nsec3param'] = \
     {
+        'default': None,
         'validity': {'function': 'dnssec_policy_nsec3param'},
         'found-in': {'dnssec-policy'},
         'introduced': '9.15.6',  # TODO verify
         'topic': 'DNSSEC',
-        'comment': '',
+        'comment': """Use NSEC3 instead of NSEC, and optionally set the NSEC3 parameters.
+
+Here is an example of an ``nsec3`` configuration:
+
+    nsec3param iterations 0 optout no salt-length 0;
+
+The default is to use NSEC.  The ``iterations``, ``optout`` and
+``salt-length`` parts are optional, but if not set, the values in
+the example above are the default NSEC3 parameters. Note that you don't
+specify a specific salt string, :iscman:`named` will create a salt for you
+of the provided salt length.""",
     }
 
 g_nc_keywords['nta-lifetime'] = \
@@ -4324,7 +4371,7 @@ g_nc_keywords['parental-source'] = \
     {
         'default': '*',
         'validity': {'function': 'ip4addr_port_dscp_list'},
-        'found-in': {'view'},
+        'found-in': {'options', 'view'},  # added 'options' in v9.19?
         'introduced': '9.18',
         'topic': 'DoH',
         'comment': '',
@@ -4334,7 +4381,7 @@ g_nc_keywords['parental-source-v6'] = \
     {
         'default': '*',
         'validity': {'function': 'ip6addr_port_dscp_list'},
-        'found-in': {'view'},
+        'found-in': {'options', 'view'},  # added 'options' in v9.19?
         'introduced': '9.18',
         'topic': 'DoH',
         'comment': '',
@@ -4377,7 +4424,8 @@ g_nc_keywords['port'] = \
         'validity': {'range': {1, 65535}},
         'found-in': {'options', 'primaries', 'masters', 'also-notify',
                      'alt-transfer-source', 'alt-transfer-source-v6',
-                     'forwarders', 'statistics-channels', 'controls'},
+                     'forwarders', 'statistics-channels', 'controls', 'parental-source',
+                     'parental-source-v6', 'query-source', 'query-source-v6'},
         'introduced': '9.1',
         'topic': 'operating-system, interface, transport layer',
         'zone-type': '',
@@ -4920,6 +4968,15 @@ g_nc_keywords['retire-safety'] = \
         'comment': "",
     }
 
+g_nc_keywords['reuseport'] = \
+    {
+        'default': 'no',
+        'validity': {'boolean'},
+        'found-in': {'options'},
+        'introduced': '9.18.0',
+        'topic': 'resource, OS',
+        'comment': '',
+    }
 g_nc_keywords['rfc2308-type1'] = \
     {
         'default': "no",
