@@ -104,34 +104,19 @@ g_nc_keywords['dnssec-keys'] = \
     }
 
 #  dlz <string> { database <string>; search <boolean>; }; [ DLZ ]
+#  dlz <string>; [ View Zone ]
 g_nc_keywords['dlz'] = \
     {
         'default': None,
         'validity': {'function': 'netprefix'},
         'occurs-multiple-times': True,
         'topblock': True,
-        'found-in': {''},  # also at top-statement-level
-        'topic': 'dlz',
-        'introduced': "9.5.0",
-        'obsoleted': '9.17.19',
-        'comment': """
-Introduced 'search' clause in v9.10.0
-""",
-    }
-
-#  dlz <string>; [ View Zone ]
-g_nc_keywords['dlz'] = \
-    {
-        'default': None,
-        'validity': {'function': 'dlz_name'},
-        'occurs-multiple-times': False,
-        'introduced': "9.5.0",
-        'obsoleted': '9.17.19',
-        'topblock': False,
-        'found-in': {'view', 'zone'},  # also at top-statement-level
+        'found-in': {'', 'view', 'zone'},  # also at top-statement-level
         'topic': 'dlz, redirect',
         'zone-type': 'master, slave, redirect, primary, secondary',
+        'introduced': "9.5.0",
         'comment': """
+Introduced 'search' statement in v9.10.0
 """,
     }
 
@@ -163,6 +148,18 @@ g_nc_keywords['dyndb'] = \
         'comment': '',
     }
 
+g_nc_keywords['http'] = \
+    {
+        'default': None,
+        'topblock': True,
+        'occurs-multiple-times': True,
+        'validity': {'string'},
+        'found-in': {''},
+        'introduced': '9.18',  # TODO verify
+        'topic': 'DNS-over-HTTP, DoH',
+        'comment': '',
+    }
+
 g_nc_keywords['include'] = \
     {
         'default': None,
@@ -173,6 +170,18 @@ g_nc_keywords['include'] = \
         'introduced': '8.1',
         'topic': '',
         'comment': 'A placeholder for more configuration items',
+    }
+
+g_nc_keywords['inet'] = \
+    {
+        'default': None,
+        'validity': {'function': 'inet'},
+        'occurs-multiple-times': False,
+        'topblock': False,
+        'found-in': {'controls', 'statistics-channels'},  # TODO added to 'statistics-channels' in v9.?
+        'introduced': '8.1',
+        'topic': '',
+        'comment': ''
     }
 
 g_nc_keywords['key'] = \
@@ -202,7 +211,7 @@ g_nc_keywords['logging'] = \
         'occurs-multiple-times': False,
         'topblock': True,
         'required': False,
-        'found-in': {},
+        'found-in': {''},
         'subordering-matters': True,
         'output-order-id': 20,  # 'logging' is second last
         'introduced': "8.1",
@@ -290,9 +299,10 @@ g_nc_keywords['tls'] = \
         'topblock': True,
         'validity': {'string'},
         'dict-index-by-name': True,
-        'found-in': {'', 'primaries', 'masters'},
+        'found-in': {'', 'primaries', 'masters', 'listen-on', 'listen-on-v6',
+                     'parental-agents', 'also-notify', 'catalog-zones'},
         'occurs-multiple-times': True,
-        'introduced': '9.18.0',  # TODO verify
+        'introduced': '9.18.0',
         'topic': 'DNS-over-HTTP, DoH',
         'comment': '',
     }
@@ -356,25 +366,6 @@ g_nc_keywords['dyndb'] = \
         'comment': """
 Also introduced as top-level statement in v9.11.0'
 """,
-    }
-
-g_nc_keywords['default-server'] = \
-    {
-        'occurs-multiple-times': False,
-        'validity': None,
-        'found-in': {'options'},
-        'output-order-id': 11,
-        'introduced': "9.0.0",
-        'obsoleted': "9.8",  # TODO 'default-server' first noticed obsoleted 9.8
-    }
-
-g_nc_keywords['default-key'] = \
-    {
-        'occurs-multiple-times': False,
-        'validity': None,
-        'found-in': {'options'},
-        'introduced': "9.1",  # TODO it is not in 9.0.0
-        'obsoleted': "9.8",  # TODO 'default-key' first noticed obsoleted 9.8
     }
 
 g_nc_keywords['acache-cleaning-interval'] = \
@@ -570,9 +561,9 @@ g_nc_keywords['algorithm'] = \
 
 g_nc_keywords['all-per-seconds'] = \
     {
-        'default': "no",
+        'default': None,
         'validity': {'range': {0, 1000}},
-        'found-in': {'options', 'view'},
+        'found-in': {'rate-limit'},
         'introduced': '9.8.0',
         'topic': 'rate-limit, defense',
         'zone-type': '',
@@ -744,7 +735,7 @@ g_nc_keywords['allow-update'] = \
         'default': {0: {'addr': 'none'}},
         'validity': {'function': 'address_match_list'},
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '8.2',  # TODO earliest detected 8.2
+        'introduced': '8.2',
         # In 8.2, only found in ['zone']['type']['master']
         # In 8.2, not found in ['zone']['type']['slave']
         # In 8.2, not found in ['zone']['type']['stub']
@@ -1135,7 +1126,8 @@ g_nc_keywords['cache-file'] = \
         'default': "",
         'validity': {'function': 'path_name'},
         'found-in': {'options', 'view'},
-        'introduced': '9.4.0',  # TODO probably obsoleted by now
+        'introduced': '9.2.0',
+        'obsoleted': '9.18.0',
         'topic': 'testing, test',
         'zone-type': '',
         'comment': """This is for testing only. Do not use.""",
@@ -1168,7 +1160,7 @@ g_nc_keywords['cert-file'] = \
     {
         'default': None,
         'validity': {'quoted_filepath'},
-        'found-in': {'primaries', 'masters'},
+        'found-in': {'tls', 'primaries', 'masters'},
         'introduced': '9.19.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
@@ -1266,7 +1258,6 @@ g_nc_keywords['check-names'] = \
                     },  # change from 'master' in v9.13
         'validity': {'regex': r"(primary|master|slave|secondary|response)\s+(warn|fail|ignore)"},
         'found-in': {'options', 'view', 'zone'},
-        'zone-type': {'hint'},
         'occurs-multiple-times': True,
         # In 8.2, found in ['zone']['type']['master']
         # In 8.2, found in ['zone']['type']['slave']
@@ -1356,7 +1347,7 @@ g_nc_keywords['ciphers'] = \
     {
         'default': None,
         'validity': {'string'},
-        'found-in': {'primaries', 'masters'},
+        'found-in': {'tls', 'primaries', 'masters'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
@@ -1470,9 +1461,8 @@ g_nc_keywords['database'] = \
     {
         'default': 'rbt',
         'validity': 'string',
-        'found-in': {'zone', 'dlz'},
+        'found-in': {'dlz'},
         'introduced': '9.1',
-        'obsoleted': '9.11.0',
         'topic': 'operating-system, database',
         'zone-type': 'master, slave, mirror, stub, primary, secondary',
         'comment': '',
@@ -1519,23 +1509,11 @@ g_nc_keywords['deallocate-on-exit'] = \
 BIND 9 ignores the option and always performs the checks.""",
     }
 
-g_nc_keywords['default-channel'] = \
-    {
-        'default': None,  # TODO define 'default_channel' default value
-        'validity': {'regex': r'(yes|no)'},
-        'found-in': {'logging'},
-        'introduced': '9.3.0',
-        'topic': '',
-        'zone-type': '',
-        'comment': '',
-    }
-
 g_nc_keywords['delegation-only'] = \
     {
-        'default': None,  # TODO define 'delegation-only' default value
+        'default': 'no',
         'validity': {'regex': r'(yes|no)'},
         'found-in': {'zone'},
-        'zone-type': {'forward', 'hint'},
         'introduced': '9.3.0',
         'topic': 'query, forwarding',
         'zone-type': 'hint, stub, forward',
@@ -1568,7 +1546,7 @@ g_nc_keywords['dhparam-file'] = \
     {
         'default': None,
         'validity': {'quoted_filepath'},
-        'found-in': {'primaries', 'masters'},
+        'found-in': {'tls', 'primaries', 'masters'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
         'comment': '',
@@ -1906,8 +1884,7 @@ g_nc_keywords['dnssec-accept-expired'] = \
         'default': 'no',
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.7.0',
-        'introduced': '9.15.6',  # Ummm, two introduction?  TBD
+        'introduced': '9.4.0',
         'topic': 'DNSSEC',
         'zone-type': 'master, slave, primary, secondary',
         'comment': """
@@ -2379,15 +2356,24 @@ g_nc_keywords['empty-zones-enable'] = \
         'comment': """Enable or disable all empty zones. By default, they are enabled.""",
     }
 
+g_nc_keywords['endpoints'] = \
+    {
+        'default': None,
+        'validity': {'list_of_quoted_string'},
+        'found-in': {'http'},
+        'introduced': '9.15.7',
+        'topic': 'HTTP, DoH, TLS',
+        'comment': '',
+    }
+
 g_nc_keywords['fake-iquery'] = \
     {
         'default': 'no',
         'validity': {'regex': r'(yes|no)'},
         'found-in': {'options'},
         'introduced': '8.1',
-        'obsoleted': '9.7.0',  # TODO wait, still noticed it in 9.6.3
+        'obsoleted': '9.6.3',
         'topic': 'inert',
-        'zone-type': '',
         'comment': """In BIND 8, this option enabled simulating the obsolete DNS query type IQUERY. BIND 9
 never does IQUERY simulation.""",
     }
@@ -2534,7 +2520,6 @@ g_nc_keywords['file'] = \
         'default': '.',
         'validity': {'function': 'path_name'},
         'found-in': {'zone'},
-        'zone-type': {'hint'},
         # In 8.2, not found in ['zone']['type']['forward']
         # In 8.2, not found in ['zone']['type']['hint']
         'introduced': '8.2',
@@ -2690,7 +2675,6 @@ g_nc_keywords['forward'] = \
         'default': 'first',
         'validity': {'regex': r'(first|only)'},
         'found-in': {'options', 'view', 'zone'},
-        'zone-type': {'forward'},
         'introduced': '8.1',
         'topic': 'forwarding',
         'zone-type': 'master, slave, stub, static-stub, forward, primary, secondary',
@@ -2708,7 +2692,6 @@ g_nc_keywords['forwarders'] = \
         'default': {},
         'validity': {'function': 'in_addr_list'},
         'found-in': {'options', 'view', 'zone'},
-        'zone-type': {'forward'},
         'introduced': '9.2',  # Intro in 4.8, 8.1, not yet back in 9.0
         'topic': 'forwarding, dscp',
         'zone-type': 'master, slave, stub, static-stub, forward, primary, secondary',
@@ -2726,7 +2709,7 @@ g_nc_keywords['geoip-directory'] = \
         'default': '',
         'validity': {'function': 'path_name'},
         'found-in': {'options'},
-        'introduced': '9.10.0',  # TODO first spotted in 9.10.0
+        'introduced': '9.10.0',
         'topic': 'operating-system, geoip',
         'zone-type': '',
         'comment': """Specifies the directory containing GeoIP .dat
@@ -2828,7 +2811,7 @@ g_nc_keywords['hostname'] = \
         'validity': {'options': 'none',
                      'regex': r'[A-Za-z0-9\-_]{1-64}(\.[A-Za-z0-9\-_]{1-64})*"',
                      },
-        'found-in': {'options', 'primaries', 'masters'},  # TODO added 'masters' in v9.???
+        'found-in': {'options', 'tls'},  # dropped 'masters' in v9.???
         'introduced': '8.3',
         'topic': 'CHAOS, server info',
         'zone-type': '',
@@ -2894,7 +2877,6 @@ g_nc_keywords['in-view'] = \
         'zone-type': {'in-view'},
         'introduced': '9.10.0',
         'topic': 'zone, view',
-        'zone-type': 'in-view',
         'comment': """
 Only valid within a zone clause.
 Allows a zone clause within one view to be used by another view.
@@ -3006,12 +2988,12 @@ g_nc_keywords['ixfr-from-differences'] = \
 
 g_nc_keywords['ixfr-from-differences'] = \
     {
-        'default': None,  # TODO Check if default of ixfr_from_differences is 'no'
-        'validity': {'function': 'bracket_ip_list'},
-        'found-in': {'options', 'view', 'zone'},
-        'introduced': '',
+        'default': 'yes',
+        'validity': {'options': r'(primaries|secondaries|masters|slaves)',
+                     'views': 'boolean'},
+        'found-in': {'options', 'view'},  # only 'zone' got dropped at v9.18.0 after initial intro
+        'introduced': '9.3.0',
         'topic': 'transfer',
-        'zone-type': '',
         'comment': '',
     }
 
@@ -3080,7 +3062,7 @@ g_nc_keywords['key-file'] = \
     {
         'default': None,
         'validity': {'function': 'quoted_filepath'},
-        'found-in': {'primaries', 'masters'},
+        'found-in': {'tls', 'primaries', 'masters'},
         'introduced': '9.18.0',
         'topic': 'DoH, TLS, HTTPS',
         'comment': '',
@@ -3108,13 +3090,12 @@ required to be signed by this key."""
 
 g_nc_keywords['lame-ttl'] = \
     {
-        'default': 0,  # TODO: was 600 in v9.11
+        'default': 0,  # changed from 600 at v9.17.4
         'validity': {'range': {0, 1800}},
         'unit': 'second',
         'found-in': {'options', 'view'},
         'introduced': '8.2',
         'topic': 'tuning',
-        'zone-type': '',
         'comment': """Sets the number of seconds to cache a lame server
 indication. 0 disables caching. (This is NOT
 recommended.)
@@ -3178,9 +3159,8 @@ g_nc_keywords['listen-on-v6'] = \
         'default': {0: {'addr': 'any'}},
         'validity': {'function': "address_match_list"},
         'found-in': {'options'},
-        'introduced': '9.2',  # TODO Intro on 8.4, but not 9.0
-        'topic': 'interface, DSCP',
-        'zone-type': '',
+        'introduced': '9.2',
+        'topic': 'IPv6, interface, DSCP',
         'comment': """If no listen-on is specified, the server will
 listen on port 53 on all IPv4 interfaces.  The
 listen-on-v6 option is used to specify the interfaces
@@ -3215,6 +3195,17 @@ matched address.)
 
 To make the server not listen on any IPv6 address, use
 listen-on-v6 { none; };""",
+    }
+
+g_nc_keywords['listener-clients'] = \
+    {
+        'default': 300,
+        'validity': {'range': {1, 65535}},
+        'found-in': {'http'},
+        'introduced': '9.18',
+        'topic': 'DNS-over-HTTP, DoH',
+        'zone-type': '',
+        'comment': 'seems very similiar to \'http-listener-clients\'',
     }
 
 g_nc_keywords['lmdb-mapsize'] = \
@@ -3382,11 +3373,11 @@ The use of this option is discouraged.""",
 
 g_nc_keywords['match-recursive-only'] = \
     {
-        'default': "no",  # TODO what is 'match-recursive-only' default value?
+        'default': 'no',
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'view'},
         'introduced': '9.3.0',
-        'topic': 'recursive',
+        'topic': 'recursive, filter',
         'zone-type': '',
         'comment': '',
     }
@@ -3567,8 +3558,8 @@ max-ncache-ttl cannot exceed 7 days and will be silently truncated to 7 days if 
 
 g_nc_keywords['max-records'] = \
     {
-        'default': '0',
-        'validity': {'range': {0, 32767}},  # TODO Find maximum limit to 'max-records'
+        'default': 0,  # 0=unlimited
+        'validity': {'range': {0, 32767}},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.12',
         'topic': 'DNS, server resource',
@@ -3598,13 +3589,12 @@ query is terminated and returns SERVFAIL. The default is 7.""",
 
 g_nc_keywords['max-recursion-queries'] = \
     {
-        'default': 100,  # TODO: was 75 in v9.11
+        'default': 100,  # was 75 in v9.11
         'validity': {'range': {0, 1024}},
         'unit': 'queries_per_recursion',
         'found-in': {'options', 'view'},
-        'introduced': '9.9.0',  # effective on 9.11?
+        'introduced': '9.9.0',
         'topic': 'tuning',
-        'zone-type': '',
         'comment': """Sets the maximum number of iterative queries that may be
 sent while servicing a recursive query. If more queries are
 sent, the recursive query is terminated and returns
@@ -3759,7 +3749,7 @@ g_nc_keywords['max-transfer-time-out'] = \
 
 g_nc_keywords['max-udp-size'] = \
     {
-        'default': '1232',  # TODO: changed from 4096 when?
+        'default': '1232',  # changed from 4096 at v9.16
         'validity': {'range': {512, 4096}},
         'unit': 'udp_buffer_byte_size',
         'found-in': {'options', 'view', 'server'},
@@ -3847,7 +3837,7 @@ If not specified, the default is named.memstats.""",
 
 g_nc_keywords['message-compression'] = \
     {
-        'default': 'yes',  # TODO: was 'no' in v9.14
+        'default': 'yes',  # was 'no' before v9.12
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
@@ -4080,12 +4070,11 @@ g_nc_keywords['no-case-compress'] = \
 
 g_nc_keywords['nocookie-udp-size'] = \
     {
-        'default': 4096,  # TODO: changed from 0 when?
-        'validity': {'range': {128, 32767}},  # TODO verify
+        'default': 4096,
+        'validity': {'range': {128, 4096}},  # max of 'max-udp-size'; bin/named/server.c
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
-        'topic': '',
-        'zone-type': '',
+        'topic': 'UDP',
         'comment': '',
     }
 
@@ -4096,8 +4085,7 @@ g_nc_keywords['nosit-udp-size'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.10.0',
         'obsoleted': '9.11.0',  # Truly removed at 9.17.0
-        'topic': '',
-        'zone-type': '',
+        'topic': 'UDP ',
         'comment': """Sets the maximum size of UDP responses that will be sent to queries without a valid
 source identity token. A value below 128 will be silently raised to 128. The default value
 is 4096, but the max-udp-size option may further limit the response size.""",
@@ -4238,15 +4226,23 @@ g_nc_keywords['nsec3-test-zone'] = \
         'default': 'no',
         'validity': {'regex': r'(yes|no)'},
         'found-in': {'view'},
-        'introduced': '9.19.0',  # TODO verify
+        'introduced': '9.6.0',
         'topic': 'DNSSEC',
-        'zone-type': '',
+        'comment': '',
+    }
+
+g_nc_keywords['nsec3param'] = \
+    {
+        'validity': {'function': 'dnssec_policy_nsec3param'},
+        'found-in': {'dnssec-policy'},
+        'introduced': '9.15.6',  # TODO verify
+        'topic': 'DNSSEC',
         'comment': '',
     }
 
 g_nc_keywords['nta-lifetime'] = \
     {
-        'default': 3600,  # TODO: changed from 'None' when?
+        'default': 3600,
         'validity': {'range': {0, 65535}},
         'unit': 'duration',
         'found-in': {'options', 'view'},
@@ -4258,7 +4254,7 @@ g_nc_keywords['nta-lifetime'] = \
 
 g_nc_keywords['nta-recheck'] = \
     {
-        'default': 300,  # TODO: changed from 'None' when?
+        'default': 300,
         'validity': {'range': {0, 65535}},
         'unit': 'duration',
         'found-in': {'options', 'view'},
@@ -4329,9 +4325,9 @@ g_nc_keywords['parental-source'] = \
         'default': '*',
         'validity': {'function': 'ip4addr_port_dscp_list'},
         'found-in': {'view'},
-        'introduced': '9.19',  # TODO first seen in v9.19
+        'introduced': '9.18',
         'topic': 'DoH',
-        'comment': "",
+        'comment': '',
     }
 
 g_nc_keywords['parental-source-v6'] = \
@@ -4339,9 +4335,9 @@ g_nc_keywords['parental-source-v6'] = \
         'default': '*',
         'validity': {'function': 'ip6addr_port_dscp_list'},
         'found-in': {'view'},
-        'introduced': '9.19',  # TODO first seen in v9.19
+        'introduced': '9.18',
         'topic': 'DoH',
-        'comment': "",
+        'comment': '',
     }
 
 g_nc_keywords['pid-file'] = \
@@ -4381,7 +4377,7 @@ g_nc_keywords['port'] = \
         'validity': {'range': {1, 65535}},
         'found-in': {'options', 'primaries', 'masters', 'also-notify',
                      'alt-transfer-source', 'alt-transfer-source-v6',
-                     'forwarders'},
+                     'forwarders', 'statistics-channels', 'controls'},
         'introduced': '9.1',
         'topic': 'operating-system, interface, transport layer',
         'zone-type': '',
@@ -4397,7 +4393,7 @@ g_nc_keywords['prefer-server-ciphers'] = \
     {
         'default': 'no',
         'validity': {'boolean'},
-        'found-in': {'primaries', 'masters'},
+        'found-in': {'tls', 'primaries', 'masters'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
         'comment': '',
@@ -4450,9 +4446,9 @@ The default eligibility TTL is 9.""",
 
 g_nc_keywords['protocols'] = \
     {
-        'default': 0,  # TODO what is the default of 'protocols'?
-        'validity': {'regex': r'(a|b|c)'},
-        'found-in': {'primaries', 'masters'},
+        'default': 'TLSv1.3',
+        'validity': {'regex': r'(TLSv1.2|TLSv1.3)'},
+        'found-in': {'tls', 'primaries', 'masters'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
         'comment': '',
@@ -4511,39 +4507,45 @@ g_nc_keywords['publish-safety'] = \
         'comment': "",
     }
 
+g_nc_keywords['purgekey'] = \
+    {
+        'default': 0,  # TODO supply default
+        'validity': {'range': {0, 3660}},  # TODO verify range
+        'found-in': {'dnssec-policy'},
+        'introduced': '9.15.6',
+        'topic': 'DNSSEC',
+        'comment': '',
+    }
 g_nc_keywords['qname-minimization'] = \
     {
         'default': 'relaxed',
         'validity': {'regex': "(strict|relaxed|disabled|off)"},
         'found-in': {'options', 'view'},
-        'introduced': '9.14.0',  # TODO; verify; first seen in v9.14
+        'introduced': '9.14.0',
         'topic': 'QNAME',
-        'zone-type': '',
         'comment': '',
     }
 
 g_nc_keywords['queryport-pool-ports'] = \
     {
-        'default': None,  # TODO 'queryport_pool_ports' default value?
-        'validity': {'regex': "(yes|no)"},  # TODO 'queryport_pool_ports' validity?
+        'default': 0,
+        'validity': {'integer'},
         'found-in': {'options', 'view'},
-        'introduced': '9.5',  # TODO when was 'queryport-pool-ports' introduced?
+        'introduced': '9.4',
         'obsoleted': '9.10.5',
         'topic': 'query address, inert, obsoleted, ancient',
-        'zone-type': '',
-        'comment': '',  # TODO comment on 'queryport_pool_ports'
+        'comment': '',
     }
 
 g_nc_keywords['queryport-pool-updateinterval'] = \
     {
-        'default': None,  # TODO 'queryport_pool_updateinterval' default value?
-        'validity': {'regex': "(yes|no)"},  # TODO 'queryport_pool_updateinterval' validity?
+        'default': 0,
+        'validity': {'integer'},
         'found-in': {'options', 'view'},
-        'introduced': '9.5',  # TODO when was 'queryport-pool-updateinterval' introduced?
+        'introduced': '9.4',
         'obsoleted': '9.10.5',
         'topic': 'query address, inert, obsolete, ancient',
-        'zone-type': '',
-        'comment': '',  # TODO comment on 'queryport_pool_updateinterval'
+        'comment': '',
     }
 
 g_nc_keywords['query-source'] = \
@@ -4579,8 +4581,7 @@ g_nc_keywords['query-source-v6'] = \
         'found-in': {'options', 'server', 'view'},
         'introduced': '9.4',  # 8.4?
         'topic': 'query address',
-        'zone-type': '',
-        'comment': '',  # TODO comment on 'query-source-v6'
+        'comment': '',
     }
 
 g_nc_keywords['querylog'] = \
@@ -4675,12 +4676,11 @@ internal operation, such as NOTIFY address lookups.""",
 g_nc_keywords['recursive-clients'] = \
     {
         'default': '1000',
-        'validity': {'range': {0, 32768}},  # TODO 'recursive-clients' range?
+        'validity': {'range': {0, 32768}},
         'found-in': {'options'},
         'unit': 'connections',
         'introduced': '9.0.0',
         'topic': 'operating-system, server resource',
-        'zone-type': '',
         'comment':
             """The maximum number ("hard quota") of simultaneous
             recursive lookups the server will perform on behalf of
@@ -4808,10 +4808,8 @@ g_nc_keywords['require-server-cookie'] = \
         'default': 'no',
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
-        'introduced': '9.19.0',  # TODO verify; first seen in v9.19
-        'obsoleted': '',
+        'introduced': '9.11.0',
         'topic': 'server resource',
-        'zone-type': '',
         'comment': '',
     }
 
@@ -4891,7 +4889,7 @@ g_nc_keywords['response-padding'] = \
     {
         'default': None,
         'validity': {'function': 'address_match_list',
-                     'function': 'block_size'},
+                     'size': 'block_size'},
         'found-in': {'options', 'view'},
         'introduced': '9.12',
         'topic': '',
@@ -4902,12 +4900,11 @@ g_nc_keywords['response-padding'] = \
 
 g_nc_keywords['response-policy'] = \
     {
-        'default': None,  # TODO define 'response-policy' keyword
-        'validity': None,
+        'default': None,
+        'validity': {'function': 'response_policy'},
         'found-in': {'options', 'view'},
         'introduced': '9.8.0',
         'topic': 'RPZ rewriting, response rate limiting',
-        'zone-type': '',
         'comment': """
 Option 'passthru' and 'disable' added in v9.9.0.
 """,
@@ -5004,6 +5001,15 @@ g_nc_keywords['rrset-order'] = \
         'comment': '',
     }
 
+g_nc_keywords['search'] = \
+    {
+        'default': '',  # incite
+        'validity': {'string'},
+        'occurs-multiple-times': False,
+        'topblock': False,
+        'found-in': {'dlz'},
+        'introduced': "9.10.0",
+    }
 g_nc_keywords['secret'] = \
     {
         'default': '',  # incite
@@ -5034,7 +5040,6 @@ g_nc_keywords['send-cookie'] = \
     {
         'default': 'true',  # was 'None' in v9.11
         'validity': {'regex': "(true|false|yes|no)"},
-        'found-in': {'server'},
         'found-in': {'options', 'view', 'server'},  # 'options' added in 9.12?
         'introduced': '9.11.0',
         'topic': 'transfer, DSCP, server',
@@ -5044,8 +5049,8 @@ g_nc_keywords['send-cookie'] = \
 
 g_nc_keywords['serial-queries'] = \
     {
-        'default': None,
-        'validity': {'range': (1, 2222111222)},  # TODO, max range for 'serial-queries'?
+        'default': 34,
+        'validity': {'range': (1, 2222111222)},
         'found-in': {'options'},
         'introduced': '8.3',
         'obsoleted': '9.14',
@@ -5234,9 +5239,9 @@ Used with 'nsupdate -l' and dhcpd.
 
 g_nc_keywords['session-tickets'] = \
     {
-        'default': 0,  # TODO what is the default of 'session-tickets'?
-        'validity': {'regex': r'(a|b|c)'},
-        'found-in': {'primaries', 'masters'},
+        'default': 'no',
+        'validity': {'boolean'},
+        'found-in': {'tls', 'primaries', 'masters'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
         'comment': '',
@@ -5245,7 +5250,7 @@ g_nc_keywords['session-tickets'] = \
 g_nc_keywords['sig-signing-nodes'] = \
     {
         'default': 100,
-        'validity': {'range': {1, 1024}},  # TODO range limit for 'sig-signing-nodes'?
+        'validity': {'range': {1, 1024}},
         'unit': 'nodes_per_quantum',
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.5.0',
@@ -5370,8 +5375,8 @@ g_nc_keywords['signatures-refresh'] = \
     {
         'default': "P5D",  # 5 days
         'unit': 'iso8601_time_duration',
-        'validity': {'range': {0, 3660}},
-        'validity': {'function': 'iso8601_time_duration'},
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
         'found-in': {'dnssec-policy'},  # moved from 'options' in 9.16?
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
@@ -5389,8 +5394,8 @@ g_nc_keywords['signatures-refresh'] = \
 g_nc_keywords['signatures-validity'] = \
     {
         'default': 'P2W',
-        'validity': {'range': {0, 3660}},
-        'validity': {'function': 'iso8601_time_duration'},
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
         'found-in': {'dnssec-policy'},  # move from 'options' 9.16?
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
@@ -5405,8 +5410,8 @@ g_nc_keywords['signatures-validity'] = \
 g_nc_keywords['signatures-validity-dnskey'] = \
     {
         'default': 'P2W',
-        'validity': {'range': {0, 3660}},
-        'validity': {'function': 'iso8601_time_duration'},
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
         'found-in': {'dnssec-policy'},
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
@@ -5580,6 +5585,16 @@ The maximum value is 28 days (40320 minutes).
 If set to 0, no statistics will be logged.
 
 Not yet implemented in Bind 9""",
+    }
+
+g_nc_keywords['streams-per-connection'] = \
+    {
+        'default': 100,
+        'validity': {'range': {1, 65535}},
+        'found-in': {'http'},
+        'introduced': '9.18',
+        'topic': 'DNS-over-HTTP, DoH',
+        'comment': '',
     }
 
 g_nc_keywords['support-ixfr'] = \
@@ -5955,8 +5970,8 @@ g_nc_keywords['topology'] = \
         'default': 'none',
         'validity': {'function': 'address_match_list'},
         'found-in': {'options', 'view'},
-        'introduced': '9.14',
-        'introduced': '9.18',  # obsoleted when?  TBD
+        'introduced': '9.13',
+        'introduced': '9.18.0',
         'topic': '',
         'zone-type': '',
         'comment': '',
@@ -6172,7 +6187,7 @@ g_nc_keywords['treat-cr-as-space'] = \
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options'},
         'introduced': '8.3',
-        'obsoleted': '9.14.0',  # TODO still inert at 9.6.3
+        'obsoleted': '9.14.0',  # still inert at 9.6.3
         'topic': 'operating-system, inert',
         'zone-type': '',
         'comment': """This option was used in BIND 8 to make the server
@@ -6189,10 +6204,8 @@ g_nc_keywords['trust-anchor-telemetry'] = \
         'default': 'yes',
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
-        # TODO verify Opt/View/Zone/Server
         'introduced': "9.10.5",
         'topic': 'DNSSEC',
-        'zone-type': '',
         'comment': """Causes named to send specially-formed queries once per
 day to domains for which trust anchors have been
 configured via trusted-keys, managed-keys,
