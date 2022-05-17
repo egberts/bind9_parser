@@ -16,7 +16,7 @@ Template is:
 abc = {
   'required': True, bare minimum keyword
               required within its subblock context
-              (as pointed to by its presense
+              (as pointed to by its presence
   'default': "yes",   # None, if statement is a
              presence-trigger type; all int() type
              are in str()type
@@ -155,7 +155,7 @@ g_nc_keywords['http'] = \
         'occurs-multiple-times': True,
         'validity': {'string'},
         'found-in': {''},
-        'introduced': '9.18',  # TODO verify
+        'introduced': '9.18',
         'topic': 'DNS-over-HTTP, DoH',
         'comment': '',
     }
@@ -178,7 +178,7 @@ g_nc_keywords['inet'] = \
         'validity': {'function': 'inet'},
         'occurs-multiple-times': False,
         'topblock': False,
-        'found-in': {'controls', 'statistics-channels'},  # TODO added to 'statistics-channels' in v9.?
+        'found-in': {'controls', 'statistics-channels'},  # added to 'statistics-channels' in v9.5
         'introduced': '8.1',
         'topic': '',
         'comment': ''
@@ -601,7 +601,8 @@ g_nc_keywords['allow-new-zones'] = \
         'introduced': '9.8.0',
         'topic': 'rndc, zone, ddns',
         'zone-type': 'slave',
-        'comment': """If yes, then zones can be added at runtime via 'rndc addzone', 'rndc modzone' or deleted via 'rndc delzone'. The default is no.""",
+        'comment': """If yes, then zones can be added at runtime via 'rndc addzone', 
+'rndc modzone' or deleted via 'rndc delzone'. The default is no.""",
     }
 
 g_nc_keywords['allow-notify'] = \
@@ -1852,7 +1853,7 @@ The default is 1 hour (3660 seconds).
 g_nc_keywords['dnskey-validity'] = \
     {
         'default': None,
-        'validity': {'regex': '\d+'},
+        'validity': {'regex': r'\d+'},
         'introduced': '9.15.0',  # not in 9.9.0
         'obsoleted': '9.17.0',  # not in 9.17.0
         'found-in': {'options', 'view', 'zone'},
@@ -1941,11 +1942,12 @@ specifically queried for. The default is yes.""",
 
 g_nc_keywords['dnssec-dnskey-kskonly'] = \
     {
-        'default': 'no',  # TODO verify
+        'default': 'no',
         'validity': {'boolean'},
-        'found-in': {'options', 'view'},
-        'introduced': '9.3.0',  # TODO verify
+        'found-in': {'options', 'view', 'zone'},
+        'introduced': '9.7.0',
         'topic': 'DNSSEC',
+        'zone-type': {'primary', 'secondary', 'master', 'slave'}
         'comment': '',
     }
 
@@ -2874,7 +2876,11 @@ g_nc_keywords['http-port'] = \
         'introduced': '9.18',
         'topic': 'DNS-over-HTTP, DoH',
         'zone-type': '',
-        'comment': 'An IP port number. The number is limited to 1 through 65535, with values below 1024 typically restricted to use by processes running as root. In some cases, an asterisk (*) character can be used as a placeholder to select a random high-numbered port.',
+        'comment': """An IP port number. The number is limited to 1 
+through 65535, with values below 1024 typically 
+restricted to use by processes running as root. In 
+some cases, an asterisk (*) character can be used as 
+a placeholder to select a random high-numbered port.""",
     }
 
 g_nc_keywords['http-streams-per-connection'] = \
@@ -2896,7 +2902,11 @@ g_nc_keywords['https-port'] = \
         'introduced': '9.18',
         'topic': 'DNS-over-HTTP, DoH',
         'zone-type': '',
-        'comment': 'An IP port number. The number is limited to 1 through 65535, with values below 1024 typically restricted to use by processes running as root. In some cases, an asterisk (*) character can be used as a placeholder to select a random high-numbered port.',
+        'comment': """An IP port number. The number is limited to 1 
+through 65535, with values below 1024 typically 
+restricted to use by processes running as root. 
+In some cases, an asterisk (*) character can be used 
+as a placeholder to select a random high-numbered port.""",
     }
 
 g_nc_keywords['in-view'] = \
@@ -3560,20 +3570,31 @@ g_nc_keywords['max-ixfr-ratio'] = \
         'zone-type': 'master, primary, mirror, slave, secondary',
         'comment':
             """This sets the size threshold (expressed as a
-            percentage of the size of the full zone) beyond which
-            named chooses to use an AXFR response rather than
-            IXFR when answering zone transfer requests.
+percentage of the size of the full zone) beyond which
+named chooses to use an AXFR response rather than
+IXFR when answering zone transfer requests.
             
-            See Incremental Zone Transfers (IXFR).
+See Incremental Zone Transfers (IXFR).
             
-            The minimum value is 1%.
+The minimum value is 1%.
             
-            The keyword 'unlimited' disables ratio checking and
-            allows IXFRs of any size.
+The keyword 'unlimited' disables ratio checking and
+allows IXFRs of any size.
             
-            The default is 100%.
+The default is 100%.
             
-            When a secondary server receives a zone via AXFR, it creates a new copy of the zone database and then swaps it into place; during the loading process, queries continue to be served from the old database with no interference. When receiving a zone via IXFR, however, changes are applied to the running zone, which may degrade query performance during the transfer. If a server receiving an IXFR request determines that the response size would be similar in size to an AXFR response, it may wish to send AXFR instead. The threshold at which this determination is made can be configured using the max-ixfr-ratio option.""",
+When a secondary server receives a zone via AXFR, it 
+creates a new copy of the zone database and then swaps 
+it into place; during the loading process, queries 
+continue to be served from the old database with no 
+interference. When receiving a zone via IXFR, however, 
+changes are applied to the running zone, which may 
+degrade query performance during the transfer. If a 
+server receiving an IXFR request determines that the 
+response size would be similar in size to an AXFR 
+response, it may wish to send AXFR instead. The 
+threshold at which this determination is made can be 
+configured using the max-ixfr-ratio option.""",
     }
 
 g_nc_keywords['max-journal-size'] = \
@@ -4296,7 +4317,7 @@ g_nc_keywords['nsec3param'] = \
         'default': None,
         'validity': {'function': 'dnssec_policy_nsec3param'},
         'found-in': {'dnssec-policy'},
-        'introduced': '9.15.6',  # TODO verify
+        'introduced': '9.16.0',
         'topic': 'DNSSEC',
         'comment': """Use NSEC3 instead of NSEC, and optionally set the NSEC3 parameters.
 
@@ -4568,12 +4589,13 @@ g_nc_keywords['publish-safety'] = \
         'comment': "",
     }
 
-g_nc_keywords['purgekey'] = \
+g_nc_keywords['purge-keys'] = \
     {
-        'default': 0,  # TODO supply default
-        'validity': {'range': {0, 3660}},  # TODO verify range
-        'found-in': {'dnssec-policy'},
-        'introduced': '9.15.6',
+        'default': 'P90D',  # 90-day
+        'validity': {'iso8601_time'},
+        'unit': 'iso8601_time_duration',
+        'found-in': {'options', 'dnssec-policy'},
+        'introduced': '9.16.0',  # code appeared in 9.15.7
         'topic': 'DNSSEC',
         'comment': '',
     }
@@ -5341,13 +5363,13 @@ The default is 100.""",
 g_nc_keywords['sig-signing-signatures'] = \
     {
         'default': 10,
-        'validity': {'range': {1, 1024}},  # TODO range limit for 'sig-signing-signatures'?
+        'validity': {'range': {1, 2**32}},
         'unit': 'signing_per_quantum',
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.5.0',
+        'introduced': '9.6.0',
         'topic': 'dnssec, tuning',
         'zone-type': 'master, slave, primary, secondary',
-        'comment': """Specify at hreshold number of signatures that will
+        'comment': """Specify at threshold number of signatures that will
 terminate processing a quantum when signing a zone with a new DNSKEY.
 
 `sig-signing-signatures` specifies a threshold number
@@ -5513,12 +5535,11 @@ bits for SHA256.""",
 
 g_nc_keywords['sortlist'] = \
     {
-        'default': None,  # TODO define 'sortlist' in its entirity
+        'default': None,
         'validity': {'function': "address_match_nosemicolon"},
         'found-in': {'options', 'view'},
         'introduced': '8.2',
         'topic': 'answer, response',
-        'zone-type': '',
         'comment': '',
     }
 
@@ -5570,11 +5591,11 @@ g_nc_keywords['stale-answer-ttl'] = \
 
 g_nc_keywords['stale-cache-enable'] = \
     {
-        'default': 'false',  # was 'yes' in v9.12
+        'default': 'false',
         'validity': {'regex': '(true|false|yes|no)'},
-        'found-in': {'options', 'view'},  # 'options' added 9.13?
-        'introduced': '9.12',  # TODO first seen in v9.19
-        'topic': '',
+        'found-in': {'options', 'view'},
+        'introduced': '9.16',
+        'topic': 'caching',
         'comment': '',
     }
 
@@ -5668,12 +5689,11 @@ g_nc_keywords['support-ixfr'] = \
 g_nc_keywords['suppress-initial-notify'] = \
     {
         'default': None,  # TODO define 'suppress-initial-notify' in its entirity
-        'validity': None,
+        'validity': {'boolean'},
         'found-in': {'options', 'view'},
-        'introduced': '8.3',
+        'introduced': '8.3',  # not yet implemented
         'obsoleted': '8.18',  # TBD when was it gone?
         'topic': '',
-        'zone-type': '',
         'comment': '',
     }
 
@@ -6017,7 +6037,11 @@ g_nc_keywords['tls-port'] = \
         'introduced': '9.18',
         'topic': 'DNS-over-HTTP, DoH',
         'zone-type': '',
-        'comment': 'An IP port number. The number is limited to 1 through 65535, with values below 1024 typically restricted to use by processes running as root. In some cases, an asterisk (*) character can be used as a placeholder to select a random high-numbered port.',
+        'comment': """An IP port number. The number is limited to 1 
+through 65535, with values below 1024 typically 
+restricted to use by processes running as root. 
+In some cases, an asterisk (*) character can be used 
+as a placeholder to select a random high-numbered port.""",
     }
 
 g_nc_keywords['topology'] = \
@@ -6302,7 +6326,7 @@ g_nc_keywords['type'] = \
         'default': 'primary',  # change from 'delegation-only' in v9.13
         # 'mirror' added in v9.15
         'validity': {
-            'regex': r"(delegation\-only|master|primary|slave|secondary|stub|static\-stub|hint|forward|redirect|mirror)"},
+            'regex': r'(delegation\-only|master|primary|slave|secondary|stub|static\-stub|hint|forward|redirect|mirror)'},
         'found-in': {'zone'},
         'zone-type': {'delegation-only', 'forward', 'hint', 'in-view', 'master', 'primary', 'redirect', 'slave',
                       'secondary',
@@ -6839,7 +6863,8 @@ class NamedConfGlobal(object):
         if type(token_kw) is not str:
             if self.debug > 5:
                 print(
-                    "_is_current_version_keyword: cannot check version as '%s' argument must be a str() type" % token_kw)
+                    ("_is_current_version_keyword: cannot check version as '%s' argument "
+                        "must be a str() type") % token_kw)
                 print("_is_current_version_keyword: Argument '%s' currently is a %s type." % (token_kw, type(token_kw)))
             return False
 
@@ -7016,7 +7041,7 @@ def normalize_version_str(myobject):
 
 
 # @profile
-def normalize_version_int(myobject: str) -> str:
+def normalize_version_int(myobject: str) -> int:
     bang = myobject.split('.', 3)
     bang_len = len(bang)
     version = 0
