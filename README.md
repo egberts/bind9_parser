@@ -5,7 +5,7 @@ Despite completion of over 2,800 nodes, I am struggling with handling multiple `
 bind9-parser reads ISC config files and produces a (massive) Pythonized
 Dict/List containing all of its configuration settings.
 
-# **BETA RELEASE - BETA RELEASE - BETA RELEASE**
+# **ALPHA RELEASE - ALPHA RELEASE - ALPHA RELEASE**
 
 # bind9-parser
 
@@ -40,16 +40,19 @@ bind9-parser make it so easy to do all of that, and now easier for you.
 # Introduction
 Here is a program to parse ``"options { server-id 'example.invalid'; };"`` :
 
-.. code:: python
+```python
 
     from bind9_parser import *
     test_named_conf_text = "options { server-id 'example.invalid'; };"
     result = clause_statements.parseString(test_named_conf_text, parseAll=True)
     print(result.asDict())
+```
 
 The program outputs the following::
 
+```python
     {'options': [{'server_id_name': "'example.invalid'"}]}
+```
 
 # Parse Everthing here
 One issue #10 asked to provide an example to parse the whole named.conf thing.
