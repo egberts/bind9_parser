@@ -117,7 +117,9 @@ print(result.asDict()):
 I hope this helps.
 
 # Unit Tests
-A massive unit test is supplied (under `tests/` subdirectory) to ensure that future breakage does not occur.
+A massive unit tests files are supplied (under `tests/` subdirectory) to ensure that future breakage does not occur.
+
+At the moment, breakage is occurring in the `zone` clause and multiple thereof.
 
 # Others
 
