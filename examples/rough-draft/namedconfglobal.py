@@ -3441,7 +3441,9 @@ g_nc_keywords['max-ixfr-log-size'] = \
                      'regex': '(unlimited|default)'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.0.0',
-        'obsoleted': '9.3.0',
+        'deprecated': '9.1.0',
+        'obsoleted': '9.1.0',
+        'ancient': '9.14.0',
         'topic': 'transfer, IXFR, server resource',
         'zone-type': {'master'},
         'comment':
@@ -3914,7 +3916,6 @@ g_nc_keywords['minimal-response'] = \
         'validity': {'regex': r"(yes|no|no-auth|no-auth-recursive)"},
         'found-in': {'options', 'view'},
         'introduced': '9.2',
-        'obsoleted': '9.11.0',
         'topic': 'DNS',
         'comment': '',
     }
@@ -5925,7 +5926,6 @@ g_nc_keywords['transfer-per-ns'] = \
         'unit': 'concurrent_inbound_zone_transfers',
         'found-in': {'options'},
         'introduced': '8.1',
-        'obsoleted': '',
         'topic': 'zone transfer',
         'comment':
             """The maximum number of inbound zone transfers that can

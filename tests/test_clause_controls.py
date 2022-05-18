@@ -159,6 +159,8 @@ class TestClauseControls(unittest.TestCase):
             ]
         }
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+    def test_isc_controls_statement_dual_passing(self):
+        """ Clause controls; Dual statement, passing mode """
         test_data = 'controls { inet 128.0.0.4 port 8004 allow { 128.0.0.5; 128.0.0.6;} keys { public-rndc-key3; }; };'
         expected_result = {
             'controls': [
@@ -171,50 +173,69 @@ class TestClauseControls(unittest.TestCase):
                             ]
                         },
                         'control_server_addr': '128.0.0.4',
-                        'ip_port_w': 8004,
+                        'ip_port_w': '8004',
                         'keys': [{'key_id': 'public-rndc-key3'}]
                     }
                 }
             ]
         }
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+    def test_isc_controls_statement_single_inet_allow_passing(self):
+        """ Clause controls; Single statement, inet-allow; passing mode """
         test_data = 'controls { inet 128.0.0.2 allow {localhost;}; };'
         expected_result = {'controls': [{'inet': {'allow': {'aml': [{'addr': 'localhost'}]},
                                                   'control_server_addr': '128.0.0.2'}}]}
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+    def test_isc_controls_statement_single_port_inet_allow_passing(self):
+        """ Clause controls; Single statement, port-inet-allow; passing mode """
         test_data = 'controls { inet * port 8001 allow {} keys { my-key;};};'
         expected_result = {'controls': [{'inet': {'allow': [],
                                                   'control_server_addr': '*',
-                                                  'ip_port_w': 8001,
+                                                  'ip_port_w': '8001',
                                                   'keys': [{'key_id': 'my-key'}]}}]}
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+
+    def test_isc_controls_statement_single_port_inet_allow_key_passing(self):
+        """ Clause controls; Single statement, port-inet-allow-key; passing mode """
         test_data = "controls { inet * port 8002 allow {'rndc-users';} keys {'rndc-remote';};};"
         expected_result = {'controls': [{'inet': {'allow': {'aml': [{'acl_name': "'rndc-users'"}]},
                                                   'control_server_addr': '*',
-                                                  'ip_port_w': 8002,
+                                                  'ip_port_w': '8002',
                                                   'keys': [{'key_id': "'rndc-remote'"}]}}]}
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+
+    def test_isc_controls_statement_dual_port_inet_allow_key_passing(self):
+        """ Clause controls; dual statement, port-inet-allow-key; passing mode """
         test_data = 'controls { inet 128.0.0.3 allow {}; inet * port 8003 allow {} keys { mykey2;};};'
         expected_result = {'controls': [{'inet': {'allow': [],
                                                   'control_server_addr': '128.0.0.3'}},
                                         {'inet': {'allow': [],
                                                   'control_server_addr': '*',
-                                                  'ip_port_w': 8003,
+                                                  'ip_port_w': '8003',
                                                   'keys': [{'key_id': 'mykey2'}]}}]}
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+
+    def test_isc_controls_statement_single_inet_port_allow_key_passing(self):
+        """ Clause controls; single statement, inet-port-allow-key; passing mode """
         test_data = 'controls { inet 128.0.0.7 port 8005 allow { 128.0.0.8; } keys { rndc-key4; };};'
         expected_result = {'controls': [{'inet': {'allow': {'aml': [{'addr': '128.0.0.8'}]},
                                                   'control_server_addr': '128.0.0.7',
-                                                  'ip_port_w': 8005,
+                                                  'ip_port_w': '8005',
                                                   'keys': [{'key_id': 'rndc-key4'}]}}]}
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+
+    def test_isc_controls_statement_single_inet_port_allow_list_key_passing(self):
+        """ Clause controls; single statement, inet-port-allow-list-key; passing mode """
         test_data = 'controls { inet 128.0.0.9 port 8006 allow { 128.0.0.10; 128.0.0.11;} read-only yes; };'
         expected_result = {'controls': [{'inet': {'allow': {'aml': [{'addr': '128.0.0.10'},
                                                                     {'addr': '128.0.0.11'}]},
                                                   'control_server_addr': '128.0.0.9',
-                                                  'ip_port_w': 8006,
+                                                  'ip_port_w': '8006',
                                                   'read-only': 'yes'}}]}
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+
+    def test_isc_controls_statement_dual_inet_allow_localhost_passing(self):
+        """ Clause controls; dual statement, inet-allow-localhost; passing mode """
         test_data = 'controls { inet 128.0.0.12 allow {localhost;};'\
                     + ' inet * port 8007 allow {"rndc-users";} keys {"rndc-remote5";};};'
         expected_result = {
@@ -235,9 +256,12 @@ class TestClauseControls(unittest.TestCase):
                             ]
                         },
                         'control_server_addr': '*',
-                        'ip_port_w': 8007,
+                        'ip_port_w': '8007',
                         'keys': [{'key_id': '"rndc-remote5"'}]}}]}
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+
+    def test_isc_controls_statement_unix_passing(self):
+        """ Clause controls; statement, unix; passing mode """
         test_data = 'controls { unix "/tmp/x" perm 0666 owner 101 group 101; };'
         expected_result = {'controls': [{'unix': {'gid': 101,
                                                   'path_name': '"/tmp/x"',
@@ -277,7 +301,7 @@ class TestClauseControls(unittest.TestCase):
         expected_result = {'controls': [{'inet': {'allow': {'aml': [{'addr': '128.0.0.5'},
                                                                     {'addr': '128.0.0.6'}]},
                                                   'control_server_addr': '128.0.0.4',
-                                                  'ip_port_w': 8004,
+                                                  'ip_port_w': '8004',
                                                   'keys': [{'key_id': 'public_rndc_key3'}]}}]}
         my_csc = clause_stmt_control_series.setWhitespaceChars(' \t\n')
         assertParserResultDict(my_csc, test_data, expected_result, True)
@@ -300,7 +324,7 @@ controls {
                                                   'control_server_addr': '128.0.0.13'}},
                                         {'inet': {'allow': {'aml': [{'acl_name': '"rndc-users"'}]},
                                                   'control_server_addr': '*',
-                                                  'ip_port_w': 8008,
+                                                  'ip_port_w': '8008',
                                                   'keys': [{'key_id': '"rndc-remote5"'}]}},
                                         {'unix': {'gid': 666,
                                                   'path_name': '"/tmp/x"',
