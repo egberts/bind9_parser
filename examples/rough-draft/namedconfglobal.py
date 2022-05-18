@@ -138,7 +138,7 @@ g_nc_keywords['dyndb'] = \
         'introduced': '9.6.0',
         'topic': 'dynamic database',
         'comment': ''
-}
+    }
 
 g_nc_keywords['http'] = \
     {
@@ -162,18 +162,6 @@ g_nc_keywords['include'] = \
         'introduced': '8.1',
         'topic': 'multi-file configuration',
         'comment': 'A placeholder for more configuration items',
-    }
-
-g_nc_keywords['inet'] = \
-    {
-        'default': None,
-        'validity': {'function': 'inet'},
-        'occurs-multiple-times': False,
-        'topblock': False,
-        'found-in': {'controls', 'statistics-channels'},  # added to 'statistics-channels' in v9.5
-        'introduced': '8.1',
-        'topic': 'Unix socket, IPC',
-        'comment': ''
     }
 
 g_nc_keywords['key'] = \
@@ -254,7 +242,7 @@ g_nc_keywords['options'] = \
         'required': True,  # the only keyword w/ 'required' (nope, logging too)
         'found-in': {''},
         'output-order-id': 4,  # options should be after keys, ACLs, and controls)
-        'topic': 'general options'
+        'topic': 'general options',
         'introduced': "4.9.3"  # 1994 Vixie Enterprise
     }
 
@@ -1799,7 +1787,7 @@ g_nc_keywords['dnskey-sig-validity'] = \
     {
         'default': 0,
         'validity': {'regex': r'\d+'},
-        'unit': 'duration'
+        'unit': 'duration',
         'introduced': '9.15.0',  # document-only in 9.8.0
         'found-in': {'options', 'view', 'zone'},
         'topic': 'DNSSEC',
@@ -2834,6 +2822,18 @@ clause and thus is particularly useful if you defined a shed-load of
 stuff in the previous zone clause. Only forward and forwarders
 statements are allowed in in-view zone clauses.
 """,
+    }
+
+g_nc_keywords['inet'] = \
+    {
+        'default': None,
+        'validity': {'function': 'inet'},
+        'occurs-multiple-times': False,
+        'topblock': False,
+        'found-in': {'controls', 'statistics-channels'},  # added to 'statistics-channels' in v9.5
+        'introduced': '8.1',
+        'topic': 'Unix socket, IPC',
+        'comment': ''
     }
 
 g_nc_keywords['inline-signing'] = \
@@ -5201,7 +5201,7 @@ The default is 100.""",
 g_nc_keywords['sig-signing-signatures'] = \
     {
         'default': 10,
-        'validity': {'range': {1, 2**32}},
+        'validity': {'range': {1, 2 ** 32}},
         'unit': 'signing_per_quantum',
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.6.0',
@@ -5590,7 +5590,7 @@ g_nc_keywords['tcp-advertised-timeout'] = \
 g_nc_keywords['tcp-clients'] = \
     {
         'default': 150,  # was 100
-        'validity': {'range': {1, 2**32-1}},
+        'validity': {'range': {1, 2 ** 32 - 1}},
         'unit': 'TCP_connections',
         'found-in': {'options'},
         'introduced': '9.0.0',
@@ -5698,7 +5698,7 @@ g_nc_keywords['tcp-keepalive-timeout'] = \
 g_nc_keywords['tcp-listen-queue'] = \
     {
         'default': 10,
-        'validity': {'range': {10, 2**32-1}},
+        'validity': {'range': {10, 2 ** 32 - 1}},
         'unit': 'listen_queue_depth',
         'found-in': {'options'},
         'introduced': '9.3.0',
@@ -5744,7 +5744,7 @@ g_nc_keywords['tcp-receive-buffer'] = \
 g_nc_keywords['tcp-send-buffer'] = \
     {
         'default': 0,
-        'validity': {'range': {0, 2**32-1},
+        'validity': {'range': {0, 2 ** 32 - 1},
                      'string': 'unlimited'},
         'found-in': {'options'},
         'introduced': '9.18.0',
@@ -6278,7 +6278,7 @@ stub
 g_nc_keywords['udp-receive-buffer'] = \
     {
         'default': 0,
-        'validity': {'range': {0, 2**32-1},
+        'validity': {'range': {0, 2 ** 32 - 1},
                      'string': 'unlimited'},
         'found-in': {'options'},
         'introduced': '9.18.0',
@@ -6289,7 +6289,7 @@ g_nc_keywords['udp-receive-buffer'] = \
 g_nc_keywords['udp-send-buffer'] = \
     {
         'default': 0,
-        'validity': {'range': {0, 2**32-1},
+        'validity': {'range': {0, 2 ** 32 - 1},
                      'string': 'unlimited'},
         'found-in': {'options'},
         'introduced': '9.18.0',
@@ -6647,7 +6647,7 @@ class NamedConfGlobal(object):
             if self.debug > 5:
                 print(
                     ("_is_current_version_keyword: cannot check version as '%s' argument "
-                        "must be a str() type") % token_kw)
+                     "must be a str() type") % token_kw)
                 print("_is_current_version_keyword: Argument '%s' currently is a %s type." % (token_kw, type(token_kw)))
             return False
 
@@ -6784,7 +6784,6 @@ class NamedConfGlobal(object):
             return crap
         return False
 
-
     def search(self, search_kw, search_value):
         # Cycle through entire dictionary of a specific version
         print("Pattern: %s" % search_value)
@@ -6793,14 +6792,13 @@ class NamedConfGlobal(object):
             if search_kw in self.versioned_keywords_dictionary[global_keyword]:
                 this_keyvalue = self.versioned_keywords_dictionary[global_keyword][search_kw]
                 if this_keyvalue != '':
-                        matches = re.match(search_value, this_keyvalue)
-                        if matches:
-                            print("====\n%s" % (global_keyword))
-                            comment = self.versioned_keywords_dictionary[global_keyword]['comment']
-                            print("      comment:\n %s\n" % (comment))
-                            # print((matches.group()))
+                    matches = re.match(search_value, this_keyvalue)
+                    if matches:
+                        print("====\n%s" % (global_keyword))
+                        comment = self.versioned_keywords_dictionary[global_keyword]['comment']
+                        print("      comment:\n %s\n" % (comment))
+                        # print((matches.group()))
         return
-
 
 
 # class-less functions goes afterward at this point
@@ -6890,12 +6888,10 @@ def print_clause_keywords(gnc_kw):
 
 
 def word_search(version, keyword, keyvalue):
-
     ws_ncg = NamedConfGlobal(version, debug=5)
     print("Version: %s" % ws_ncg.get_version())
-#    ws_ncg.print_versioned_dictionary()
+    #    ws_ncg.print_versioned_dictionary()
     ws_ncg.search(keyword, keyvalue)
-
 
 
 def validate():
@@ -6950,6 +6946,7 @@ def main():
         word_search(version, search_keyword, search_keyvalue)
 
     print("END\n")
+
 
 #####################################################################
 
