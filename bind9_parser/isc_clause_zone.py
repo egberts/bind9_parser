@@ -36,7 +36,7 @@ clause_stmt_zone_standalone = (
     Keyword('zone').suppress()
     - Group(
         zone_name('zone_name')
-        - Optional(rr_domain_name)
+        - Optional(rr_domain_name('class'))
         - lbrack
         - (
             zone_all_stmts_series
@@ -48,6 +48,6 @@ clause_stmt_zone_standalone = (
 
 clause_stmt_zone_series = (
     OneOrMore(
-        Group(clause_stmt_zone_standalone)('')
-    )('')
+        clause_stmt_zone_standalone
+    )
 )

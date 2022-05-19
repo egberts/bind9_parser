@@ -715,13 +715,11 @@ class TestZone(unittest.TestCase):
         """ Clause zone; Statement zone_statements_series; passing """
         assertParserResultDictTrue(
             zone_statements_series,
-            'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
-            ,
-            {'masters': [{'dscp_port': 5,
-                         'ip_port': '7553',
-                         'master_list': [{'addr': 'yellow_masters',
-                                          'key_id': 'priv_dns_chan_key5'}]}],
-             }
+            'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };',
+            {'masters_zone': {'dscp_port': 5,
+                              'ip_port': '7553',
+                              'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
+                                                    'master_name': 'yellow_masters'}]}}
         )
 
     def test_isc_zone_statements_set_passing(self):

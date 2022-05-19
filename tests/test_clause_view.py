@@ -24,53 +24,80 @@ class TestClauseView(unittest.TestCase):
 
     def test_isc_clause_view_zone_passing(self):
         """ Clause view; Statement zone; passing mode """
-        test_data = [
-            'view red { zone www.example.com { auto-dnssec maintain; }; };',
-        ]
-        result = clause_stmt_view_standalone.runTests(test_data, failureTests=False)
-        self.assertTrue(result[0])
+        test_string = """view red { zone www.example.com { auto-dnssec maintain; }; };"""
+        expected_result = { 'views': [ { 'view_name': 'red',
+               'zones': [ { 'auto_dnssec': 'maintain',
+                            'zone_name': 'www.example.com'}]}]}
+        assertParserResultDictTrue(clause_stmt_view_standalone, test_string, expected_result)
 
-    def test_isc_clause_view_zone_dict_passing(self):
+    def test_isc_clause_view_zone_standalone_one_view_passing(self):
+        """ Clause view; Statement standalone one-view; passing """
         assertParserResultDictTrue(
             clause_stmt_view_standalone,
             'view red IN { zone www.example.com { auto-dnssec maintain; }; };',
-            {'view': [{'configs': {'zone': {'auto_dnssec': 'maintain',
-                                             'zone_name': 'www.example.com'}},
-                       'rr_class': 'IN',
-                       'view_name': 'red'}]}
+            {'views': [{'class': 'IN',
+                        'view_name': 'red',
+                        'zones': [{'auto_dnssec': 'maintain',
+                                   'zone_name': 'www.example.com'}]}]}
         )
 
-    def test_isc_clause_view_passing(self):
-        test_data = [
-            """ view chaos { match-clients { any; }; zone "bind" { type master; file "/var/lib/bind/internal/master/db.bind"; allow-update { none; }; allow-transfer { none; }; }; };""",
-            'view xyz { database this_one; dlz that_one; };'
-            ]
-        test_clause_stmt_view = clause_stmt_view_standalone.copy()
-        test_clause_stmt_view = test_clause_stmt_view.setWhitespaceChars(' \t')
-        test_clause_stmt_view = test_clause_stmt_view.ignore(pythonStyleComment)
-        test_clause_stmt_view = test_clause_stmt_view.ignore(cppStyleComment)
-#        test_clause_stmt_view.ignore(pythonStyleComment)
-#        test_clause_stmt_view.ignore(cppStyleComment)
-        result = clause_stmt_view_standalone.runTests(test_data, failureTests=False)
-        self.assertTrue(result[0])
+    def test_isc_clause_view__series_two_view_passing(self):
+        """ Clause view; Statement standalone two-view; passing """
+        test_string = """
+view chaos { 
+    match-clients { any; }; 
+    zone "bind" {
+        type master; 
+        file "/var/lib/bind/internal/master/db.bind"; 
+        allow-update { none; }; 
+        allow-transfer { none; }; 
+    };
+};
+view xyz { database this_one; dlz that_one; }; """
+        expected_result = { 'views': [ { 'match_clients': {'aml': [{'addr': 'any'}]},
+               'view_name': 'chaos',
+               'zones': [ { 'allow_transfer': { 'aml': [ { 'addr': 'none'}]},
+                            'allow_update': { 'aml': [ { 'addr': 'none'}]},
+                            'file': '"/var/lib/bind/internal/master/db.bind"',
+                            'type': 'master',
+                            'zone_name': '"bind"'}]},
+             { 'database': 'this_one',
+               'dlz': 'that_one',
+               'view_name': 'xyz'}]}
+        assertParserResultDictTrue(
+            clause_stmt_view_series,
+            test_string,
+            expected_result)
 
-    def test_isc_clause_view_dict_passing(self):
+    def test_isc_clause_view_series_3_views_passing(self):
+        """ Clause view; Statement series three-view; passing """
         assertParserResultDictTrue(
             clause_stmt_view_series,
             'view red { match-clients { any; }; };' +
             'view green { database those_are; };',
-            {'view': [{'configs': {'match_clients': {'aml': [{'addr': 'any'}]}},
-                       'view_name': 'red'},
-                      {'configs': {'database': 'those_are'},
-                       'view_name': 'green'}]}
+            {'views': [{'match_clients': {'aml': [{'addr': 'any'}]},
+                        'view_name': 'red'},
+                       {'database': 'those_are', 'view_name': 'green'}]}
         )
-    def test_isc_clause_view_statements_series_passing(self):
-        test_data = [""" zone "home" IN { type master; file "/var/lib/bind/internal/master/db.home"; allow-update { none; }; };"""]
-        result = view_all_statements_series.runTests(test_data, failureTests=False)
-        self.assertTrue(result[0])
+
+    def test_isc_clause_view_statements_series_single_passing(self):
+        """ Clause view; All Statement series single-view; passing """
+        test_string = """
+zone "home" IN {
+    type master;
+    file "/var/lib/bind/internal/master/db.home";
+    allow-update { none; };
+};"""
+        expected_result = { 'zones': [ { 'allow_update': {'aml': [{'addr': 'none'}]},
+               'class': 'IN',
+               'file': '"/var/lib/bind/internal/master/db.home"',
+               'type': 'master',
+               'zone_name': '"home"'}]}
+        assertParserResultDictTrue( view_all_statements_series, test_string, expected_result)
 
     def test_isc_view_all_statements_series_passing(self):
-        test_data = """
+        """ Clause View; All Statement series; passing """
+        test_string = """
     match-clients { trusted_cablesupport_acl; };
     allow-query {
         trusted_cablesupport_acl;
@@ -126,7 +153,7 @@ class TestClauseView(unittest.TestCase):
     # view_all_statements_series.
         assertParserResultDictTrue(
             view_all_statements_series,
-            test_data,
+            test_string,
             {'allow-recursion': {'aml': [{'acl_name': 'trusted_cablesupport_acl'}]},
              'allow_query': {'aml': [{'acl_name': 'trusted_cablesupport_acl'}]},
              'allow_query_cache': {'aml': [{'acl_name': 'trusted_cablesupport_acl'}]},
@@ -136,18 +163,46 @@ class TestClauseView(unittest.TestCase):
              'disable_empty_zone': [{'zone_name': 'yes'}],
              'dlz': 'given_database_zone',
              'empty_zones_enable': 'no',
-             'fowarders': [{'fwdr2': [{'addr': '71.242.0.12'},
-                                      {'addr': '71.252.0.12'}]}],
+             'forwarders': {'forwarders_list': [{'addr': '71.242.0.12'},
+                                                {'addr': '71.252.0.12'}]},
              'match_clients': {'aml': [{'acl_name': 'trusted_cablesupport_acl'}]},
              'recursion': 'yes',
              'trusted_keys': [{'algorithm_id': 3,
                                'domain': 'example.net.',
                                'flags': 243,
                                'protocol_id': 1}],
-             'zone': {'delegation-only': 'yes',
-                       'file': '"/var/lib/bind/internal/master/db.cache.home"',
-                       'type': 'hint',
-                       'zone_name': '"."'}}
+             'zones': [{'allow_update': {'aml': [{'addr': 'none'}]},
+                        'class': 'IN',
+                        'file': '"/var/lib/bind/internal/master/db.home"',
+                        'type': 'master',
+                        'zone_name': '"home"'},
+                       {'allow_update': {'aml': [{'key_id': ['DDNS_UPDATER']}]},
+                        'class': 'IN',
+                        'file': '"/var/lib/bind/internal/master/db.ip4.1.168.192"',
+                        'forwarders': [],
+                        'notify': 'no',
+                        'type': 'master',
+                        'zone_name': '"1.168.192.in-addr.arpa"'},
+                       {'allow_update': {'aml': [{'addr': 'none'}]},
+                        'class': 'IN',
+                        'file': '"/var/lib/bind/internal/master/db.localhost"',
+                        'forwarders': [],
+                        'notify': 'no',
+                        'type': 'master',
+                        'zone_name': '"localhost"'},
+                       {'allow_update': {'aml': [{'addr': 'none'}]},
+                        'class': 'IN',
+                        'file': '"/var/lib/bind/internal/master/db.ip4.127"',
+                        'forwarders': [],
+                        'notify': 'no',
+                        'type': 'master',
+                        'zone_name': '"0.0.127.in-addr.arpa"'},
+                       {'class': 'IN',
+                        'delegation-only': 'yes',
+                        'file': '"/var/lib/bind/internal/master/db.cache.home"',
+                        'type': 'hint',
+                        'zone_name': '"."'}]}
+
         )
 
 

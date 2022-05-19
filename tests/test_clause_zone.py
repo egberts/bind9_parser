@@ -60,17 +60,43 @@ class TestClauseZone(unittest.TestCase):
             expected_result
         )
 
+    def test_isc_clause_zone__all_stmts_set_database(self):
+        """ Clause zone; All Zone statement 'database' (from isc_viewzone.py via 'viewzone_statements_set'dd); passing mode """
+        test_string = """database abcd;"""
+        expected_result = {'database': 'abcd'}
+        assertParserResultDictTrue(
+            zone_all_stmts_set,
+            test_string,
+            expected_result
+        )
 
+    """ Now combine above four grouping of statements set together for our first multiple line checking"""
+
+    def test_isc_clause_zone__all_stmts_set_combo(self):
+        """ Clause zone; All Zone statement 'combo' (from various isc_[opt][view][opt][server].py); passing mode """
+        test_string = """zone public { forwarders { 5.6.7.8; 1.2.3.4; }; database abcd; also-notify {mymaster; 1.2.3.4;}; notify-to-soa yes; };"""
+        expected_result = { 'zones': [ { 'also_notify': [ {'master': 'mymaster'},
+                                {'addr': '1.2.3.4'}],
+               'database': 'abcd',
+               'forwarders': { 'forwarders_list': [ { 'addr': '5.6.7.8'},
+                                                    { 'addr': '1.2.3.4'}]},
+               'notify_to_soa': 'yes',
+               'zone_name': 'public'}]}
+        assertParserResultDictTrue(
+            clause_stmt_zone_standalone,
+            test_string,
+            expected_result
+        )
 
     def test_isc_clause_zone__clause_stmt_single2(self):
         """ Clause zone; Statement zone; single2; passing mode """
-        test_data = [
-            'zone black {type forward; forwarders {1.2.3.4;};};',
-        ]
+        test_data = """zone black {type forward; forwarders {1.2.3.4;};};"""
         result = clause_stmt_zone_standalone.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
-        expected_data = [[['black', 'forward', [['1.2.3.4']]]]]
+        expected_data = { 'zones': [ { 'forwarders': { 'forwarders_list': [ { 'addr': '1.2.3.4'}]},
+                    'type': 'forward',
+                    'zone_name': 'black'}]}
 
         assertParserResultDictTrue(
             clause_stmt_zone_standalone,
@@ -79,19 +105,29 @@ class TestClauseZone(unittest.TestCase):
         )
 
 
-    def test_isc_clause_zone__clause_stmt_zone_standalone_passing(self):
-        """ Clause zone; Statement zone; passing mode """
-        test_data = [
-            'zone black {type forward;forwarders; {1.2.3.4;};};',
-            'zone red {type master;file "x";allow-update {any;};};',
-            'zone white.com {type master;file "y";allow-query {1.2.3.4;};};'
-        ]
-        result = clause_stmt_zone_standalone.runTests(test_data, failureTests=False)
-        self.assertTrue(result[0])
+    def test_isc_clause_zone__clause_stmt_zone_series_3_passing(self):
+        """ Clause zone; Statement zone series 3; passing mode """
+        test_data = 'zone black { type forward; forwarders { 1.2.3.4;}; };' + \
+            'zone red {type master; file "x"; allow-update {any;};};' + \
+            'zone white.com {type master; file "y"; allow-query {1.2.3.4;};};'
+        expected_result = { 'zones': [ { 'forwarders': { 'forwarders_list': [ { 'addr': '1.2.3.4'}]},
+               'type': 'forward',
+               'zone_name': 'black'},
+             { 'allow_update': {'aml': [{'addr': 'any'}]},
+               'file': '"x"',
+               'type': 'master',
+               'zone_name': 'red'},
+             { 'allow_query': {'aml': [{'addr': '1.2.3.4'}]},
+               'file': '"y"',
+               'type': 'master',
+               'zone_name': 'white.com'}]}
+        assertParserResultDictTrue(clause_stmt_zone_series, test_data, expected_result)
+
 
     def test_isc_clause_zone__clause_stmt_zone_standalone_dict_passing(self):
+        """ Clause zone; Statement zone standalone dict; passing mode """
         assertParserResultDictTrue(
-            clause_stmt_zone_standalone,
+            clause_stmt_zone_series,
             'zone red { auto-dnssec maintain; };',
             {
                 'zones': [{
@@ -101,8 +137,9 @@ class TestClauseZone(unittest.TestCase):
                 }
             )
 
-    def test_isc_clause_zone__clause_zone_standalone_passing(self):
-        test_data = [""" zone "home" IN { type master; file "/var/lib/bind/internal/master/db.home"; allow-update { none; }; };"""]
+    def test_isc_clause_zone__clause_zone_standalone_passing_5(self):
+        """ Clause zone; Statement zone standalone 5; passing mode """
+        test_data = [""" zone "home" { type master; file "/var/lib/bind/internal/master/db.home"; allow-update { none; }; };"""]
         test_clause_stmt_zone = clause_stmt_zone_standalone.copy()
         test_clause_stmt_zone = test_clause_stmt_zone.setWhitespaceChars(' \t')
         test_clause_stmt_zone = test_clause_stmt_zone.ignore(pythonStyleComment)
@@ -129,14 +166,15 @@ class TestClauseZone(unittest.TestCase):
             }
         )
 
-    def test_isc_clause_stmt_zone_series_passing(self):
+    def test_isc_clause_stmt_zone_series_passing_4A(self):
+        """ Clause zone; Statement zone series 4A; passing mode """
         test_data = """
-    zone "home" IN {
+    zone "first_zone" IN {
         type master;
         file "/var/lib/bind/internal/master/db.home";
         allow-update { none; };
         };
-    zone "1.168.192.in-addr.arpa" IN {
+    zone "second_zone" IN {
         type master;
         file "/var/lib/bind/internal/master/db.ip4.1.168.192";
         allow-update {
@@ -145,27 +183,57 @@ class TestClauseZone(unittest.TestCase):
         forwarders { };
         notify no;
         };
-    zone "localhost" IN {
+    zone "third_zone" IN {
         type master;
         file "/var/lib/bind/internal/master/db.localhost";
         allow-update { none; };
         forwarders { };
         notify no;
         };
-    zone "0.0.127.in-addr.arpa" IN {
+    zone "fourth_zone" IN {
         type master;
         file "/var/lib/bind/internal/master/db.ip4.127";
         allow-update { none; };
         forwarders { };
         notify no;
         };
-    zone "." IN {
+    zone "fifth_zone" IN {
         type hint;
         delegation-only yes;
         file "/var/lib/bind/internal/master/db.cache.home";
         };
     """
-    # zone_all_statements_series.
+        expected_result = { 'zones': [ { 'allow_update': {'aml': [{'addr': 'none'}]},
+               'class': 'IN',
+               'file': '"/var/lib/bind/internal/master/db.home"',
+               'type': 'master',
+               'zone_name': '"first_zone"'},
+             { 'allow_update': { 'aml': [ { 'key_id': [ 'DDNS_UPDATER']}]},
+               'class': 'IN',
+               'file': '"/var/lib/bind/internal/master/db.ip4.1.168.192"',
+               'forwarders': [],
+               'notify': 'no',
+               'type': 'master',
+               'zone_name': '"second_zone"'},
+             { 'allow_update': {'aml': [{'addr': 'none'}]},
+               'class': 'IN',
+               'file': '"/var/lib/bind/internal/master/db.localhost"',
+               'forwarders': [],
+               'notify': 'no',
+               'type': 'master',
+               'zone_name': '"third_zone"'},
+             { 'allow_update': {'aml': [{'addr': 'none'}]},
+               'class': 'IN',
+               'file': '"/var/lib/bind/internal/master/db.ip4.127"',
+               'forwarders': [],
+               'notify': 'no',
+               'type': 'master',
+               'zone_name': '"fourth_zone"'},
+             { 'class': 'IN',
+               'delegation-only': 'yes',
+               'file': '"/var/lib/bind/internal/master/db.cache.home"',
+               'type': 'hint',
+               'zone_name': '"fifth_zone"'}]}
         assertParserResultDictTrue(
             clause_stmt_zone_series,
             test_data, expected_result
@@ -174,50 +242,52 @@ class TestClauseZone(unittest.TestCase):
     def test_isc_clause_stmt_zone_series_multiplezone_passing(self):
         """ Clause, All; Zone Statements group; passing """
         test_string = """
-zone "." {
+zone "first_zone" {
   type hint;
   file "root.servers";
 };
-zone "example.com" in{
+zone "second_zone" in{
   type master;
   file "master/master.example.com";
   allow-transfer {192.168.23.1;192.168.23.2;};
 };
-zone "localhost" in{
+zone "third_zone" in{
   type master;
   file "master.localhost";
   allow-update{none;};
 };
-zone "0.0.127.in-addr.arpa" in{
+zone "fourth_zone" in{
   type master;
   file "localhost.rev";
   allow-update{none;};
 };
-zone "0.168.192.IN-ADDR.ARPA" in{
+zone "fifth_zone" in{
   type master;
   file "192.168.0.rev";
 };"""
-        expected_result = { 
-                'zones': [
-                    { 'file': '"root.servers"',
-                      'type': 'hint',
-                      'zone_name': '"."'},
-                    { 'allow_transfer': { 'aml': [ { 'addr': '192.168.23.1'},
-                                                   { 'addr': '192.168.23.2'}]},
-                      'file': '"master/master.example.com"',
-                      'type': 'master',
-                      'zone_name': '"example.com"'},
-                    { 'allow_update': { 'aml': [ { 'addr': 'none'}]},
-                      'file': '"master.localhost"',
-                      'type': 'master',
-                      'zone_name': '"localhost"'},
-                    { 'allow_update': { 'aml': [ { 'addr': 'none'}]},
-                      'file': '"localhost.rev"',
-                      'type': 'master',
-                      'zone_name': '"0.0.127.in-addr.arpa"'},
-                    { 'file': '"192.168.0.rev"',
-                      'type': 'master',
-                      'zone_name': '"0.168.192.IN-ADDR.ARPA"'}]}
+        expected_result = { 'zones': [ { 'file': '"root.servers"',
+               'type': 'hint',
+               'zone_name': '"first_zone"'},
+             { 'allow_transfer': { 'aml': [ { 'addr': '192.168.23.1'},
+                                            { 'addr': '192.168.23.2'}]},
+               'class': 'in',
+               'file': '"master/master.example.com"',
+               'type': 'master',
+               'zone_name': '"second_zone"'},
+             { 'allow_update': {'aml': [{'addr': 'none'}]},
+               'class': 'in',
+               'file': '"master.localhost"',
+               'type': 'master',
+               'zone_name': '"third_zone"'},
+             { 'allow_update': {'aml': [{'addr': 'none'}]},
+               'class': 'in',
+               'file': '"localhost.rev"',
+               'type': 'master',
+               'zone_name': '"fourth_zone"'},
+             { 'class': 'in',
+               'file': '"192.168.0.rev"',
+               'type': 'master',
+               'zone_name': '"fifth_zone"'}]}
         assertParserResultDictTrue(
             clause_stmt_zone_series,
             test_string,
