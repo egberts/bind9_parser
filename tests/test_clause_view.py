@@ -34,8 +34,8 @@ class TestClauseView(unittest.TestCase):
         assertParserResultDictTrue(
             clause_stmt_view_standalone,
             'view red IN { zone www.example.com { auto-dnssec maintain; }; };',
-            {'view': [{'configs': {'zone': [{'auto_dnssec': 'maintain',
-                                             'zone_name': 'www.example.com'}]},
+            {'view': [{'configs': {'zone': {'auto_dnssec': 'maintain',
+                                             'zone_name': 'www.example.com'}},
                        'rr_class': 'IN',
                        'view_name': 'red'}]}
         )
@@ -144,10 +144,10 @@ class TestClauseView(unittest.TestCase):
                                'domain': 'example.net.',
                                'flags': 243,
                                'protocol_id': 1}],
-             'zone': [{'delegation-only': 'yes',
+             'zone': {'delegation-only': 'yes',
                        'file': '"/var/lib/bind/internal/master/db.cache.home"',
                        'type': 'hint',
-                       'zone_name': '"."'}]}
+                       'zone_name': '"."'}}
         )
 
 

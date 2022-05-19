@@ -17,6 +17,23 @@ from bind9_parser.isc_clause import \
 
 
 class TestClauseALL(unittest.TestCase):
+
+    """ Clause, All """
+    def test_isc_clause_clause_stmt_optional_set_passing1(self):
+        """ Clause, All; Statements group; optional clause 1; passing """
+        test_data = [
+            'acl MY_BASTION_HOSTS { 4.4.4.4; 3.3.3.3; 2.2.2.2; 1.1.1.1; };',
+        ]
+        result = optional_clause_stmt_set.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+        assertParserResultDictTrue(
+            optional_clause_stmt_set,
+            test_data,
+            {'rr_class': 'ANY'}
+        )
+
+
     """ Clause, All """
     def test_isc_clause_clause_stmt_set_passing(self):
         """ Clause, All; Statements group; passing """

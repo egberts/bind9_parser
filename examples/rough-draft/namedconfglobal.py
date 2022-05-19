@@ -2626,7 +2626,7 @@ only query the forwarders.  TODO: when setting up
 
 g_nc_keywords['forwarders'] = \
     {
-        'default': {},
+        'default': {'aml': 'none'},
         'validity': {'function': 'in_addr_list'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.2',  # Intro in 4.8, 8.1, not yet back in 9.0

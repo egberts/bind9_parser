@@ -28,11 +28,9 @@ zone_all_stmts_set = (
      | viewzone_statements_set
 )
 
-zone_all_stmts_series = (
-    ZeroOrMore(
+zone_all_stmts_series = OneOrMore(
         zone_all_stmts_set
     )
-)
 
 clause_stmt_zone_standalone = (
     Keyword('zone').suppress()
@@ -42,14 +40,14 @@ clause_stmt_zone_standalone = (
         - lbrack
         - (
             zone_all_stmts_series
-        )('')
+        )  # no dictionary available if ('zones9*') appended here
         + rbrack
-    )('zone')
+    )('zones*')
     + semicolon
-)('')
+)
 
 clause_stmt_zone_series = (
     OneOrMore(
         Group(clause_stmt_zone_standalone)('')
     )('')
-)('zones')
+)

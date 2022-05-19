@@ -39,7 +39,7 @@ optviewzoneserver_stmt_also_notify_element_set = (
         (
             (
                 ip46_addr('addr')
-                | master_id('addr')
+                | master_id('master')
             )
             + Optional(inet_ip_port_keyword_and_number_element)
             - Optional(inet_dscp_port_keyword_and_number_element)

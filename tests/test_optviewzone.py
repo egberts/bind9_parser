@@ -280,14 +280,18 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_forwarders.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_forwarders_passing_exact(self):
+        """ Clause options/view/zone; Statement forwarders; exact passing """
+
         assertParserResultDictTrue(
             optviewzone_stmt_forwarders,
             'forwarders port 44  dscp 4 { 2.2.2.2 port 53; fe08::8 dscp 3; };',
-            {'fowarders': [{'dscp_port': 4,
-                            'fwdr2': [{'addr': '2.2.2.2', 'ip_port': '53'},
+            {'forwarders': {'dscp_port': 4,
+                            'forwarders_list': [{'addr': '2.2.2.2', 'ip_port': '53'},
                                       {'addr': 'fe08::8',
                                        'dscp_port': 3}],
-                            'ip_port': '44'}]}
+                            'ip_port': '44'}}
         )
 
     def test_isc_optviewzone_stmt_forward_passing(self):
@@ -799,8 +803,8 @@ class TestOptionsViewZone(unittest.TestCase):
         self.assertTrue(result[0])
 
 
-    def test_isc_optviewzone_statements_series_passing(self):
-        """ Clause optviewzone; Statement optviewzone_statements_series; passing """
+    def test_isc_optviewzone_statements_series_passing2(self):
+        """ Clause optviewzone; Statement optviewzone_statements_series 2; passing """
         assertParserResultDictTrue(
             optviewzone_statements_series,
             'use-alt-transfer-source yes;' +
@@ -871,7 +875,7 @@ class TestOptionsViewZone(unittest.TestCase):
              'dialup': 'yes',
              'dnssec_loadkeys_interval': 3600,
              'forward': 'only',
-             'fowarders': [{'fwdr2': [{'addr': '1.1.1.1'}], 'ip_port': '53'}],
+             'fowarders': [{'forwarders_list': [{'addr': '1.1.1.1'}], 'ip_port': '53'}],
              'ixfr_from_differences': 'slave',
              'ixfr_tmp_file': '/tmp/junk.dat',
              'key_directory': '"/tmp/keydir/"',

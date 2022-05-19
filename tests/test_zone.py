@@ -748,11 +748,18 @@ class TestZone(unittest.TestCase):
         result = zone_statements_set.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
 
-    def test_isc_zone_statements_set_dict_passing(self):
+    def test_isc_zone_statements_set_dict_passing_check_name(self):
         assertParserResultDictTrue(
             zone_statements_set,
             'check-names fail;',
             {'check_names': 'fail'}
+        )
+
+    def test_isc_zone_statements_set_dict_passing_delegation_only(self):
+        assertParserResultDictTrue(
+            zone_statements_set,
+            'delegation-only yes;',
+            {'delegation-only': 'yes'}
         )
 
     def test_isc_zone_stmt_statements_set_failing(self):
@@ -763,8 +770,8 @@ class TestZone(unittest.TestCase):
         result = zone_statements_set.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
-    def test_isc_zone_statements_series_simple_passing(self):
-        """ Clause zone; Statement zone_statements_series; passing """
+    def test_isc_zone_statements_series_simple_passing_1(self):
+        """ Clause zone; Statement zone_statements_series 1; passing """
         assertParserResultDictTrue(
             zone_statements_series,
             'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };',
@@ -774,50 +781,52 @@ class TestZone(unittest.TestCase):
                                                     'master_name': 'yellow_masters'}]}}
         )
 
-    def test_isc_zone_statements_series_passing(self):
-        """ Clause zone; Statement zone_statements_series; passing """
-        assertParserResultDictTrue(
-            zone_statements_series,
-            'check-names fail;'
-            'delegation-only yes;'
-            'file "/var/lib/bind9/public/masters/db.example.org";'
-            'in-view dmz_view;'
-            'ixfr-from-differences yes;'
-            'journal "/tmp/x";'
-            'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
-            'pubkey 53 251 7 "asdfasddfasdfasdf";'
-            'server-addresses { fb03::7 port 9553; 9.9.9.9; };'
-            'server-names { "example.com"; };'
-            'type forward;'
-            'update-policy {grant hidden-master.ADMIN.EXAMPLE.COM ms-self EXAMPLE.COM A AAAA;};'
-            'use-id-pool yes;'  # obsoleted in 9.6.3 but here as a test
-        ,
-            {
+    def test_isc_zone_statements_series_passing_2(self):
+        """ Clause zone; Statement zone_statements_series 2; passing """
+
+        test_string = """check-names fail;
+            delegation-only yes;
+            file "/var/lib/bind9/public/masters/db.example.org";
+            in-view dmz_view;
+            ixfr-from-differences yes;
+            journal "/tmp/x";
+            masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };
+            pubkey 53 251 7 "asdfasddfasdfasdf";
+            server-addresses { fb03::7 port 9553; 9.9.9.9; };
+            server-names { "example.com"; };
+            type forward;
+            update-policy {grant hidden-master.ADMIN.EXAMPLE.COM ms-self EXAMPLE.COM A AAAA;};
+            use-id-pool yes;"""
+        expected_result = {
             'check_names': 'fail',
             'delegation-only': 'yes',
             'file': '"/var/lib/bind9/public/masters/db.example.org"',
             'in_view': 'dmz_view',
             'ixfr_from_differences': 'yes',
             'journal': '"/tmp/x"',
-            'masters_zone': {'dscp_port': 5,
-                             'ip_port': '7553',
-                             'zone_master_list': [{'key_id': 'priv_dns_chan_key5',
-                                                   'master_name': 'yellow_masters'}]},
-            'pubkey': {'algorithms': 7,
-                       'flags': 53,
-                       'key_secret': 'asdfasddfasdfasdf',
-                       'protocol': 251},
-            'server_addresses': [{'addr': 'fb03::7', 'ip_port': '9553'},
-                                 {'addr': '9.9.9.9'}],
+            'masters_zone': {
+                'dscp_port': 5,
+                'ip_port': '7553',
+                'zone_master_list': [{ 'key_id': 'priv_dns_chan_key5', 'master_name': 'yellow_masters'}]
+            },
+            'pubkey': {
+                'algorithms': 7,
+                'flags': 53,
+                'key_secret': 'asdfasddfasdfasdf',
+                'protocol': 251},
+            'server_addresses': [ {'addr': 'fb03::7', 'ip_port': '9553'},
+                        {'addr': '9.9.9.9'}],
             'server_names': ['example.com'],
             'type': 'forward',
-            'update_policy': [{'impacting_realm': 'EXAMPLE.COM',
-                               'permission': 'grant',
-                               'policy': 'ms-self',
-                               'requestor_domain': 'hidden-master.ADMIN.EXAMPLE.COM',
-                               'rr_types': ['A', 'AAAA']}],
-            'use_id_pool': 'yes'}
-    )
+            'update_policy': [ { 'impacting_realm': 'EXAMPLE.COM',
+                                 'permission': 'grant',
+                                 'policy': 'ms-self',
+                                 'requestor_domain': 'hidden-master.ADMIN.EXAMPLE.COM',
+                                 'rr_types': ['A', 'AAAA']}],
+            'use_id_pool': 'yes',
+        }
+        assertParserResultDictTrue(zone_statements_series, test_string, expected_result)
+
 
     def test_isc_zone_stmt_statements_series_failing(self):
         """ Clause zone; Statement statements_series; failing """

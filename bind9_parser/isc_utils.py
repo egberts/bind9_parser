@@ -410,6 +410,8 @@ test_data_boolean_passing = [
     'TRUE',
     'true',
     'false',
+    'tRue',
+    'faLse',
 ]
 test_data_boolean_failing = [
     'yeah',
@@ -558,7 +560,7 @@ def assertParserResultDict(parser_element,
     import pyparsing
     pyparsing._defaultStartDebugAction = incr_pos(pyparsing._defaultStartDebugAction)
     pyparsing._defaultSuccessDebugAction = decr_pos(pyparsing._defaultSuccessDebugAction)
-    pyparsing._defaultExceptionDebugAction = decr_pos(pyparsing._defaultExceptionDebugAction)
+    pyparsing._defaultExceptionDebugAction = incr_pos(pyparsing._defaultExceptionDebugAction)
     try:
         parser_element = parser_element.setDebug(True)
         result = parser_element.parseString(test_strings, parseAll=True)
@@ -590,11 +592,19 @@ def assertParserResultDict(parser_element,
         # print(parser_element.errmsg)
         retsts = False
         # raise InvalidConfiguration(error_msg)
+    except Exception as pe:
+        exc_type, value, traceback = sys.exc_info()
+        assert exc_type.__name__ == 'NameError'
+        print("Failed with exception [%s]" % exc_type.__name__)
+        print(pe)
+    except:
+        print('UNKNOWN exception error')
+        print("test_strings: ", test_strings)
     if retsts == assert_flag:
         print('assert(True)')
         return True
     else:
-        errmsg = 'Error(assert=' + str(False) + '): ' + message + '\"' + test_strings + '\".'
+        errmsg = 'Error(assert=' + str(False) + '): ' + message + '\"' + str(test_strings) + '\".'
         raise SyntaxError(errmsg)
 
 

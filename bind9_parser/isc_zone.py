@@ -399,6 +399,6 @@ zone_statements_set = (
 
 zone_statements_series = (
     OneOrMore(
-            zone_statements_set('')
-    )('')
+            zone_statements_set
+    )
 )

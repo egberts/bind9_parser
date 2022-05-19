@@ -114,7 +114,7 @@ optviewzone_stmt_alt_transfer_source_v6 = (
         )('')
     )('alt_transfer_source_v6')
     + semicolon
-)('')
+)
 
 optviewzone_stmt_auto_dnssec = (
     Keyword('auto-dnssec').suppress()
@@ -176,16 +176,12 @@ optviewzone_stmt_forwarders = (
         + Optional(inet_dscp_port_keyword_and_number_element)
         + lbrack
         + (
-            (
-                (
-                    forwarders_ip46_addr_prefix_port_series
-                )('')
-            )('fwdr3')
-        )('fwdr2')
+            forwarders_ip46_addr_prefix_port_series
+        )('forwarders_list')
         + rbrack
         + semicolon
-    )('')
-)('fowarders')
+    )('forwarders')
+)
 
 # ixfr-from-differences ( master | slave | <boolean> );
 optviewzone_stmt_ixfr_from_differences = (
@@ -465,6 +461,6 @@ optviewzone_statements_series = (
     ZeroOrMore(
         (
             optviewzone_statements_set
-        )('')
-    )('')
+        )
+    )
 )

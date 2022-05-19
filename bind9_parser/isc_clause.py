@@ -41,13 +41,14 @@ optional_clause_stmt_set = (
         | clause_stmt_server_standalone
         | clause_stmt_trusted_keys_standalone
         | clause_stmt_view_standalone
-        | clause_stmt_zone_standalone('zones25')
-)
+        | clause_stmt_zone_standalone
+        )('clause_stmt_set3*')
+
 
 optional_clause_stmt_series = (
     OneOrMore(
         optional_clause_stmt_set
-    )
+    )('clause_series2*')
 )
 #  Mandatory and Optional CLAUSE statements
 
@@ -68,7 +69,6 @@ mandatory_clause_stmt_set = clause_stmt_options
 # TODO: Unable to enforce mixed mode 1-* and 1-1 clauses (external logic required here?)
 # TODO: BUG https://github.com/pyparsing/pyparsing/issues/167
 clause_statements = ZeroOrMore(
-    optional_clause_stmt_set
-    | mandatory_clause_stmt_set
+    mandatory_clause_stmt_set
     | optional_clause_stmt_set
-)
+)('clause_statements*')
