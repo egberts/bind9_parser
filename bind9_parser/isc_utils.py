@@ -379,6 +379,10 @@ master_name_base = Word(charset_master_name_base, max=62)
 master_name = (master_name_base)('master_name')
 master_name.setName('<master_name>')
 
+# iso8601 is not a naive nor aware ISO time-interval
+# iso8601 is a delta time (or duration)
+iso8601_duration = Word(alphanums + '-.+:', min=1, max=63)('iso8601_duration')
+
 # #############################################################
 # Series
 # #############################################################

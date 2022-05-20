@@ -17,7 +17,9 @@ import os.path
 from pathlib import Path
 import argparse
 import pyparsing as pp
-from bind9_parser.isc_clauses import clause_statements, parse_me
+import bind9_parser
+from bind9_parser.isc_clauses import clause_statements
+from bind9_parser.isc_utils import parse_me
 
 g_progname = os.path.basename(__file__)
 g_root_dir = '.'  # default to current working directory

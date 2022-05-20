@@ -18,7 +18,7 @@ packages = [
     'bind9_parser',
 ]
 
-bind9_parser_version = '0.9.8.1'
+bind9_parser_version = '0.9.10.1'
 
 setup(  # Distribution meta-data
     name='bind9_parser',
@@ -30,19 +30,20 @@ setup(  # Distribution meta-data
     author_email='egberts@yahoo.com',
     keywords='bind9 configuration parser isc named.conf',
     url='https://github.com/egberts/bind9_parser/',
-    download_url='https://github.com/egberts/bind9_parser/archive/0.9.8.tar.gz',
+    download_url='https://github.com/egberts/bind9_parser/archive/0.9.10.tar.gz',
     license='MIT License',
     packages=packages,
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     install_requires=['pyparsing'],
     platforms='any',
     classifiers=[
         'Development Status :: 4 - Beta',
+        'Environment :: Web Environment',
         'Intended Audience :: Developers',
-        'Intended Audience :: System Administrators',
         'Intended Audience :: Information Technology',
+        'Intended Audience :: System Administrators',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
@@ -51,12 +52,18 @@ setup(  # Distribution meta-data
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
+        'Topic :: Internet :: Name Service (DNS)',
         'Topic :: Security',
         'Topic :: Software Development :: Libraries',
-        'Topic :: System :: Logging',
-        'Topic :: System :: Monitoring',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: System :: Installation/Setup',
+        'Topic :: System :: Networking',
+        'Topic :: Text Processing',
+        'Topic :: Utilities',
     ],
 )

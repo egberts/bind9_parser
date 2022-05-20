@@ -12,6 +12,7 @@ Description: Provides ALL clauses at the top-level of ISC
 from pyparsing import ZeroOrMore, OneOrMore, Group, ungroup
 from bind9_parser.isc_clause_acl import clause_stmt_acl_standalone
 from bind9_parser.isc_clause_controls import clause_stmt_control_standalone
+from bind9_parser.isc_clause_dnssec_policy import clause_stmt_dnssecpolicy_standalone
 from bind9_parser.isc_clause_dlz import clause_stmt_dlz_standalone
 from bind9_parser.isc_clause_dyndb import clause_stmt_dyndb_standalone
 from bind9_parser.isc_clause_key import clause_stmt_key_standalone
@@ -31,6 +32,7 @@ optional_clause_stmt_set = (
         clause_stmt_acl_standalone
         #    | (clause_catalog_zones + semicolon)
         | clause_stmt_control_standalone
+        | clause_stmt_dnssecpolicy_standalone
         | clause_stmt_dlz_standalone
         | clause_stmt_dyndb_standalone
         | clause_stmt_key_standalone

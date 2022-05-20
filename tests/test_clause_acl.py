@@ -53,7 +53,7 @@ class TestClauseACL(unittest.TestCase):
 
     def test_isc_clause_acl_list_simple(self):
         """ Clause ACL; clause_stmt_acl_series; List, simple; passing """
-        test_data = 'acl e { f; };'
+        test_string = 'acl e { f; };'
         expected_result = {
             'acl': [
                 {
@@ -68,7 +68,10 @@ class TestClauseACL(unittest.TestCase):
                 }
             ]
         }
-        assertParserResultDictTrue(clause_stmt_acl_standalone, test_data, expected_result)
+        assertParserResultDictTrue(
+                clause_stmt_acl_standalone,
+                test_string,
+                expected_result)
 
     def test_isc_clause_acl_clause_stmt_acl_clause_series(self):
         """ Clause ACL; caluse_stmt_acl; Clause Series; passing """

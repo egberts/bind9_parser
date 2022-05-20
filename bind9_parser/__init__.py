@@ -36,6 +36,7 @@ from bind9_parser.isc_acl import *
 from bind9_parser.isc_aml import *
 from bind9_parser.isc_clause_acl import *
 from bind9_parser.isc_clause_controls import *
+from bind9_parser.isc_clause_dnssec_policy import *
 from bind9_parser.isc_clause_dlz import *
 from bind9_parser.isc_clause_dyndb import *
 from bind9_parser.isc_clause_key import *

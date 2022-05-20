@@ -51,15 +51,16 @@ clause_stmt_acl_standalone = (
                     Group(
 
                         aml_nesting('')  # peel away testing label here
-                    )('')  # ('aml_series3')
-                )('')
+                    )  # ('aml_series3')
+                )
             )('aml_series')
-        )('')
+        )
 )('acl')
 
 # Syntax:
 #         acl a { b; };  acl c { d; e; f; }; acl g { ! h; ! { i; }; };
 #
+# {0-*} statement
 clause_stmt_acl_series = ZeroOrMore(
     (
         clause_stmt_acl_standalone

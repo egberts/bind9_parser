@@ -13,7 +13,7 @@ from pyparsing import Group, Keyword, Optional,\
     Literal, ZeroOrMore, CaselessLiteral
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, isc_boolean, path_name, \
     seconds_type, days_type, minute_type, quoted_path_name,\
-    size_spec
+    size_spec, name_base
 from bind9_parser.isc_inet import ip4_addr,\
     inet_ip_port_keyword_and_wildcard_element, ip6_addr,\
     inet_ip_port_keyword_and_number_element, ip46_addr_or_prefix,\
@@ -131,6 +131,12 @@ optviewzone_stmt_auto_dnssec = (
 optviewzone_stmt_dialup = (
     Keyword('dialup')
     - isc_boolean('dialup')
+    + semicolon
+)
+
+optviewzone_stmt_dnssec_policy = (
+    Keyword('dnssec-policy')
+    - name_base('dnssec_name')
     + semicolon
 )
 
