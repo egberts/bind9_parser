@@ -28,8 +28,8 @@ bind9_parser module - Classes and methods to define and execute parsing grammars
 
 """
 
-__version__ = "0.9.8.1"
-__versionTime__ = "07 Sep 2020 08:11 UTC"
+__version__ = "0.9.10.1"
+__versionTime__ = "20 May 2022 04:47 UTC"
 __author__ = "Steve Egbert <egberts@yahoo.com>"
 
 from bind9_parser.isc_acl import *
@@ -39,10 +39,12 @@ from bind9_parser.isc_clause_controls import *
 from bind9_parser.isc_clause_dnssec_policy import *
 from bind9_parser.isc_clause_dlz import *
 from bind9_parser.isc_clause_dyndb import *
+from bind9_parser.isc_clause_http import *
 from bind9_parser.isc_clause_key import *
 from bind9_parser.isc_clause_logging import *
 from bind9_parser.isc_clause_managed_keys import *
 from bind9_parser.isc_clause_parental_agents import *
+from bind9_parser.isc_clause_plugin import *
 from bind9_parser.isc_clause_primaries import *
 from bind9_parser.isc_clause_options import *
 from bind9_parser.isc_clauses import *

@@ -383,6 +383,9 @@ master_name.setName('<master_name>')
 # iso8601 is a delta time (or duration)
 iso8601_duration = Word(alphanums + '-.+:', min=1, max=63)('iso8601_duration')
 
+config_base_charset = alphanums + ' \t_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon allowed
+config_base = Word(config_base_charset, min=1, max=4086)
+
 # #############################################################
 # Series
 # #############################################################
