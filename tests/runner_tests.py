@@ -8,13 +8,17 @@ import test_clause_acl
 import test_clause_controls
 import test_clause_dlz
 import test_clause_dyndb
+import test_clause_http
 import test_clause_key
 import test_clause_logging
 import test_clause_managed_keys
+import test_clause_parental_agents
+import test_clause_plugin
 import test_clause_primaries
 import test_clause_options
 import test_clauses
 import test_clause_server
+import test_clause_statistics_channels
 import test_clause_view
 import test_clause_zone
 import test_domain

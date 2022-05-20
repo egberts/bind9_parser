@@ -12,18 +12,19 @@ Description: Provides ALL clauses at the top-level of ISC
 from pyparsing import ZeroOrMore, OneOrMore, Group, ungroup
 from bind9_parser.isc_clause_acl import clause_stmt_acl_standalone
 from bind9_parser.isc_clause_controls import clause_stmt_control_standalone
-from bind9_parser.isc_clause_dnssec_policy import clause_stmt_dnssecpolicy_standalone
 from bind9_parser.isc_clause_dlz import clause_stmt_dlz_standalone
+from bind9_parser.isc_clause_dnssec_policy import clause_stmt_dnssecpolicy_standalone
 from bind9_parser.isc_clause_dyndb import clause_stmt_dyndb_standalone
 from bind9_parser.isc_clause_http import clause_stmt_http_standalone
 from bind9_parser.isc_clause_key import clause_stmt_key_standalone
 from bind9_parser.isc_clause_logging import clause_stmt_logging_standalone
 from bind9_parser.isc_clause_managed_keys import clause_stmt_managed_keys_standalone
+from bind9_parser.isc_clause_options import clause_stmt_options
 from bind9_parser.isc_clause_parental_agents import clause_stmt_parental_agents_standalone
 from bind9_parser.isc_clause_plugin import clause_stmt_plugin_standalone
 from bind9_parser.isc_clause_primaries import clause_stmt_primaries_standalone
-from bind9_parser.isc_clause_options import clause_stmt_options
 from bind9_parser.isc_clause_server import clause_stmt_server_standalone
+from bind9_parser.isc_clause_statistics_channels import clause_stmt_statistics_channels_standalone
 from bind9_parser.isc_clause_trusted_keys import clause_stmt_trusted_keys_standalone
 from bind9_parser.isc_clause_view import clause_stmt_view_standalone
 from bind9_parser.isc_clause_zone import clause_stmt_zone_standalone, clause_stmt_zone_series
@@ -46,6 +47,7 @@ optional_clause_stmt_set = (
         | clause_stmt_plugin_standalone
         | clause_stmt_primaries_standalone
         | clause_stmt_server_standalone
+        | clause_stmt_statistics_channels_standalone
         | clause_stmt_trusted_keys_standalone
         | clause_stmt_view_standalone
         | clause_stmt_zone_standalone
