@@ -36,7 +36,7 @@ from bind9_parser.isc_clause_dnssec_policy import \
     clause_stmt_dnssecpolicy_set, clause_stmt_dnssecpolicy_series
 
 
-class TestClauseKey(unittest.TestCase):
+class TestClauseDnssecPolicy(unittest.TestCase):
     """ Test Clause DNSSEC Policy """
 
     def test_dnssecpolicy_dnskey_ttl_passing(self):

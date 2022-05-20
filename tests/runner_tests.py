@@ -11,7 +11,7 @@ import test_clause_dyndb
 import test_clause_key
 import test_clause_logging
 import test_clause_managed_keys
-import test_clause_masters
+import test_clause_primaries
 import test_clause_options
 import test_clauses
 import test_clause_server
@@ -65,13 +65,21 @@ suite.addTests(loader.loadTestsFromModule(test_optzone))
 suite.addTests(loader.loadTestsFromModule(test_clause_acl))
 suite.addTests(loader.loadTestsFromModule(test_clause_controls))
 suite.addTests(loader.loadTestsFromModule(test_clause_dlz))
+suite.addTests(loader.loadTestsFromModule(test_clause_dnssec_policy))
 suite.addTests(loader.loadTestsFromModule(test_clause_dyndb))
+suite.addTests(loader.loadTestsFromModule(test_clause_http))
 suite.addTests(loader.loadTestsFromModule(test_clause_key))
 suite.addTests(loader.loadTestsFromModule(test_clause_logging))
 suite.addTests(loader.loadTestsFromModule(test_clause_managed_keys))
-suite.addTests(loader.loadTestsFromModule(test_clause_masters))
 suite.addTests(loader.loadTestsFromModule(test_clause_options))
+suite.addTests(loader.loadTestsFromModule(test_clause_parental_agents))
+suite.addTests(loader.loadTestsFromModule(test_clause_plugin))
+suite.addTests(loader.loadTestsFromModule(test_clause_primaries))
 suite.addTests(loader.loadTestsFromModule(test_clause_server))
+suite.addTests(loader.loadTestsFromModule(test_clause_statistics_channels))
+suite.addTests(loader.loadTestsFromModule(test_clause_tls))
+suite.addTests(loader.loadTestsFromModule(test_clause_trust_anchors))
+suite.addTests(loader.loadTestsFromModule(test_clause_trust_keys))
 suite.addTests(loader.loadTestsFromModule(test_clause_view))
 suite.addTests(loader.loadTestsFromModule(test_clause_zone))
 

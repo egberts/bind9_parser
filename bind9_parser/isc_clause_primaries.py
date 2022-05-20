@@ -1,12 +1,12 @@
 #!/usr/bin/env python3.7
 """
-File: isc_clause_masters.py
+File: isc_clause_primaries.py
 
-Clause: masters
+Clause: 'primaries'
 
-Title: Clause Statement for Master Servers
+Title: Clause Statement for Primary Servers
 
-Description: Provides master-related grammar in PyParsing engine
+Description: Provides primary-related grammar in PyParsing engine
              for ISC-configuration style
 """
 from pyparsing import OneOrMore, Group, Keyword, Optional, Word,\
@@ -19,45 +19,45 @@ from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip46_addr,\
 from bind9_parser.isc_rr import rr_domain_name_or_root
 
 
-# Quoteable masters name
-# Yes, ISC Bind9 supports period in master_name_type
-charset_master_name = srange('[A-Za-z0-9]') + '_-.'
-master_name_type = Word(charset_master_name)('master_name_type')
-master_name_type.setName('<master_name>')
-master_name_type_squotable = Word(charset_master_name + '"')
-master_name_type_dquotable = Word(charset_master_name + "'")
+# Quoteable primary name
+# Yes, ISC Bind9 supports period in primary_name_type
+charset_primary_name = srange('[A-Za-z0-9]') + '_-.'
+primary_name_type = Word(charset_primary_name)('primary_name_type')
+primary_name_type.setName('<primary_name>')
+primary_name_type_squotable = Word(charset_primary_name + '"')
+primary_name_type_dquotable = Word(charset_primary_name + "'")
 
-master_name_type_with_squote = Combine(
+primary_name_type_with_squote = Combine(
     dquote
-    - master_name_type_dquotable
+    - primary_name_type_dquotable
     + dquote
 )
 
-master_name_type_with_dquote = Combine(
+primary_name_type_with_dquote = Combine(
     squote
-    - master_name_type_squotable
+    - primary_name_type_squotable
     + squote
 )
 
-# the term masters_name used with the :
-#   * masters clause,
-#   * masters statement or
+# the term primary_name used with the :
+#   * primaries clause,
+#   * primaries statement or
 #   * also-notify statement of options/view/zone clauses.
-master_id = (
-        master_name_type_squotable
-        | master_name_type_dquotable
-        | master_name_type
-)('master_id')
+primary_id = (
+        primary_name_type_squotable
+        | primary_name_type_dquotable
+        | primary_name_type
+)('primary_id')
 
-# { ( masters
+# { ( primaries
 #     | ipv4_address [ port integer ]
 #     | ipv6_address [ port integer ]
-#     | 'masters'                      # New in 9.15.1???
+#     | 'primaries'                      # New in 9.15.1???
 #   )
 #   [ key string ];
 #   ...
 # };
-masters_element_list = (
+primaries_element_list = (
     (
         ip4_addr('addr')
         + Optional(inet_ip_port_keyword_and_number_element)
@@ -71,54 +71,54 @@ masters_element_list = (
             + semicolon
     )
     | (
-            master_id('addr')
+            primary_id('addr')
             + Optional(key_id_keyword_and_name_pair)
             + semicolon
-    )   # TODO investigate if a series of master_id is supported in masters clause
+    )   # TODO investigate if a series of primary_id is supported in primaries clause
     | (
-            master_id('addr')
+            primary_id('addr')
             + semicolon
     )
 )
 
-masters_element_series = (
+primaries_element_series = (
     OneOrMore(
         Group(    # Started indexing via list []
-            masters_element_list
+            primaries_element_list
         )
-    )('master_list')
+    )('primary_list')
 )
 
-# masters string [ port integer ]
+# primaries string [ port integer ]
 #                [ dscp integer ]
 #                {
-#                    ( masters
+#                    ( primaries
 #                      | ipv4_address [ port integer ]
 #                      | ipv6_address [ port integer ]
 #                    )
 #                    [ key string ];
 #                    ...
 #                };
-clause_stmt_masters_standalone = (
-    Keyword('masters').suppress()
+clause_stmt_primaries_standalone = (
+    Keyword('primaries').suppress()
     - Group(
-        master_id('master_id')
+        primary_id('primary_id')
         - Optional(inet_ip_port_keyword_and_number_element)
         - Optional(inet_dscp_port_keyword_and_number_element)
         - Group(
             lbrack
-            + masters_element_series('')
+            + primaries_element_series('')
             + rbrack
-        )('master_list')
+        )('primary_list')
     )
     + semicolon
-)('masters')
+)('primaries')
 
-# clause_stmt_masters_series cannot be used within 'zone' clause, use clause_stmt_masters_set instead
-clause_stmt_masters_series = (
+# clause_stmt_primaries_series cannot be used within 'zone' clause, use clause_stmt_primaries_set instead
+clause_stmt_primaries_series = (
     OneOrMore(
-            clause_stmt_masters_standalone
+            clause_stmt_primaries_standalone
     )
-)('masters')
-clause_stmt_masters_series.setName('masters <name> key <key_id>')
+)('primaries')
+clause_stmt_primaries_series.setName('primaries <name> key <key_id>')
 

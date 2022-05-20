@@ -16,7 +16,7 @@ from bind9_parser.isc_clause_key import key_id
 from bind9_parser.isc_inet import ip46_addr, \
     inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element
-from bind9_parser.isc_clause_masters import master_id
+from bind9_parser.isc_clause_primaries import primary_id
 
 
 #  Note:  Be careful of deleting any options/view/zone/server
@@ -39,7 +39,7 @@ optviewzoneserver_stmt_also_notify_element_set = (
         (
             (
                 ip46_addr('addr')
-                | master_id('master')
+                | primary_id('master')
             )
             + Optional(inet_ip_port_keyword_and_number_element)
             - Optional(inet_dscp_port_keyword_and_number_element)

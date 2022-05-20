@@ -51,7 +51,7 @@ inet_dscp_port_keyword_and_number_element = (
             dscp_port('dscp_port')
         )
     # No semicolon here
-)('')  # ('dscp_port')
+)  # ('dscp_port')
 
 # ip_port = Word(nums).setParseAction(lambda toks: int(toks[0]), max=5)
 _ip_port = Regex(r'(6553[0-5]|'
@@ -70,21 +70,21 @@ inet_ip_port_keyword_and_number_element = (
         Keyword('port').suppress()
         - ip_port('ip_port')
     # No semicolon here
-)('')
+)
 
 inet_ip_port_keyword_and_wildcard_element = (
         Keyword('port').suppress()
         - (
                 ip_port('ip_port_w')
                 | Literal('*')('ip_port_w')  # TODO: Use 'wildcard_name' to handle quotes/no-quotes '*'
-        )('')
+        )
 ) # ('')  # ('ip_port_w')
 
 # ip4s_subnet = Word(nums, min=1, max=2)
 _ip4s_subnet = Regex(r'(3[0-2]|'
                      r'[0-2][0-9]|'
                      r'[0-9])')
-ip4s_subnet = _ip4s_subnet('')
+ip4s_subnet = _ip4s_subnet
 ip4s_subnet.setName('<ip4_subnet>')
 
 ip4_addr = pyparsing_common.ipv4_address
@@ -384,7 +384,7 @@ ip46_addr_and_port_list = (
             + Optional(inet_ip_port_keyword_and_number_element)
             + semicolon
     )('ip46_addr_port')
-)('')
+)
 
 
 ### SERIES ####

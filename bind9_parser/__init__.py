@@ -42,7 +42,8 @@ from bind9_parser.isc_clause_dyndb import *
 from bind9_parser.isc_clause_key import *
 from bind9_parser.isc_clause_logging import *
 from bind9_parser.isc_clause_managed_keys import *
-from bind9_parser.isc_clause_masters import *
+from bind9_parser.isc_clause_parental_agents import *
+from bind9_parser.isc_clause_primaries import *
 from bind9_parser.isc_clause_options import *
 from bind9_parser.isc_clauses import *
 from bind9_parser.isc_clause_server import *
