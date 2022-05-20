@@ -1,6 +1,6 @@
 #!/usr/bin/env python3.7
 """
-File: isc_clause.py
+File: isc_clauses.py
 
 Clause: top-level
 
@@ -42,13 +42,13 @@ optional_clause_stmt_set = (
         | clause_stmt_trusted_keys_standalone
         | clause_stmt_view_standalone
         | clause_stmt_zone_standalone
-        )('clause_stmt_set3*')
+        )
 
 
 optional_clause_stmt_series = (
     OneOrMore(
         optional_clause_stmt_set
-    )('clause_series2*')
+    )
 )
 #  Mandatory and Optional CLAUSE statements
 

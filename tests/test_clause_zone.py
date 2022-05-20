@@ -148,6 +148,9 @@ class TestClauseZone(unittest.TestCase):
 #        test_clause_stmt_zone.ignore(cppStyleComment)
         result = clause_stmt_zone_standalone.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_clause_zone__clause_zone_standalone_passing_dict_5(self):
+        """ Clause zone; Statement zone standalone dict 5; passing mode """
         assertParserResultDictTrue(
             clause_stmt_zone_standalone,
             'zone "home" IN { type master; file "/var/lib/bind/internal/master/db.home"; allow-update { none; }; };',
@@ -158,6 +161,7 @@ class TestClauseZone(unittest.TestCase):
                             {'addr': 'none'}
                         ]
                     },
+                   'class': 'IN',
                    'file': '"/var/lib/bind/internal/master/db.home"',
                    'type': 'master',
                    'zone_name': '"home"'

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-File: test_clause.py
+File: test_clauses.py
 
-Description:  Performs unit test on the isc_clause.py source file.
+Description:  Performs unit test on the isc_clauses.py source file.
 """
 
 import unittest
 from pyparsing import ParseException, ParseBaseException
 from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
-from bind9_parser.isc_clause import \
+from bind9_parser.isc_clauses import \
     optional_clause_stmt_set,\
     optional_clause_stmt_series,\
     mandatory_clause_stmt_set,\
@@ -17,8 +17,8 @@ from bind9_parser.isc_clause import \
 
 
 class TestClauseALL(unittest.TestCase):
-
     """ Clause, All """
+
     def test_isc_clause_clause_stmt_optional_set_passing1(self):
         """ Clause, All; Statements group; optional clause 1; passing """
         test_data = [
@@ -27,31 +27,29 @@ class TestClauseALL(unittest.TestCase):
         result = optional_clause_stmt_set.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
+    def test_isc_clause_clause_stmt_optional_set_dict_passing1(self):
+        """ Clause, All; Statements group; optional clause dict 1; passing """
+        test_string = 'acl MY_BASTION_HOSTS { 4.4.4.4; 3.3.3.3; 2.2.2.2; 1.1.1.1; };'
         assertParserResultDictTrue(
             optional_clause_stmt_set,
-            test_data,
-            {'rr_class': 'ANY'}
+            test_string,
+            {'acl': [{'acl_name': 'MY_BASTION_HOSTS',
+                      'aml_series': [{'aml': [{'addr': '4.4.4.4'},
+                                              {'addr': '3.3.3.3'},
+                                              {'addr': '2.2.2.2'},
+                                              {'addr': '1.1.1.1'}]}]}]}
         )
 
-
-    """ Clause, All """
-    def test_isc_clause_clause_stmt_set_passing(self):
+    def test_isc_clause_clause_stmt_optional_set_passing(self):
         """ Clause, All; Statements group; passing """
-        test_data = [
-            'acl MY_BASTION_HOSTS { 4.4.4.4; 3.3.3.3; 2.2.2.2; 1.1.1.1; };',
-        ]
-        result = optional_clause_stmt_set.runTests(test_data, failureTests=False)
-        self.assertTrue(result[0])
+        test_string = 'acl MY_BASTION_HOSTS { 4.4.4.4; 3.3.3.3; 2.2.2.2; 1.1.1.1; };'
+        expected_result = { 'acl': [ { 'acl_name': 'MY_BASTION_HOSTS',
+             'aml_series': [ { 'aml': [ {'addr': '4.4.4.4'},
+                                        {'addr': '3.3.3.3'},
+                                        {'addr': '2.2.2.2'},
+                                        {'addr': '1.1.1.1'}]}]}]}
+        assertParserResultDictTrue(optional_clause_stmt_set, test_string, expected_result)
 
-
-    def test_isc_clause_optional_clause_stmt_series_empty_passing(self):
-        """ Clause, All; All Statements group; passing """
-        test_data = [
-            '',
-        ]
-        result = optional_clause_stmt_set.runTests(test_data, failureTests=False)
-        self.assertTrue(result[0])
-        # TODO BUG, We cannot test for an empty dictionary here, yet.
 
     def test_isc_clause_stmt_multiplezone_passing(self):
         """ Clause, All; Zone Statements group; passing """
@@ -79,50 +77,29 @@ class TestClauseALL(unittest.TestCase):
       type master;
       file "192.168.0.rev";
     };"""
-        expected_result = {
-            'zone': [
-                {
-                    'file': '"root.servers"',
-                    'type': 'hint',
-                    'zone_name': '"."'
-                },
-                {
-                    'allow_transfer': {
-                        'aml': [
-                            {'addr': '192.168.23.1'},
-                            {'addr': '192.168.23.2'}
-                        ]
-                    },
-                    'file': '"master/master.example.com"',
-                    'type': 'master',
-                    'zone_name': '"example.com"'
-                },
-                {
-                    'allow_update': {
-                        'aml': [
-                            {'addr': 'none'}
-                        ]
-                    },
-                    'file': '"master.localhost"',
-                    'type': 'master',
-                    'zone_name': '"localhost"'
-                },
-                {
-                    'allow_update': {
-                        'aml': [
-                            {'addr': 'none'}
-                        ]
-                    },
-                    'file': '"localhost.rev"',
-                    'type': 'master',
-                    'zone_name': '"0.0.127.in-addr.arpa"'
-                },
-                {
-                    'file': '"192.168.0.rev"',
-                    'type': 'master',
-                    'zone_name': '"0.168.192.IN-ADDR.ARPA"'}
-            ]
-        }
+        expected_result = { 'zones': [ { 'file': '"root.servers"',
+               'type': 'hint',
+               'zone_name': '"."'},
+             { 'allow_transfer': { 'aml': [ { 'addr': '192.168.23.1'},
+                                            { 'addr': '192.168.23.2'}]},
+               'class': 'in',
+               'file': '"master/master.example.com"',
+               'type': 'master',
+               'zone_name': '"example.com"'},
+             { 'allow_update': {'aml': [{'addr': 'none'}]},
+               'class': 'in',
+               'file': '"master.localhost"',
+               'type': 'master',
+               'zone_name': '"localhost"'},
+             { 'allow_update': {'aml': [{'addr': 'none'}]},
+               'class': 'in',
+               'file': '"localhost.rev"',
+               'type': 'master',
+               'zone_name': '"0.0.127.in-addr.arpa"'},
+             { 'class': 'in',
+               'file': '"192.168.0.rev"',
+               'type': 'master',
+               'zone_name': '"0.168.192.IN-ADDR.ARPA"'}]}
         assertParserResultDictTrue(
             optional_clause_stmt_series,
             test_string,
@@ -161,7 +138,7 @@ class TestClauseALL(unittest.TestCase):
              'controls': [{'inet': {'allow': {'aml': [{'addr': '128.0.0.10'},
                                                       {'addr': '128.0.0.11'}]},
                                     'control_server_addr': '128.0.0.9',
-                                    'ip_port_w': 8006,
+                                    'ip_port_w': '8006',
                                     'read-only': 'yes'}}],
              'dlz': [{'db_args': 'RSDMS',
                       'dlz_name': 'your_IBM_2',
@@ -197,7 +174,7 @@ class TestClauseALL(unittest.TestCase):
                                'protocol_id': 1,
                                'rr_domain': 'www1.www.example.com'}],
              'masters': [{'dscp_port': 5,
-                          'ip_port': 7553,
+                          'ip_port': '7553',
                           'master_id': 'dmz_masters',
                           'master_list': [{'addr': 'yellow_masters',
                                            'key_id': 'priv_dns_chan_key5'}]}],
@@ -228,10 +205,10 @@ class TestClauseALL(unittest.TestCase):
                                'domain': 'abc',
                                'flags': 1,
                                'protocol_id': 1}],
-             'zones': [{'zone': {'file': '"/var/lib/bind9/public/masters/db.example.com"',
-                                 'zone_name': 'red'}},
-                       {'zone': {'file': '"/var/lib/bind9/public/masters/db.green.com"',
-                                 'zone_name': 'green'}}]}
+             'zones': [{'file': '"/var/lib/bind9/public/masters/db.example.com"',
+                        'zone_name': 'red'},
+                       {'file': '"/var/lib/bind9/public/masters/db.green.com"',
+                        'zone_name': 'green'}]}
         )
 
 

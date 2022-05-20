@@ -43,7 +43,7 @@ from bind9_parser.isc_clause_logging import *
 from bind9_parser.isc_clause_managed_keys import *
 from bind9_parser.isc_clause_masters import *
 from bind9_parser.isc_clause_options import *
-from bind9_parser.isc_clause import *
+from bind9_parser.isc_clauses import *
 from bind9_parser.isc_clause_server import *
 from bind9_parser.isc_clause_trusted_keys import *
 from bind9_parser.isc_clause_view import *

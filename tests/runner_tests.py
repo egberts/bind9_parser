@@ -13,7 +13,7 @@ import test_clause_logging
 import test_clause_managed_keys
 import test_clause_masters
 import test_clause_options
-import test_clause
+import test_clauses
 import test_clause_server
 import test_clause_view
 import test_clause_zone
@@ -75,7 +75,7 @@ suite.addTests(loader.loadTestsFromModule(test_clause_server))
 suite.addTests(loader.loadTestsFromModule(test_clause_view))
 suite.addTests(loader.loadTestsFromModule(test_clause_zone))
 
-suite.addTests(loader.loadTestsFromModule(test_clause))
+suite.addTests(loader.loadTestsFromModule(test_clauses))
 # initialize a runner, pass it your suite and run it
 runner = unittest.TextTestRunner(verbosity=3)
 result = runner.run(suite)

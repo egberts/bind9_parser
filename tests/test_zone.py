@@ -37,9 +37,9 @@ from bind9_parser.isc_zone import \
 
 
 class TestZone(unittest.TestCase):
-    """ Clause zone; things found only under 'zone' clause """
+    """ Test Clause Zone; things found only under 'zone' clause """
     def test_isc_zone_stmt_check_names_passing(self):
-        """ Clause zone; Statement check-names; passing """
+        """ Test Clause Zone; Statement check-names; passing """
         test_string = [
             'check-names fail;',
             'check-names warn;',
@@ -53,18 +53,21 @@ class TestZone(unittest.TestCase):
             {'check_names': 'fail'}
         )
 
-    def test_isc_zone_stmt_check_names_failing(self):
-        """ Clause zone; Statement check-names; failing """
-        test_string = [
-            'check-names warning;',
-            'check-names failed;',
-            'check-names ignored;',
-        ]
-        result = zone_stmt_check_names.runTests(test_string, failureTests=True)
-        self.assertTrue(result[0])
+    def test_isc_zone_stmt_check_names_3_passing(self):
+        """ Test Clause Zone; Statement check-names; failing """
+
+        test_string = 'check-names warn;'
+        expected_result = {'check_names': 'warn'}
+        assertParserResultDictTrue(zone_stmt_check_names, test_string, expected_result)
+        test_string = 'check-names fail;'
+        expected_result = {'check_names': 'fail'}
+        assertParserResultDictTrue(zone_stmt_check_names, test_string, expected_result)
+        test_string = 'check-names ignore;'
+        expected_result = {'check_names': 'ignore'}
+        assertParserResultDictTrue(zone_stmt_check_names, test_string, expected_result)
 
     def test_isc_zone_stmt_delegation_only_passing(self):
-        """ Clause zone; Statement delegation-only; passing """
+        """ Test Clause Zone; Statement delegation-only; passing """
         test_string = [
             'delegation-only yes;',
         ]
@@ -77,7 +80,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_delegation_only_failing(self):
-        """ Clause zone; Statement delegation-only; failing """
+        """ Test Clause Zone; Statement delegation-only; failing """
         test_string = [
             'delegation-only Nah;',
         ]
@@ -85,13 +88,16 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_stmt_file_passing(self):
-        """ Clause zone; Statement file; passing """
+        """ Test Clause Zone; Statement file; passing """
         test_string = [
             'file "/var/lib/bind9/public/masters/db.example.org";',
             'file \'/var/lib/bind9/internal/dynamic/db.local\';',
         ]
         result = zone_stmt_file.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_zone_stmt_file_dict_passing(self):
+        """ Test Clause Zone; Statement dict file; passing """
         assertParserResultDictTrue(
             zone_stmt_file,
             'file \'/var/lib/bind9/public/slaves/db.example.org\';',
@@ -99,7 +105,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_file_failing(self):
-        """ Clause zone; Statement file; failing """
+        """ Test Clause Zone; Statement file; failing """
         test_string = [
             'file "/etc/junk-file.txt"',
         ]
@@ -107,12 +113,15 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_stmt_in_view_passing(self):
-        """ Clause zone; Statement in_view; passing """
+        """ Test Clause Zone; Statement in_view; passing """
         test_string = [
             'in-view dmz_view;',
         ]
         result = zone_stmt_in_view.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_zone_stmt_in_view_dict_passing(self):
+        """ Test Clause Zone; Statement in_view dict; passing """
         assertParserResultDictTrue(
             zone_stmt_in_view,
             'in-view dmz_view;',
@@ -120,7 +129,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_in_view_failing(self):
-        """ Clause zone; Statement in_view; failing """
+        """ Test Clause Zone; Statement in_view; failing """
         test_string = [
             'in-view /var/tmp;',
         ]
@@ -128,12 +137,15 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_stmt_zone_stmt_inline_signing_passing(self):
-        """ Clause zone; Statement zone_stmt_inline_signing; passing """
+        """ Test Clause Zone; Statement zone_stmt_inline_signing; passing """
         test_string = [
             'inline-signing no;',
         ]
         result = zone_stmt_inline_signing.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_zone_stmt_zone_stmt_inline_signing_dict_passing(self):
+        """ Test Clause Zone; Statement zone_stmt_inline_signing dict; passing """
         assertParserResultDictTrue(
             zone_stmt_inline_signing,
             'inline-signing no;',
@@ -141,21 +153,23 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_inline_signing_failing(self):
-        """ Clause zone; Statement inline_signing; failing """
+        """ Test Clause Zone; Statement inline_signing; failing """
         test_string = [
             'inline_signing "YYYY";',
         ]
         result = zone_stmt_inline_signing.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
-
     def test_isc_zone_stmt_ixfr_base_passing(self):
-        """ Clause zone; Statement ixfr-base; passing """
+        """ Test Clause Zone; Statement ixfr-base; passing """
         test_string = [
             'ixfr-base ixfr_file_basename;',
         ]
         result = zone_stmt_ixfr_base.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_zone_stmt_ixfr_base_dict_passing(self):
+        """ Test Clause Zone; Statement ixfr-base dict; passing """
         assertParserResultDictTrue(
             zone_stmt_ixfr_base,
             'ixfr-base custom_file_basename_goes_here;',
@@ -163,7 +177,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_ixfr_base_failing(self):
-        """ Clause zone; Statement ixfr_base; failing """
+        """ Test Clause Zone; Statement ixfr_base; failing """
         test_string = [
             'ixfr-base /tmp/should_not_use/subdirectory/here";',
         ]
@@ -172,7 +186,7 @@ class TestZone(unittest.TestCase):
 
 
     def test_isc_zone_stmt_ixfr_from_differences_passing(self):
-        """ Clause zone; Statement ixfr-from-differences; passing """
+        """ Test Clause Zone; Statement ixfr-from-differences; passing """
         test_string = [
             'ixfr-from-differences yes;',
         ]
@@ -185,29 +199,31 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_ixfr_from_differences_failing(self):
-        """ Clause zone; Statement ixfr_from_differences; failing """
+        """ Test Clause Zone; Statement ixfr_from_differences; failing """
         test_string = [
             'ixfr-from-differences "YYYY";',
         ]
         result = zone_stmt_ixfr_from_differences.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
-
     def test_isc_zone_stmt_journal_passing(self):
-        """ Clause zone; Statement journal; passing """
+        """ Test Clause Zone; Statement journal; passing """
         test_string = [
             'journal /var/lib/logging/deep/in/somewhere/journal.log;',
         ]
         result = zone_stmt_journal.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_zone_stmt_journal_passing(self):
+        """ Test Clause Zone; Statement journal; passing """
         assertParserResultDictTrue(
-            zone_stmt_journal,
+                zone_stmt_journal,
             'journal /var/lib/logging/deep/in/somewhere/journal.log;',
             {'journal': '/var/lib/logging/deep/in/somewhere/journal.log'}
         )
 
     def test_isc_zone_stmt_journal_failing(self):
-        """ Clause zone; Statement journal; failing """
+        """ Test Clause Zone; Statement journal; failing """
         test_string = [
             'journal "/subdire\nctory/should/not/be/used/here";',
         ]
@@ -217,7 +233,7 @@ class TestZone(unittest.TestCase):
 
     # zone_masters_set
     def test_isc_zone_stmt_masters_name_by_ipv6_passing(self):
-        """ Clause zone; Name, masters; by IPv6; passing """
+        """ Test Clause Zone; Name, masters; by IPv6; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             'fe02::1 key priv_dns_chan_key0;',
@@ -225,7 +241,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_name_by_ipv4_passing(self):
-        """ Clause zone; Name, masters; by IPv4; passing """
+        """ Test Clause Zone; Name, masters; name by IPv4; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             '4.4.4.4 key priv_dns_chan_key0;',
@@ -234,6 +250,7 @@ class TestZone(unittest.TestCase):
 
     #    @unittest.skip("skipping zone's masters_series passing")
     def test_isc_zone_stmt_masters_set_simple_passing(self):
+        """ Test Clause Zone; Name, masters set simple; by IPv4; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             'red_masters key priv_dns_chan_key1;',
@@ -243,35 +260,40 @@ class TestZone(unittest.TestCase):
             }
         )
 
-    def test_isc_zone_stmt_masters_set_simple1_passing(self):
+    def test_isc_zone_stmt_masters_set_simple_masterlabel_passing(self):
+        """ Test Clause Zone; masters name, set simple; by IPv4; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             'red_masters;',
             {'master_name': 'red_masters'}
         )
 
-    def test_isc_zone_stmt_masters_set_simple2_passing(self):
+    def test_isc_zone_stmt_masters_set_simple2_ip4_passing(self):
+        """ Test Clause Zone; masters name, set simple; by IPv4; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             '127.0.0.1;',
             {'ip4': '127.0.0.1'}
         )
 
-    def test_isc_zone_stmt_masters_set_simple3_passing(self):
+    def test_isc_zone_stmt_masters_set_simple_ip6_passing(self):
+        """ Test Clause Zone; masters name, set simple; by IPv6; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             '::1;',
             {'ip6': '::1'}
         )
 
-    def test_isc_zone_stmt_masters_set_simple4_passing(self):
+    def test_isc_zone_stmt_masters_set_simple_keyid_passing(self):
+        """ Test Clause Zone; masters name, set simple; by keyid; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             'red_masters key secret_ring_decoder;',
             {'key_id': 'secret_ring_decoder', 'master_name': 'red_masters'}
         )
 
-    def test_isc_zone_stmt_masters_set_simple5_passing(self):
+    def test_isc_zone_stmt_masters_set_simple_ip4_keyid_passing(self):
+        """ Test Clause Zone; masters name, set simple; by IP4/keyid; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             '127.0.0.1 key vinegrete;',
@@ -279,7 +301,8 @@ class TestZone(unittest.TestCase):
              'key_id': 'vinegrete'}
         )
 
-    def test_isc_zone_stmt_masters_set_simple6_passing(self):
+    def test_isc_zone_stmt_masters_set_simple_ip6_keyid_passing(self):
+        """ Test Clause Zone; masters name, set simple; by IP6/keyid; passing """
         assertParserResultDictTrue(
             zone_masters_set,
             '::1 key treasure_island;',
@@ -289,15 +312,15 @@ class TestZone(unittest.TestCase):
 
     # zone_masters_series
     def test_isc_zone_stmt_masters_series_singleset_passing(self):
-        """ Clause zone; Series, masters; Single set; passing """
+        """ Test Clause Zone; Series, masters; Single set; passing """
         assertParserResultDictTrue(
             zone_masters_series,
             'another_bastion_host_group ;',
             {'zone_master_list': [{'master_name': 'another_bastion_host_group'}]}
         )
 
-    def test_isc_zone_stmt_masters_series_singleset2_passing(self):
-        """ Clause zone; Series, masters; Single set with key; passing """
+    def test_isc_zone_stmt_masters_series_singleset_keyid_passing(self):
+        """ Test Clause Zone; Series, masters; Single set with key; passing """
         assertParserResultDictTrue(
             zone_masters_series,
             'another_bastion_host_group key priv_dns_chan_key0;',
@@ -308,7 +331,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_series_two_same_passing(self):
-        """ Clause zone; Series, masters; Single set with key; passing """
+        """ Test Clause Zone; Series, masters; Single set with key; passing """
         assertParserResultDictTrue(
             zone_masters_series,
             'another_bastion_host_group; internal_bastion_host_group;',
@@ -321,7 +344,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_series_two_mixed_passing(self):
-        """ Clause zone; Series, masters set; Two set, mixed; passing """
+        """ Test Clause Zone; Series, masters set; Two set, mixed; passing """
         assertParserResultDictTrue(
             zone_masters_series,
             'another_bastion_host_group; 128.0.0.1;',
@@ -330,7 +353,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_series_two_mixed_w_key_passing(self):
-        """ Clause zone; Series, masters set; Two set, mixed; passing """
+        """ Test Clause Zone; Series, masters set; Two set, mixed; passing """
         assertParserResultDictTrue(
             zone_masters_series,
             'another_bastion_host_group; 128.0.0.1 key ring_decoder;',
@@ -340,7 +363,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_series_passing(self):
-        """ Clause zone; Series, masters; passing """
+        """ Test Clause Zone; Series, masters; passing """
         assertParserResultDictTrue(
             zone_masters_series,
             'another_bastion_host_group key priv_dns_chan_key0; 5.5.5.5 port 6553 key secret_dmz_key;',
@@ -352,7 +375,7 @@ class TestZone(unittest.TestCase):
 
     # zone_stmt_masters
     def test_isc_zone_stmt_masters_passing(self):
-        """ Clause zone; Statement masters; passing """
+        """ Test Clause Zone; Statement masters; passing """
         test_string = [
             'masters { red_masters key priv_dns_chan_key1; };',
             'masters port 563 { ffe1::1 port 5583; };',
@@ -362,7 +385,7 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_stmt_masters_dict_passing(self):
-        """ Clause zone; Statement masters; passing """
+        """ Test Clause Zone; Statement masters; passing """
         assertParserResultDictTrue(
             zone_stmt_masters,
             'masters  { red_masters ;  };',
@@ -370,7 +393,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_dict2_passing(self):
-        """ Clause zone; Statement masters; Dict2; passing """
+        """ Test Clause Zone; Statement masters; Dict2; passing """
         assertParserResultDictTrue(
             zone_stmt_masters,
             'masters { yellow_masters key priv_dns_chan_key5; };',
@@ -380,7 +403,7 @@ class TestZone(unittest.TestCase):
 
     # zone_stmt_masters
     def test_isc_zone_stmt_masters_port_passing(self):
-        """ Clause zone; Statement masters; Port; passing """
+        """ Test Clause Zone; Statement masters; Port; passing """
         assertParserResultDictTrue(
             zone_stmt_masters,
             'masters port 7553 { black_primary; };',
@@ -389,7 +412,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_dscp_passing(self):
-        """ Clause zone; Statement masters; Dict series; passing """
+        """ Test Clause Zone; Statement masters; Dict series; passing """
         assertParserResultDictTrue(
             zone_stmt_masters,
             'masters dscp 12 { yellow_masters key priv_dns_chan_key5; dmz_public; };',
@@ -400,7 +423,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_port_dscp_passing(self):
-        """ Clause zone; Statement masters; Dict series; passing """
+        """ Test Clause Zone; Statement masters; Dict series; passing """
         assertParserResultDictTrue(
             zone_stmt_masters,
             'masters port 54 dscp 11 { yellow_masters key priv_dns_chan_key5; dmz_public; };',
@@ -412,7 +435,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_port_dscp_reversed_passing(self):
-        """ Clause zone; Statement masters; Dict series; passing """
+        """ Test Clause Zone; Statement masters; Dict series; passing """
         assertParserResultDictTrue(
             zone_stmt_masters,
             'masters dscp 12 port 55 { yellow_masters key priv_dns_chan_key5; dmz_public; };',
@@ -424,7 +447,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_dict_series2_passing(self):
-        """ Clause zone; Statement masters; Dict series; passing """
+        """ Test Clause Zone; Statement masters; Dict series; passing """
         assertParserResultDictTrue(
             zone_stmt_masters,
             'masters { yellow_masters; dmz_public2 key priv_dns_chan_key5; dmz_public1; };',
@@ -435,7 +458,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_failing(self):
-        """ Clause zone; Statement masters; failing """
+        """ Test Clause Zone; Statement masters; failing """
         test_string = [
             'masters "YYYY";',
         ]
@@ -445,7 +468,7 @@ class TestZone(unittest.TestCase):
 #  TODO: Need to investigate on the de-introduction of 'masters' statement for 'zone clause'.
 
     def test_isc_zone_statements_series_multiple_masters_passing(self):
-        """ Clause zone; Statement, multiple masters; passing """
+        """ Test Clause Zone; Statement, multiple masters; passing """
         # Only one masters statement is allowed in zone clause, so get the last one
         assertParserResultDictFalse(
             zone_statements_series,
@@ -458,7 +481,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_masters_name_by_name_passing(self):
-        """ Clause zone; Name, masters; by name; passing """
+        """ Test Clause Zone; Name, masters; by name; passing """
         assertParserResultDictTrue(
             zone_stmt_masters,
             'masters { another_bastion_host_group; };',
@@ -467,7 +490,7 @@ class TestZone(unittest.TestCase):
 
 
     def test_isc_zone_stmt_pubkey_passing(self):
-        """ Clause zone; Statement pubkey; passing """
+        """ Test Clause Zone; Statement pubkey; passing """
         test_string = [
             'pubkey 53 251;',
             'pubkey 53 251 7;',
@@ -485,7 +508,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_pubkey_failing(self):
-        """ Clause zone; Statement pubkey; failing """
+        """ Test Clause Zone; Statement pubkey; failing """
         test_string = [
             'pubkey "YYYY";',
         ]
@@ -494,7 +517,7 @@ class TestZone(unittest.TestCase):
 
 
     def test_isc_zone_stmt_server_addresses_passing(self):
-        """ Clause zone; Statement server-addresses; passing """
+        """ Test Clause Zone; Statement server-addresses; passing """
         test_string = [
             'server-addresses { 7.7.7.7; fe77::1; };',
         ]
@@ -508,7 +531,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_server_addresses_failing(self):
-        """ Clause zone; Statement server-addresses; failing """
+        """ Test Clause Zone; Statement server-addresses; failing """
         test_string = [
             'server-addresses "YYYY";',
         ]
@@ -516,7 +539,7 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_stmt_server_names_passing(self):
-        """ Clause zone; Statement server-names; passing """
+        """ Test Clause Zone; Statement server-names; passing """
         test_string = [
             'server-names { "example.com"; };',
         ]
@@ -534,7 +557,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_server_names_failing(self):
-        """ Clause zone; Statement server-names; failing """
+        """ Test Clause Zone; Statement server-names; failing """
         test_string = [
             'server-names "YYYY";',
         ]
@@ -543,7 +566,7 @@ class TestZone(unittest.TestCase):
 
 
     def test_isc_zone_stmt_type_passing(self):
-        """ Clause zone; Statement type; passing """
+        """ Test Clause Zone; Statement type; passing """
         test_string = [
             'type delegation-only;',
             'type forward;',
@@ -566,7 +589,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_type_failing(self):
-        """ Clause zone; Statement type; failing """
+        """ Test Clause Zone; Statement type; failing """
         test_string = [
             'type "YYYY";',
         ]
@@ -576,7 +599,7 @@ class TestZone(unittest.TestCase):
 
 
     def test_isc_zone_stmt_update_policy_rr_type_series_passing(self):
-        """ Clause zone; Statement update_policy_rr_type_series; passing """
+        """ Test Clause Zone; Statement update_policy_rr_type_series; passing """
         test_string = [
             'any',
             'wks hinfo txt',
@@ -593,7 +616,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_update_policy_rr_type_failing(self):
-        """ Clause zone; Statement update-policy-nonlocal; failing """
+        """ Test Clause Zone; Statement update-policy-nonlocal; failing """
         test_string = [
             'text',
             'address',
@@ -602,7 +625,7 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_stmt_update_policy_name_and_rr_type_fields_passing(self):
-        """ Clause zone; Statement update_policy_name_and_rr_type_fields; passing """
+        """ Test Clause Zone; Statement update_policy_name_and_rr_type_fields; passing """
         test_string = [
             'domain_name *',
             'example.com any',
@@ -631,7 +654,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_update_policy_matchtype_passing(self):
-        """ Clause zone; Statement update_policy_matchtype; passing """
+        """ Test Clause Zone; Statement update_policy_matchtype; passing """
         test_string = [
             '8to6-self example1.com mx',
             'external "example1.com" CAA',
@@ -661,7 +684,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_update_policy_nonlocal_passing(self):
-        """ Clause zone; Statement update_policy_nonlocal; passing """
+        """ Test Clause Zone; Statement update_policy_nonlocal; passing """
         test_string = [
             'grant local-ddns zonesub any;',
             'deny local-dyndns subdomain wks hinfo txt;',
@@ -682,7 +705,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_update_policy_nonlocal_failing(self):
-        """ Clause zone; Statement update-policy-nonlocal; failing """
+        """ Test Clause Zone; Statement update-policy-nonlocal; failing """
         test_string = [
             'local;',
             'global;',
@@ -691,7 +714,7 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_stmt_use_id_pool_passing(self):
-        """ Clause zone; Statement use-id-pool; passing """
+        """ Test Clause Zone; Statement use-id-pool; passing """
         test_string = [
             'use-id-pool yes;',
         ]
@@ -704,7 +727,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_use_id_pool_failing(self):
-        """ Clause zone; Statement use-id-pool; failing """
+        """ Test Clause Zone; Statement use-id-pool; failing """
         test_string = [
             'use-id-pool "YYYY";',
         ]
@@ -712,7 +735,7 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_statements_series_simple_passing(self):
-        """ Clause zone; Statement zone_statements_series; passing """
+        """ Test Clause Zone; Statement zone_statements_series; passing """
         assertParserResultDictTrue(
             zone_statements_series,
             'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };',
@@ -723,7 +746,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_statements_set_passing(self):
-        """ Clause zone; Statement statements_set; passing """
+        """ Test Clause Zone; Statement statements_set; passing """
         test_string = [
             'check-names fail;',
             'delegation-only yes;',
@@ -761,7 +784,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_stmt_statements_set_failing(self):
-        """ Clause zone; Statement statements_set; failing """
+        """ Test Clause Zone; Statement statements_set; failing """
         test_string = [
             'statements_set "YYYY";',
         ]
@@ -769,7 +792,7 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_statements_series_simple_passing_1(self):
-        """ Clause zone; Statement zone_statements_series 1; passing """
+        """ Test Clause Zone; Statement zone_statements_series 1; passing """
         assertParserResultDictTrue(
             zone_statements_series,
             'masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };',
@@ -780,7 +803,7 @@ class TestZone(unittest.TestCase):
         )
 
     def test_isc_zone_statements_series_passing_2(self):
-        """ Clause zone; Statement zone_statements_series 2; passing """
+        """ Test Clause Zone; Statement zone_statements_series 2; passing """
 
         test_string = """check-names fail;
             delegation-only yes;
@@ -827,7 +850,7 @@ class TestZone(unittest.TestCase):
 
 
     def test_isc_zone_stmt_statements_series_failing(self):
-        """ Clause zone; Statement statements_series; failing """
+        """ Test Clause Zone; Statement statements_series; failing """
         test_string = [
             'statements_series "YYYY";',
         ]
@@ -835,7 +858,7 @@ class TestZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_zone_stmt_statements_github_issue1(self):
-        """ Clause zone; Statement statements_series; GitHub issue #1; failing """
+        """ Test Clause Zone; Statement statements_series; GitHub issue #1; failing """
         assertParserResultDictTrue(
             zone_statements_series,
             """
