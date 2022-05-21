@@ -2,91 +2,148 @@
 """
 File: isc_trusted_keys.py
 
-Clause: trusted-keys
+Statement: trusted_keys
 
-Title: Statement for Trusted Keys
+Title: Statement statement for 'trusted-keys'
 
-Description: Provides trusted-key-related grammar in
-             PyParsing engine for ISC-configuration style
+Description: 
+
+  Used in 'view'-only clauses
+
+  Statement Grammar:
+
+    trusted-keys { 
+        string ( 
+            static-key |
+            initial-key | 
+            static-ds |
+            initial-ds )
+        integer integer integer
+        quoted_string; 
+        ... 
+        };
+
+References:
+
+  * https://egbert.net/blog/articles/dns-rr-key.html
+
 """
-from pyparsing import Word, alphanums, Group, Keyword, Literal, ZeroOrMore
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, number_type,\
-    squote, dquote, Combine, ungroup
-from bind9_parser.isc_domain import rr_domain_name_or_wildcard_type
+from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums
 
-# From now on, all new installs of ISC Bind9 should use dnssec-validation auto; in place of trusted-keys.
-# source: https://github.com/webmin/webmin/issues/617
-trusted_keyname_type = (
-    rr_domain_name_or_wildcard_type
-    | Literal('.')
-)('domain')
-trusted_keyname_type.setName('<domain_name>')
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
+        iso8601_duration, quotable_name, fqdn_name, quoted_base64, \
+        lbrack, rbrack, quoted_name, quoted_path_name, isc_boolean
 
-trusted_keyname_dquoted = Combine(
-        Literal('"').suppress()
-        - trusted_keyname_type
-        + Literal('"').suppress()
+# NOTE: If any declaration here is to be used OUTSIDE of 
+# the 'trusted_keys' clause, it should instead be defined within isc_utils.py
+
+
+#  integer - key id 
+#    range: 0-65535
+#      256 - zone-signed key
+#      257 - key-signed key
+#  command: dnssec-keygen -N
+trusted_keys_stmt_key_id_integer = (
+            Word(nums, min=1, max=5)
+        )
+
+#  integer - protocol_type
+#    range: 0-255
+#             0 = reserved
+#             1 = TLS
+#             2 = email
+#             3 = DNSSEC
+#             4 = IPSEC
+#             255 = any
+#  command: dnssec-keygen -p XXX
+#
+trusted_keys_protocol_type_integer = (
+            Word(nums, min=1, max=3)
+        )
+
+#  integer -  algorithm id
+#    range: 0-255
+#       8 - RSA-SHA256
+#       10 - RSA-SHA512
+#       13 - ECDSA-P256-SHA256
+#       14 - ECDSA-P384-SHA384
+#       15 - ED25519
+#       16 - ED448
+#  command: dnssec--keygen -a XXX
+trusted_keys_algorithm_id_integer = (
+            Word(nums, min=1, max=3)
+        )
+
+#   trusted-keys { 
+#       string ( 
+#           static-key |
+#           initial-key | 
+#           static-ds |
+#           initial-ds )
+#       integer - key id (256=zone, 257=key)
+#       integer - protocol type (3=DNS)
+#       integer - algorithm (8,10,15)
+#       quoted_string; 
+#       ... 
+#       };
+
+trusted_keys_stmt_element = (
+    (
+        Group(
+            fqdn_name('domain')
+            + trusted_keys_stmt_key_id_integer('key_id')
+            + trusted_keys_protocol_type_integer('protocol_type')
+            + trusted_keys_algorithm_id_integer('algorithm_id')
+            + quoted_base64('pubkey_base64')
+        )
+    )
+    + semicolon
 )
-# keyname_dquoted.setName('keyname_dquoted')
 
-trusted_keyname_squoted = Combine(
-        Literal("'").suppress()
-        - trusted_keyname_type
-        + Literal("'").suppress()
-)
-# keyname_dquoted.setName('keyname_squoted')
-
-trusted_key_domain_name = Group(
-    trusted_keyname_dquoted
-    | trusted_keyname_squoted
-    | trusted_keyname_type
+trusted_keys_stmt_element_series = (
+                                        ZeroOrMore(
+                                            trusted_keys_stmt_element(None)
+                                        )
 )
 
-trusted_key_flags_type = number_type('flags')
-trusted_key_flags_type.setName('<key-flags-id>')
-
-trusted_key_protocol_type = number_type('protocol_id')
-trusted_key_protocol_type.setName('<key-protocol-id>')
-
-trusted_key_algorithm_name = Word(alphanums + '-')('algorithm')
-trusted_key_algorithm_name.setName('<key-algorithm>')
-
-trusted_key_algorithm_type = number_type('algorithm_id')
-trusted_key_algorithm_type.setName('<key-algorithm-id>')
-
-
-# Secret are in base64 encoding scheme with 2-char paddings (RFC 1421)
-# Handles up to 16K encoding
-charset_key_secret_base = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/='
-charset_key_secret_base_squote_allowed = charset_key_secret_base + "'"
-charset_key_secret_base_dquote_allowed = charset_key_secret_base + '"'
-
-quoted_trusted_key_secret_type = (
-    Combine(squote + Word(charset_key_secret_base_dquote_allowed) + squote)
-    | Combine(dquote + Word(charset_key_secret_base_squote_allowed) + dquote)
-)
-quoted_trusted_key_secret_type.setName('<quoted-key-secret>')
-
-#  domain name, flags, protocol, algorithm, and the Base64
-#  representation of the key data.
-
-trusted_keys_statements_set = (
+trusted_keys_stmt_standalone = (
     Keyword('trusted-keys').suppress()
     + lbrack
-    + Group(
-        ungroup(trusted_key_domain_name)('domain')
-        + trusted_key_flags_type
-        - trusted_key_protocol_type
-        - trusted_key_algorithm_type
-        - quoted_trusted_key_secret_type
-        + semicolon
-    )('')
+    + (
+            Optional(trusted_keys_stmt_element_series)
+    )('trusted_keys*')
     + rbrack
     + semicolon
-)('trusted_keys')
+)
 
-trusted_keys_statements_series = (
-    ZeroOrMore(
-        trusted_keys_statements_set
+trusted_keys_stmt_standalone.setName(\
+    """trusted-keys { 
+        string ( 
+            static-key |
+            initial-key | 
+            static-ds |
+            initial-ds )
+        integer integer integer
+        quoted_string; 
+        ... };""")
+
+trusted_keys_stmt_set = trusted_keys_stmt_standalone
+trusted_keys_stmt_set.setName(\
+    """trusted-keys { 
+        string ( 
+            static-key |
+            initial-key | 
+            static-ds |
+            initial-ds )
+        integer integer integer
+        quoted_string; 
+        ... };""")
+
+# {0-*} statement
+trusted_keys_stmt_series = (
+    (
+        ZeroOrMore( trusted_keys_stmt_set )
     )
-)('trusted_keys')
+)
+trusted_keys_stmt_series.setName('trusted_keys <string> { ... }; ...')
+

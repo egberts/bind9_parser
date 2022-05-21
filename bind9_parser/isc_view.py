@@ -19,7 +19,7 @@ Description: Provides View-related grammar in PyParsing engine
 from pyparsing import Group, Keyword, ZeroOrMore
 from bind9_parser.isc_utils import semicolon, isc_boolean
 from bind9_parser.isc_aml import aml_nesting
-from bind9_parser.isc_trusted_keys import trusted_keys_statements_set
+from bind9_parser.isc_clause_trusted_keys import clause_stmt_trusted_keys_set
 
 
 #   match-clients { aml; } ; [ View ]

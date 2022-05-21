@@ -649,3 +649,6 @@ class TestClauseLogging(unittest.TestCase):
 #       parse_me(logging_chan_syslog_severity_element, 'severity critical;', True)
 #       parse_me(logging_chan_syslog_severity_element, 'severity debug 1;', True)
 
+
+if __name__ == '__main__':
+    unittest.main()

@@ -113,4 +113,7 @@ http furtive {
             clause_stmt_http_series,
             test_string,
             expected_result)
-    """########################################################"""
+
+
+if __name__ == '__main__':
+    unittest.main()

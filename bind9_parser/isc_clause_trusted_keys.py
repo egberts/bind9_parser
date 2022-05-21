@@ -2,27 +2,62 @@
 """
 File: isc_clause_trusted_keys.py
 
-Clause: trusted-keys
+Clause: trusted_keys
 
-Title: Clause Statement for Trusted Keys
+Title: Clause statement for 'trusted-keys'
 
-Description: Provides trusted-key-related grammar in
-             PyParsing engine for ISC-configuration style
+Description: 
+
+  Statement Grammar:
+
+    trusted-keys { 
+        string ( 
+            static-key |
+            initial-key | 
+            static-ds |
+            initial-ds )
+        integer integer integer
+        quoted_string; 
+        ... 
+        };
+
+References:
+
+  * https://egbert.net/blog/articles/dns-rr-key.html
+
 """
-from pyparsing import Word, alphanums, Group, Keyword, Literal, ZeroOrMore
-from bind9_parser.isc_utils import semicolon, lbrack, \
-    rbrack, number_type,\
-    squote, dquote, Combine
-from bind9_parser.isc_domain import rr_domain_name_or_wildcard_type
-from bind9_parser.isc_trusted_keys import trusted_keys_statements_set, \
-        trusted_keys_statements_series
+from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums
 
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
+        iso8601_duration, quotable_name, fqdn_name, quoted_base64, \
+        lbrack, rbrack, quoted_name, quoted_path_name, isc_boolean
 
-# key <key-name> { algorithm <string>; secret <key-secret>; };
-clause_stmt_trusted_keys_standalone = (
-    trusted_keys_statements_set
-)('trusted_keys')
+from bind9_parser.isc_trusted_keys import trusted_keys_stmt_set, \
+        trusted_keys_stmt_series
 
-clause_stmt_trusted_keys_series = (
-    ZeroOrMore(clause_stmt_trusted_keys_standalone)
-)('trusted_keys')
+clause_stmt_trusted_keys_standalone = trusted_keys_stmt_set
+
+clause_stmt_trusted_keys_set = trusted_keys_stmt_set
+clause_stmt_trusted_keys_set.setName(\
+    """trusted-keys { 
+        string ( 
+            static-key |
+            initial-key | 
+            static-ds |
+            initial-ds )
+        integer integer integer
+        quoted_string; 
+        ... };""")
+
+# {0-*} statement
+clause_stmt_trusted_keys_series = trusted_keys_stmt_series
+clause_stmt_trusted_keys_series.setName(\
+    """trusted-keys { 
+        string ( 
+            static-key |
+            initial-key | 
+            static-ds |
+            initial-ds )
+        integer integer integer
+        quoted_string; 
+        ... };""")

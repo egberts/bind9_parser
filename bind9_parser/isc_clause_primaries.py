@@ -99,8 +99,13 @@ primaries_element_series = (
 #                    [ key string ];
 #                    ...
 #                };
+
+primary_keyword = (
+        Keyword('primaries').suppress()
+        ^ Keyword('masters').suppress()
+        )
 clause_stmt_primaries_standalone = (
-    Keyword('primaries').suppress()
+    primary_keyword
     - Group(
         primary_id('primary_id')
         - Optional(inet_ip_port_keyword_and_number_element)

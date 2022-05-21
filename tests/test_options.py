@@ -573,3 +573,6 @@ deny-answer-addresses {
         self.assertTrue(result[0])
 
 
+if __name__ == '__main__':
+    unittest.main()
+

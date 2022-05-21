@@ -26,6 +26,18 @@ I built a complete parser that will work on version 4.9 to 9.15.  Why did I name
 it Bind9-parser?  Because I started out only to cover Bind version 9.0 to 9.15.
 I later expanded it to cover 4.9 on up.
 
+# Quick HOWTO
+
+To take your `named.conf` file and output a Pythonized variable containing ALL
+of the settings found:
+
+```shell
+bin/dump-named-conf.py /etc/bind/named.conf
+```
+
+To install this package, consult README.install.md
+
+
 # Features
 
 Features:

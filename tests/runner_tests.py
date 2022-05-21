@@ -19,6 +19,7 @@ import test_clause_options
 import test_clauses
 import test_clause_server
 import test_clause_statistics_channels
+import test_clause_trusted_keys
 import test_clause_view
 import test_clause_zone
 import test_domain
@@ -56,7 +57,6 @@ suite.addTests(loader.loadTestsFromModule(test_options))
 suite.addTests(loader.loadTestsFromModule(test_server))
 suite.addTests(loader.loadTestsFromModule(test_trusted_keys))
 suite.addTests(loader.loadTestsFromModule(test_view))
-suite.addTests(loader.loadTestsFromModule(test_viewzone))
 suite.addTests(loader.loadTestsFromModule(test_zone))
 
 suite.addTests(loader.loadTestsFromModule(test_optview))
@@ -65,6 +65,7 @@ suite.addTests(loader.loadTestsFromModule(test_optviewzone))
 suite.addTests(loader.loadTestsFromModule(test_optviewzoneserver))
 suite.addTests(loader.loadTestsFromModule(test_optzone))
 
+suite.addTests(loader.loadTestsFromModule(test_viewzone))
 
 suite.addTests(loader.loadTestsFromModule(test_clause_acl))
 suite.addTests(loader.loadTestsFromModule(test_clause_controls))

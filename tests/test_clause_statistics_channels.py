@@ -84,4 +84,7 @@ statistics-channels { inet 127.0.0.8; inet 127.0.0.9 port 856; };
             clause_stmt_statistics_channels_series,
             test_string,
             expected_result)
-    """########################################################"""
+
+
+if __name__ == '__main__':
+    unittest.main()

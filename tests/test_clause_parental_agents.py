@@ -192,3 +192,6 @@ parental-agents tunneled_office port 853 dscp 5 {
             test_string,
             expected_result)
 
+
+if __name__ == '__main__':
+    unittest.main()

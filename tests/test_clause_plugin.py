@@ -112,5 +112,8 @@ plugin query "../../../filter-aaaa.so" { filter-aaaa yes; };"""
             clause_stmt_plugin_series,
             test_string,
             expected_result)
-    """########################################################"""
+
+
+if __name__ == '__main__':
+    unittest.main()
 

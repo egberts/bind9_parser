@@ -205,7 +205,7 @@ dnssec-policy enterprise {
             clause_stmt_dnssecpolicy_series,
             test_string,
             expected_result)
-    """########################################################"""
 
-        # result = clause_stmt_key_series.runTests(test_data, failureTests=True)
-        # self.assertTrue(result[0])
+
+if __name__ == '__main__':
+    unittest.main()
