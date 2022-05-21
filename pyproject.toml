@@ -32,5 +32,5 @@ doc = [ ]
 [project.urls]
 Documentation = "https://github.com/egberts/bind9_parser"
 Source = "https://github.com/egberts/bind9_parser"
-Changelog = "https://github.com/egberts/bind9_parser/ChangeLog"
+Changelog = "https://github.com/egberts/bind9_parser/CHANGES"
 

@@ -32,7 +32,37 @@ To take your `named.conf` file and output a Pythonized variable containing ALL
 of the settings found:
 
 ```shell
-bin/dump-named-conf.py /etc/bind/named.conf
+bin/dump-named-conf.py examples/named-conf/named-oracle.conf
+```
+and the output of the Python array variable is:
+```console
+{'logging': [{'category_group': [{'categories': ['default_syslog'],
+                                  'category_group_name': 'queries'}]}],
+ 'options': [{'allow_transfer': {'aml': [{'addr': '127.0.1.1/24'}]},
+              'datasize': [2098],
+              'directory': '"/var/named"',
+              'forward': 'only',
+              'forwarders': {'forwarders_list': [{'addr': '99.11.33.44'}]},
+              'recursion': 'no',
+              'transfers_in': 10,
+              'transfers_per_ns': 2}],
+ 'zones': [{'file': '"db.cities.zn"',
+            'type': 'master',
+            'zone_name': '"cities.zn"'},
+           {'file': '"db.127.cities.zn"',
+            'type': 'master',
+            'zone_name': '"0.0.127.in-addr.arpa"'},
+           {'file': '"db.cities.zn.rev"',
+            'type': 'master',
+            'zone_name': '"168.192.in-addr.arpa"'},
+           {'file': '"slave/db.sales.doc"',
+            'masters_zone': {'zone_master_list': [{'ip4': '192.168.1.151'}]},
+            'type': 'slave',
+            'zone_name': '"sales.doc.com"'},
+           {'file': '"slave/db.sales.doc.rev"',
+            'masters_zone': {'zone_master_list': [{'ip4': '192.168.1.151'}]},
+            'type': 'slave',
+            'zone_name': '"168.192.in-addr.arpa"'}]}
 ```
 
 To install this package, consult README.install.md

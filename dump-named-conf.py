@@ -265,14 +265,20 @@ if __name__ == '__main__':
 #    pp.__diag__.enable("warn_on_multiple_string_args_to_oneof")
 
 
-    print("Start: Is the library quiet?")
-    result = my_clauses.parseString(toplevel_config, parseAll=True)
-    print("End: Is the library quiet?")
+    if args.debug:
+        print("Start: Is the library quiet?")
 
-    print('len(result):', len(result))
-    print('\nPlain print(result):')
-    result.pprint()
-    print('result:', result.asDict())
+    result = my_clauses.parseString(toplevel_config, parseAll=True)
+
+    if args.debug:
+        print("End: Is the library quiet?")
+
+    if g_verbosity > 1:
+      print('len(result):', len(result))
+      print('\nPlain print(result):')
+    if g_verbosity > 0:
+        result.pprint()
+        print('result:', result.asDict())
     import pprint
     pp = pprint.PrettyPrinter(width=2, compact=False, indent=1)
     print('\nprint(result.asDict()):')
