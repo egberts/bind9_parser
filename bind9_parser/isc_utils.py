@@ -173,18 +173,26 @@ charset_keysecret_squotable = charset_keysecret_base + '"'
 keysecret_base = Word(charset_keysecret_base, max=32767)
 keysecret_dquotable = Combine(Char('"') + Word(charset_keysecret_dquotable, max=32765) + Char('"'))
 keysecret_squotable = Combine(Char("'") + Word(charset_keysecret_squotable, max=32765) + Char("'"))
+
+# key_secret is being obsoleted, use quoteable_key_secret instead
 key_secret = (
         keysecret_squotable
         ^ keysecret_dquotable
         ^ keysecret_base
 )('key_secret')
 key_secret.setName('<secret_string>')
+quotable_key_secret = key_secret
+quotable_key_secret.setName('<quotable_key_secret')
+quoted_key_secret = (
+    keysecret_squotable
+    ^ keysecret_dquotable
+)('key_secret')
+quoted_key_secret.setName('<quoted_key_secret')
 g_expose_secrets = False
 
 charset_key_id_base = alphanums + '_-'
 charset_key_id_dquotable = charset_key_id_base + "'"
 charset_key_id_squotable = charset_key_id_base + '"'
-
 key_id_base = Word(charset_key_id_base, max=62)
 key_id_dquotable = Combine(Char('"') + Word(charset_key_id_dquotable, max=64) + Char('"'))
 key_id_squotable = Combine(Char("'") + Word(charset_key_id_squotable, max=64) + Char("'"))
@@ -211,6 +219,26 @@ key_id_keyword_and_name_element = (
         + semicolon
 )  # propagate 'key_id' ResultsName up from 'key_id' parser element.
 key_id_keyword_and_name_element.setName('"key" <key_id>;')
+
+# <base-64-char> 	:: <alpha> | <decimal-digit> | "+" | "/" | "=" ;
+charset_base64 = alphanums + '+/'  # excluded '=' for later end enforcement
+base64_base = Word(charset_base64, min=1, max=8096) + '=='  # exactly two equal ('=') symbols for a terminator
+base64_base.setName('<base64>')
+
+base64_base_squotable = Word(charset_base64 + "='")
+base64_base_dquotable = Word(charset_base64 + '="')
+
+quoted_base64 = (
+    base64_base_squotable
+    ^ base64_base_dquotable
+)
+quoted_base64.setName('<quoted_base64>')
+quotable_base64 = (
+    base64_base_squotable
+    ^ base64_base_dquotable
+    ^ base64_base
+)
+quotable_base64.setName('<quotable_base64>')
 
 # Quoteable view name
 # view_name can begin with a digit/alpha/certain-symbol

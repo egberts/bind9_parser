@@ -26,6 +26,7 @@ from bind9_parser.isc_clause_primaries import clause_stmt_primaries_standalone
 from bind9_parser.isc_clause_server import clause_stmt_server_standalone
 from bind9_parser.isc_clause_statistics_channels import clause_stmt_statistics_channels_standalone
 from bind9_parser.isc_clause_tls import clause_stmt_tls_standalone
+from bind9_parser.isc_clause_trust_anchors import clause_stmt_trust_anchors_standalone
 from bind9_parser.isc_clause_trusted_keys import clause_stmt_trusted_keys_standalone
 from bind9_parser.isc_clause_view import clause_stmt_view_standalone
 from bind9_parser.isc_clause_zone import clause_stmt_zone_standalone, clause_stmt_zone_series
@@ -50,6 +51,7 @@ optional_clause_stmt_set = (
         | clause_stmt_server_standalone
         | clause_stmt_statistics_channels_standalone
         | clause_stmt_tls_standalone
+        | clause_stmt_trust_anchors_standalone
         | clause_stmt_trusted_keys_standalone
         | clause_stmt_view_standalone
         | clause_stmt_zone_standalone
