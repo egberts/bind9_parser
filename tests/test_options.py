@@ -236,20 +236,34 @@ deny-answer-addresses {
                                    {'directory': '\'/etc/bind/\''})
 
     def test_isc_options_stmt_disable_algorithms_passing(self):
-        assertParserResultDictTrue(options_stmt_disable_algorithms,
-                                   'disable-algorithms example.com { sha512; cbc32; };',
-                                   {
-                                       'disable_algorithms': [
-                                           {
-                                               'algorithm_list': [
-                                                   'sha512',
-                                                   'cbc32'
-                                               ],
-                                               'domain_name': 'example.com'
-                                           },
-                                       ]
-                                   }
-                                   )
+        assertParserResultDictTrue(
+            options_stmt_disable_algorithms,
+            'disable-algorithms . { sha512; cbc32; };',
+            {'disable_algorithms': [{'algorithm_list': ['sha512', 'cbc32'],
+                                     'domain_name': '.'}]}
+        )
+
+    def test_isc_options_stmt_disable_algorithms_2_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_disable_algorithms,
+            'disable-algorithms example.com { sha512; cbc32; };',
+            {'disable_algorithms': [{'algorithm_list': ['sha512', 'cbc32'],
+                                     'domain_name': 'example.com'},
+                                    {'algorithm_list': ['cbc128'],
+                                     'domain_name': 'yahoo.com'}]}
+        )
+    def test_isc_options_stmt_disable_algorithms_3_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_disable_algorithms,
+            'disable-algorithms example.com { sha512; cbc32; };',
+            'disable-algorithms yahoo.com { GOST; };',
+            {'disable_algorithms': [{'algorithm_list': ['sha512', 'cbc32'],
+                                     'domain_name': 'example.com'},
+                                    {'algorithm_list': ['cbc128'],
+                                     'domain_name': 'yahoo.com'}]}
+        )
+
+    def test_isc_options_stmt_disable_algorithms_4_passing(self):
         assertParserResultDictTrue(options_multiple_stmt_disable_algorithms,
                                    'disable-algorithms example.com { sha512; cbc32; }; disable-algorithms yahoo.com { cbc128; };',
                                    {

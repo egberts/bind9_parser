@@ -134,9 +134,14 @@ zone_masters_series = (
 
 # 'masters' clause has a name field for the 1st argument;
 #     'masters' statement in the zone clause does not have a <master_name> field but it has 'port' or 'dscp'
+primaries_keyword = (
+        Keyword('primaries').suppress()
+        ^ Keyword('masters').suppress()
+        )
+
 zone_stmt_masters = (
     Group(
-        Keyword('masters').suppress()  # if we could have a lookahead of 'masters {';
+        primaries_keyword  # if we could have a lookahead of 'primaries {';
         - (
             (
                 lbrack

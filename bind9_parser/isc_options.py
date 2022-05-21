@@ -197,10 +197,10 @@ options_stmt_directory = (
 options_stmt_disable_algorithms = (
     Keyword('disable-algorithms').suppress()
     + Group(
-        domain_generic_fqdn('domain_name')
+        fqdn_name('domain_name')
         + lbrack
         + OneOrMore(
-            Word(domain_charset_alphanums_dash_underscore, max=63)('')
+            fqdn_name('')
             + semicolon
         )('algorithm_list')
         + rbrack
@@ -212,7 +212,7 @@ options_stmt_disable_algorithms = (
 options_stmt_disable_ds_digests = (
     Keyword('disable-ds-digests').suppress()
     + Group(
-        domain_generic_fqdn
+        fqdn_name('domain_name')
         + lbrack
         + OneOrMore(
             Word(domain_charset_alphanums_dash_underscore, max=63)
