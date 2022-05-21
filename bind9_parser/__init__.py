@@ -50,6 +50,7 @@ from bind9_parser.isc_clause_options import *
 from bind9_parser.isc_clauses import *
 from bind9_parser.isc_clause_server import *
 from bind9_parser.isc_clause_statistics_channels import *
+from bind9_parser.isc_clause_tls import *
 from bind9_parser.isc_clause_trusted_keys import *
 from bind9_parser.isc_clause_view import *
 from bind9_parser.isc_clause_zone import *

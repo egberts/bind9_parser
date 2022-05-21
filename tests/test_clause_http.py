@@ -80,7 +80,7 @@ http private {
             expected_result)
 
     def test_clause_stmt_http_series_passing(self):
-        """ Test Clause HTTP; DNSKEY TTL; passing """
+        """ Test Clause HTTP; series; passing """
         test_string = """
 http private {
     endpoints { "endpoint1"; };
