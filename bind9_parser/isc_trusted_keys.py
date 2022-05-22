@@ -95,7 +95,7 @@ trusted_keys_stmt_group_set = (
             - trusted_keys_stmt_key_id_integer('key_id')
             - trusted_keys_protocol_type_integer('protocol_type')
             - trusted_keys_algorithm_id_integer('algorithm_id')
-            - quoted_base64('pubkey_base64')
+            - ungroup(quoted_base64)('pubkey_base64')
         )
         ('trusted_keys*')  # do use '*' in 'trusted_keys' to aggregate multiple 'trusted-keys' together in one list group
     )

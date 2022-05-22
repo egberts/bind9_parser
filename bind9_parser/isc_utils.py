@@ -221,17 +221,25 @@ key_id_keyword_and_name_element = (
 key_id_keyword_and_name_element.setName('"key" <key_id>;')
 
 # <base-64-char> 	:: <alpha> | <decimal-digit> | "+" | "/" | "=" ;
-charset_base64 = alphanums + '+/'  # excluded '=' for later end enforcement
-base64_base = Word(charset_base64, min=1, max=8096) + '=='  # exactly two equal ('=') symbols for a terminator
+charset_base64 = alphanums + '+/'  # we do not allow '=' terminator(s)
+base64_base = Word(charset_base64, min=1, max=8096)
 base64_base.setName('<base64>')
 
-base64_base_squotable = Word(charset_base64 + "='")
-base64_base_dquotable = Word(charset_base64 + '="')
+base64_base_squotable = Word(charset_base64 + "'")
+base64_base_dquotable = Word(charset_base64 + '"')
 
 quoted_base64 = (
-    base64_base_squotable
-    ^ base64_base_dquotable
-)
+                    (
+                            Char('"').suppress()
+                            - base64_base
+                            - Char('"').suppress()
+                    )
+                    ^ (
+                            Char("'").suppress()
+                            - base64_base
+                            - Char("'").suppress()
+                    )
+)(None)
 quoted_base64.setName('<quoted_base64>')
 quotable_base64 = (
     base64_base_squotable

@@ -86,7 +86,7 @@ class TestTrustedKeys(unittest.TestCase):
                                'domain': '"."',
                                'key_id': '257',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"}]}
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'}]}
         )
 
     def test_isc_trusted_keys_statements_group_series_one_passing(self):
@@ -98,7 +98,7 @@ class TestTrustedKeys(unittest.TestCase):
                                'domain': '"16.172.in-addr.arpa."',
                                'key_id': '256',
                                'protocol_type': '3',
-                               'pubkey_base64': "'ZZZZZZZZZ+YYYYYYYYYYYYY/XXXXXXXXXXXXXXXX'"}]}
+                               'pubkey_base64': 'ZZZZZZZZZ+YYYYYYYYYYYYY/XXXXXXXXXXXXXXXX'}]}
             )
 
     def test_isc_trusted_keys_statements_group_series_two_passing(self):
@@ -113,12 +113,12 @@ class TestTrustedKeys(unittest.TestCase):
                                'domain': '"."',
                                'key_id': '257',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"},
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'},
                               {'algorithm_id': '15',
                                'domain': '"16.172.in-addr.arpa."',
                                'key_id': '256',
                                'protocol_type': '3',
-                               'pubkey_base64': "'ZZZZZZZZZ+YYYYYYYYYYYYY/XXXXXXXXXXXXXXXX'"}]}
+                               'pubkey_base64': 'ZZZZZZZZZ+YYYYYYYYYYYYY/XXXXXXXXXXXXXXXX'}]}
             )
 
     # trusted_keys_stmt_group_series
@@ -137,27 +137,27 @@ class TestTrustedKeys(unittest.TestCase):
                                'domain': '"."',
                                'key_id': '257',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"},
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'},
                               {'algorithm_id': '10',
                                'domain': '"."',
                                'key_id': '257',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"},
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'},
                               {'algorithm_id': '13',
                                'domain': '"."',
                                'key_id': '256',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"},
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'},
                               {'algorithm_id': '14',
                                'domain': '"."',
                                'key_id': '257',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"},
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'},
                               {'algorithm_id': '15',
                                'domain': '"."',
                                'key_id': '256',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"}]}
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'}]}
         )
 
     # trusted_keys_stmt_standalone
@@ -170,16 +170,16 @@ class TestTrustedKeys(unittest.TestCase):
                                'domain': '"."',
                                'key_id': '257',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"}]}
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'}]}
         )
 
     def test_isc_trusted_keys_statements_set_syntax_passing(self):
         """ Clause trusted_keys; Statement Series; Syntax passing mode """
         test_string = [
-            'trusted-keys { abc 1 1 1 "ASBASDASD==";};',
+            'trusted-keys { abc 1 1 1 "ASBASDASD";};',
             'trusted-keys { "." 257 3 3 "AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC";};',
             "trusted-keys { \".\" 257 3 3 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';};",
-            'trusted-keys { "." 1 243 4 "BBBBBEEEEE++++/////ASDASDASDASDASD=="; };',
+            'trusted-keys { "." 1 243 4 "BBBBBEEEEE++++/////ASDASDASDASDASD"; };',
         ]
         result = trusted_keys_stmt_set.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
@@ -187,10 +187,10 @@ class TestTrustedKeys(unittest.TestCase):
     def test_isc_trusted_keys_statements_set_multiple_passing(self):
         """ Clause trusted_keys; Statement Set multiple; passing mode """
         test_string = """trusted-keys { 
-    abc 1 1 1 "ASBASDASD==";
+    abc 1 1 1 "ASBASDASD";
     "." 257 3 3 "AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC";
     \".\" 257 3 3 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';
-    "." 1 243 4 "BBBBBEEEEE++++/////ASDASDASDASDASD==";
+    "." 1 243 4 "BBBBBEEEEE++++/////ASDASDASDASDASD";
     };
             """
         assertParserResultDictTrue(
@@ -200,22 +200,22 @@ class TestTrustedKeys(unittest.TestCase):
                                'domain': 'abc',
                                'key_id': '1',
                                'protocol_type': '1',
-                               'pubkey_base64': '"ASBASDASD=="'},
+                               'pubkey_base64': 'ASBASDASD'},
                               {'algorithm_id': '3',
                                'domain': '"."',
                                'key_id': '257',
                                'protocol_type': '3',
-                               'pubkey_base64': '"AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC"'},
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'},
                               {'algorithm_id': '3',
                                'domain': '"."',
                                'key_id': '257',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"},
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'},
                               {'algorithm_id': '4',
                                'domain': '"."',
                                'key_id': '1',
                                'protocol_type': '243',
-                               'pubkey_base64': '"BBBBBEEEEE++++/////ASDASDASDASDASD=="'}]}
+                               'pubkey_base64': 'BBBBBEEEEE++++/////ASDASDASDASDASD'}]}
         )
 
     def test_isc_trusted_keys_statements_set_passing2(self):
@@ -227,7 +227,7 @@ class TestTrustedKeys(unittest.TestCase):
                                'domain': '"."',
                                'key_id': '257',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"}]}
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'}]}
         )
 
     def test_isc_trusted_keys_statements_set_failing(self):
@@ -247,35 +247,35 @@ class TestTrustedKeys(unittest.TestCase):
         """ Clause trusted_keys; Statement Series; passing mode """
         assertParserResultDictTrue(
             trusted_keys_stmt_series,
-            'trusted-keys { abc 1 1 1 "ASBASDASD=="; second-zone.test. 2 2 2 "ASASDASDASDASD"; };' +
+            'trusted-keys { abc 1 1 1 "ASBASDASD"; second-zone.test. 2 2 2 "ASASDASDASDASD"; };' +
             "trusted-keys { \".\" 3 3 3 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';};" +
-            'trusted-keys { "." 4 4 4 "BBBBBEEEEE++++/////ASDASDASDASDASD=="; };' +
+            'trusted-keys { "." 4 4 4 "BBBBBEEEEE++++/////ASDASDASDASDASD"; };' +
             'trusted-keys { "." 5 5 5 "AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC";};',
             {'trusted_keys': [{'algorithm_id': '1',
                                'domain': 'abc',
                                'key_id': '1',
                                'protocol_type': '1',
-                               'pubkey_base64': '"ASBASDASD=="'},
+                               'pubkey_base64': 'ASBASDASD'},
                               {'algorithm_id': '2',
                                'domain': 'second-zone.test.',
                                'key_id': '2',
                                'protocol_type': '2',
-                               'pubkey_base64': '"ASASDASDASDASD"'},
+                               'pubkey_base64': 'ASASDASDASDASD'},
                               {'algorithm_id': '3',
                                'domain': '"."',
                                'key_id': '3',
                                'protocol_type': '3',
-                               'pubkey_base64': "'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'"},
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'},
                               {'algorithm_id': '4',
                                'domain': '"."',
                                'key_id': '4',
                                'protocol_type': '4',
-                               'pubkey_base64': '"BBBBBEEEEE++++/////ASDASDASDASDASD=="'},
+                               'pubkey_base64': 'BBBBBEEEEE++++/////ASDASDASDASDASD'},
                               {'algorithm_id': '5',
                                'domain': '"."',
                                'key_id': '5',
                                'protocol_type': '5',
-                               'pubkey_base64': '"AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC"'}]}
+                               'pubkey_base64': 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC'}]}
         )
 
 
