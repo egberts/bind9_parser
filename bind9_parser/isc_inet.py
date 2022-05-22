@@ -380,10 +380,14 @@ ip46_addr_list = Group(
 
 ip46_addr_and_port_list = (
     (
-            ip46_addr('addr')
-            + Optional(inet_ip_port_keyword_and_number_element)
-            + semicolon
-    )('ip46_addr_port')
+        ip46_addr('addr')
+        - Optional(
+            ungroup(
+                inet_ip_port_keyword_and_number_element
+            )('ip_port')
+        )
+        + semicolon
+    )(None)
 )
 
 
@@ -419,4 +423,3 @@ ip_addr_semicolon_series = Group(
     ip_addr_list
     + ZeroOrMore(ip_addr_list)
 )
-
