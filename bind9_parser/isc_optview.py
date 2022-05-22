@@ -672,7 +672,7 @@ optview_stmt_response_policy_element_dnsrps_enable = (
 
 optview_stmt_response_policy_element_dnsrps_options = (
     Keyword('dnsrps-options').suppress()
-    - rr_fqdn_w_absolute('dnsrps_options')  # TODO Flesh this type of string out
+    - Word(alphanums, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
     )
 
 optview_stmt_response_policy_zone_element_set = (

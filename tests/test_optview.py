@@ -986,7 +986,7 @@ class TestOptionsView(unittest.TestCase):
     zone "example.test." log yes max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no add-soa no; 
     zone "example2.test." max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no add-soa yes log yes; 
     zone "172.in-addr.arpa." add-soa no log yes max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no; 
-    } add-soa no break-dnssec no max-policy-ttl 30S min-update-interval 4w min-ns-dots 2 nsip-wait-recurse yes nsdname-wait-recurse yes qname-wait-recurse yes recursive-only yes nsip-enable yes nsdname-enable yes dnsrps-enable yes dnsrps-options unspecified_options;""",
+    } add-soa no break-dnssec no max-policy-ttl 30S min-update-interval 4w min-ns-dots 2 nsip-wait-recurse yes nsdname-wait-recurse yes qname-wait-recurse yes recursive-only yes nsip-enable yes nsdname-enable yes dnsrps-enable yes dnsrps-options unspecifiedoptions;""",
         ]
         result = optview_stmt_response_policy.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
