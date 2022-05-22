@@ -163,13 +163,17 @@ domain_fqdn.setName('<strict-fqdn>')
 domain_fqdn.setResultsName('domain_name')
 
 # Generic fully-qualified domain name (less stringent)
+# takes a 'period', 'tld', 'tld.', but never starting with a period and domain
 domain_generic_fqdn = Combine(
-    domain_generic_label
-    + ZeroOrMore(
-        Literal('.')
-        + domain_generic_label
+    Char('.')
+    | (
+        domain_generic_label
+        + ZeroOrMore(
+            Literal('.')
+            + domain_generic_label
+        )
+        + Optional(Char('.'))
     )
-    + Optional(Char('.'))
 )
 domain_generic_fqdn.setName('<generic-fqdn>')
 domain_generic_fqdn.setResultsName('domain_name')

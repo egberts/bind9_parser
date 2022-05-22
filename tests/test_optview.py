@@ -837,6 +837,13 @@ class TestOptionsView(unittest.TestCase):
             'zone grey;',
             {'zone_name': 'grey'}
         )
+    def test_isc_optview_stmt_response_policy_zone_group_empty_dot_passing(self):
+        """ Clause options/view; Statement response-policy zone group dot; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone \'.\';',
+            {'zone_name': "'.'"}
+        )
     def test_isc_optview_stmt_response_policy_zone_group_empty_squote_passing(self):
         """ Clause options/view; Statement response-policy zone group empty; passing """
         assertParserResultDictTrue(
@@ -979,7 +986,7 @@ class TestOptionsView(unittest.TestCase):
     zone "example.test." log yes max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no add-soa no; 
     zone "example2.test." max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no add-soa yes log yes; 
     zone "172.in-addr.arpa." add-soa no log yes max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no; 
-    } add-soa no break-dnssec max-policy-ttl 30S min-update-interval 4w min-ns-dots 2 nsip-wait-recurse yes nsdname-wait-recurse yes qname-wait-recurse yes recursive-only yes nsip-enable yes nsdname-enable yes dnsrps-enable yes dnsrps-options unspecified_options;""",
+    } add-soa no break-dnssec no max-policy-ttl 30S min-update-interval 4w min-ns-dots 2 nsip-wait-recurse yes nsdname-wait-recurse yes qname-wait-recurse yes recursive-only yes nsip-enable yes nsdname-enable yes dnsrps-enable yes dnsrps-options unspecified_options;""",
         ]
         result = optview_stmt_response_policy.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
