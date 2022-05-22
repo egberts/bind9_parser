@@ -209,6 +209,7 @@ zone_stmt_server_addresses = (
     + rbrack
     + semicolon
 )
+zone_stmt_server_addresses.setName('server-addresses { <ip46_addr> [ port <port_number> ]; ... };')
 
 quoted_rr_fqdn_w_absolute = (
     Combine(squote.suppress() + rr_fqdn_w_absolute + squote.suppress())
