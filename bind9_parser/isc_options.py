@@ -165,7 +165,7 @@ options_stmt_deny_answer_addresses.setName('deny-answer-addresses [ except-from 
 #     [ except-from { name_list } ]; [ Opt ]
 options_stmt_deny_answer_aliases = (
     Keyword('deny-answer-aliases').suppress()
-    + Group(
+    - Group(
         lbrack
         - OneOrMore(
             Group(
@@ -174,10 +174,10 @@ options_stmt_deny_answer_aliases = (
             )
         )
         + rbrack
-        + Optional(
+        - Optional(
             Keyword('except-from').suppress()
             + lbrack
-            + Group(
+            - Group(
                 name_type('name')
                 + semicolon
             )
@@ -475,7 +475,7 @@ options_tcp_listen_queue = (
 
 #   tkey-dhkey keyname_base key_tag; [ Opt ]
 options_tkey_dhkey_tag = number_type
-options_tkey_dhkey_tag.setName('<key_tag>')
+# options_tkey_dhkey_tag.setName('<key_tag>')  # do not do THAT!  it overwrites number_type.setName()!!!! And confuses everyone else!
 
 options_stmt_tkey_dhkey = (
     Keyword('tkey-dhkey').suppress()

@@ -16,14 +16,14 @@ from pyparsing import Group, Keyword, OneOrMore, Literal, \
 from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     squote, dquote, number_type, name_type, minute_type, seconds_type, \
     byte_type, run_me, path_name, check_options, \
-    quoted_path_name, size_spec, exclamation
+    quoted_path_name, size_spec, exclamation, iso8601_duration
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, \
     inet_ip_port_keyword_and_number_element, \
     inet_ip_port_keyword_and_wildcard_element
 from bind9_parser.isc_zone import zone_name
 from bind9_parser.isc_domain import quoted_domain_generic_fqdn, \
-    domain_generic_fqdn, rr_fqdn_w_absolute
+    domain_generic_fqdn, rr_fqdn_w_absolute, rr_domain_name_type, quotable_domain_generic_fqdn
 
 optview_stmt_acache_cleaning_interval = (
     Keyword('acache-cleaning-interval').suppress()
@@ -564,12 +564,12 @@ optview_rate_limit_options = (
 
 optview_stmt_rate_limit = (
     Keyword('rate-limit').suppress()
-    + lbrack
-    + OneOrMore(
+    - lbrack
+    - OneOrMore(
         optview_rate_limit_options
     )('rate_limit')
-    + rbrack
-    + semicolon
+    - rbrack
+    - semicolon
 )('')
 
 optview_stmt_recursion = (
@@ -578,43 +578,212 @@ optview_stmt_recursion = (
         + semicolon
 )
 
-#   response-policy { zone zone-name
-#      [ policy (given|disabled|passthru|drop|nxdomain|nodata|tcp-only| cname domain-name)
-optview_stmt_response_policy = (
-    Keyword('response-policy').suppress()
+# 'response-policy' (super-)statement
+# following 'response-policy' elements are in zone-specific-only
+optview_stmt_response_policy_element_log = (
+    Keyword('log').suppress()  # introduced in v9.11
+    - isc_boolean
+)('log')
+
+optview_stmt_response_policy_element_policy_type = (
+    Keyword('policy').suppress()
     - (
-        lbrack
-        + OneOrMore(
-            Group(
-                Keyword('zone')
-                + zone_name
-                + (
-                    Keyword('policy').suppress()
-                    + (
-                        Literal('given')
-                        | Literal('disabled')
-                        | Literal('passthru')
-                        | Literal('drop')
-                        | Literal('nxdomain')
-                        | Literal('nodata')
-                        | (
-                            Literal('tcp-only').suppress()
-                            + quoted_path_name)('tcp_only')  # when did this 2nd arg happened? first spotted v9.15.0
-                        | (Literal('cname').suppress() + rr_fqdn_w_absolute)('cname')
-                    )('policy')
-                    | (Keyword('recursive-only').suppress() - isc_boolean('recursive_only'))
-                    | (Keyword('max-policy-ttl').suppress() - seconds_type('max_policy_ttl'))
-                    | (Keyword('break-dnssec').suppress() + isc_boolean('break_dnssec'))  # first seen in 9.7.0
-                    | (Keyword('min-ns-dots').suppress() + number_type('min_ns_dots'))  # first seen in 9.7.0
-                    | (Keyword('log').suppress() + isc_boolean)('log')
-                )
-            )('')  # cannot have multiple zone names with a ListLabel here
-            + semicolon
-        )('')
+        Literal('disabled')
+        | Literal('drop')
+        | Literal('given')
+        | Literal('no-op')
+        | Literal('nodata')
+        | Literal('nxdomain')
+        | Literal('passthru')
+        | Group(
+            Literal('tcp-only').suppress()  # introduced in v9.10
+            - rr_fqdn_w_absolute('tcp_only'))  # TODO re-verify string-format needed for 'tcp-only'
+        | Group(
+            Literal('cname').suppress()  # - rr_fqdn_w_absolute('cname')
+        )
+    )('policy_type')
+)
+optview_stmt_response_policy_element_policy_type.setName("""policy [ given | disabled | passthru | drop | nxdomain | nodata | cname <fqdn> | tcp-only <string>""")
+
+# following 'response-policy' elements are in both zone-specific and global-specific
+optview_stmt_response_policy_element_add_soa = (
+    Keyword('add-soa').suppress()  # introduced in v9.14
+    - isc_boolean
+)('add_soa')
+
+optview_stmt_response_policy_element_max_policy_ttl = (
+    Keyword('max-policy-ttl').suppress()
+    - iso8601_duration('max_policy_ttl')
+    )
+
+optview_stmt_response_policy_element_min_update_interval = (
+    Keyword('min-update-interval').suppress()  # introduced in v9.12
+    - iso8601_duration('min_update_interval')
+    )
+
+optview_stmt_response_policy_element_recursive_only = (
+    Keyword('recursive-only').suppress()
+    - isc_boolean('recursive_only')
+    )
+
+optview_stmt_response_policy_element_nsip_enable = (
+    Keyword('nsip-enable').suppress()
+    - isc_boolean('nsip_enable')
+    )
+optview_stmt_response_policy_element_nsip_enable.setName('nsip-enable <boolean>')
+
+optview_stmt_response_policy_element_nsdname_enable = (
+    Keyword('nsdname-enable').suppress()
+    - isc_boolean('nsdname_enable')
+    )
+
+
+# following 'response-policy' elements are in global-specific-only
+
+optview_stmt_response_policy_element_break_dnssec = (
+    Keyword('break-dnssec').suppress()  # not found in zone-specific
+    - isc_boolean('break_dnssec')
+    )
+
+optview_stmt_response_policy_element_min_ns_dots = (
+    Keyword('min-ns-dots').suppress()
+    - number_type('min_ns_dots')
+    )
+
+optview_stmt_response_policy_element_nsip_wait_recurse = (
+    Keyword('nsip-wait-recurse').suppress()
+    - isc_boolean('nsip_wait_recurse')
+    )
+
+optview_stmt_response_policy_element_nsdname_wait_recurse = (
+    Keyword('nsdname-wait-recurse').suppress()
+    - isc_boolean('nsdname_wait_recurse')
+    )
+
+optview_stmt_response_policy_element_qname_wait_recurse = (
+    Keyword('qname-wait-recurse').suppress()
+    - isc_boolean('qname_wait_recurse')
+    )
+
+optview_stmt_response_policy_element_dnsrps_enable = (
+    Keyword('dnsrps-enable').suppress()
+    - isc_boolean('dnsrps_enable')
+    )
+
+optview_stmt_response_policy_element_dnsrps_options = (
+    Keyword('dnsrps-options').suppress()
+    - rr_fqdn_w_absolute('dnsrps_options')  # TODO Flesh this type of string out
+    )
+
+optview_stmt_response_policy_zone_element_set = (
+    (
+        optview_stmt_response_policy_element_log  # added v9.11 (zone-specific only)
+        | optview_stmt_response_policy_element_policy_type # added v9.14 (zone-specific only)
+        | optview_stmt_response_policy_element_add_soa
+        | optview_stmt_response_policy_element_max_policy_ttl 
+        | optview_stmt_response_policy_element_min_update_interval  # added v9.12
+        | optview_stmt_response_policy_element_recursive_only
+        | optview_stmt_response_policy_element_nsip_enable  # added v9.12
+        | optview_stmt_response_policy_element_nsdname_enable  # added v9.12
+        )
+    )
+optview_stmt_response_policy_zone_element_set.setName('[ log <boolean> ] [ policy <string> ] [ add-soa <boolean> ]')
+
+optview_stmt_response_policy_zone_group_set = (
+    (
+        Keyword('zone').suppress()
+        - (
+            quotable_domain_generic_fqdn('zone_name')
+            - ZeroOrMore(optview_stmt_response_policy_zone_element_set)
+            - semicolon
+        )
+    )
+)
+optview_stmt_response_policy_zone_group_set.setName("""
+        zone string 
+        [ add-soa boolean ]  # v9.14
+        [ log boolean ]  # v9.11
+        [ max-policy-ttl duration ] 
+        [ min-update-interval duration ]   # 9.12
+        [ policy ( cname | disabled   # cname used to take a string @9.8
+          | drop | given | no-op   # drop @ v9.10
+          | nodata | nxdomain 
+          | passthru | tcp-only quoted_string ) ]  # tcp-only @ v9.10
+        [ recursive-only boolean ]
+        [ nsip-enable boolean ]  # v9.12
+        [ nsdname-enable boolean ];  # v9.12""")
+
+optview_stmt_response_policy_zone_group_series = (
+    ZeroOrMore(
+        optview_stmt_response_policy_zone_group_set
+    )
+)
+optview_stmt_response_policy_global_element_set = (
+    (
+        # reusing some elements from zone-specific above
+            optview_stmt_response_policy_element_add_soa  # added v9.14
+            | optview_stmt_response_policy_element_max_policy_ttl
+            | optview_stmt_response_policy_element_min_update_interval  # added v9.12
+            | optview_stmt_response_policy_element_recursive_only
+            | optview_stmt_response_policy_element_nsip_enable  # added v9.12
+            | optview_stmt_response_policy_element_nsdname_enable  # added v9.12
+            # every elements below is global-specific only
+            | optview_stmt_response_policy_element_min_ns_dots  # global-specific only
+            | optview_stmt_response_policy_element_break_dnssec  # global-specific only
+            | optview_stmt_response_policy_element_nsip_wait_recurse  # added v9.11
+            | optview_stmt_response_policy_element_nsdname_wait_recurse  # added v9.16?
+            | optview_stmt_response_policy_element_qname_wait_recurse  # added v9.10
+            | optview_stmt_response_policy_element_dnsrps_enable  # added v9.12
+            | optview_stmt_response_policy_element_dnsrps_options  # added v9.12
+    )
+)
+
+optview_stmt_response_policy_global_element_series = (
+    ZeroOrMore(
+        optview_stmt_response_policy_global_element_set
+    )
+)
+
+optview_stmt_response_policy = (
+    Group(
+        Keyword('response-policy').suppress()
+        - lbrack
+        - optview_stmt_response_policy_zone_group_series
         + rbrack
-    )('response_policy')
-    + semicolon
-)('')
+        - optview_stmt_response_policy_global_element_series
+        + semicolon
+    )
+)('response_policy')
+optview_stmt_response_policy.setName("""
+response-repolicy { #    response-policy { 
+#        zone string 
+#        [ add-soa boolean ]  # v9.14
+#        [ log boolean ]  # v9.11
+#        [ max-policy-ttl duration ] 
+#        [ min-update-interval duration ]   # 9.12
+#        [ policy ( cname | disabled   # cname used to take a string @9.8
+#          | drop | given | no-op   # drop @ v9.10
+#          | nodata | nxdomain 
+#          | passthru | tcp-only quoted_string ) ]  # tcp-only @ v9.10
+#        [ recursive-only boolean ]
+#        [ nsip-enable boolean ]  # v9.12
+#        [ nsdname-enable boolean ];  # v9.12
+#         ... 
+#        } 
+#        [ add-soa boolean ]   # v9.14
+#        [ break-dnssec boolean ]
+#        [ max-policy-ttl duration ]
+#        [ min-update-interval duration ]  # v9.12
+#        [ min-ns-dots integer ]
+#        [ nsip-wait-recurse boolean ]  # v9.11
+#        [ nsdname-wait-recurse boolean ]  # v9.16?
+#        [ qname-wait-recurse boolean ]  # v9.10
+#        [ recursive-only boolean ]
+#        [ nsip-enable boolean ]  # v9.12
+#        [ nsdname-enable boolean ]  # v9.12
+#        [ dnsrps-enable boolean ]  # v9.12
+#        [ dnsrps-options { unspecified-text } ]  # v9.12
+#        ;};""")
 
 #  rfc2308-type1 <boolean>; [ Opt View ]
 optview_stmt_rfc2308_type1 = (

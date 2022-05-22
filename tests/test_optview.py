@@ -54,6 +54,11 @@ from bind9_parser.isc_optview import \
     optview_stmt_query_source,\
     optview_stmt_rate_limit, \
     optview_stmt_recursion, \
+    optview_stmt_response_policy_element_log, \
+    optview_stmt_response_policy_element_policy_type, \
+    optview_stmt_response_policy_zone_element_set, \
+    optview_stmt_response_policy_zone_group_set, \
+    optview_stmt_response_policy_global_element_set, \
     optview_stmt_response_policy, \
     optview_stmt_rfc2308_type1,\
     optview_stmt_root_delegation_only, \
@@ -822,60 +827,186 @@ class TestOptionsView(unittest.TestCase):
         )
 
     # XXXX optview_stmt_response_policy
+
+    # Focus on within the curly '{}' braces (per-zone) basis 'zone_element'
+    # these zone-specific elements do not have semicolon separator, except at the end
+    def test_isc_optview_stmt_response_policy_zone_group_empty_passing(self):
+        """ Clause options/view; Statement response-policy zone group empty; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone grey;',
+            {'zone_name': 'grey'}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_empty_squote_passing(self):
+        """ Clause options/view; Statement response-policy zone group empty; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone \'grey\';',
+            {'zone_name': "'grey'"}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_empty_dquote_passing(self):
+        """ Clause options/view; Statement response-policy zone group empty; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone "www.template.test.";',
+            {'zone_name': '"www.template.test."'}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_add_soa_passing(self):
+        """ Clause options/view; Statement response-policy zone group 'add-soa'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone red add-soa yes;',
+            {'add_soa': ['yes'], 'zone_name': 'red'}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_log_passing(self):
+        """ Clause options/view; Statement response-policy zone group 'log'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone blue log yes;',
+            {'log': ['yes'],
+             'zone_name': 'blue'}
+        )
+
+    def test_isc_optview_stmt_response_policy_zone_group_max_policy_ttl_passing(self):
+        """ Clause options/view; Statement response-policy zone group 'max-policy-ttl'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone green max-policy-ttl 1W3D;',
+            {'max_policy_ttl': '1W3D',
+             'zone_name': 'green'}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_min_update_interval_passing(self):
+        """ Clause options/view; Statement response-policy zone group 'min-update-interval'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone yellow min-update-interval 3H;',
+            {'min_update_interval': '3H',
+             'zone_name': 'yellow'}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_policy_0_arg_passing(self):
+        """ Clause options/view; Statement response-policy zone group 'policy' 0-arg; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone black policy given;',
+            {'policy_type': ['given'],
+             'zone_name': 'black'}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_policy_1_arg_passing(self):
+        """ Clause options/view; Statement response-policy zone group 'policy' 1-arg; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone white policy tcp-only an_unknown_string;',
+            {'policy_type': [{'tcp_only': 'an_unknown_string'}],
+             'zone_name': 'white'}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_recursive_only_passing(self):
+        """ Clause options/view; Statement response-policy zone group 'recursive-only'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone pink recursive-only yes;',
+            {'recursive_only': 'yes',
+             'zone_name': 'pink'}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_nsip_enable_passing(self):
+        """ Clause options/view; Statement response-policy zone group 'nsip-enable'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone green nsip-enable yes;',
+            {'nsip_enable': 'yes',
+             'zone_name': 'green'}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_nsdname_enable_passing(self):
+        """ Clause options/view; Statement response-policy zone group 'nsdname-enable'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone purple nsdname-enable yes;',
+            {'nsdname_enable': 'yes',
+             'zone_name': 'purple'}
+        )
+    def test_isc_optview_stmt_response_policy_zone_group_complex_passing(self):
+        """ Clause options/view; Statement response-policy zone group complex; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_zone_group_set,
+            'zone purple nsip-enable yes policy tcp-only some_string nsdname-enable yes;',
+            {'nsdname_enable': 'yes',
+             'nsip_enable': 'yes',
+             'policy_type': [{'tcp_only': 'some_string'}],
+             'zone_name': 'purple'}
+        )
+
+    # For 'response-policy', global elements pertains to outside the curly '{}' or non-zone-specific attributes.
+    # these global elements do not have semicolon separators, until at the end of 'response-policy' statement.
+    def test_isc_optview_stmt_response_policy_global_element_add_soa_passing(self):
+        """ Clause options/view; Statement response-policy global element 'add-soa'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_global_element_set,
+            'add-soa yes',
+            {'add_soa': ['yes']}
+        )
+    def test_isc_optview_stmt_response_policy_global_element_break_dnssec_passing(self):
+        """ Clause options/view; Statement response-policy global element 'break-dnssec'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy_global_element_set,
+            'break-dnssec yes',
+            {'break_dnssec': 'yes'}
+        )
+
     def test_isc_optview_stmt_response_policy_passing(self):
         """ Clause options/view; Statement response-policy; passing """
+
         test_string = [
-            'response-policy { zone white policy given; };',
-            'response-policy { zone red recursive-only yes; };',
+            'response-policy { zone white add-soa yes; };',
+            'response-policy { zone white log yes; };',
             'response-policy { zone dmz max-policy-ttl 60; };',
-            'response-policy { zone orange break-dnssec yes; };',
-            'response-policy { zone green min-ns-dots 1; };',
-            'response-policy { zone white policy given; };',
-            'response-policy { zone brown policy disabled; };',
-            'response-policy { zone black policy passthru; };',
-            'response-policy { zone yellow policy nxdomain; };',
+            'response-policy { zone dmz min-update-interval 1Y; };',
+            'response-policy { zone white policy cname; };',
+            'response-policy { zone white policy disabled; };',
+            'response-policy { zone brown policy drop; };',
+            'response-policy { zone silver policy given; };',
+            'response-policy { zone silver policy no-op; };',
             'response-policy { zone purple policy nodata; };',
-            'response-policy { zone silver policy cname example.com; };',
+            'response-policy { zone yellow policy nxdomain; };',
+            'response-policy { zone black policy passthru; };',
+            'response-policy { zone black policy tcp-only some_string; };',
+            'response-policy { zone red recursive-only yes; };',
+            'response-policy { zone red nsip-enable yes; };',
+            'response-policy { zone red nsdname-enable yes; };',
+            'response-policy { zone orange; } break-dnssec yes;',
+            'response-policy { zone green; } min-ns-dots 1;',
+            """response-policy { 
+    zone "172.in-addr.arpa." add-soa no log no max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only no nsip-enable no nsdname-enable no; 
+    zone "168.192.in-addr.arpa." add-soa yes log yes max-policy-ttl 3Y min-update-interval 20S policy cname recursive-only yes nsip-enable yes nsdname-enable yes; 
+    zone "example.test." log yes max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no add-soa no; 
+    zone "example2.test." max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no add-soa yes log yes; 
+    zone "172.in-addr.arpa." add-soa no log yes max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no; 
+    } add-soa no break-dnssec max-policy-ttl 30S min-update-interval 4w min-ns-dots 2 nsip-wait-recurse yes nsdname-wait-recurse yes qname-wait-recurse yes recursive-only yes nsip-enable yes nsdname-enable yes dnsrps-enable yes dnsrps-options unspecified_options;""",
         ]
         result = optview_stmt_response_policy.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    # optview_stmt_response_policy
+    def test_isc_optview_stmt_response_policy_minimal_passing(self):
+        """ Clause options/view; Statement response-policy minimal; passing """
         assertParserResultDictTrue(
             optview_stmt_response_policy,
-            'response-policy { ' +
-            'zone white policy given;' +
-            'zone red recursive-only yes;' +
-            'zone dmz max-policy-ttl 60;' +
-            'zone orange break-dnssec yes;' +
-            'zone green min-ns-dots 1;' +
-            'zone white policy given;' +
-            'zone brown policy disabled;' +
-            'zone black policy passthru;' +
-            'zone yellow policy nxdomain;' +
-            'zone purple policy nodata;' +
-            'zone silver policy cname example.com;' +
-            '};',
-            {
-                'response_policy': [
-                    {'policy': ['given'], 'zone_name': 'white'},
-                    {'recursive_only': 'yes', 'zone_name': 'red'},
-                    {'max_policy_ttl': 60, 'zone_name': 'dmz'},
-                    {'break_dnssec': 'yes', 'zone_name': 'orange'},
-                    {'min_ns_dots': 1, 'zone_name': 'green'},
-                    {'policy': ['given'], 'zone_name': 'white'},
-                    {'policy': ['disabled'], 'zone_name': 'brown'},
-                    {'policy': ['passthru'], 'zone_name': 'black'},
-                    {'policy': ['nxdomain'], 'zone_name': 'yellow'},
-                    {'policy': ['nodata'], 'zone_name': 'purple'},
-                    {'cname': ['example.com'], 'policy': ['example.com'], 'zone_name': 'silver'}]}
+            'response-policy { zone "white"; };',
+            {'response_policy': {'zone_name': '"white"'}}
         )
+    # XXXX optview_stmt_response_policy
+    def test_isc_optview_stmt_response_policy_minimal_zone_passing(self):
+        """ Clause options/view; Statement response-policy minimal zone; passing """
         assertParserResultDictTrue(
             optview_stmt_response_policy,
-            'response-policy { zone white policy given; };',
-            {
-                'response_policy': [
-                    {
-                        'policy': ['given'],
-                        'zone_name': 'white'}]}
+            'response-policy { zone black policy given; };',
+            {'response_policy': {'policy_type': ['given'],
+                                 'zone_name': 'black'}}
+        )
+    def test_isc_optview_stmt_response_policy_minimal_all_passing(self):
+        """ Clause options/view; Statement response-policy minimal all; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy,
+            'response-policy { zone grey; } nsip-enable yes;',
+            {'response_policy': {'nsip_enable': 'yes', 'zone_name': 'grey'}}
         )
 
     def test_isc_optview_stmt_rfc2308_type1_passing(self):
@@ -1146,15 +1277,14 @@ class TestOptionsView(unittest.TestCase):
              'query_source_v6': {'ip6_addr': 'fe08::08', 'ip_port_w': '*'},
              'rate_limit': [{'qps_scale': 5}],
              'recursion': 'yes',
-             'response_policy': [{'policy': ['given'],
-                                  'zone_name': 'white'}],
+             'response_policy': {'policy_type': ['given'],
+                                 'zone_name': 'white'},
              'rfc2308_type1': 'yes',
              'root_delegation_only': {'domains': ['name1',
                                                   'name2',
                                                   'name3']},
              'sortlist': {'aml': [{'addr': 'localhost'},
-                                  {'addr': 'localnets'}]},
-             }
+                                  {'addr': 'localnets'}]}}
         )
 
     def test_isc_optview_stmt_statements_series_failing(self):
