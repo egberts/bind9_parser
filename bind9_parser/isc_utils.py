@@ -228,7 +228,7 @@ base64_base.setName('<base64>')
 base64_base_squotable = Word(charset_base64 + "'")
 base64_base_dquotable = Word(charset_base64 + '"')
 
-quoted_base64 = (
+quoted_base64 = Combine(
                     (
                             Char('"').suppress()
                             - base64_base

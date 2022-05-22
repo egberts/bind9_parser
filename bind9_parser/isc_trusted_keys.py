@@ -28,7 +28,7 @@ References:
   * https://egbert.net/blog/articles/dns-rr-key.html
 
 """
-from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums, ungroup
+from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums, ungroup, Combine
 
 from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
         iso8601_duration, quotable_name, fqdn_name, quoted_base64, \
@@ -95,7 +95,7 @@ trusted_keys_stmt_group_set = (
             - trusted_keys_stmt_key_id_integer('key_id')
             - trusted_keys_protocol_type_integer('protocol_type')
             - trusted_keys_algorithm_id_integer('algorithm_id')
-            - ungroup(quoted_base64)('pubkey_base64')
+            - quoted_base64('pubkey_base64')
         )
         ('trusted_keys*')  # do use '*' in 'trusted_keys' to aggregate multiple 'trusted-keys' together in one list group
     )
