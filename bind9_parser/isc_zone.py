@@ -200,17 +200,15 @@ zone_stmt_pubkey = (
 #   Only used if zone type is 'static-stub'
 zone_stmt_server_addresses = (
     Keyword('server-addresses').suppress()
-    + (
-        lbrack
-        - OneOrMore(
-            Group(
-                ip46_addr_and_port_list
-            )('')
-        )('')
-        + rbrack
-    )('')
+    - lbrack
+    - OneOrMore(  # at least 1 IP address required
+        Group (
+            ip46_addr_and_port_list
+        )('server_addresses*')
+    )
+    + rbrack
     + semicolon
-)('server_addresses')
+)
 
 quoted_rr_fqdn_w_absolute = (
     Combine(squote.suppress() + rr_fqdn_w_absolute + squote.suppress())
