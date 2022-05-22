@@ -45,19 +45,12 @@ clause_stmt_trusted_keys_set.setName(\
             initial-key | 
             static-ds |
             initial-ds )
-        integer integer integer
-        quoted_string; 
+        <flags> <protocol_type> <algorithm_id>
+        <quoted_base64_string>; 
         ... };""")
 
 # {0-*} statement
 clause_stmt_trusted_keys_series = trusted_keys_stmt_series
 clause_stmt_trusted_keys_series.setName(\
-    """trusted-keys { 
-        string ( 
-            static-key |
-            initial-key | 
-            static-ds |
-            initial-ds )
-        integer integer integer
-        quoted_string; 
-        ... };""")
+    """trusted-keys { }; [ trusted-keys { ... }; ]"""
+    )

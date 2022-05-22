@@ -28,7 +28,7 @@ References:
   * https://egbert.net/blog/articles/dns-rr-key.html
 
 """
-from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums
+from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums, ungroup
 
 from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
         iso8601_duration, quotable_name, fqdn_name, quoted_base64, \
@@ -44,8 +44,10 @@ from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
 #      257 - key-signed key
 #  command: dnssec-keygen -N
 trusted_keys_stmt_key_id_integer = (
-            Word(nums, min=1, max=5)
+    Word(nums, min=1, max=5)
         )
+trusted_keys_stmt_key_id_integer.setName('<key_id_number>')
+
 
 #  integer - protocol_type
 #    range: 0-255
@@ -58,8 +60,9 @@ trusted_keys_stmt_key_id_integer = (
 #  command: dnssec-keygen -p XXX
 #
 trusted_keys_protocol_type_integer = (
-            Word(nums, min=1, max=3)
+    Word(nums, min=1, max=3)
         )
+trusted_keys_protocol_type_integer.setName('<protocol_type_id>')
 
 #  integer -  algorithm id
 #    range: 0-255
@@ -71,11 +74,11 @@ trusted_keys_protocol_type_integer = (
 #       16 - ED448
 #  command: dnssec--keygen -a XXX
 trusted_keys_algorithm_id_integer = (
-            Word(nums, min=1, max=3)
+    Word(nums, min=1, max=3)
         )
+trusted_keys_algorithm_id_integer.setName('<algorithm_id_number>')
 
-#   trusted-keys { 
-#       string ( 
+#       string (
 #           static-key |
 #           initial-key | 
 #           static-ds |
@@ -84,38 +87,38 @@ trusted_keys_algorithm_id_integer = (
 #       integer - protocol type (3=DNS)
 #       integer - algorithm (8,10,15)
 #       quoted_string; 
-#       ... 
-#       };
 
-trusted_keys_stmt_element = (
+trusted_keys_stmt_group_set = (
     (
         Group(
             fqdn_name('domain')
-            + trusted_keys_stmt_key_id_integer('key_id')
-            + trusted_keys_protocol_type_integer('protocol_type')
-            + trusted_keys_algorithm_id_integer('algorithm_id')
-            + quoted_base64('pubkey_base64')
+            - trusted_keys_stmt_key_id_integer('key_id')
+            - trusted_keys_protocol_type_integer('protocol_type')
+            - trusted_keys_algorithm_id_integer('algorithm_id')
+            - quoted_base64('pubkey_base64')
         )
+        ('trusted_keys*')  # do use '*' in 'trusted_keys' to aggregate multiple 'trusted-keys' together in one list group
     )
     + semicolon
 )
 
-trusted_keys_stmt_element_series = (
-                                        ZeroOrMore(
-                                            trusted_keys_stmt_element(None)
+#  1:1+N for things inside the 'trusted-key' curly-brace '{}' group
+trusted_keys_stmt_group_series = (
+                                        OneOrMore(
+                                            trusted_keys_stmt_group_set
                                         )
 )
+trusted_keys_stmt_group_series.setName('<domain> <integer> <integer> <integer> <base64_string>; ... ')
 
 trusted_keys_stmt_standalone = (
     Keyword('trusted-keys').suppress()
     + lbrack
-    + (
-            Optional(trusted_keys_stmt_element_series)
-    )('trusted_keys*')
+    - (
+            trusted_keys_stmt_group_series
+    )
     + rbrack
     + semicolon
 )
-
 trusted_keys_stmt_standalone.setName(\
     """trusted-keys { 
         string ( 
@@ -143,7 +146,7 @@ trusted_keys_stmt_set.setName(\
 trusted_keys_stmt_series = (
     (
         ZeroOrMore( trusted_keys_stmt_set )
-    )
+    )  # do not insert ('trusted_keys') here; we want to capture all subzones into same 'trusted_keys' defined earlier 'by group'
 )
 trusted_keys_stmt_series.setName('trusted_keys <string> { ... }; ...')
 
