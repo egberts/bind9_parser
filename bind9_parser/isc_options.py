@@ -30,24 +30,28 @@ options_stmt_acache_cleaning_interval = (
     - seconds_type('acache_cleaning_interval')
     + semicolon
 )
+options_stmt_acache_cleaning_interval.setName('acache-cleaning-interval <seconds>;')
 
 options_stmt_acache_enable = (
     Keyword('acache-enable').suppress()
     - isc_boolean('acache-enable')
     + semicolon
 )
+options_stmt_acache_enable.setName('acache-enable <boolean>;')
 
 options_stmt_answer_cookie = (
     Keyword('answer-cookie').suppress()
     - isc_boolean('answer-cookie')
     + semicolon
 )
+options_stmt_answer_cookie.setName('answer_cookie <boolean>;')
 
 options_stmt_automatic_interface_scan = (
     Keyword('automatic-interface-scan').suppress()
     - isc_boolean('automatic_interface_scan')
     + semicolon
 )
+options_stmt_automatic_interface_scan.setName('automatic-interface-scan <boolean>;')
 
 options_ip_port_list = (
     ip_port
@@ -87,6 +91,7 @@ options_stmt_bindkeys_file = (
     - quoted_path_name('bindkeys_file')
     + semicolon
 )
+options_stmt_bindkeys_file.setName('bindkeys-file <quoted-filespec>;')
 
 options_stmt_blackhole = (
         Keyword('blackhole').suppress()
@@ -94,6 +99,7 @@ options_stmt_blackhole = (
             aml_nesting('')
         )('blackhole')
 )
+options_stmt_blackhole.setName('blackhole <aml>;')
 
 
 #  cache-file <path_name>    # used for ISC internal testing
@@ -102,18 +108,21 @@ options_stmt_cache_file = (
     + quoted_path_name('cache_file')
     + semicolon
 )
+options_stmt_cache_file.setName('cache-file <quoted-filespec>;')
 
 options_stmt_coresize = (
     Keyword('coresize').suppress()
     - size_spec('coresize')
     + semicolon
 )
+options_stmt_coresize.setName('coresize <size-spec>;')
 
 options_stmt_datasize = (
     Keyword('datasize').suppress()
     - size_spec('datasize')
     + semicolon
 )
+options_stmt_datasize.setName('datasize <size-spec>;')
 
 #  deallocate-on-exit <isc_boolean>;
 options_stmt_deallocate_on_exit = (
@@ -121,6 +130,7 @@ options_stmt_deallocate_on_exit = (
     - isc_boolean('deallocate_on_exit')
     + semicolon
 )
+options_stmt_deallocate_on_exit.setName('deallocate-on-exit <boolean>;')
 
 #   deny-answer-addresses { address_match_list }
 #     [ except-from { name_list } ]; [ Opt ]
@@ -189,12 +199,14 @@ options_stmt_deny_answer_aliases = (
     )('deny_answer_aliases')
     + semicolon
 )
+options_stmt_deny_answer_aliases.setName('deny-answer-aliases [ except-from { <quotable-fqdn>; } ];')
 
 options_stmt_directory = (
     Keyword('directory').suppress()
     - quoted_path_name('directory')
     + semicolon
 )
+options_stmt_directory.setName('directory <quotable-fqdn>;')
 
 #     Keyword('deny-answer-aliases').suppress()
 #     - Group(
@@ -217,6 +229,7 @@ options_stmt_disable_algorithms = (
     )('disable_algorithms*')
     + semicolon
 )
+options_stmt_disable_algorithms.setName('disable-algorithms <quotable-fqdn> { <algorithm> ; ... };')
 
 #   disable-ds-digests domain { digest ; ... }; [ Opt ]
 options_stmt_disable_ds_digests = (
@@ -232,6 +245,7 @@ options_stmt_disable_ds_digests = (
     )
     + semicolon
 )('disable_ds_digests')
+options_stmt_disable_ds_digests.setName('disable-ds-digests <quotable-fqdn> { <algorithm> ; ... };')
 
 #  dscp <integer>;
 options_stmt_dscp = inet_dscp_port_keyword_and_number_element
@@ -242,6 +256,7 @@ options_stmt_dump_file = (
     - quoted_path_name('dump_file')
     + semicolon
 )
+options_stmt_dump_file.setName('dump-file <quoted-filespec>;')
 
 # fake-iquery <boolean.; [ Opt ]    # v8.1 to v9.0.0
 options_stmt_fake_iquery = (
@@ -249,6 +264,7 @@ options_stmt_fake_iquery = (
     - isc_boolean('fake_iquery')
     + semicolon
 )
+options_stmt_fake_iquery.setName('fake-iquery <boolean>;')
 
 # flush-zones-on-shutdown <boolean>; [ Opt ]    # v9.3+
 options_stmt_flush_zones_on_shutdown = (
@@ -256,6 +272,7 @@ options_stmt_flush_zones_on_shutdown = (
     - isc_boolean('flush_zones_on_shutdown')
     + semicolon
 )
+options_stmt_flush_zones_on_shutdown.setName('flush-zones-on-shutdown <boolean>;')
 
 # has-old-clients <boolean>; [ Opt ]    # v8.1 to v9.7.0
 options_stmt_has_old_clients = (
@@ -263,20 +280,23 @@ options_stmt_has_old_clients = (
     - isc_boolean('has_old_clients')
     + semicolon
 )
+options_stmt_has_old_clients.setName('has-old-clients <boolean>;')
 
 # hostname-statistics <boolean>; [ Opt ]  #  v8.1+, still inert
 options_stmt_hostname_statistics = (
     Keyword('hostname-statistics').suppress()
-    - isc_boolean('hostname_stiatistics')
+    - isc_boolean('hostname_statistics')
     + semicolon
 )
+options_stmt_hostname_statistics.setName('hostname-statistics <boolean>;')
 
 # hostname-statistics-max <number>; [ Opt ]  #  v8.1+, still inert
 options_stmt_hostname_statistics_max = (
     Keyword('hostname-statistics-max').suppress()
-    - isc_boolean('hostname_stiatistics_max')
+    - isc_boolean('hostname_statistics_max')
     + semicolon
 )
+options_stmt_hostname_statistics_max.setName('hostname-statistics-max <boolean>;')
 
 # interface-interval number;
 options_stmt_interface_interval = (
@@ -284,6 +304,7 @@ options_stmt_interface_interval = (
     - number_type('interface_interval')
     + semicolon
 )
+options_stmt_interface_interval.setName('interface-interval <integer>;')
 
 #   listen-on [ port ip_port ] { address_match_nosemicolon }; [Opt, lwres ]
 options_stmt_listen_on = (
@@ -293,6 +314,7 @@ options_stmt_listen_on = (
             - aml_nesting
         )
 )('listen_on')
+options_stmt_listen_on.setName('listen-on [ <port> ] { <aml>; ... };')
 
 #   listen-on-v6 [ port ip_port ] { address_match_nosemicolon }; [ Opt ]
 options_stmt_listen_on_v6 = (
@@ -302,6 +324,7 @@ options_stmt_listen_on_v6 = (
             - aml_nesting
         )
 )('listen_on_v6')
+options_stmt_listen_on_v6.setName('listen-on-v6 [ <port> ] { <aml>; ... };')
 
 # lock-file <path_name>; [ Opt ]    # Introduced in v9.15???
 options_stmt_lock_file = (
@@ -309,6 +332,7 @@ options_stmt_lock_file = (
     - quoted_path_name('lock_file')
     + semicolon
 )
+options_stmt_lock_file.setName('lock-file <quoted-filespec>;')
 
 # match-mapped-addresses ( yes | no ); [ Opt ]
 options_stmt_match_mapped_addresses = (
@@ -316,6 +340,7 @@ options_stmt_match_mapped_addresses = (
     - isc_boolean('match_mapped_addresses')
     + semicolon
 )
+options_stmt_match_mapped_addresses.setName('match-mapped-addresses <boolean>;')
 
 # max-rsa-exponent-size bits; [ Opt ]
 options_stmt_max_rsa_exponent_size = (
@@ -323,6 +348,7 @@ options_stmt_max_rsa_exponent_size = (
     - number_type('max_rsa_exponent_size')
     + semicolon
 )
+options_stmt_max_rsa_exponent_size.setName('max-rsa-exponent-size <integer>;')
 
 #  memstatistics <boolean>; [ Opt ]  # v9.5.0+
 options_stmt_memstatistics = (
@@ -330,6 +356,7 @@ options_stmt_memstatistics = (
     - isc_boolean('memstatistics')
     + semicolon
 )
+options_stmt_memstatistics.setName('memstatistics <boolean>;')
 
 #  memstatistics-file <path_name>; [ Opt ]  # v8.0 to v9.1.8; now inert
 options_stmt_memstatistics_file = (
@@ -337,6 +364,7 @@ options_stmt_memstatistics_file = (
     - quoted_path_name('memstatistics_file')
     + semicolon
 )
+options_stmt_memstatistics_file.setName('memstatistics-file <quoted-filespec>;')
 
 #  multiple-cnames <boolean>; [ Opt ]
 options_stmt_multiple_cnames = (
@@ -344,6 +372,7 @@ options_stmt_multiple_cnames = (
     - isc_boolean('multiple_cnames_boolean')
     + semicolon
 )
+options_stmt_multiple_cnames.setName('multiple-cnames <boolean>;')
 
 #  named-xfer <path_name>; [ Opt ]   Introduced in 8.1, still inert @ v9.10.3
 options_stmt_named_xfer = (
@@ -351,6 +380,7 @@ options_stmt_named_xfer = (
     - path_name('named_xfer_path_name')
     + semicolon
 )
+options_stmt_named_xfer.setName('named-xfer <quoted-filespec>;')
 
 # pid-file "path_to_file"; [ Opt ]  # v8.1+
 options_stmt_pid_file = (
@@ -358,6 +388,7 @@ options_stmt_pid_file = (
     - quoted_path_name('pid_file_path_name')
     + semicolon
 )
+options_stmt_pid_file.setName('pid-file <quoted-filespec>;')
 
 options_stmt_port = inet_ip_port_keyword_and_number_element + semicolon
 
@@ -372,6 +403,7 @@ options_stmt_prefetch = (
     )('prefetch')
     + semicolon
 )
+options_stmt_prefetch.setName('prefetch <expiry-ttl> [ <threshold-ttl> ];')
 
 #   querylog ( yes | no ); [ Opt ]
 options_stmt_querylog = (
@@ -379,6 +411,7 @@ options_stmt_querylog = (
     - isc_boolean('querylog_boolean')
     + semicolon
 )
+options_stmt_querylog.setName('querylog <boolean>;')
 
 #   random-device "device_name" ; [ Opt ]
 options_stmt_random_device = (
@@ -386,6 +419,7 @@ options_stmt_random_device = (
     - quoted_path_name('random_device_path_name')
     + semicolon
 )
+options_stmt_random_device.setName('random-device <quoted-filespec>;')
 
 #   recursing-file "path_to_file"; [ Opt ]  # v9.5.0+
 options_stmt_recursing_file = (
@@ -393,6 +427,7 @@ options_stmt_recursing_file = (
     - quoted_path_name('recursing_file_path_name')
     + semicolon
 )
+options_stmt_recursing_file.setName('recursing-file <quoted-filespec>;')
 
 #   recursive-clients number; [ Opt ]
 options_stmt_recursive_clients = (
@@ -400,6 +435,7 @@ options_stmt_recursive_clients = (
     - number_type('recursive_clients')
     + semicolon
 )
+options_stmt_recursive_clients.setName('recursive-clients <integer>;')
 
 #   resolver-query-timeout seconds ; [ Opt ]
 options_stmt_resolver_query_timeout = (
@@ -407,6 +443,7 @@ options_stmt_resolver_query_timeout = (
     - seconds_type('resolver_query_timeout')
     + semicolon
 )
+options_stmt_resolver_query_timeout.setName('resolver-query-timeout <seconds>;')
 
 #  secroots-file <path_name>; [ Opt ]    # v9.5.0+
 options_stmt_secroots_file = (
@@ -414,6 +451,7 @@ options_stmt_secroots_file = (
     - quoted_path_name('secroots_file_path_name')
     + semicolon
 )
+options_stmt_secroots_file.setName('secroots-file <quoted-filespec>;')
 
 #     serial-query-rate number; [ Opt ]
 options_stmt_serial_query_rate = (
@@ -421,6 +459,7 @@ options_stmt_serial_query_rate = (
     - number_type('serial_query_rate')
     + semicolon
 )
+options_stmt_serial_query_rate.setName('serial-query-rate <integer>;')
 
 #   server-id "server_id"; [ Opt ]
 options_stmt_server_id_name = fqdn_name('server_id_fqdn_name')
@@ -436,24 +475,28 @@ options_stmt_server_id = (
     )('server_id_name')
     + semicolon
 )
+options_stmt_server_id.setName('server-id <quoted_fqdn_name>;')
 
 options_stmt_session_keyalg = (
     Keyword('session-keyalg').suppress()
     - name_type('session_keyalg_name')
     + semicolon
 )
+options_stmt_session_keyalg.setName('session-keyalg <key_id>;')
 
 options_stmt_session_keyname = (
     Keyword('session-keyname').suppress()
     - key_id('session_keyname_name')
     + semicolon
 )
+options_stmt_session_keyname.setName('session-keyname <key_id>;')
 
 options_stmt_session_keyfile = (
     Keyword('session-keyfile').suppress()
     - quoted_path_name('session_keyfile_path_name')
     + semicolon
 )
+options_stmt_session_keyfile.setName('session-keyfile <quotable_filespec>;')
 
 #   stacksize size_in_bytes ; [ Opt ]
 options_stmt_stacksize = (
@@ -461,6 +504,7 @@ options_stmt_stacksize = (
     - size_spec('stacksize')
     + semicolon
 )
+options_stmt_stacksize.setName('stacksize <size>;')
 
 #   statistics-file path_name; [ Opt ]  # v8.0+, inert at v9.0.0
 options_stmt_statistics_file = (
@@ -468,6 +512,7 @@ options_stmt_statistics_file = (
     - quoted_path_name('statistics_file_path_name')
     + semicolon
 )
+options_stmt_statistics_file.setName('statistics-file <quotable_filespec>;')
 
 #   tcp-clients number; [ Opt ]
 options_stmt_tcp_clients = (
@@ -475,13 +520,15 @@ options_stmt_tcp_clients = (
     - number_type('tcp_clients')
     + semicolon
 )
+options_stmt_tcp_clients.setName('tcp-clients <integer>;')
 
 #   tcp-listen-queue number; [ Opt ]
-options_tcp_listen_queue = (
+options_stmt_tcp_listen_queue = (
     Keyword('tcp-listen-queue').suppress()
     - number_type('tcp_listen_queue')
     + semicolon
 )
+options_stmt_tcp_listen_queue.setName('tcp-listen-queue <integer>;')
 
 #   tkey-dhkey keyname_base key_tag; [ Opt ]
 options_tkey_dhkey_tag = number_type
@@ -495,6 +542,7 @@ options_stmt_tkey_dhkey = (
     )
     + semicolon
 )('tkey_dhkey')
+options_stmt_tkey_dhkey.setName('tkey-dhkey <hostname> [ <key-tag> ];')
 
 #   tkey-domain domainname; [ Opt ]
 options_stmt_tkey_domain = (
@@ -502,6 +550,7 @@ options_stmt_tkey_domain = (
     - quoted_domain_generic_fqdn('tkey_domain')
     + semicolon
 )
+options_stmt_tkey_domain.setName('tkey-domain <fqdn>;')
 
 #   tkey-gssapi-credential domainname; [ Opt ]
 options_stmt_tkey_gssapi_credential = (
@@ -512,6 +561,7 @@ options_stmt_tkey_gssapi_credential = (
     )('tkey_gssapi_credential')
     + semicolon
 )('')
+options_stmt_tkey_gssapi_credential.setName('tkey-gssapi-credential "<principal-name>";')
 
 #  tkey-gssapi-keytab; [ Opt ]
 options_stmt_tkey_gssapi_keytab = (
@@ -519,6 +569,7 @@ options_stmt_tkey_gssapi_keytab = (
     - quoted_path_name('tkey_gssapi_keytab_path_name')
     + semicolon
 )
+options_stmt_tkey_gssapi_keytab.setName('tkey-gssapi-keytab "<quoted-filespec>";')
 
 #   transfers-in  number; [ Opt ]
 options_stmt_transfers_in = (
@@ -526,6 +577,7 @@ options_stmt_transfers_in = (
     - number_type('transfers_in')
     + semicolon
 )
+options_stmt_transfers_in.setName('transfers-in "<integer>";')
 
 #   transfers-out number; [ Opt ]
 options_stmt_transfers_out = (
@@ -540,6 +592,7 @@ options_stmt_transfers_per_ns = (
     - number_type('transfers_per_ns')
     + semicolon
 )
+options_stmt_transfers_per_ns.setName('transfers-per_ns "<nanoseconds>";')
 
 # version_string is latest as quoted_path_name, but it's path_name for backward compatibility
 options_version_string = path_name
@@ -551,6 +604,7 @@ options_stmt_version = (
     - options_version_string('version_string')
     + semicolon
 )
+options_stmt_version.setName('version <quotable-string>;')
 
 #######  Multiple-statement support  ##############3
 options_multiple_stmt_disable_ds_digests = ZeroOrMore(
@@ -622,6 +676,7 @@ options_statements_set = (
     | options_stmt_stacksize
     | options_stmt_statistics_file
     | options_stmt_tcp_clients
+    | options_stmt_tcp_listen_queue
     | options_stmt_tkey_domain
     | options_stmt_tkey_gssapi_credential
     | options_stmt_tkey_gssapi_keytab

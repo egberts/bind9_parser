@@ -755,7 +755,7 @@ optview_stmt_response_policy = (
     )
 )('response_policy')
 optview_stmt_response_policy.setName("""
-response-repolicy { #    response-policy { 
+#    response-policy { 
 #        zone string 
 #        [ add-soa boolean ]  # v9.14
 #        [ log boolean ]  # v9.11

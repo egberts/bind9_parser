@@ -38,7 +38,7 @@ from bind9_parser.isc_options import \
     options_stmt_server_id, options_stmt_session_keyalg,\
     options_stmt_session_keyname, options_stmt_session_keyfile,\
     options_stmt_stacksize, options_stmt_statistics_file,\
-    options_stmt_tcp_clients, options_tcp_listen_queue,\
+    options_stmt_tcp_clients, options_stmt_tcp_listen_queue,\
     options_tkey_dhkey_tag, options_stmt_tkey_dhkey,\
     options_multiple_stmt_tkey_dhkey,\
     options_stmt_tkey_domain, options_stmt_tkey_gssapi_credential,\
@@ -465,7 +465,7 @@ deny-answer-addresses {
 
     def test_isc_options_stmt_tcp_listen_queue_passing(self):
         assertParserResultDictTrue(
-            options_tcp_listen_queue,
+            options_stmt_tcp_listen_queue,
             'tcp-listen-queue 3623;',
             {'tcp_listen_queue': 3623})
 
