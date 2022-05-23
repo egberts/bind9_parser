@@ -13,8 +13,8 @@ from pyparsing import Group, Keyword, Optional,\
     Literal, ZeroOrMore, CaselessLiteral
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, isc_boolean, path_name, \
     seconds_type, days_type, minute_type, quoted_path_name,\
-    size_spec, name_base
-from bind9_parser.isc_inet import ip4_addr,\
+    size_spec, name_base, fqdn_name
+from bind9_parser.isc_inet import ip4_addr, ip_port, \
     inet_ip_port_keyword_and_wildcard_element, ip6_addr,\
     inet_ip_port_keyword_and_number_element, ip46_addr_or_prefix,\
     ip4_addr_or_wildcard, ip6_addr_or_wildcard, inet_dscp_port_keyword_and_number_element
@@ -42,18 +42,23 @@ optviewzone_stmt_allow_query_on = (
     )('allow_query_on')
 )
 
+optviewzone_stmt_allow_transfer_optionals = (
+    (
+        Keyword('port').suppress()
+        - ip_port
+    )
+    | (
+        Keyword('transport').suppress()
+        - fqdn_name
+    )
+)
+
 optviewzone_stmt_allow_transfer = (
     Keyword('allow-transfer').suppress()
     - Group(
-        aml_nesting
+        ZeroOrMore(optviewzone_stmt_allow_transfer_optionals)
+        - aml_nesting
     )('allow_transfer')
-)
-
-optviewzone_stmt_allow_transfer_on = (
-    Keyword('allow-transfer-on').suppress()
-    - Group(
-        aml_nesting
-    )('allow_transfer_on')
 )
 
 optviewzone_stmt_allow_update = (
@@ -420,7 +425,6 @@ optviewzone_statements_set = (
         optviewzone_stmt_allow_notify
         | optviewzone_stmt_allow_query_on
         | optviewzone_stmt_allow_query
-        | optviewzone_stmt_allow_transfer_on
         | optviewzone_stmt_allow_transfer
         | optviewzone_stmt_allow_update_forwarding
         | optviewzone_stmt_allow_update_on

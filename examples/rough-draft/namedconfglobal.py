@@ -704,7 +704,10 @@ allow recursive queries on all addresses."""
 g_nc_keywords['allow-transfer'] = \
     {
         'default': {0: {'addr': 'any'}},
-        'validity': {'function': 'address_match_list'},
+        'validity': {
+            'port': 'optional',  # added in v9.18
+            'transport': 'optional',  # added in v9.18
+            'function': 'address_match_list'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '8.1',
         # In 8.2, only found in ['zone']['type']['master']

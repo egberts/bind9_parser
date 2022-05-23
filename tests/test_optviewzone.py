@@ -11,7 +11,6 @@ from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_allow_notify, \
     optviewzone_stmt_allow_query_on, \
     optviewzone_stmt_allow_query, \
-    optviewzone_stmt_allow_transfer_on, \
     optviewzone_stmt_allow_transfer, \
     optviewzone_stmt_allow_update_on, \
     optviewzone_stmt_allow_update_forwarding, \
@@ -57,6 +56,7 @@ from bind9_parser.isc_optviewzone import \
 
 class TestOptionsViewZone(unittest.TestCase):
     """ Clause Options/View/Zone; only under 'options', 'view', and 'zone' clause """
+
     def test_isc_optviewzone_stmt_allow_notify_passing(self):
         """ Clause options/view/zone; Statement allow-notify; passing """
         test_string = [
@@ -64,6 +64,9 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_allow_notify.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_allow_notify_2_passing(self):
+        """ Clause options/view/zone; Statement allow-notify 2; passing """
         assertParserResultDictTrue(
             optviewzone_stmt_allow_notify,
             'allow-notify { localhost; localnets; };',
@@ -73,11 +76,15 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_allow_query_on_passing(self):
         """ Clause options/view/zone; Statement allow-query-on; passing """
+
         test_string = [
             'allow-query-on { any; };',
         ]
         result = optviewzone_stmt_allow_query_on.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_allow_query_on_2_passing(self):
+        """ Clause options/view/zone; Statement allow-query-on 2; passing """
         assertParserResultDictTrue(
             optviewzone_stmt_allow_query_on,
             'allow-query-on { any; };',
@@ -91,24 +98,13 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_allow_query.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_allow_query_2_passing(self):
+        """ Clause options/view/zone; Statement allow-query 2; passing """
         assertParserResultDictTrue(
             optviewzone_stmt_allow_query,
             'allow-query { any; };',
             {'allow_query': {'aml': [{'addr': 'any'}]}}
-        )
-
-    def test_isc_optviewzone_stmt_allow_transfer_on_passing(self):
-        """ Clause options/view/zone; Statement allow-transfer-on; passing """
-        test_string = [
-            'allow-transfer-on { localhost; localnets; };',
-        ]
-        result = optviewzone_stmt_allow_transfer_on.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-        assertParserResultDictTrue(
-            optviewzone_stmt_allow_transfer_on,
-            'allow-transfer-on { localhost; localnets; };',
-            {'allow_transfer_on': {'aml': [{'addr': 'localhost'},
-                                           {'addr': 'localnets'}]}}
         )
 
     def test_isc_optviewzone_stmt_allow_transfer_passing(self):
@@ -118,6 +114,57 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_allow_transfer.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_allow_transfer_2_passing(self):
+        """ Clause options/view/zone; Statement allow-transfer 2; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_allow_transfer,
+            'allow-transfer { localhost; localnets; };',
+            {'allow_transfer': {'aml': [{'addr': 'localhost'},
+                                           {'addr': 'localnets'}]}}
+        )
+
+    def test_isc_optviewzone_stmt_allow_transfer_port_passing(self):
+        """ Clause options/view/zone; Statement allow-transfer port; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_allow_transfer,
+            'allow-transfer port 53 { localhost; localnets; };',
+            {'allow_transfer': {'aml': [{'addr': 'localhost'},
+                                        {'addr': 'localnets'}],
+                                'ip_port': '53'}}
+        )
+
+    def test_isc_optviewzone_stmt_allow_transfer_transport_passing(self):
+        """ Clause options/view/zone; Statement allow-transfer transport; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_allow_transfer,
+            'allow-transfer transport mystring { localhost; localnets; };',
+            {'allow_transfer': {'aml': [{'addr': 'localhost'},
+                                        {'addr': 'localnets'}],
+                                'fqdn_name': 'mystring'}}
+        )
+
+    def test_isc_optviewzone_stmt_allow_transfer_port_transport_passing(self):
+        """ Clause options/view/zone; Statement allow-transfer port/transport; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_allow_transfer,
+            'allow-transfer port 53 transport mystring { localhost; localnets; };',
+            {'allow_transfer': {'aml': [{'addr': 'localhost'},
+                                        {'addr': 'localnets'}],
+                                'fqdn_name': 'mystring',
+                                'ip_port': '53'}}
+        )
+
+    def test_isc_optviewzone_stmt_allow_transfer_localnet_passing(self):
+        """ Clause options/view/zone; Statement allow-transfer; passing """
+        test_string = [
+            'allow-transfer { localhost; localnets; };',
+        ]
+        result = optviewzone_stmt_allow_transfer.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_allow_transfer_localnet2_passing(self):
+        """ Clause options/view/zone; Statement allow-transfer; passing """
         assertParserResultDictTrue(
             optviewzone_stmt_allow_transfer,
             'allow-transfer { localhost; localnets; };',
@@ -132,6 +179,9 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_allow_update_on.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_allow_update_on_2_passing(self):
+        """ Clause options/view/zone; Statement allow-update; passing """
         assertParserResultDictTrue(
             optviewzone_stmt_allow_update_on,
             'allow-update-on { localhost; localnets; };',
@@ -779,11 +829,14 @@ class TestOptionsViewZone(unittest.TestCase):
             'allow-update-on { any; };',
             'allow-update { localhost; localnets; };',
             'allow-transfer { localhost; localnets; };',
+            'allow-transfer transport "transport_string" { localhost; localnets; };',
+            'allow-transfer port 53 { localhost; localnets; };',
+            'allow-transfer port 54 transport "transport_string" { localhost; localnets; };',
+            'allow-transfer transport "transport_string" port 55 { localhost; localnets; };',
             'allow-update-on { any; };',
             'allow-update { localhost; localnets; };',
             'allow-query-on { any; };',
             'allow-query { any; };',
-            'allow-transfer-on { localhost; localnets; };',
         ]
         result = optviewzone_statements_set.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
@@ -852,16 +905,13 @@ class TestOptionsViewZone(unittest.TestCase):
             'allow-update-on { any; };' +
             'allow-update { localhost; localnets; };' +
             'allow-query-on { any; };' +
-            'allow-query { any; };' +
-            'allow-transfer-on { localhost; localnets; };',
+            'allow-query { any; };',
             {'allow_notify': {'aml': [{'addr': 'localhost'},
                                       {'addr': 'localnets'}]},
              'allow_query': {'aml': [{'addr': 'any'}]},
              'allow_query_on': {'aml': [{'addr': 'any'}]},
              'allow_transfer': {'aml': [{'addr': 'localhost'},
                                         {'addr': 'localnets'}]},
-             'allow_transfer_on': {'aml': [{'addr': 'localhost'},
-                                           {'addr': 'localnets'}]},
              'allow_update': {'aml': [{'addr': 'localhost'},
                                       {'addr': 'localnets'}]},
              'allow_update_forwarding': {'aml': [{'addr': 'localhost'},
