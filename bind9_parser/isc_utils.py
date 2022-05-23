@@ -313,6 +313,31 @@ fqdn_name = (
 )('fqdn_name')
 fqdn_name.setName('<fqdn-name>')
 
+fqdn_name_squoted = Combine(
+    squote.suppress()
+    + Word(charset_fqdn_name_has_dquote)
+    + squote.suppress()
+)
+
+fqdn_name_dquoted = Combine(
+    dquote.suppress()
+    + Word(charset_fqdn_name_has_squote)
+    + dquote.suppress()
+)
+
+fqdn_name_dequoted = (
+        fqdn_name_squoted
+        | fqdn_name_dquoted
+)('fqdn_name')
+fqdn_name_dequoted.setName('<fqdn-name(dequoted)>')
+
+fqdn_name_dequotable = (
+        fqdn_name_squoted
+        | fqdn_name_dquoted
+        | fqdn_name_base
+)('fqdn_name')
+fqdn_name_dequotable.setName('<fqdn-name(dequotable)>')
+
 # Username can only contain alphanumeric characters and '_', '+', '-', or '.'.
 # Username should have between 3 and 32 characters.
 charset_krb5_username = alphanums + '-+_.'
@@ -439,6 +464,30 @@ key_id_list_series = (
 )
 key_id_list_series.setName('<key_list>;')
 
+
+#  Algorithms used by PKI
+charset_algorithm = alphanums + '-'
+algorithm_name = Word(charset_algorithm, min=1, max=32)('algorithm_name')
+algorithm_name.setName('<algorithm_name>')
+
+algorithm_name_list_set = (
+        Word(charset_algorithm, min=1, max=32)('algorithm_name')
+        - semicolon
+)
+algorithm_name_list_set.setName('<algorithm_name>;')
+
+algorithm_name_list_series = (
+    Group(
+        OneOrMore(
+            ungroup(algorithm_name)
+            - semicolon
+        )
+    )('algorithm_name')
+)
+algorithm_name_list_series.setName('<algorithm_name>; [ <algorithm_name>; ... ]')
+
+
+# Boolean support
 
 test_data_boolean_passing = [
     'yes',

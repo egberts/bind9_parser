@@ -10,11 +10,12 @@ Description: Various 'options' statement that is used
              only by 'options' clause.
 """
 from pyparsing import Group, Keyword, OneOrMore, Optional, Word,\
-    ZeroOrMore, OneOrMore, Combine, Literal
+    ZeroOrMore, OneOrMore, Combine, Literal, ungroup
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
     name_type, path_name, number_type, seconds_type, \
     isc_boolean, fqdn_name, key_id, krb5_principal_name,\
-    exclamation, quoted_path_name, squote, dquote
+    exclamation, quoted_path_name, squote, dquote, algorithm_name_list_series,\
+    fqdn_name_dequoted, fqdn_name_dequotable
 from bind9_parser.isc_inet import ip_port,\
     inet_dscp_port_keyword_and_number_element,\
     inet_ip_port_keyword_and_number_element
@@ -55,7 +56,9 @@ options_ip_port_list = (
 
 options_ip_port_series = (
     OneOrMore(
+        ungroup(
         options_ip_port_list
+        )
     )('options_ip_port_series_OneOrMore')
 )
 
@@ -193,20 +196,27 @@ options_stmt_directory = (
     + semicolon
 )
 
+#     Keyword('deny-answer-aliases').suppress()
+#     - Group(
+#         lbrack
+#         - OneOrMore(
+#             Group(
+#                 name_type('name')
+#                 + semicolon
+#             )
+#         )
+
 #   disable-algorithms domain { algorithm ; ... }; [ Opt ]
 options_stmt_disable_algorithms = (
     Keyword('disable-algorithms').suppress()
-    + Group(
-        fqdn_name('domain_name')
-        + lbrack
-        + OneOrMore(
-            fqdn_name('')
-            + semicolon
-        )('algorithm_list')
+    - Group(
+        fqdn_name_dequotable('domain_name')
+        - lbrack
+        - algorithm_name_list_series
         + rbrack
-    )
+    )('disable_algorithms*')
     + semicolon
-)('disable_algorithms')
+)
 
 #   disable-ds-digests domain { digest ; ... }; [ Opt ]
 options_stmt_disable_ds_digests = (

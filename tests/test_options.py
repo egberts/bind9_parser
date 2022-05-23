@@ -7,7 +7,7 @@ Description:  Performs unit test on the isc_options.py source file.
 
 import unittest
 from bind9_parser.isc_utils import unit_test_booleans, assertParserResultDict,\
-    assertParserResultDictTrue, assertParserResultDictFalse
+    assertParserResultDictTrue, assertParserResultDictFalse, algorithm_name_list_series
 from bind9_parser.isc_options import \
     options_stmt_acache_cleaning_interval,options_stmt_acache_enable,\
     options_stmt_answer_cookie, options_stmt_automatic_interface_scan,\
@@ -72,33 +72,44 @@ class TestOptions(unittest.TestCase):
 
     def test_isc_options_stmt_acache_cleaning_interval_passing(self):
         """ Clause options; Statement acache-cleaning-interface; passing mode """
-        assertParserResultDict(options_stmt_acache_cleaning_interval,
-                  'acache-cleaning-interval 15;',
-                               {'acache_cleaning_interval':  15},
-                               True)
+        assertParserResultDict(
+            options_stmt_acache_cleaning_interval,
+            'acache-cleaning-interval 15;',
+            {'acache_cleaning_interval':  15}
+            )
         assertParserResultDictTrue(options_stmt_acache_cleaning_interval,
                                    'acache-cleaning-interval 123;',
                                    {'acache_cleaning_interval': 123})
 
-    def test_isc_options_stmt_avoid_v4_udp_ports_passing(self):
-        """ Clause options; Statement avoid-v4-udp-ports; passing mode """
-        assertParserResultDict(options_stmt_avoid_v4_udp_ports,
-                  'avoid-v4-udp-ports { 15; 43; 50; };',
-                               {'avoid_v4_udp_ports': [15, 43, 50]},
-                               True)
-        assertParserResultDictTrue(options_stmt_avoid_v4_udp_ports,
-                                   'avoid-v4-udp-ports { 54; 123; };',
-                                   {'avoid_v4_udp_ports': [54, 123]})
+    def test_isc_options_stmt_avoid_v4_udp_ports_3port_passing(self):
+        """ Clause options; Statement avoid-v4-udp-ports 3-port; passing mode """
+        assertParserResultDict(
+            options_stmt_avoid_v4_udp_ports,
+            'avoid-v4-udp-ports { 15; 43; 50; };',
+            {'avoid_v4_udp_ports': ['15', '43', '50']})
 
-    def test_isc_options_stmt_avoid_v6_udp_ports_passing(self):
-        """ Clause options; Statement avoid-v4-udp-ports; passing mode """
-        assertParserResultDict(options_stmt_avoid_v6_udp_ports,
-                  'avoid-v6-udp-ports { 15; 43; 50; };',
-                               {'avoid_v6_udp_ports': [15, 43, 50]},
+    def test_isc_options_stmt_avoid_v4_udp_ports_2port_passing(self):
+        """ Clause options; Statement avoid-v4-udp-ports 2-port; passing mode """
+        assertParserResultDictTrue(
+            options_stmt_avoid_v4_udp_ports,
+            'avoid-v4-udp-ports { 54; 123; };',
+            {'avoid_v4_udp_ports': ['54', '123']}
+            )
+
+    def test_isc_options_stmt_avoid_v6_udp_ports_3port_passing(self):
+        """ Clause options; Statement avoid-v6-udp-ports 3-port; passing mode """
+        assertParserResultDict(
+            options_stmt_avoid_v6_udp_ports,
+            'avoid-v6-udp-ports { 15; 43; 50; };',
+            {'avoid_v6_udp_ports': ['15', '43', '50']},
                                True)
-        assertParserResultDictTrue(options_stmt_avoid_v6_udp_ports,
-                                   'avoid-v6-udp-ports { 54; 123; };',
-                                   {'avoid_v6_udp_ports': [54, 123]})
+
+    def test_isc_options_stmt_avoid_v6_udp_ports_2port_passing(self):
+        """ Clause options; Statement avoid-v6-udp-ports 2-port; passing mode """
+        assertParserResultDictTrue(
+            options_stmt_avoid_v6_udp_ports,
+            'avoid-v6-udp-ports { 54; 123; };',
+            {'avoid_v6_udp_ports': ['54', '123']})
 
     def test_isc_options_stmt_bindkeys_file(self):
         """ Clause options; Statement bindkeys-file; passing mode """
@@ -239,72 +250,59 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_disable_algorithms,
             'disable-algorithms . { sha512; cbc32; };',
-            {'disable_algorithms': [{'algorithm_list': ['sha512', 'cbc32'],
+            {'disable_algorithms': [{'algorithm_name': ['sha512', 'cbc32'],
                                      'domain_name': '.'}]}
         )
 
     def test_isc_options_stmt_disable_algorithms_2_passing(self):
         assertParserResultDictTrue(
             options_stmt_disable_algorithms,
-            'disable-algorithms example.com { sha512; cbc32; };',
-            {'disable_algorithms': [{'algorithm_list': ['sha512', 'cbc32'],
-                                     'domain_name': 'example.com'},
-                                    {'algorithm_list': ['cbc128'],
-                                     'domain_name': 'yahoo.com'}]}
+            'disable-algorithms "example.com." { sha512; };',
+            {'disable_algorithms': [{'algorithm_name': ['sha512'],
+                                     'domain_name': 'example.com.'}]}
         )
     def test_isc_options_stmt_disable_algorithms_3_passing(self):
         assertParserResultDictTrue(
             options_stmt_disable_algorithms,
-            'disable-algorithms example.com { sha512; cbc32; };',
-            'disable-algorithms yahoo.com { GOST; };',
-            {'disable_algorithms': [{'algorithm_list': ['sha512', 'cbc32'],
-                                     'domain_name': 'example.com'},
-                                    {'algorithm_list': ['cbc128'],
-                                     'domain_name': 'yahoo.com'}]}
+            'disable-algorithms \'172.in-addr.arpa.\' { aes256; sha-1; rsa; };',
+            {'disable_algorithms': [{'algorithm_name': ['aes256',
+                                                        'sha-1',
+                                                        'rsa'],
+                                     'domain_name': '172.in-addr.arpa.'}]}
         )
 
     def test_isc_options_stmt_disable_algorithms_4_passing(self):
-        assertParserResultDictTrue(options_multiple_stmt_disable_algorithms,
-                                   'disable-algorithms example.com { sha512; cbc32; }; disable-algorithms yahoo.com { cbc128; };',
-                                   {
-                                       'disable_algorithms': [
-                                           {
-                                               'algorithm_list': [
-                                                   'sha512',
-                                                   'cbc32'
-                                               ],
-                                               'domain_name': 'example.com'
-                                           },
-                                           {
-                                               'algorithm_list': [
-                                                   'cbc128'
-                                               ],
-                                               'domain_name': 'yahoo.com'
-                                           }
-                                       ]
-                                   }
-                                   )
+        assertParserResultDictTrue(
+            options_multiple_stmt_disable_algorithms,
+            'disable-algorithms example.com { sha512; cbc32; }; disable-algorithms yahoo.com { cbc128; };',
+            {'disable_algorithms': [{'algorithm_name': ['sha512', 'cbc32'],
+                                     'domain_name': 'example.com'},
+                                    {'algorithm_name': ['cbc128'],
+                                     'domain_name': 'yahoo.com'},
+                                    [{'algorithm_name': ['sha512',
+                                                         'cbc32'],
+                                      'domain_name': 'example.com'},
+                                     {'algorithm_name': ['cbc128'],
+                                      'domain_name': 'yahoo.com'}]]}
+        )
 
-    def test_isc_options_stmt_part_disable_ds_digests_passing(self):
+    def test_isc_options_stmt_part_disable_ds_digests_1_passing(self):
         assertParserResultDictTrue(
             options_stmt_disable_ds_digests,
             'disable-ds-digests example.com { hmac; cbc32; };',
-            {
-                'disable_ds_digests': [
-                    {'digest_list': ['hmac', 'cbc32']},
-                ]
-            }
+            {'disable_ds_digests': [{'digest_list': ['hmac', 'cbc32'],
+                                     'domain_name': 'example.com'}]}
             )
+
+    def test_isc_options_stmt_part_disable_ds_digests_passing(self):
         assertParserResultDictTrue(
             options_multiple_stmt_disable_ds_digests,
             'disable-ds-digests example.com { hmac; cbc32; };'\
                 'disable-ds-digests bing.com { crc32; };',
-            {
-                'disable_ds_digests': [
-                    {'digest_list': ['hmac', 'cbc32']},
-                    {'digest_list': ['crc32']}
-                ]
-            }
+            {'disable_ds_digests': [{'digest_list': ['hmac', 'cbc32'],
+                                     'domain_name': 'example.com'},
+                                    {'digest_list': ['crc32'],
+                                     'domain_name': 'bing.com'}]}
             )
 
     def test_isc_options_stmt_dump_file_passing(self):
@@ -324,7 +322,7 @@ deny-answer-addresses {
                         'aml': [
                             {'addr': '127.0.0.1'}
                         ],
-                        'ip_port': 553
+                        'ip_port': '553'
                     },
                 ]
             }
@@ -335,19 +333,10 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_multiple_stmt_listen_on,
             'listen-on port 553 { 127.0.0.1;}; listen-on port 1553 { 192.168.1.1; };',
-            {
-                'listen_on': [
-                    {
-                        'aml': [
-                            {'addr': '127.0.0.1'}
-                        ],
-                        'ip_port': 553
-                    },
-                    {
-                        'aml': [
-                            {'addr': '192.168.1.1'}
-                        ],
-                        'ip_port': 1553}]}
+            {'listen_on': [{'aml': [{'addr': '127.0.0.1'}],
+                            'ip_port': '553'},
+                           {'aml': [{'addr': '192.168.1.1'}],
+                            'ip_port': '1553'}]}
         )
 
     def test_isc_options_stmt_listen_on3_passing(self):
@@ -396,7 +385,7 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_port,
             'port 32111;',
-            {'ip_port': 32111})
+            {'ip_port': '32111'})
 
     def test_isc_options_stmt_prefetch_passing(self):
         assertParserResultDictTrue(

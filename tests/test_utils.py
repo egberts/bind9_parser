@@ -12,7 +12,8 @@ from bind9_parser.isc_utils import assertParserResultDictTrue,\
     view_name, view_name_dquotable, view_name_squotable, \
     zone_name, zone_name_dquotable, zone_name_squotable, \
     fqdn_name, krb5_principal_name, \
-    filename_base, size_spec, path_name, \
+    filename_base, size_spec, path_name, algorithm_name,\
+    algorithm_name_list_set, algorithm_name_list_series, \
     key_id_list_series
 
 
@@ -473,7 +474,8 @@ class TestConfigUtils(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_utils_inline_comments_passing(self):
-        test_data = """
+
+        test_string = """
         abc; // CPP-style comment
         def /* C-comment */ ;  # bash-styled
         ghi;"""
@@ -483,9 +485,41 @@ class TestConfigUtils(unittest.TestCase):
         new_key_id_series.ignore(pythonStyleComment)
         new_key_id_series.setWhitespaceChars(' \t')
         assertParserResultDictTrue(new_key_id_series,
-                                        test_data,
+                                        test_string,
                                         expected_result,
                                         'Unable to handle inline comments.')
+
+    def test_isc_utils_algorithm_name_passing(self):
+        """ ISC Utilities; Type algorithm_name; passing """
+        test_string = 'SHA512'
+        expected_result = {'algorithm_name': 'SHA512'}
+        assertParserResultDictTrue(
+            algorithm_name,
+            test_string,
+            expected_result)
+
+    def test_isc_utils_algorithm_name_set_passing(self):
+        """ ISC Utilities; Type algorithm_name_list_set; passing """
+        test_string = 'SHA512;'
+        expected_result = {'algorithm_name': 'SHA512'}
+        assertParserResultDictTrue(
+            algorithm_name_list_set,
+            test_string,
+            expected_result)
+
+    def test_isc_utils_algorithm_name_series_passing(self):
+        """ ISC Utilities; Type algorithm_name_list_series; passing """
+        test_string = 'SHA512; sha-128; dsa; rsa; ED448; ED25519;'
+        expected_result = { 'algorithm_name': [ 'SHA512',
+                      'sha-128',
+                      'dsa',
+                      'rsa',
+                      'ED448',
+                      'ED25519']}
+        assertParserResultDictTrue(
+            algorithm_name_list_series,
+            test_string,
+            expected_result)
 
 
 if __name__ == '__main__':
