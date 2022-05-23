@@ -8,8 +8,8 @@ Description:  Performs unit test on the isc_optview.py source file.
 import unittest
 from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
 from bind9_parser.isc_optview import \
-    optview_stmt_acache_cleaning_interval,\
-    optview_stmt_acache_enable,\
+    optview_stmt_acache_cleaning_interval, \
+    optview_stmt_acache_enable, \
     optview_stmt_additional_from_auth, \
     optview_stmt_additional_from_cache, \
     optview_stmt_allow_new_zones, \
@@ -19,7 +19,7 @@ from bind9_parser.isc_optview import \
     optview_stmt_allow_recursion, \
     optview_stmt_attach_cache, \
     optview_stmt_auth_nxdomain, \
-    optview_stmt_cache_file,\
+    optview_stmt_cache_file, \
     optview_stmt_check_dup_records, \
     optview_stmt_check_integrity, \
     optview_stmt_check_mx_cname, \
@@ -35,12 +35,12 @@ from bind9_parser.isc_optview import \
     optview_stmt_dnssec_lookaside, \
     optview_stmt_dnssec_must_be_secure, \
     optview_stmt_dnssec_validation, \
-    optview_stmt_dual_stack_servers,\
-    optview_stmt_disable_empty_zone,\
+    optview_stmt_dual_stack_servers, \
+    optview_stmt_disable_empty_zone, \
     optview_stmt_empty_contact, \
     optview_stmt_empty_zones_enable, \
-    optview_stmt_fetch_glue,\
-    optview_stmt_files,\
+    optview_stmt_fetch_glue, \
+    optview_stmt_files, \
     optview_stmt_heartbeat_interval, \
     optview_stmt_hostname, \
     optview_stmt_lame_ttl, \
@@ -51,7 +51,7 @@ from bind9_parser.isc_optview import \
     optview_stmt_minimal_responses, \
     optview_stmt_preferred_glue, \
     optview_stmt_query_source_v6, \
-    optview_stmt_query_source,\
+    optview_stmt_query_source, \
     optview_stmt_rate_limit, \
     optview_stmt_recursion, \
     optview_stmt_response_policy_element_log, \
@@ -60,9 +60,9 @@ from bind9_parser.isc_optview import \
     optview_stmt_response_policy_zone_group_set, \
     optview_stmt_response_policy_global_element_set, \
     optview_stmt_response_policy, \
-    optview_stmt_rfc2308_type1,\
+    optview_stmt_rfc2308_type1, \
     optview_stmt_root_delegation_only, \
-    optview_stmt_rrset_order,\
+    optview_stmt_rrset_order, \
     optview_stmt_sortlist, \
     optview_statements_set, \
     optview_statements_series
@@ -70,6 +70,7 @@ from bind9_parser.isc_optview import \
 
 class TestOptionsView(unittest.TestCase):
     """ Clause Options/View; things found only under 'options' and 'view' clause """
+
     def test_isc_optview_stmt_acache_cleaning_interval_passing(self):
         """ Clause options/view; Statement acache-cleaning-interval; passing """
         test_string = [
@@ -600,7 +601,7 @@ class TestOptionsView(unittest.TestCase):
     def test_isc_optview_stmt_hostname_passing(self):
         """ Clause options/view; Statement hostname; passing """
         test_string = [
-            'hostname none;',   # 'none', since v9.4.0
+            'hostname none;',  # 'none', since v9.4.0
             'hostname example.com;',
             'hostname "example.com";',  # no quote support in v9.4.0
         ]
@@ -848,6 +849,7 @@ class TestOptionsView(unittest.TestCase):
             'zone grey;',
             {'zone_name': 'grey'}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_empty_dot_passing(self):
         """ Clause options/view; Statement response-policy zone group dot; passing """
         assertParserResultDictTrue(
@@ -855,6 +857,7 @@ class TestOptionsView(unittest.TestCase):
             'zone \'.\';',
             {'zone_name': "'.'"}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_empty_squote_passing(self):
         """ Clause options/view; Statement response-policy zone group empty; passing """
         assertParserResultDictTrue(
@@ -862,6 +865,7 @@ class TestOptionsView(unittest.TestCase):
             'zone \'grey\';',
             {'zone_name': "'grey'"}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_empty_dquote_passing(self):
         """ Clause options/view; Statement response-policy zone group empty; passing """
         assertParserResultDictTrue(
@@ -869,6 +873,7 @@ class TestOptionsView(unittest.TestCase):
             'zone "www.template.test.";',
             {'zone_name': '"www.template.test."'}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_add_soa_passing(self):
         """ Clause options/view; Statement response-policy zone group 'add-soa'; passing """
         assertParserResultDictTrue(
@@ -876,6 +881,7 @@ class TestOptionsView(unittest.TestCase):
             'zone red add-soa yes;',
             {'add_soa': ['yes'], 'zone_name': 'red'}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_log_passing(self):
         """ Clause options/view; Statement response-policy zone group 'log'; passing """
         assertParserResultDictTrue(
@@ -893,6 +899,7 @@ class TestOptionsView(unittest.TestCase):
             {'max_policy_ttl': '1W3D',
              'zone_name': 'green'}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_min_update_interval_passing(self):
         """ Clause options/view; Statement response-policy zone group 'min-update-interval'; passing """
         assertParserResultDictTrue(
@@ -901,6 +908,7 @@ class TestOptionsView(unittest.TestCase):
             {'min_update_interval': '3H',
              'zone_name': 'yellow'}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_policy_0_arg_passing(self):
         """ Clause options/view; Statement response-policy zone group 'policy' 0-arg; passing """
         assertParserResultDictTrue(
@@ -909,6 +917,7 @@ class TestOptionsView(unittest.TestCase):
             {'policy_type': ['given'],
              'zone_name': 'black'}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_policy_1_arg_passing(self):
         """ Clause options/view; Statement response-policy zone group 'policy' 1-arg; passing """
         assertParserResultDictTrue(
@@ -917,6 +926,7 @@ class TestOptionsView(unittest.TestCase):
             {'policy_type': [{'tcp_only': 'an_unknown_string'}],
              'zone_name': 'white'}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_recursive_only_passing(self):
         """ Clause options/view; Statement response-policy zone group 'recursive-only'; passing """
         assertParserResultDictTrue(
@@ -925,6 +935,7 @@ class TestOptionsView(unittest.TestCase):
             {'recursive_only': 'yes',
              'zone_name': 'pink'}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_nsip_enable_passing(self):
         """ Clause options/view; Statement response-policy zone group 'nsip-enable'; passing """
         assertParserResultDictTrue(
@@ -933,6 +944,7 @@ class TestOptionsView(unittest.TestCase):
             {'nsip_enable': 'yes',
              'zone_name': 'green'}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_nsdname_enable_passing(self):
         """ Clause options/view; Statement response-policy zone group 'nsdname-enable'; passing """
         assertParserResultDictTrue(
@@ -941,6 +953,7 @@ class TestOptionsView(unittest.TestCase):
             {'nsdname_enable': 'yes',
              'zone_name': 'purple'}
         )
+
     def test_isc_optview_stmt_response_policy_zone_group_complex_passing(self):
         """ Clause options/view; Statement response-policy zone group complex; passing """
         assertParserResultDictTrue(
@@ -961,6 +974,7 @@ class TestOptionsView(unittest.TestCase):
             'add-soa yes',
             {'add_soa': ['yes']}
         )
+
     def test_isc_optview_stmt_response_policy_global_element_break_dnssec_passing(self):
         """ Clause options/view; Statement response-policy global element 'break-dnssec'; passing """
         assertParserResultDictTrue(
@@ -992,12 +1006,19 @@ class TestOptionsView(unittest.TestCase):
             'response-policy { zone orange; } break-dnssec yes;',
             'response-policy { zone green; } min-ns-dots 1;',
             """response-policy { 
-    zone "172.in-addr.arpa." add-soa no log no max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only no nsip-enable no nsdname-enable no; 
-    zone "168.192.in-addr.arpa." add-soa yes log yes max-policy-ttl 3Y min-update-interval 20S policy cname recursive-only yes nsip-enable yes nsdname-enable yes; 
-    zone "example.test." log yes max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no add-soa no; 
-    zone "example2.test." max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no add-soa yes log yes; 
-    zone "172.in-addr.arpa." add-soa no log yes max-policy-ttl 4Y min-update-interval 30S policy no-op recursive-only yes nsip-enable yes nsdname-enable no; 
-    } add-soa no break-dnssec no max-policy-ttl 30S min-update-interval 4w min-ns-dots 2 nsip-wait-recurse yes nsdname-wait-recurse yes qname-wait-recurse yes recursive-only yes nsip-enable yes nsdname-enable yes dnsrps-enable yes dnsrps-options unspecifiedoptions;""",
+    zone "172.in-addr.arpa." add-soa no log no max-policy-ttl 4Y min-update-interval 30S 
+        policy no-op recursive-only no nsip-enable no nsdname-enable no; 
+    zone "168.192.in-addr.arpa." add-soa yes log yes max-policy-ttl 3Y min-update-interval 20S 
+        policy cname recursive-only yes nsip-enable yes nsdname-enable yes; 
+    zone "example.test." log yes max-policy-ttl 4Y min-update-interval 30S 
+        policy no-op recursive-only yes nsip-enable yes nsdname-enable no add-soa no; 
+    zone "example2.test." max-policy-ttl 4Y min-update-interval 30S 
+        policy no-op recursive-only yes nsip-enable yes nsdname-enable no add-soa yes log yes; 
+    zone "172.in-addr.arpa." add-soa no log yes max-policy-ttl 4Y min-update-interval 30S 
+        policy no-op recursive-only yes nsip-enable yes nsdname-enable no; 
+    } add-soa no break-dnssec no max-policy-ttl 30S min-update-interval 4w min-ns-dots 2 
+         nsip-wait-recurse yes nsdname-wait-recurse yes qname-wait-recurse yes recursive-only yes 
+         nsip-enable yes nsdname-enable yes dnsrps-enable yes dnsrps-options unspecifiedoptions;""",
         ]
         result = optview_stmt_response_policy.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
@@ -1010,6 +1031,7 @@ class TestOptionsView(unittest.TestCase):
             'response-policy { zone "white"; };',
             {'response_policy': {'zone_name': '"white"'}}
         )
+
     # XXXX optview_stmt_response_policy
     def test_isc_optview_stmt_response_policy_minimal_zone_passing(self):
         """ Clause options/view; Statement response-policy minimal zone; passing """
@@ -1019,6 +1041,7 @@ class TestOptionsView(unittest.TestCase):
             {'response_policy': {'policy_type': ['given'],
                                  'zone_name': 'black'}}
         )
+
     def test_isc_optview_stmt_response_policy_minimal_all_passing(self):
         """ Clause options/view; Statement response-policy minimal all; passing """
         assertParserResultDictTrue(
@@ -1078,7 +1101,11 @@ class TestOptionsView(unittest.TestCase):
         test_string = [
             'sortlist { localhost; localnets; };',
             'sortlist { localnets; };',
-            'sortlist { { localhost; { localnets; 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; { 192.168.1.0/24; { 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; };',
+            """sortlist { 
+    { localhost; 
+        { localnets; 192.168.1.0/24; 
+            { 192.168.2.0/24; 192.168.3.0/24; }; }; }; 
+    { 192.168.1.0/24; { 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; };""",
         ]
         result = optview_stmt_sortlist.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
@@ -1090,7 +1117,11 @@ class TestOptionsView(unittest.TestCase):
         )
         assertParserResultDictTrue(
             optview_stmt_sortlist,
-            'sortlist { { localhost; { localnets; 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; { 192.168.1.0/24; { 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; };',
+            """sortlist { 
+    { localhost; 
+        { localnets; 192.168.1.0/24; 
+            { 192.168.2.0/24; 192.168.3.0/24; }; }; }; 
+    { 192.168.1.0/24; { 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; };""",
             {
                 'sortlist': {
                     'aml': [
@@ -1184,11 +1215,10 @@ class TestOptionsView(unittest.TestCase):
     def test_isc_optview_stmt_statements_set_failing(self):
         """ Clause optview; Statement statements_set; failing """
         test_string = [
-            'non-existant statements_set "YYYY";',
+            'non-existent statements_set "YYYY";',
         ]
         result = optview_statements_set.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
-
 
     def test_isc_optview_statements_series_passing(self):
         """ Clause optview; Statement optview_statements_series; passing """
