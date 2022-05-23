@@ -115,7 +115,7 @@ zone "home" IN {
         71.242.0.12;
         71.252.0.12;
         };
-    trusted-keys { "example.net." 243 1 3 "ASDASDASDASD+ASDASDASDASD/ASDASDASSD=="; };
+    trusted-keys { "example.net." 243 1 3 "ASDASDASDASD+ASDASDASDASD/ASDASDASSD"; };
     zone "home" IN {
         type master;
         file "/var/lib/bind/internal/master/db.home";
@@ -167,10 +167,11 @@ zone "home" IN {
                                                 {'addr': '71.252.0.12'}]},
              'match_clients': {'aml': [{'acl_name': 'trusted_cablesupport_acl'}]},
              'recursion': 'yes',
-             'trusted_keys': [{'algorithm_id': 3,
-                               'domain': 'example.net.',
-                               'flags': 243,
-                               'protocol_id': 1}],
+             'trusted_keys': [{'algorithm_id': '3',
+                               'domain': '"example.net."',
+                               'key_id': '243',
+                               'protocol_type': '1',
+                               'pubkey_base64': 'ASDASDASDASD+ASDASDASDASD/ASDASDASSD'}],
              'zones': [{'allow_update': {'aml': [{'addr': 'none'}]},
                         'class': 'IN',
                         'file': '"/var/lib/bind/internal/master/db.home"',
@@ -202,7 +203,6 @@ zone "home" IN {
                         'file': '"/var/lib/bind/internal/master/db.cache.home"',
                         'type': 'hint',
                         'zone_name': '"."'}]}
-
         )
 
 

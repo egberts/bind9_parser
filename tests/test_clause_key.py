@@ -67,24 +67,24 @@ class TestClauseKey(unittest.TestCase):
         """ Clause key; Type Secret; passing mode """
         test_data = [
             'ABASDASDAD=',  # equal symbol is allowed
-            'ABCDEFABCDEFABCDEFABCDEFABCDEF==',
-            'AB/DEFABCDEFABCDEFABCDEFABCDEF==',   # slash symbol is allowed
-            'ABCDEFA+CDEFABCDEFABCDEFABCDEF==',   # plus symbol is allowed
+            'ABCDEFABCDEFABCDEFABCDEFABCDEF',
+            'AB/DEFABCDEFABCDEFABCDEFABCDEF',   # slash symbol is allowed
+            'ABCDEFA+CDEFABCDEFABCDEFABCDEF',   # plus symbol is allowed
         ]
         result = key_secret.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
     def test_isc_key_secret_dict_passing(self):
         """ Clause key; Type key_secret; List/Dict; passing """
-        test_data = 'ASDASDASDASDASSD123123123123123=='
-        expected_result = {'key_secret': 'ASDASDASDASDASSD123123123123123=='}
+        test_data = 'ASDASDASDASDASSD123123123123123'
+        expected_result = {'key_secret': 'ASDASDASDASDASSD123123123123123'}
         assertParserResultDictTrue(key_secret, test_data, expected_result)
 
     def test_isc_key_secret_failing(self):
         """ Clause key; Type Secret; failing mode """
         test_data = [
             'secret a',
-            'ABCDEFA&CDEFABCDEFABCDEFABCDEF==',  # ampersand symbol is not allowed
+            'ABCDEFA&CDEFABCDEFABCDEFABCDEF',  # ampersand symbol is not allowed
         ]
         result = key_secret.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
@@ -178,37 +178,37 @@ class TestClauseKey(unittest.TestCase):
     def test_isc_clause_stmt_key_passing(self):
         """ Clause key; Statement key; passing mode """
         test_data = [
-            'key my_key_1 { algorithm hmac-sha512; secret ABCDEFABCDEFABCDEFABCDEF==; };',
-            'key dyndns { algorithm hmac-sha512; secret ABCDEFG==; };',
-            'key DDNS_UPDATER { algorithm hmac-md5; secret "+TlDtzhAe/akZ/tF507/zQ==";};',
+            'key my_key_1 { algorithm hmac-sha512; secret ABCDEFABCDEFABCDEFABCDEF; };',
+            'key dyndns { algorithm hmac-sha512; secret ABCDEFG; };',
+            'key DDNS_UPDATER { algorithm hmac-md5; secret "+TlDtzhAe/akZ/tF507/zQ";};',
         ]
         result = clause_stmt_key_series.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
     def test_isc_clause_stmt_key_dict_passing(self):
         """ Clause key; Statement clause_stmt_key_series; List/Dict; passing """
-        test_data = 'key DDNS_UPDATER { algorithm hmac-md5; secret "oopsiedaisy=="; };'
+        test_data = 'key DDNS_UPDATER { algorithm hmac-md5; secret "oopsiedaisy"; };'
         expected_result = { 'key': [ { 'algorithm': 'hmac-md5',
              'key_id': 'DDNS_UPDATER',
-             'secret': '"oopsiedaisy=="'}]}
+             'secret': '"oopsiedaisy"'}]}
         assertParserResultDictTrue(clause_stmt_key_series, test_data, expected_result)
 
     def test_isc_clause_stmt_multiple_key_dict_passing(self):
         """ Clause key; Statement clause_stmt_key_series; multiple List/Dict; passing """
         assertParserResultDictTrue(
             clause_stmt_key_series,
-            'key my_key_1 { algorithm hmac-sha512; secret ABCDEFABCDEFABCDEFABCDEF==; };' +
-            'key dyndns { algorithm hmac-sha512; secret ABCDEFG==; };' +
-            'key DDNS_UPDATER { algorithm hmac-md5; secret "+TlDtzhAe/akZ/tF507/zQ==";};',
+            'key my_key_1 { algorithm hmac-sha512; secret ABCDEFABCDEFABCDEFABCDEF; };' +
+            'key dyndns { algorithm hmac-sha512; secret ABCDEFG; };' +
+            'key DDNS_UPDATER { algorithm hmac-md5; secret "+TlDtzhAe/akZ/tF507/zQ";};',
             {'key': [{'algorithm': 'hmac-sha512',
                       'key_id': 'my_key_1',
-                      'secret': 'ABCDEFABCDEFABCDEFABCDEF=='},
+                      'secret': 'ABCDEFABCDEFABCDEFABCDEF'},
                      {'algorithm': 'hmac-sha512',
                       'key_id': 'dyndns',
-                      'secret': 'ABCDEFG=='},
+                      'secret': 'ABCDEFG'},
                      {'algorithm': 'hmac-md5',
                       'key_id': 'DDNS_UPDATER',
-                      'secret': '"+TlDtzhAe/akZ/tF507/zQ=="'}]}
+                      'secret': '"+TlDtzhAe/akZ/tF507/zQ"'}]}
         )
 
     def test_isc_key_clause_stmt_failing(self):
@@ -216,9 +216,9 @@ class TestClauseKey(unittest.TestCase):
         test_data = [
             'key what_is_mine { database ghi; search disabled;};',
             'deny { }',
-            'key dyndns { algorithm hmac*sha512; secret ABCDEFG==; };',  # inadvert '*'
-            'key dyndns { algorithm,  hmac-sha512; secret ABCDEFG==; };',  # mistyped ';' with ','
-            'key dyndns { oops-algorithm  hmac-sha512; secret ABCDEFG==; };',  # missing semicolon
+            'key dyndns { algorithm hmac*sha512; secret ABCDEFG; };',  # inadvert '*'
+            'key dyndns { algorithm,  hmac-sha512; secret ABCDEFG; };',  # mistyped ';' with ','
+            'key dyndns { oops-algorithm  hmac-sha512; secret ABCDEFG; };',  # missing semicolon
             'key bad { algorithm sha512; secret ABCDEFGHIJK; }',  # missing semicolon at end
         ]
         result = clause_stmt_key_series.runTests(test_data, failureTests=True)

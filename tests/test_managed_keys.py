@@ -82,8 +82,8 @@ class TestManagedKeys(unittest.TestCase):
     def test_isc_managed_keys_series_passing(self):
         """ Statement managed-keys; managed keys series; passing mode """
         test_data = [
-            'abc initial-key 1 1 1 "ASBASDASD==";',
-            'abc initial-key 1 1 1 "ASBASDASD=="; def initial-key 243 16 7 "LKJOULKJOIULKKJ+ASD==";',
+            'abc initial-key 1 1 1 "ASBASDASD";',
+            'abc initial-key 1 1 1 "ASBASDASD"; def initial-key 243 16 7 "LKJOULKJOIULKKJ+ASD";',
         ]
         result = managed_keys_series.runTests(
             test_data,
@@ -94,7 +94,7 @@ class TestManagedKeys(unittest.TestCase):
     def test_isc_managed_keys_series_failing(self):
         """ Statement managed-keys; managed keys series, failing mode """
         test_data = [
-            'abc initial-key X Y Z ASBASDASD==;',
+            'abc initial-key X Y Z ASBASDASD;',
         ]
         result = managed_keys_series.runTests(
             test_data,
@@ -105,11 +105,11 @@ class TestManagedKeys(unittest.TestCase):
     def test_isc_managed_keys_statement_set_passing(self):
         """ Statement managed-keys; passing mode """
         test_data = [
-            'managed-keys { abc initial-key 1 1 1 "ASBASDASD==";};',
-            'managed-keys { example.com initial-key 1 1 1 "ASBASDASD==";};',
-            'managed-keys { www.example.com initial-key 1 1 1 "ASBASDASD==";};',
-            'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD==";};',
-            'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD==";};',
+            'managed-keys { abc initial-key 1 1 1 "ASBASDASD";};',
+            'managed-keys { example.com initial-key 1 1 1 "ASBASDASD";};',
+            'managed-keys { www.example.com initial-key 1 1 1 "ASBASDASD";};',
+            'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD";};',
+            'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD";};',
             'managed-keys { "." initial-key 257 3 3 "AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC";};',
             "managed-keys { \".\" initial-key 257 3 3 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';};",
             'managed-keys { "." initial-key 257 3 3 "AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC";};',

@@ -15,46 +15,46 @@ class TestClauseManagedKeys(unittest.TestCase):
 
     def test_isc_clause_stmt_managed_keys_passing(self):
         """ Clause managed-keys; passing mode"""
-        test_string = 'managed-keys { abc initial-key 1 2 3 "ASBASDASD==";};'
+        test_string = 'managed-keys { abc initial-key 1 2 3 "ASBASDASD";};'
         expected_result = { 'managed_keys': [ { 'algorithm_id': 3,
                       'flags': 1,
-                      'key_secret': '"ASBASDASD=="',
+                      'key_secret': '"ASBASDASD"',
                       'protocol_id': 2,
                       'rr_domain': 'abc'}]}
         assertParserResultDictTrue(clause_stmt_managed_keys_series,
                                    test_string,
                                    expected_result)
-        test_string = 'managed-keys { example.com initial-key 4 5 6 "ASBASDASD==";};'
+        test_string = 'managed-keys { example.com initial-key 4 5 6 "ASBASDASD";};'
         expected_result = { 'managed_keys': [ { 'algorithm_id': 6,
                       'flags': 4,
-                      'key_secret': '"ASBASDASD=="',
+                      'key_secret': '"ASBASDASD"',
                       'protocol_id': 5,
                       'rr_domain': 'example.com'}]}
         assertParserResultDictTrue(clause_stmt_managed_keys_series,
                                    test_string,
                                    expected_result)
-        test_string = 'managed-keys { www.example.com initial-key 7 8 9 "ZZZZZZASD==";};'
+        test_string = 'managed-keys { www.example.com initial-key 7 8 9 "ZZZZZZASD";};'
         expected_result = { 'managed_keys': [ { 'algorithm_id': 9,
                       'flags': 7,
-                      'key_secret': '"ZZZZZZASD=="',
+                      'key_secret': '"ZZZZZZASD"',
                       'protocol_id': 8,
                       'rr_domain': 'www.example.com'}]}
         assertParserResultDictTrue(clause_stmt_managed_keys_series,
                                    test_string,
                                    expected_result)
-        test_string = 'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD==";};'
+        test_string = 'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD";};'
         expected_result = { 'managed_keys': [ { 'algorithm_id': 1,
                       'flags': 1,
-                      'key_secret': '"ASBASDASD=="',
+                      'key_secret': '"ASBASDASD"',
                       'protocol_id': 1,
                       'rr_domain': 'www1.www.example.com'}]}
         assertParserResultDictTrue(clause_stmt_managed_keys_series,
                                    test_string,
                                    expected_result)
-        test_string = 'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD==";};'
+        test_string = 'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD";};'
         expected_result = { 'managed_keys': [ { 'algorithm_id': 1,
                       'flags': 1,
-                      'key_secret': '"ASBASDASD=="',
+                      'key_secret': '"ASBASDASD"',
                       'protocol_id': 1,
                       'rr_domain': 'www1.www.example.com'}]}
         assertParserResultDictTrue(clause_stmt_managed_keys_series,

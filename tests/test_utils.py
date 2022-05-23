@@ -190,24 +190,24 @@ class TestConfigUtils(unittest.TestCase):
     def test_isc_key_secret_passing(self):
         """ ISC Utilities; Type key_secret; passing """
         test_data = [
-            'ABCDEF0123458==',
-            "'ABCDEF0123458=='",
-            '"ABCDEF0123458=="',
+            'ABCDEF0123458',
+            "'ABCDEF0123458'",
+            '"ABCDEF0123458"',
         ]
         result = key_secret.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
     def test_isc_key_secret_dict_passing(self):
         """ ISC Utilities; Type key_secret; List/Dict; passing """
-        test_data = 'ABCDEF0123456=='
-        expected_result = {'key_secret': 'ABCDEF0123456=='}
+        test_data = 'ABCDEF0123456'
+        expected_result = {'key_secret': 'ABCDEF0123456'}
         assertParserResultDictTrue(key_secret,
                                         test_data,
                                         expected_result)
 
     def test_isc_key_secret_failing(self):
         """ ISC Utilities; Type Key Secret; failing """
-        test_data = ["bad_key_secret_ABCDEFGH&^%$=="]
+        test_data = ["bad_key_secret_ABCDEFGH&^%$"]
         result = key_secret.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
 
@@ -236,7 +236,7 @@ class TestConfigUtils(unittest.TestCase):
 
     def test_isc_key_id_failing(self):
         """ ISC Utilities; Type key_id; failing """
-        test_data = ["bad_key_id_ABCDEFGH&^%$=="]
+        test_data = ["bad_key_id_ABCDEFGH&^%$"]
         result = key_id.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
 

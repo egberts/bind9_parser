@@ -114,11 +114,11 @@ class TestClauseALL(unittest.TestCase):
             'controls { inet 128.0.0.9 port 8006 allow { 128.0.0.10; 128.0.0.11;} read-only yes; };' +
             'dlz your_IBM_2 { database RSDMS; search no; };' +
             'dyndb "example-ldap" "/usr/lib64/bind/ldap.so" { uri "ldap://ldap.example.com"; base "cn=dns, dc=example,dc=com"; auth_method "none"; };' +
-            'key dyndns { algorithm hmac-sha512; secret ABCDEFG==; };' +
+            'key dyndns { algorithm hmac-sha512; secret ABCDEFG; };' +
             'logging { channel salesfolks { file "/tmp/sales.log" size 5M; severity info; print-time no;};'+
             ' channel accounting { file "/tmp/acct.log" size 30M; severity info; print-time no; };' +
             ' channel badguys { file "/tmp/alert" size 255G; severity debug 77; print-time yes;}; };' +
-            'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD=="; };' +
+            'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD"; };' +
             'masters bastion_host_group { bastion_hosts22; hidden_bastion; };' +
             'zone red { file "/var/lib/bind9/public/masters/db.example.com"; };' +
             'server 3.4.5.6 { bogus yes; edns no; edns-udp-size 102; edns-version 2;' +
@@ -126,7 +126,7 @@ class TestClauseALL(unittest.TestCase):
             ' padding 53; provide-ixfr yes; query-source *; query-source address *; query-source-v6 *;' +
             ' request-expire yes; request-ixfr yes; request-nsid yes; send-cookie yes; tcp-keepalive yes; ' +
             ' tcp-only yes; transfer-format one-answer; transfer-source *; transfer-source-v6 *; transfers 36; };' +
-            'trusted-keys { abc 1 1 1 "ASBASDASD==";};' +
+            'trusted-keys { abc 1 1 1 "ASBASDASD";};' +
             'zone green { file "/var/lib/bind9/public/masters/db.green.com"; };' +
             'masters dmz_masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
             '',
@@ -152,7 +152,7 @@ class TestClauseALL(unittest.TestCase):
                         'module_filename': '"/usr/lib64/bind/ldap.so"'}],
              'key': [{'algorithm': 'hmac-sha512',
                       'key_id': 'dyndns',
-                      'secret': 'ABCDEFG=='}],
+                      'secret': 'ABCDEFG'}],
              'logging': [{'channel': [{'channel_name': 'salesfolks',
                                        'path_name': '"/tmp/sales.log"',
                                        'print_time': 'no',
@@ -170,7 +170,7 @@ class TestClauseALL(unittest.TestCase):
                                        'size_spec': [255, 'G']}]}],
              'managed_keys': [{'algorithm_id': 1,
                                'flags': 1,
-                               'key_secret': '"ASBASDASD=="',
+                               'key_secret': '"ASBASDASD"',
                                'protocol_id': 1,
                                'rr_domain': 'www1.www.example.com'}],
              'masters': [{'dscp_port': 5,
