@@ -16,7 +16,7 @@ from pyparsing import Group, Keyword, OneOrMore, Literal, \
 from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     squote, dquote, number_type, name_type, minute_type, seconds_type, \
     byte_type, run_me, path_name, check_options, \
-    quoted_path_name, size_spec, exclamation, iso8601_duration
+    quoted_path_name, size_spec, exclamation, iso8601_duration, view_name
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, \
     inet_ip_port_keyword_and_number_element, \
@@ -29,106 +29,107 @@ optview_stmt_acache_cleaning_interval = (
     Keyword('acache-cleaning-interval').suppress()
     - isc_boolean('acache_cleaning_interval')
     + semicolon
-)
+).setName('acache-cleaning-interval <boolean>')
 
 optview_stmt_acache_enable = (
     Keyword('acache-enable').suppress()
     - isc_boolean('acache_enable')
     + semicolon
-)
+).setName('acache-enable <boolean>;')
 
 optview_stmt_additional_from_auth = (
     Keyword('additional-from-auth').suppress()
     - isc_boolean('additional_from_auth')
     + semicolon
-)
+).setName('additional-from-auth <boolean>;')
 
 optview_stmt_additional_from_cache = (
     Keyword('additional-from-cache').suppress()
     - isc_boolean('additional_from_cache')
     + semicolon
 )
+optview_stmt_additional_from_cache.setName('additional-from-cache <boolean>;')
 
 # allow-new-zones <boolean>; [ Opt View ]  # v9.5.0+
 optview_stmt_allow_new_zones = (
     Keyword('allow-new-zones').suppress()
     - isc_boolean('allow_new_zones')
     + semicolon
-)
+).setName('allow-new-zones <boolean>;')
 
 optview_stmt_allow_query_cache = (
     Keyword('allow-query-cache').suppress()
     - Group(
         aml_nesting('')
     )('allow_query_cache')
-)('')
+).setName('allow-query-cache <aml>;')
 
 optview_stmt_allow_query_cache_on = (
     Keyword('allow-query-cache-on').suppress()
     - Group(
         aml_nesting('')
     )('allow_query_cache_on')
-)('')
+).setName('allow-query-cache-on <boolean>;')
 
 optview_stmt_allow_recursion = (
     Keyword('allow-recursion').suppress()
     - Group(
         aml_nesting('')
     )('allow-recursion')
-)('')   # 'allow-recursion' can only be specified ONCE
+).setName('allow-recursion <aml>;')
 
 optview_stmt_allow_recursion_on = (
     Keyword('allow-recursion-on').suppress()
     - Group(
         aml_nesting('')
     )('allow-recursion-on')
-)('')  # 'allow-recursion-on' can only be specified ONCE
+).setName('allow-recursion-on <aml>;')
 
 optview_attach_cache_name = name_type  # TODO: Identify when it got obsoleted???
 optview_attach_cache_name.setName('<cache_name>')
 optview_stmt_attach_cache = (
         Keyword('attach-cache').suppress()
-        - optview_attach_cache_name('attach_cache')
+        - view_name('attach_cache')
         + semicolon
-)
+).setName('attach-cache <view_name>;')
 
 # [auth-nxdomain yes | no;]
 optview_stmt_auth_nxdomain = (
         Keyword('auth-nxdomain').suppress()
         - isc_boolean('auth_nxdomain')
         + semicolon
-)
+).setName('auth-nxdomain <boolean>;')
 
 #  cache-file <path_name>  # [ Opt View ]
 optview_stmt_cache_file = (
     Keyword('cache-file').suppress()
     - path_name('cache_file')
     + semicolon
-)
+).setName('cache-file <quoted-path_name>;')
 
 optview_stmt_check_dup_records = (
         Keyword('check-dup-records').suppress()
         - check_options('check_dup_records')
         + semicolon
-)  # [ Opt View Zone ] v9.5+
+).setName('check-dup-records <options>;')  # [ Opt View Zone ] v9.5+
 
 optview_stmt_check_integrity = (
         Keyword('check-integrity').suppress()
         - isc_boolean('check_integrity')
         + semicolon
-)  # [ Opt View Zone ] v9.4+
+).setName('check-integrity <boolean>;')  # [ Opt View Zone ] v9.4+
 
 optview_stmt_check_mx = (
         Keyword('check-mx').suppress()
         - check_options('check_mx')
         + semicolon
-)  # [ Opt View Zone ] v9.4+
+).setName('check-mx <options>;')  # [ Opt View Zone ] v9.4+
 
 optview_stmt_check_mx_cname = (
         Keyword('check-mx-cname').suppress()
         - check_options('check_mx_cname')
         + semicolon
-)  # [ Opt View Zone ] v9.4+
+).setName('check-mx-cname <options>;')  # [ Opt View Zone ] v9.4+
 
 #  check-names (master |slave| response) (warn|fail|ignore) ; [ Opt View (Zone) ]
 #  Zone-variant of check-names is more simplified syntax than OptView-variant
@@ -147,37 +148,38 @@ optview_stmt_check_names = (
 )('')
     + semicolon
 )('check_names')
+optview_stmt_check_names.setName('check-names [ primary | secondary | response | master | slave ] <options>;')
 
 optview_stmt_check_sibling = (
         Keyword('check-sibling').suppress()
         + check_options('check_sibling')
         + semicolon
-)  # [ Opt View Zone ] v9.4+
+).setName('check-sibling <options>;')  # [ Opt View Zone ] v9.4+
 
 optview_stmt_check_spf = (
         Keyword('check-spf').suppress()
         - check_options('check_spf')
         - semicolon
-)  # [ Opt View Zone ] v9.4+
+).setName('check-spf <options>;')  # [ Opt View Zone ] v9.4+
 
 optview_stmt_check_srv_cname = (
         Keyword('check-srv-cname').suppress()
         - check_options('check_srv_cname')
         + semicolon
-)  # [ Opt View Zone ] v9.4+
+).setName('check-srv-cname <options>;')  # [ Opt View Zone ] v9.4+
 
 optview_stmt_check_wildcard = (
         Keyword('check-wildcard').suppress()
         - isc_boolean('check_wildcard')
         + semicolon
-)  # [ Opt View Zone ] v9.4+
+).setName('check-wildcard <options>;')  # [ Opt View Zone ] v9.4+
 
 #  cleaning-interval minutes;
 optview_stmt_cleaning_interval = (
         Keyword('cleaning-interval').suppress()
         - minute_type('cleaning_interval')
         + semicolon
-)
+).setName('cleaning-interval <minutes>')
 
 # disable-empty-zone  zone_name ;
 # disable-empty-zone "168.192.IN-ADDR.ARPA";
@@ -190,20 +192,21 @@ optview_stmt_disable_empty_zone = (
         )('')
         + semicolon
 )('disable_empty_zone')  # multiple-statement
+optview_stmt_disable_empty_zone.setName('disable-empty-zone <quotable-zone-name>;')
 
 #  dnssec-accept-expired <boolean>; [ Opt View ]  # v9.4.0+
 optview_stmt_dnssec_accept_expired = (
         Keyword('dnssec-accept-expired').suppress()
         - isc_boolean('dnssec_accept_expired')
         + semicolon
-)
+).setName('dnssec-accept-expired <boolean>;')
 
 # dnssec-enable <boolean>; [ Opt View  ]  # v9.3.0+
 optview_stmt_dnssec_enable = (
         Keyword('dnssec-enable').suppress()
         - isc_boolean('dnssec_enable')
         + semicolon
-)
+).setName('dnssec-enable <boolean>;')
 
 # dnssec-lookaside domain trust-anchor domain; [ Opt View ]  # v9.3.0+ (when obsoleted???)
 # Obsoleted first noted at 9.15.0, must be before...
@@ -220,6 +223,7 @@ optview_stmt_dnssec_lookaside = (
         )('dnssec_lookaside')
         + semicolon
 )('')
+optview_stmt_dnssec_lookaside.setName('dnssec-lookaside [ auto | no | <fqdn> trust-anchor <fqdn>;')
 
 #  dnssec-must-be-secure <domain_name> <boolean>; [ Opt View ]  # v9.3.0+
 optview_stmt_dnssec_must_be_secure = (
@@ -229,7 +233,7 @@ optview_stmt_dnssec_must_be_secure = (
         - isc_boolean('accept_secured_answers')
     )('dnssec_must_be_secure')
     + semicolon
-)
+).setName('dnssec-must-be-secure <fqdn> domain <boolean>;')
 
 # dnssec-validation ( yes | no );
 optview_stmt_dnssec_validation = (
@@ -239,7 +243,7 @@ optview_stmt_dnssec_validation = (
         | isc_boolean
     )('dnssec_validation')
     + semicolon
-)
+).setName('dnssec-validation [ auto | yes | no ];')
 
 #  dual-stack-servers [ port <pg_num> ]
 #                     { ( <domain_name> [port <p_num>] |
@@ -263,6 +267,8 @@ dual_stack_servers_address_set = (
     )
     + semicolon
 )('')
+dual_stack_servers_address_set.setName('[ ip4 | ip6 | <fqdn> ];')
+
 dual_stack_servers_address_series = Group(
     ZeroOrMore(
         (
@@ -270,6 +276,7 @@ dual_stack_servers_address_series = Group(
         )('')
     )('')
 )('')
+dual_stack_servers_address_series.setName('[ ip4 | ip6 | <fqdn> ]; ...')
 
 optview_stmt_dual_stack_servers = (
     Keyword('dual-stack-servers').suppress()
@@ -283,6 +290,7 @@ optview_stmt_dual_stack_servers = (
     )('dual_stack_servers')
     + semicolon
 )('')
+optview_stmt_dual_stack_servers.setName('dual-stack-servers [ port <port> ] { [ ip4 | ip6 | <fqdn> ]; ... };')
 
 soa_name_type = rr_fqdn_w_absolute  # might be name_type
 
@@ -293,18 +301,21 @@ optview_stmt_empty_contact = (
         + semicolon
     )('empty_contact')  # Dict (not a multiple-statement)
 )('')
+optview_stmt_empty_contact.setName('empty-contact <soa_rname>;')
 
 optview_stmt_empty_zones_enable = (
         Keyword('empty-zones-enable').suppress()
         - isc_boolean('empty_zones_enable')
         + semicolon
 )
+optview_stmt_empty_zones_enable.setName('empty-zones-enable <boolean>;')
 
 optview_stmt_fetch_glue = (
         Keyword('fetch-glue').suppress()
         - isc_boolean('fetch_glue')
         + semicolon
 )  # v8.1 to v9.7.0
+optview_stmt_fetch_glue.setName('fetch-glue  <boolean>;')
 
 optview_stmt_files = (
     Keyword('files').suppress()
@@ -317,12 +328,13 @@ optview_stmt_files = (
     )('files')
     + semicolon
 )('')
+optview_stmt_files.setName('files [ unlimited | default | <integer> ];')
 
 optview_stmt_heartbeat_interval = (
         Keyword('heartbeat-interval').suppress()
         - minute_type('heartbeat_interval')
         + semicolon
-)
+).setName('heartbeat-interval <minutes>;')
 
 #  hostname ( none | quoted_fqdn );  # [ Opt View ]
 optview_stmt_hostname = (
@@ -333,43 +345,43 @@ optview_stmt_hostname = (
         | domain_generic_fqdn('hostname')('name')
     )('hostname')
     + semicolon
-)
+).setName('hostname [ none | hostname | <quotable_fqdn> ];')
 
 optview_stmt_lame_ttl = (
     Keyword('lame-ttl').suppress()
     - number_type('lame_ttl')
     + semicolon
-)
+).setName('lame-ttl <integer>;')
 
 optview_stmt_managed_keys_directory = (
     Keyword('managed-keys-directory').suppress()
     - quoted_path_name('managed_keys_directory')
     + semicolon
-)
+).setName('managed-keys-directory <quoted-filespec>;')
 
 optview_stmt_max_cache_size = (
     Keyword('max-cache-size').suppress()
     - size_spec('max_cache_size')
     + semicolon
-)
+    ).setName('max-cache-size <size-spec>')
 
 optview_stmt_max_cache_ttl = (
     Keyword('max-cache-ttl').suppress()
     - seconds_type('max_cache_ttl')
     + semicolon
-)
+).setName('max-cache-ttl <seconds>;')
 
 optview_stmt_max_ncache_ttl = (
     Keyword('max-ncache-ttl').suppress()
     - seconds_type('max_ncache_ttl')
     + semicolon
-)
+).setName('max-ncache-ttl <seconds>;')
 
 optview_stmt_minimal_responses = (
     Keyword('minimal-responses').suppress()
     - isc_boolean('minimal_responses')
     + semicolon
-)
+).setName('minimal-responses <boolean>;')
 
 optview_stmt_preferred_glue = (
     Keyword('preferred-glue').suppress()
@@ -379,7 +391,7 @@ optview_stmt_preferred_glue = (
         ^ CaselessLiteral('none')  # Introduced in 9.15.0-ish
     )('preferred_glue')
     + semicolon
-)
+).setName('preferred-glue [ A | AAAA | none ];')
 
 #   query-source [ address ( ip46_addr_or_prefix | * ) ] [ port ( ip_port | * ) ];
 optview_stmt_query_source = (
@@ -398,6 +410,7 @@ optview_stmt_query_source = (
     )('query_source')
     + semicolon
 )('')  # disabling List for it is not a multiple-statement, use Dict
+optview_stmt_query_source.setName('query-source address [ <ip4-addr> | * ];')
 
 #   query-source-v6 [ address ( ip46_addr_or_prefix | * ) ] [ port ( ip_port | * ) ];
 optview_stmt_query_source_v6 = (
@@ -414,6 +427,7 @@ optview_stmt_query_source_v6 = (
     )('query_source_v6')
     + semicolon
 )('')  # disabling List for it is not a multiple-statement, use Dict
+optview_stmt_query_source_v6.setName('query-source address [ <ip6-addr> | * ];')
 
 # rate-limit {
 #      [ responses-per-second number ; ]
@@ -433,13 +447,17 @@ optview_stmt_query_source_v6 = (
 #      [ min-table-size number ; ]
 # };
 
+optview_rate_limit_options_all_per_seconds = (
+    Keyword('all-per-second').suppress()
+    - Group(
+        number_type('all_per_second')
+    )
+).setName('all-per-second <seconds>')
+
 optview_rate_limit_options = (
     (
         (
-            Keyword('all-per-second').suppress()
-            - Group(
-                number_type('all_per_second')
-            )('')
+            optview_rate_limit_options_all_per_seconds
         )('')
         | (
             Keyword('errors-per-second').suppress()
@@ -560,7 +578,23 @@ optview_rate_limit_options = (
         )('')
     )
     + semicolon
-)
+).setName("""
+      [ responses-per-second <number>; ]
+      [ referrals-per-second <number>; ]
+      [ nodata-per-second <number>; ]
+      [ nxdomains-per-second <number>; ]
+      [ errors-per-second <number>; ]
+      [ all-per-second <number>; ]
+      [ window <number>; ]
+      [ log-only <boolean>; ]
+      [ qps-scale <number> ; ]
+      [ ipv4-prefix-length <number> ; ]
+      [ ipv6-prefix-length <number> ; ]
+      [ slip <number>; ]
+      [ exempt-clients { <aml> }; ]
+      [ max-table-size <number>; ]
+      [ min-table-size <number>; ]
+""")
 
 optview_stmt_rate_limit = (
     Keyword('rate-limit').suppress()
@@ -571,14 +605,32 @@ optview_stmt_rate_limit = (
     - rbrack
     - semicolon
 )('')
+optview_stmt_rate_limit.setName("""
+rate-limit {
+      [ responses-per-second <number>; ]
+      [ referrals-per-second <number>; ]
+      [ nodata-per-second <number>; ]
+      [ nxdomains-per-second <number>; ]
+      [ errors-per-second <number>; ]
+      [ all-per-second <number>; ]
+      [ window <number>; ]
+      [ log-only <boolean>; ]
+      [ qps-scale <number> ; ]
+      [ ipv4-prefix-length <number> ; ]
+      [ ipv6-prefix-length <number> ; ]
+      [ slip <number>; ]
+      [ exempt-clients { <aml> }; ]
+      [ max-table-size <number>; ]
+      [ min-table-size <number>; ]
+};""")
 
 optview_stmt_recursion = (
         Keyword('recursion').suppress()
         - isc_boolean('recursion')
         + semicolon
-)
+).setName('recursion <boolean>;')
 
-# 'response-policy' (super-)statement
+# 'response-policy' (super-)statements
 # following 'response-policy' elements are in zone-specific-only
 optview_stmt_response_policy_element_log = (
     Keyword('log').suppress()  # introduced in v9.11
@@ -755,42 +807,42 @@ optview_stmt_response_policy = (
     )
 )('response_policy')
 optview_stmt_response_policy.setName("""
-#    response-policy { 
-#        zone string 
-#        [ add-soa boolean ]  # v9.14
-#        [ log boolean ]  # v9.11
-#        [ max-policy-ttl duration ] 
-#        [ min-update-interval duration ]   # 9.12
-#        [ policy ( cname | disabled   # cname used to take a string @9.8
-#          | drop | given | no-op   # drop @ v9.10
-#          | nodata | nxdomain 
-#          | passthru | tcp-only quoted_string ) ]  # tcp-only @ v9.10
-#        [ recursive-only boolean ]
-#        [ nsip-enable boolean ]  # v9.12
-#        [ nsdname-enable boolean ];  # v9.12
-#         ... 
-#        } 
-#        [ add-soa boolean ]   # v9.14
-#        [ break-dnssec boolean ]
-#        [ max-policy-ttl duration ]
-#        [ min-update-interval duration ]  # v9.12
-#        [ min-ns-dots integer ]
-#        [ nsip-wait-recurse boolean ]  # v9.11
-#        [ nsdname-wait-recurse boolean ]  # v9.16?
-#        [ qname-wait-recurse boolean ]  # v9.10
-#        [ recursive-only boolean ]
-#        [ nsip-enable boolean ]  # v9.12
-#        [ nsdname-enable boolean ]  # v9.12
-#        [ dnsrps-enable boolean ]  # v9.12
-#        [ dnsrps-options { unspecified-text } ]  # v9.12
-#        ;};""")
+response-policy { 
+    zone string 
+    [ add-soa boolean ]  # v9.14
+    [ log boolean ]  # v9.11
+    [ max-policy-ttl duration ] 
+    [ min-update-interval duration ]   # 9.12
+    [ policy ( cname | disabled   # cname used to take a string @9.8
+      | drop | given | no-op   # drop @ v9.10
+      | nodata | nxdomain 
+      | passthru | tcp-only quoted_string ) ]  # tcp-only @ v9.10
+    [ recursive-only boolean ]
+    [ nsip-enable boolean ]  # v9.12
+    [ nsdname-enable boolean ];  # v9.12
+     ... 
+    } 
+    [ add-soa boolean ]   # v9.14
+    [ break-dnssec boolean ]
+    [ max-policy-ttl duration ]
+    [ min-update-interval duration ]  # v9.12
+    [ min-ns-dots integer ]
+    [ nsip-wait-recurse boolean ]  # v9.11
+    [ nsdname-wait-recurse boolean ]  # v9.16?
+    [ qname-wait-recurse boolean ]  # v9.10
+    [ recursive-only boolean ]
+    [ nsip-enable boolean ]  # v9.12
+    [ nsdname-enable boolean ]  # v9.12
+    [ dnsrps-enable boolean ]  # v9.12
+    [ dnsrps-options { unspecified-text } ]  # v9.12
+};""")
 
 #  rfc2308-type1 <boolean>; [ Opt View ]
 optview_stmt_rfc2308_type1 = (
         Keyword('rfc2308-type1').suppress()
         - isc_boolean('rfc2308_type1')
         + semicolon
-)
+).setName('rfc2308-type1 <boolean>')
 
 #  root-delegation-only [ exclude { "domain_name"; ... } ];
 #  root-delegation-only exclude { "com"; "net" };
@@ -810,14 +862,14 @@ optview_stmt_root_delegation_only = (
             )('')
         )('')
         + semicolon
-)
+).setName('root-delegation-only [ exclude { <quoted-fqdn>; ...} ];')
 
 optview_class_type = (
         CaselessLiteral('HS')
         | CaselessLiteral('IN')
         | CaselessLiteral('CH')
         | CaselessLiteral('ANY')
-)
+).setName('[ IN | CH | HS | ANY')
 
 #  [ class class_name ][ type type_name ][ name "domain_name"] order ordering;
 optview_type_type = Word(alphanums + '-', max=16)
@@ -826,7 +878,7 @@ optview_ordering_type = (
         Literal('fixed')
         | Literal('random')
         | Literal('cyclic')
-)
+).setName('[ fixed | random | cyclic ]')
 
 optview_order_spec = (
         Optional(
@@ -860,6 +912,7 @@ optview_stmt_rrset_order = (
     )('rrset_order')
     + semicolon
 )('')  # only one (, the last one) 'rrset-order' allowed, so no List [] here
+optview_stmt_rrset_order.setName('rrset-order ...;')  # TODO
 
 #  optview_stmt_sortlist { aml; ... };
 #  optview_stmt_sortlist { {10.2/16; };};
@@ -869,6 +922,7 @@ optview_stmt_sortlist = (
         aml_nesting('')
     )('sortlist')
 )('')
+optview_stmt_sortlist.setName('sortlist <aml>;')
 
 # Keywords are in dictionary-order, but with longest pattern as having been listed firstly
 optview_statements_set = (

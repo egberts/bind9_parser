@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_optview.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
 from bind9_parser.isc_optview import \
     optview_stmt_acache_cleaning_interval,\
     optview_stmt_acache_enable,\
@@ -197,9 +197,20 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_attach_cache.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optview_stmt_attach_cache_2_passing(self):
+        """ Clause options/view; Statement attach-cache 2; passing """
         assertParserResultDictTrue(
             optview_stmt_attach_cache,
             'attach-cache dmz_view;',
+            {'attach_cache': 'dmz_view'}
+        )
+
+    def test_isc_optview_stmt_attach_cache_2_failing(self):
+        """ Clause options/view; Statement attach-cache 2; failing """
+        assertParserResultDictFalse(
+            optview_stmt_attach_cache,
+            'attach-cache ***not_a_view_name***;',
             {'attach_cache': 'dmz_view'}
         )
 
@@ -1173,7 +1184,7 @@ class TestOptionsView(unittest.TestCase):
     def test_isc_optview_stmt_statements_set_failing(self):
         """ Clause optview; Statement statements_set; failing """
         test_string = [
-            'statements_set "YYYY";',
+            'non-existant statements_set "YYYY";',
         ]
         result = optview_statements_set.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
