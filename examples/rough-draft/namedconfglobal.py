@@ -169,7 +169,11 @@ g_nc_keywords['key'] = \
         'validity': {'string': 'key_name'},
         'occurs-multiple-times': True,
         'topblock': True,
-        'found-in': {'', 'view', 'primaries', 'masters', 'also-notify', 'catalog-zones', 'parental-agents'},
+        'found-in': {
+            '', 'view', 'primaries', 'masters', 
+            'also-notify',  # 'key' added to also-notify in v9.9
+            'catalog-zones', 'parental-agents'
+            },
         # found in view since v9.0
         'user-defined-indices': True,  # keyname
         'multi-line-order-id': 2,  # Keys should always be on top, after ACL

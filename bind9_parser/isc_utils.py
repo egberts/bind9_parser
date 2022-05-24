@@ -486,6 +486,59 @@ algorithm_name_list_series = (
 )
 algorithm_name_list_series.setName('<algorithm_name>; [ <algorithm_name>; ... ]')
 
+#  Algorithms used by TLS
+charset_tls_algorithm = alphanums + '.-'
+tls_algorithm_name = Word(charset_tls_algorithm, min=1, max=32)('tls_algorithm_name')
+tls_algorithm_name.setName('<tls_algorithm_name>')
+
+tls_algorithm_name_list_set = (
+        Word(charset_algorithm, min=1, max=32)('tls_algorithm_name')
+        - semicolon
+)
+tls_algorithm_name_list_set.setName('<tls_algorithm_name>;')
+
+tls_algorithm_name_list_series = (
+    Group(
+        OneOrMore(
+            ungroup(tls_algorithm_name)
+            - semicolon
+        )
+    )('tls_algorithm_name')
+)
+tls_algorithm_name_list_series.setName('<tls_algorithm_name>; [ <tls_algorithm_name>; ... ]')
+
+# Primary (formerly masters) name
+
+# Quoteable primary name
+# Yes, ISC Bind9 supports period in primary_name_type
+charset_primary_name = alphanums + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
+primary_name_type = Word(charset_primary_name, min=1, max=63)('primary_name_type')
+primary_name_type.setName('<primary_name>')
+primary_name_type_squotable = Word(charset_primary_name + '"')
+primary_name_type_dquotable = Word(charset_primary_name + "'")
+
+primary_name_type_with_squote = Combine(
+    dquote
+    - primary_name_type_dquotable
+    + dquote
+)
+
+primary_name_type_with_dquote = Combine(
+    squote
+    - primary_name_type_squotable
+    + squote
+)
+
+# the term primary_name used with the :
+#   * primaries clause,
+#   * primaries statement or
+#   * also-notify statement of options/view/zone clauses.
+primary_id = (
+        primary_name_type_squotable
+        | primary_name_type_dquotable
+        | primary_name_type
+)('primary_id')
+
 
 # Boolean support
 

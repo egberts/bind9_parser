@@ -378,14 +378,18 @@ ip46_addr_list = Group(
     + semicolon
 )
 
-ip46_addr_and_port_list = (
-    (
+ip46_addr_and_port_list_set = (
         ip46_addr('addr')
         - Optional(
             ungroup(
                 inet_ip_port_keyword_and_number_element
             )('ip_port')
         )
+)
+
+ip46_addr_and_port_list = (
+    (
+        ip46_addr_and_port_list_set
         + semicolon
     )(None)
 )

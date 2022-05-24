@@ -14,7 +14,7 @@ from bind9_parser.isc_utils import assertParserResultDictTrue,\
     fqdn_name, krb5_principal_name, \
     filename_base, size_spec, path_name, algorithm_name,\
     algorithm_name_list_set, algorithm_name_list_series, \
-    key_id_list_series
+    key_id_list_series, primary_id
 
 
 class TestConfigUtils(unittest.TestCase):
@@ -511,16 +511,23 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type algorithm_name_list_series; passing """
         test_string = 'SHA512; sha-128; dsa; rsa; ED448; ED25519;'
         expected_result = { 'algorithm_name': [ 'SHA512',
-                      'sha-128',
-                      'dsa',
-                      'rsa',
-                      'ED448',
-                      'ED25519']}
+                                                'sha-128',
+                                                'dsa',
+                                                'rsa',
+                                                'ED448',
+                                                'ED25519']}
         assertParserResultDictTrue(
             algorithm_name_list_series,
             test_string,
             expected_result)
 
+    def test_isc_utils_primary_name_passing(self):
+        """ ISC Utilities; Type primary_id; passing """
+        assertParserResultDictTrue(
+            primary_id,
+            'myprimary_name',
+            {'primary_id': 'myprimary_name'}
+            )
 
 if __name__ == '__main__':
     unittest.main()

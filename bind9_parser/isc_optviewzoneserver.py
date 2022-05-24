@@ -10,13 +10,16 @@ Description: Provides statement support for ones found in all
              four clauses: options, view, zone, server
              PyParsing engine for ISC-configuration style
 """
-from pyparsing import Group, Keyword, OneOrMore, Optional
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack
+from pyparsing import Group, Keyword, OneOrMore, Optional, ungroup, Combine
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, tls_algorithm_name,\
+    primary_id
+
 from bind9_parser.isc_clause_key import key_id
-from bind9_parser.isc_inet import ip46_addr, \
-    inet_ip_port_keyword_and_number_element,\
+
+from bind9_parser.isc_inet import \
+    ip46_addr_and_port_list_set, \
+    inet_ip_port_keyword_and_number_element, \
     inet_dscp_port_keyword_and_number_element
-from bind9_parser.isc_clause_primaries import primary_id
 
 
 #  Note:  Be careful of deleting any options/view/zone/server
@@ -35,44 +38,85 @@ from bind9_parser.isc_clause_primaries import primary_id
 #   [... ;]
 # };
 #  Note: no more 'masters-list' since 9.9+
-optviewzoneserver_stmt_also_notify_element_set = (
-        (
-            (
-                ip46_addr('addr')
-                | primary_id('master')
-            )
-            + Optional(inet_ip_port_keyword_and_number_element)
-            - Optional(inet_dscp_port_keyword_and_number_element)
+optviewzoneserver_also_notify_subgroup_subelement1 = (
+    (
+        Keyword('key')
+        + key_id
+        - Optional(
+            Keyword('tls')
+            + tls_algorithm_name
         )
-        + Optional(Keyword('key') + key_id)
-        + semicolon
-)
-optviewzoneserver_also_notify_element_series = OneOrMore(
-    Group(  # this is essential for multiple entries within a List {}
-        optviewzoneserver_stmt_also_notify_element_set
+    )
+    ^ (
+        Keyword('tls')
+        + tls_algorithm_name
+        + Optional(
+            Keyword('key')
+            + key_id
+        )
     )
 )
+optviewzoneserver_also_notify_subgroup_subelement1.setName('[ key <key_id_name> ] [ tls <tls_algorithm_name> ]')
 
-# also-notify [ port integer ]
-#             [ dscp integer ]
+optviewzoneserver_also_notify_subgroup_element2 = (
+        ip46_addr_and_port_list_set
+        ^ primary_id('primary_name')
+)
+optviewzoneserver_also_notify_subgroup_element2.setName('[ ( <ip4>  <port> | <ip6>  <port> | <primary_name> ]')
+
+optviewzoneserver_also_notify_subgroup_series = (
+    OneOrMore(
+        Group(
+        optviewzoneserver_also_notify_subgroup_element2
+        - Optional(optviewzoneserver_also_notify_subgroup_subelement1)
+        + semicolon
+        )('remote*')
+    )
+).setName('( [ ( <ip4>  <port> | <ip6>  <port> | <primary_name> ] ) [ key <key_id_name> ] [ tls <tls_algorithm_name> ]')
+# also-notify
+#             [ port integer ]
+#             [ dscp integer ]  # added in v9.10
 #             {
-#                 ( masters
-#                   | ipv4_address [ port integer ]
-#                   | ipv6_address [ port integer ]
+#                 (
+#                   (
+#                     ipv4_address [ port integer ]
+#                     | ipv6_address [ port integer ]
+#                     )
+#                   [ port integer ]
+#                   )
+#                 [ key string ]  # added in v9.9
+#                 [ tls string ]  # added in v9.18?
+#              )
+#              | (
+#                 <primary_name>  # added in v9.9
 #                 )
-#                 [ key string ]
-#                 ;
-#                 ...
+#             ;
 #             };
+
+optviewzoneserver_also_notify_group_element_set = (
+    (
+        ungroup(inet_ip_port_keyword_and_number_element)('port')
+        - Optional(ungroup(inet_dscp_port_keyword_and_number_element)('dscp'))
+    )
+    ^ (
+        ungroup(inet_dscp_port_keyword_and_number_element)('dscp')
+        - Optional(ungroup(inet_ip_port_keyword_and_number_element)('port'))
+    )
+).setName('[ port <port> ] | [ dscp <dscp> ]')
+
 optviewzoneserver_stmt_also_notify = (
     Keyword('also-notify').suppress()
-    - Optional(inet_ip_port_keyword_and_number_element)
-    - Optional(inet_dscp_port_keyword_and_number_element)
-    + lbrack
-    - optviewzoneserver_also_notify_element_series
+    - Group(
+        Optional(optviewzoneserver_also_notify_group_element_set)
+        + lbrack
+        - (
+            optviewzoneserver_also_notify_subgroup_series
+        )
+    )('also-notify')
     + rbrack
     + semicolon
-)('also_notify')
+)
+optviewzoneserver_stmt_also_notify.setName('also-notify [ port <port> ] [ dscp <dscp> { ( <primary_name> | <ip4_addr> | <ip6_addr> ); };')
 
 # Keywords are in dictionary-order, but with longest pattern as having been listed firstly
 optviewzoneserver_statements_set = (

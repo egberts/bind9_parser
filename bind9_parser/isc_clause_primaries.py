@@ -12,42 +12,13 @@ Description: Provides primary-related grammar in PyParsing engine
 from pyparsing import OneOrMore, Group, Keyword, Optional, Word,\
     srange, Combine, ZeroOrMore, ungroup
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, \
-    dquote, squote, key_id_keyword_and_name_pair
+    dquote, squote, key_id_keyword_and_name_pair, \
+    primary_id
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip46_addr,\
     inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element
 from bind9_parser.isc_rr import rr_domain_name_or_root
 
-
-# Quoteable primary name
-# Yes, ISC Bind9 supports period in primary_name_type
-charset_primary_name = srange('[A-Za-z0-9]') + '_-.'
-primary_name_type = Word(charset_primary_name)('primary_name_type')
-primary_name_type.setName('<primary_name>')
-primary_name_type_squotable = Word(charset_primary_name + '"')
-primary_name_type_dquotable = Word(charset_primary_name + "'")
-
-primary_name_type_with_squote = Combine(
-    dquote
-    - primary_name_type_dquotable
-    + dquote
-)
-
-primary_name_type_with_dquote = Combine(
-    squote
-    - primary_name_type_squotable
-    + squote
-)
-
-# the term primary_name used with the :
-#   * primaries clause,
-#   * primaries statement or
-#   * also-notify statement of options/view/zone clauses.
-primary_id = (
-        primary_name_type_squotable
-        | primary_name_type_dquotable
-        | primary_name_type
-)('primary_id')
 
 # { ( primaries
 #     | ipv4_address [ port integer ]
