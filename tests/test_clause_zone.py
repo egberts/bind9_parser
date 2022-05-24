@@ -53,11 +53,11 @@ class TestClauseZone(unittest.TestCase):
     def test_isc_clause_zone__all_stmts_set_also_notify(self):
         """ Clause zone; All Zone statement 'also-notify' (from isc_optzoneserver.py via 'optzoneserver_statements_set'dd); passing mode """
         test_string = """also-notify {mymaster; 1.2.3.4;};"""
-        expected_result = {'also_notify': [{'master': 'mymaster'}, {'addr': '1.2.3.4'}]}
         assertParserResultDictTrue(
             zone_all_stmts_set,
             test_string,
-            expected_result
+            {'also-notify': {'remote': [{'primary_name': 'mymaster'},
+                                        {'addr': '1.2.3.4'}]}}
         )
 
     def test_isc_clause_zone__all_stmts_set_database(self):
@@ -75,17 +75,16 @@ class TestClauseZone(unittest.TestCase):
     def test_isc_clause_zone__all_stmts_set_combo(self):
         """ Clause zone; All Zone statement 'combo' (from various isc_[opt][view][opt][server].py); passing mode """
         test_string = """zone public { forwarders { 5.6.7.8; 1.2.3.4; }; database abcd; also-notify {mymaster; 1.2.3.4;}; notify-to-soa yes; };"""
-        expected_result = { 'zones': [ { 'also_notify': [ {'master': 'mymaster'},
-                                {'addr': '1.2.3.4'}],
-               'database': 'abcd',
-               'forwarders': { 'forwarders_list': [ { 'addr': '5.6.7.8'},
-                                                    { 'addr': '1.2.3.4'}]},
-               'notify_to_soa': 'yes',
-               'zone_name': 'public'}]}
         assertParserResultDictTrue(
             clause_stmt_zone_standalone,
             test_string,
-            expected_result
+            {'zones': [{'also-notify': {'remote': [{'primary_name': 'mymaster'},
+                                                   {'addr': '1.2.3.4'}]},
+                        'database': 'abcd',
+                        'forwarders': {'forwarders_list': [{'addr': '5.6.7.8'},
+                                                           {'addr': '1.2.3.4'}]},
+                        'notify_to_soa': 'yes',
+                        'zone_name': 'public'}]}
         )
 
     def test_isc_clause_zone__clause_stmt_single2(self):

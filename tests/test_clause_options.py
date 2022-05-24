@@ -41,7 +41,7 @@ allow-recursion-on { 127.0.0.1; };
 allow-transfer port 855 { 127.0.0.1; };
 allow-update { 127.0.0.1; };
 allow-update-forwarding { 127.0.0.1; };
-also-notify port 856 { 127.0.0.1; key ABC_KEY; tls TLS_NAME; };
+also-notify port 856 { 127.0.0.1 key ABC_KEY tls SSLv3; };
 alt-transfer-source * port *;
 alt-transfer-source * port * dscp 1;
 alt-transfer-source-v6 * port * dscp 2;
@@ -49,10 +49,34 @@ answer-cookie no;
 attach-cache ABC_CACHE;
 auth-nxdomain no;
 auto-dnssec off;
-automatic-interface-scan off;
+automatic-interface-scan no;
 avoid-v4-udp-ports { 1; 2; 3; };
 avoid-v6-udp-ports { 4; 5; 6; };""",
-            {}
+            {'allow-recursion': {'aml': [{'addr': '127.0.0.1'}]},
+             'allow-recursion-on': {'aml': [{'addr': '127.0.0.1'}]},
+             'allow_new_zones': 'yes',
+             'allow_notify': {'aml': [{'addr': '127.0.0.1'}]},
+             'allow_query': {'aml': [{'addr': 'any'}]},
+             'allow_query_cache': {'aml': [{'addr': 'none'}]},
+             'allow_query_cache_on': {'aml': [{'addr': '127.0.0.1'}]},
+             'allow_query_on': {'aml': [{'addr': '127.0.0.1'}]},
+             'allow_transfer': {'aml': [{'addr': '127.0.0.1'}],
+                                'ip_port': '855'},
+             'allow_update': {'aml': [{'addr': '127.0.0.1'}]},
+             'allow_update_forwarding': {'aml': [{'addr': '127.0.0.1'}]},
+             'also-notify': {'port': '856',
+                             'remote': [{'addr': '127.0.0.1',
+                                         'key_id': 'ABC_KEY',
+                                         'tls_algorithm_name': 'SSLv3'}]},
+             'alt_transfer_source': {'dscp_port': 1, 'ip_port_w': '*'},
+             'alt_transfer_source_v6': {'dscp_port': 2, 'ip_port_w': '*'},
+             'answer-cookie': 'no',
+             'attach_cache': 'ABC_CACHE',
+             'auth_nxdomain': 'no',
+             'auto_dnssec': 'off',
+             'automatic_interface_scan': 'no',
+             'avoid_v4_udp_ports': ['1', '2', '3'],
+             'avoid_v6_udp_ports': ['4', '5', '6']}
             )
 
     def test_isc_options_all_statement_set_b_to_c_passing(self):

@@ -9,7 +9,7 @@ Title: Clause Statement for Options
 Description:
 """
 
-from pyparsing import Group, Keyword, ZeroOrMore, ParseFatalException, Word, alphas, alphanums
+from pyparsing import Group, Keyword, ZeroOrMore, ParseFatalException, Word, alphas, alphanums, OneOrMore
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon
 from bind9_parser.isc_options import options_statements_set
 from bind9_parser.isc_optview import optview_statements_set
@@ -53,7 +53,7 @@ options_all_statements_set = (
 )
 
 options_all_statements_series = (
-    ZeroOrMore(
+    OneOrMore(
         (
             options_all_statements_set
         )

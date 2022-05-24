@@ -15,6 +15,7 @@ from bind9_parser.isc_optviewserver import \
     optviewserver_statements_set,\
     optviewserver_statements_series
 
+
 class TestOptionsViewServer(unittest.TestCase):
     """ Clause Options/View/Server; things found only under 'options', 'view', and 'server' clause """
 
@@ -40,7 +41,6 @@ class TestOptionsViewServer(unittest.TestCase):
         ]
         result = optviewserver_stmt_edns_udp_size.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
-
 
     def test_isc_optviewserver_stmt_provide_ixfr_passing(self):
         """ Clause Options/View/Server; Statement provide-ixfr; passing mode """

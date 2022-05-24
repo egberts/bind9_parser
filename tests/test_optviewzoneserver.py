@@ -224,9 +224,9 @@ class TestOptionsViewZoneServer(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzoneserver_statements_set,
             'also-notify { 1.1.1.1 port 58 key lockbox6_key; };',
-            {'also_notify': [{'addr': '1.1.1.1',
-                              'ip_port': '58',
-                              'key_id': 'lockbox6_key'}]}
+            {'also-notify': {'remote': [{'addr': '1.1.1.1',
+                                         'ip_port': '58',
+                                         'key_id': 'lockbox6_key'}]}}
         )
 
     def test_isc_optviewzoneserver_stmt_statements_set_failing(self):
@@ -244,9 +244,10 @@ class TestOptionsViewZoneServer(unittest.TestCase):
             optviewzoneserver_statements_series,
             'also-notify { 1.1.1.1 port 58 key lockbox6_key; };' +
             'also-notify { 2.2.2.2 port 52 key lockbox16_key; };',
-            {'also_notify': [{'addr': '2.2.2.2',
-                              'ip_port': '52',
-                              'key_id': 'lockbox16_key'}]}
+            # This is a unique case of just saving the last statement out of 2
+            {'also-notify': {'remote': [{'addr': '2.2.2.2',
+                                         'ip_port': '52',
+                                         'key_id': 'lockbox16_key'}]}}
         )
 
     def test_isc_optviewzoneserver_stmt_statements_series_failing(self):
