@@ -15,6 +15,7 @@ from bind9_parser.isc_optviewzoneserver import \
 
 class TestOptionsViewZoneServer(unittest.TestCase):
     """ Clause Options/View/Zone/Server; only under 'options', 'view', 'zone', and 'server' clause """
+
     def test_isc_optviewzoneserver_stmt_also_notify_passing(self):
         """ Clause options/view/zone/server; Statement also-notify; passing """
         test_string = [
@@ -45,6 +46,9 @@ class TestOptionsViewZoneServer(unittest.TestCase):
         ]
         result = optviewzoneserver_stmt_also_notify.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzoneserver_stmt_also_notify_2_passing(self):
+        """ Clause options/view/zone/server; Statement also-notify 2; passing """
         assertParserResultDictTrue(
             optviewzoneserver_stmt_also_notify,
             'also-notify { 1.1.1.1 port 58 dscp 4 key lockbox6_key; fe01::1 dscp 6 key lockbox11_key; };',
@@ -59,8 +63,6 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_statements_set_passing(self):
         """ Clause optviewzoneserver; Statement statements_set; passing """
-
-
         test_string = [
             'also-notify { masters; };',
             'also-notify { masters key lockbox0_key; };',
@@ -100,6 +102,9 @@ class TestOptionsViewZoneServer(unittest.TestCase):
         ]
         result = optviewzoneserver_statements_set.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzoneserver_statements_set_2_passing(self):
+        """ Clause optviewzoneserver; Statement statements_set 2; passing """
         assertParserResultDictTrue(
             optviewzoneserver_statements_set,
             'also-notify { 1.1.1.1 port 58 dscp 4 key lockbox6_key; };',
