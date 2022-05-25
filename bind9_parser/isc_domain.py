@@ -216,6 +216,10 @@ rr_domain_name_or_wildcard_type = (
 rr_domain_name_or_wildcard_type.setName('<rr-name-or-wildcard>')
 rr_domain_name_or_wildcard_type.setResultsName('domain_name')
 
+# SOA RNAME in SOA record; responsible person in SOA format
+soa_name_type = rr_fqdn_w_absolute  # might be name_type
+soa_rname = domain_generic_fqdn
+
 # Bind9 convention
 # domain_name = rr_fqdn_w_absolute
 # domain_name.setName('domain_name')

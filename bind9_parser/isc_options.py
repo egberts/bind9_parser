@@ -11,11 +11,13 @@ Description: Various 'options' statement that is used
 """
 from pyparsing import Group, Keyword, OneOrMore, Optional, Word,\
     ZeroOrMore, OneOrMore, Combine, Literal, ungroup
+from pyparsing import pyparsing_common
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
     name_type, path_name, number_type, seconds_type, \
     isc_boolean, fqdn_name, key_id, krb5_principal_name,\
     exclamation, quoted_path_name, squote, dquote, algorithm_name_list_series,\
-    fqdn_name_dequoted, fqdn_name_dequotable
+    fqdn_name_dequoted, fqdn_name_dequotable, key_secret, quotable_name, \
+    algorithm_name
 from bind9_parser.isc_inet import ip_port,\
     inet_dscp_port_keyword_and_number_element,\
     inet_ip_port_keyword_and_number_element
@@ -42,7 +44,7 @@ options_stmt_acache_enable.setName('acache-enable <boolean>;')
 options_stmt_answer_cookie = (
     Keyword('answer-cookie').suppress()
     - isc_boolean('answer-cookie')
-    + semicolon
+    - semicolon
 )
 options_stmt_answer_cookie.setName('answer_cookie <boolean>;')
 
@@ -110,10 +112,34 @@ options_stmt_cache_file = (
 )
 options_stmt_cache_file.setName('cache-file <quoted-filespec>;')
 
+options_stmt_clients_per_query = (
+        Keyword('clients-per-query').suppress()
+        - pyparsing_common.integer('clients_per_query')
+        + semicolon
+)
+options_stmt_clients_per_query.setName('clients-per-query <integer>;')
+
+options_stmt_cookie_algorithm = (
+        Keyword('cookie-algorithm').suppress()
+        - (
+                Literal('aes')
+                | Literal('siphash24')
+        )('cookie_algorithm')
+        + semicolon
+)
+options_stmt_cookie_algorithm.setName('cookie-algorithm [ aes | siphash24 ];')
+
+options_stmt_cookie_secret = (
+        Keyword('cookie-secret').suppress()
+        - quotable_name('cookie_secret')
+        - semicolon
+)
+options_stmt_cookie_secret.setName('cookie-secret <secret>;')
+
 options_stmt_coresize = (
-    Keyword('coresize').suppress()
-    - size_spec('coresize')
-    + semicolon
+        Keyword('coresize').suppress()
+        - size_spec('coresize')
+        + semicolon
 )
 options_stmt_coresize.setName('coresize <size-spec>;')
 
@@ -136,7 +162,7 @@ options_stmt_deallocate_on_exit.setName('deallocate-on-exit <boolean>;')
 #     [ except-from { name_list } ]; [ Opt ]
 options_stmt_deny_answer_addresses = (
     Keyword('deny-answer-addresses').suppress()
-    + Group (
+    - Group(
         lbrack
         + (
             ZeroOrMore(
@@ -158,16 +184,16 @@ options_stmt_deny_answer_addresses = (
                         + semicolon
                     )  # never set a ResultsLabel here, you get duplicate but un-nested 'addr'
                 )  # never set a ResultsLabel here, you get no []
-            )(None)
+            )
         )('aml')
         + rbrack
         # NOSEMICOLON HERE!
-        + Optional(
+        - Optional(
             Keyword('except-from')
             + lbrack
-            - name_type
-            + semicolon
-            + rbrack
+            - OneOrMore(quoted_domain_generic_fqdn)
+            - semicolon
+            - rbrack
         )
         + semicolon
     )('deny_answer_addresses')
@@ -223,7 +249,7 @@ options_stmt_disable_algorithms = (
     Keyword('disable-algorithms').suppress()
     - Group(
         fqdn_name_dequotable('domain_name')
-        - lbrack
+        + lbrack
         - algorithm_name_list_series
         + rbrack
     )('disable_algorithms*')
@@ -238,13 +264,13 @@ options_stmt_disable_ds_digests = (
         fqdn_name('domain_name')
         + lbrack
         + OneOrMore(
-            Word(domain_charset_alphanums_dash_underscore, max=63)
+            algorithm_name
             + semicolon
-        )('digest_list')
+        )
         + rbrack
-    )
+    )('disable_ds_digests*')
     + semicolon
-)('disable_ds_digests')
+)
 options_stmt_disable_ds_digests.setName('disable-ds-digests <quotable-fqdn> { <algorithm> ; ... };')
 
 #  dscp <integer>;
@@ -482,7 +508,7 @@ options_stmt_session_keyalg = (
     - name_type('session_keyalg_name')
     + semicolon
 )
-options_stmt_session_keyalg.setName('session-keyalg <key_id>;')
+options_stmt_session_keyalg.setName('session-keyalg <key_algorithm_id>;')
 
 options_stmt_session_keyname = (
     Keyword('session-keyname').suppress()
@@ -631,64 +657,67 @@ options_multiple_stmt_tkey_dhkey = ZeroOrMore(
 # This is irritating; was forced to used '^' over '|' in options_statements_set()
 options_statements_set = (
     options_stmt_acache_cleaning_interval
-    | options_stmt_acache_enable
-    | options_stmt_answer_cookie
-    | options_stmt_automatic_interface_scan
-    | options_stmt_avoid_v4_udp_ports
-    | options_stmt_avoid_v6_udp_ports
-    | options_stmt_bindkeys_file
-    | options_stmt_blackhole
-    | options_stmt_cache_file
-    | options_stmt_coresize
-    | options_stmt_datasize
-    | options_stmt_deallocate_on_exit
-    | options_stmt_deny_answer_addresses
-    | options_stmt_deny_answer_aliases
-    | options_stmt_directory
-    | options_stmt_dscp
-    | options_stmt_dump_file
-    | options_stmt_fake_iquery
-    | options_stmt_flush_zones_on_shutdown
-    | options_stmt_has_old_clients
-    | options_stmt_hostname_statistics_max
-    | options_stmt_hostname_statistics
-    | options_stmt_interface_interval
-    | options_stmt_match_mapped_addresses
-    | options_stmt_max_rsa_exponent_size
-    | options_stmt_memstatistics_file
-    | options_stmt_memstatistics
-    | options_stmt_multiple_cnames
-    | options_stmt_named_xfer
-    | options_stmt_pid_file
-    | options_stmt_port
-    | options_stmt_prefetch
-    | options_stmt_querylog
-    | options_stmt_random_device
-    | options_stmt_recursing_file
-    | options_stmt_recursive_clients
-    | options_stmt_resolver_query_timeout
-    | options_stmt_secroots_file
-    | options_stmt_serial_query_rate
-    | options_stmt_server_id
-    | options_stmt_session_keyalg
-    | options_stmt_session_keyfile
-    | options_stmt_session_keyname
-    | options_stmt_stacksize
-    | options_stmt_statistics_file
-    | options_stmt_tcp_clients
-    | options_stmt_tcp_listen_queue
-    | options_stmt_tkey_domain
-    | options_stmt_tkey_gssapi_credential
-    | options_stmt_tkey_gssapi_keytab
-    | options_stmt_transfers_in
-    | options_stmt_transfers_out
-    | options_stmt_transfers_per_ns
-    | options_stmt_version
-    | options_stmt_disable_algorithms
-    | options_stmt_disable_ds_digests
-    | options_stmt_listen_on_v6
-    | options_stmt_listen_on
-    | options_stmt_tkey_dhkey
+    ^ options_stmt_acache_enable
+    ^ options_stmt_answer_cookie
+    ^ options_stmt_automatic_interface_scan
+    ^ options_stmt_avoid_v4_udp_ports
+    ^ options_stmt_avoid_v6_udp_ports
+    ^ options_stmt_bindkeys_file
+    ^ options_stmt_blackhole
+    ^ options_stmt_cache_file
+    ^ options_stmt_clients_per_query
+    ^ options_stmt_cookie_algorithm
+    ^ options_stmt_cookie_secret
+    ^ options_stmt_coresize
+    ^ options_stmt_datasize
+    ^ options_stmt_deallocate_on_exit
+    ^ options_stmt_deny_answer_addresses
+    ^ options_stmt_deny_answer_aliases
+    ^ options_stmt_directory
+    ^ options_stmt_dscp
+    ^ options_stmt_dump_file
+    ^ options_stmt_fake_iquery
+    ^ options_stmt_flush_zones_on_shutdown
+    ^ options_stmt_has_old_clients
+    ^ options_stmt_hostname_statistics_max
+    ^ options_stmt_hostname_statistics
+    ^ options_stmt_interface_interval
+    ^ options_stmt_match_mapped_addresses
+    ^ options_stmt_max_rsa_exponent_size
+    ^ options_stmt_memstatistics_file
+    ^ options_stmt_memstatistics
+    ^ options_stmt_multiple_cnames
+    ^ options_stmt_named_xfer
+    ^ options_stmt_pid_file
+    ^ options_stmt_port
+    ^ options_stmt_prefetch
+    ^ options_stmt_querylog
+    ^ options_stmt_random_device
+    ^ options_stmt_recursing_file
+    ^ options_stmt_recursive_clients
+    ^ options_stmt_resolver_query_timeout
+    ^ options_stmt_secroots_file
+    ^ options_stmt_serial_query_rate
+    ^ options_stmt_server_id
+    ^ options_stmt_session_keyalg
+    ^ options_stmt_session_keyfile
+    ^ options_stmt_session_keyname
+    ^ options_stmt_stacksize
+    ^ options_stmt_statistics_file
+    ^ options_stmt_tcp_clients
+    ^ options_stmt_tcp_listen_queue
+    ^ options_stmt_tkey_domain
+    ^ options_stmt_tkey_gssapi_credential
+    ^ options_stmt_tkey_gssapi_keytab
+    ^ options_stmt_transfers_in
+    ^ options_stmt_transfers_out
+    ^ options_stmt_transfers_per_ns
+    ^ options_stmt_version
+    ^ options_stmt_disable_algorithms
+    ^ options_stmt_disable_ds_digests
+    ^ options_stmt_listen_on_v6
+    ^ options_stmt_listen_on
+    ^ options_stmt_tkey_dhkey
 )
 
 #options_statements_set = (

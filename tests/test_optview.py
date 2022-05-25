@@ -25,11 +25,12 @@ from bind9_parser.isc_optview import \
     optview_stmt_check_mx_cname, \
     optview_stmt_check_mx, \
     optview_stmt_check_names, \
-    optview_stmt_check_sibling, \
     optview_stmt_check_spf, \
     optview_stmt_check_srv_cname, \
     optview_stmt_check_wildcard, \
     optview_stmt_cleaning_interval, \
+    optview_stmt_dns64, \
+    optview_stmt_dns64_contact, \
     optview_stmt_dnssec_accept_expired, \
     optview_stmt_dnssec_enable, \
     optview_stmt_dnssec_lookaside, \
@@ -317,21 +318,6 @@ class TestOptionsView(unittest.TestCase):
                               'zone_type': 'slave'}]}
         )
 
-    def test_isc_optview_stmt_check_sibling_passing(self):
-        """ Clause options/view; Statement check-sibling; passing """
-        test_string = [
-            'check-sibling ignore;',
-            'check-sibling warn;',
-            'check-sibling fail;',
-        ]
-        result = optview_stmt_check_sibling.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-        assertParserResultDictTrue(
-            optview_stmt_check_sibling,
-            'check-sibling fail;',
-            {'check_sibling': 'fail'}
-        )
-
     def test_isc_optview_stmt_check_spf_passing(self):
         """ Clause options/view; Statement check-spf; passing """
         test_string = [
@@ -384,13 +370,46 @@ class TestOptionsView(unittest.TestCase):
             {'cleaning_interval': 480}
         )
 
+    def test_isc_optview_stmt_optview_stmt_disable_empty_zone(self):
+        """ Clause options/view; Statement 'optview_stmt_disable_empty_zone'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_disable_empty_zone,
+            'disable-empty-zone "127.in-addr.arpa";',
+            {'disable_empty_zone': [{'zone_name': '"127.in-addr.arpa"'}]}
+        )
+
+    def test_isc_optview_stmt_optview_stmt_dns64_passing(self):
+        """ Clause options/view; Statement 'optview_stmt_dns64'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_dns64,
+            """
+dns64 64:ff9b::/96 { 
+    break-dnssec yes;
+    recursive-only no;
+    clients { 127.0.0.1; };
+    exclude { 127.0.0.1; };
+    mapped   { 127.0.0.1; };
+    };""",
+            {'dns64': [{'aml': [{'addr': '127.0.0.1'}],
+                        'break_dnssec': 'yes',
+                        'clients': [{'addr': '127.0.0.1'}],
+                        'exclude': [{'addr': '127.0.0.1'}],
+                        'ip6_addr': '64:ff9b::',
+                        'ip6s_subnet': '96',
+                        'mapped': [{'addr': '127.0.0.1'}],
+                        'recursive_only': 'no'}]}
+        )
+
+    def test_isc_optview_stmt_dns64_contact_passing(self):
+        """ Clause options/view; Statement 'dns64-contact'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_dns64_contact,
+            'dns64-contact johndoe.example.test;',
+            {'dns64_contact': {'soa_rname': 'johndoe.example.test'}}
+        )
+
     def test_isc_optview_stmt_dnssec_accept_expired_passing(self):
         """ Clause options/view; Statement dnssec-accept-expired; passing """
-        test_string = [
-            'dnssec-accept-expired no;'
-        ]
-        result = optview_stmt_dnssec_accept_expired.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
         assertParserResultDictTrue(
             optview_stmt_dnssec_accept_expired,
             'dnssec-accept-expired False;',
@@ -1153,54 +1172,64 @@ class TestOptionsView(unittest.TestCase):
     def test_isc_optview_statements_set_passing(self):
         """ Clause optview; Statement statements_set; passing """
         test_string = [
-            'acache-enable no;',
             'acache-cleaning-interval no;',
-            'additional-from-cache yes;',
-            'allow-query-cache-on { localnets; localhost; };',
-            'allow-query-cache { localnets; localhost; };',
-            'allow-recursion-on { any; };',
-            'allow-recursion { localnets; localhost; };',
-            'auth-nxdomain no;',
-            'check-integrity no;',
-            'allow-new-zones 0;',
-            'attach-cache dmz_view;',
-            'cache-file "/dev/null";',
-            'rate-limit { qps-scale 5; };',
-            'query-source-v6 address fe08::08 port *;',
-            'check-mx warn;',
+            'acache-enable no;',
             'additional-from-auth yes;',
-            'max-cache-ttl 3600;',
-            'check-wildcard yes;',
-            'heartbeat-interval 3600;',
-            'dnssec-lookaside auto;',
+            'additional-from-cache yes;',
+            'allow-new-zones 0;',
+            'allow-query-cache { localnets; localhost; };',
+            'allow-query-cache-on { localnets; localhost; };',
+            'allow-recursion { localnets; localhost; };',
+            'allow-recursion-on { any; };',
+            'attach-cache dmz_view;',
+            'auth-nxdomain no;',
+            'cache-file "/dev/null";',
+            'check-dup-records ignore;',
+            'check-integrity no;',
+            'check-mx warn;',
             'check-mx-cname fail;',
-            'dnssec-enable yes;',
+            'check-names slave ignore;',
             'check-spf fail;',
             'check-srv-cname warn;',
-            'dnssec-must-be-secure www.example.com. no;',
-            'empty-contact admin.example.com;',
-            'files default;',
-            'check-dup-records ignore;',
-            'hostname example.com;',
-            'check-names slave ignore;',
+            'check-wildcard yes;',
             'cleaning-interval 480;',
-            'lame-ttl 32;',
-            'max-cache-size 2048000;',
-            'managed-keys-directory "/var/lib/bind9/managed-keys/public/";',
-            'minimal-responses yes;',
-            'query-source address 5.5.5.5 port 53;',
-            'preferred-glue aaaa;',
-            'dnssec-accept-expired False;',
-            'check-sibling warn;',
+            'deny-answer-addresses { 127.0.0.1; };',
+            'deny-answer-aliases { example.test.; };',
+            'disable-empty-zone ".";',
+            """dns64 64:ff9b::/96 { 
+    break-dnssec yes;
+    recursive-only no;
+    clients { 127.0.0.1; };
+    exclude { 127.0.0.1; };
+    mapped   { 127.0.0.1; };
+    };""",
+            'dns64-contact johndoe.example.test;',
+            'dnssec-accept-expired no;',
+            'dnssec-enable yes;',
+            'dnssec-lookaside auto;',
+            'dnssec-must-be-secure www.example.com. no;',
             'dnssec-validation auto;',
+            'dual-stack-servers port 593 { "bastion1.example.com" port 693; };',
+            'empty-contact admin.example.com;',
+            'empty-zones-enable no;',
+            'fetch-glue no;',
+            'files default;',
+            'heartbeat-interval 3600;',
+            'hostname example.com;',
+            'lame-ttl 32;',
+            'managed-keys-directory "/var/lib/bind9/managed-keys/public/";',
+            'max-cache-size 2048000;',
+            'max-cache-ttl 3600;',
+            'minimal-responses yes;',
+            'preferred-glue aaaa;',
+            'query-source address 5.5.5.5 port 53;',
+            'query-source-v6 address fe08::08 port *;',
+            'rate-limit { qps-scale 5; };',
+            'recursion yes;',
             'response-policy { zone white policy given; };',
             'rfc2308-type1 yes;',
-            'fetch-glue no;',
             'root-delegation-only exclude { name1; name2; name3; };',
-            'dual-stack-servers port 593 { "bastion1.example.com" port 693; };',
-            'disable-empty-zone ".";',
-            'empty-zones-enable False;',
-            'recursion yes;',
+            'rrset-order { class IN type A name "host.example.com" order random; order cyclic; };',
             'sortlist { localhost; localnets; };',
         ]
         result = optview_statements_set.runTests(test_string, failureTests=False)
@@ -1220,12 +1249,22 @@ class TestOptionsView(unittest.TestCase):
         result = optview_statements_set.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
-    def test_isc_optview_statements_series_passing(self):
+    def test_isc_optview_statements_series_experimental_passing(self):
         """ Clause optview; Statement optview_statements_series; passing """
         assertParserResultDictTrue(
             optview_statements_series,
-            'acache-enable no;' +
-            'acache-cleaning-interval no;' +
+            'acache-enable no; dns64-contact a.b.c; acache-cleaning-interval no;',
+            {'acache_cleaning_interval': 'no',
+             'acache_enable': 'no',
+             'dns64_contact': {'soa_rname': 'a.b.c'}}
+            )
+
+    def test_isc_optview_statements_series_passing(self):
+        """ Clause optview; Statement optview_statements_series; passing """
+        assertParserResultDictTrue(
+                optview_statements_series,
+                'acache-enable no;' +
+                'acache-cleaning-interval no;' +
             'additional-from-cache yes;' +
             'allow-query-cache-on { localnets; localhost; };' +
             'allow-query-cache { localnets; localhost; };' +
@@ -1262,7 +1301,6 @@ class TestOptionsView(unittest.TestCase):
             'query-source address 5.5.5.5 port 53;' +
             'preferred-glue aaaa;' +
             'dnssec-accept-expired False;' +
-            'check-sibling warn;' +
             'dnssec-validation auto;' +
             'response-policy { zone white policy given; };' +
             'rfc2308-type1 yes;' +
@@ -1294,7 +1332,6 @@ class TestOptionsView(unittest.TestCase):
              'check_mx_cname': 'fail',
              'check_names': [{'result_status': 'ignore',
                               'zone_type': 'slave'}],
-             'check_sibling': 'warn',
              'check_spf': 'fail',
              'check_srv_cname': 'warn',
              'check_wildcard': 'yes',

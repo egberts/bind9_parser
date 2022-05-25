@@ -19,6 +19,7 @@ from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_alt_transfer_source_v6, \
     optviewzone_stmt_alt_transfer_source, \
     optviewzone_stmt_auto_dnssec, \
+    optviewzone_stmt_check_sibling, \
     optviewzone_stmt_dialup, \
     optviewzone_stmt_forwarders, \
     optviewzone_stmt_forward, \
@@ -295,6 +296,21 @@ class TestOptionsViewZone(unittest.TestCase):
             optviewzone_stmt_auto_dnssec,
             'auto-dnssec maintain;',
             {'auto_dnssec': 'maintain'}
+        )
+
+    def test_isc_optviewzone_stmt_check_sibling_passing(self):
+        """ Clause options/view; Statement check-sibling; passing """
+        test_string = [
+            'check-sibling ignore;',
+            'check-sibling warn;',
+            'check-sibling fail;',
+        ]
+        result = optviewzone_stmt_check_sibling.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optviewzone_stmt_check_sibling,
+            'check-sibling fail;',
+            {'check_sibling': 'fail'}
         )
 
     def test_isc_optviewzone_stmt_dialup_passing(self):
@@ -855,7 +871,6 @@ class TestOptionsViewZone(unittest.TestCase):
         result = optviewzone_statements_set.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
-
     def test_isc_optviewzone_statements_series_passing2(self):
         """ Clause optviewzone; Statement optviewzone_statements_series 2; passing """
         assertParserResultDictTrue(
@@ -875,6 +890,7 @@ class TestOptionsViewZone(unittest.TestCase):
             'dnssec-loadkeys-interval 3600;' +
             'ixfr-tmp-file /tmp/junk.dat;' +
             'notify-source 3.3.3.3 port 253;' +
+            'check-sibling warn;' +
             'max-retry-time 3600;' +
             'notify-source-v6 * port 53;' +
             'sig-validity-interval 7;' +
@@ -922,6 +938,7 @@ class TestOptionsViewZone(unittest.TestCase):
              'alt_transfer_source': ['*'],
              'alt_transfer_source_v6': {'dscp_port': 7, 'ip_port_w': '53'},
              'auto_dnssec': 'maintain',
+             'check_sibling': 'warn',
              'dialup': 'yes',
              'dnssec_loadkeys_interval': 3600,
              'forward': 'only',

@@ -6,7 +6,8 @@ Description:  Performs unit test on the isc_inet.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictFalse, assertParserResultDictTrue
+from bind9_parser.isc_utils import OneOrMore, \
+    assertParserResultDictFalse, assertParserResultDictTrue
 from bind9_parser.isc_inet import \
     dscp_port, \
     ip_port, \
@@ -265,8 +266,8 @@ class TestINET(unittest.TestCase):
         result = _ip6_device_index.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
-    def test_isc_inet_ip6_addr_passing(self):
-        """INET clause, ip6_addr passing
+    def test_isc_inet_ip6_addr_ut_passing(self):
+        """INET clause, ip6_addr unittest passing
          1::                              1:2:3:4:5:6:7::
          1::8             1:2:3:4:5:6::8  1:2:3:4:5:6::8
          1::7:8           1:2:3:4:5::7:8  1:2:3:4:5::8
@@ -317,6 +318,14 @@ class TestINET(unittest.TestCase):
         ]
         result = ip6_addr.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_inet_ip6_addr_suffix(self):
+        """INET clause, ip6_addr suffix; passing"""
+        assertParserResultDictTrue(
+            ip6_addr,
+            "::127.0.0.1",
+            {'ip6_addr': '::127.0.0.1'}
+        )
 
     def test_isc_inet_ip6_addr_failing(self):
         """INET clause, ip6_addr failing"""
@@ -457,8 +466,8 @@ class TestINET(unittest.TestCase):
         result = ip6_addr_or_index.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
-    def test_isc_inet_ip6s_prefix_passing(self):
-        """INET clause; ip6s_prefix element; passing mode"""
+    def test_isc_inet_ip6s_prefix_ut_passing(self):
+        """INET clause; ip6s_prefix element; unittest passing mode"""
         test_data = [
             '::127.0.0.1/16',
             '::192.168.1.1/24',
@@ -469,6 +478,21 @@ class TestINET(unittest.TestCase):
         ]
         result = ip6s_prefix.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_inet_ip6s_prefix_passing(self):
+        """INET clause; ip6s_prefix element; passing mode"""
+        assertParserResultDictTrue(
+            ip6s_prefix,
+            """::127.0.0.1/16"""
+# ::192.168.1.1/24
+# fe80::1ff:fe23:4567:890a/128
+# fe80::1/124
+# fe80::1ff:fe23:4567:890a/96
+# fe80::1ff:fe23:4567:890a/48
+# """,
+            ,
+            {'ip6_addr': '::127.0.0.1', 'ip6s_subnet': '16'}
+        )
 
     def test_isc_inet_ip6_addr_or_wildcard_passing(self):
         """INET clause; ip6_addr_or_wildcard element; passing mode"""

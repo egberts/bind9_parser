@@ -38,33 +38,35 @@ def error(exceptionClass):
         raise exceptionClass(s,l,t[0])
     return Word(alphas,alphanums).setParseAction(raise_exception)
 
+
 options_stmt_counter = 0
+
+
 def counter_options(strg, loc, toks):
     global options_stmt_counter
     options_stmt_counter = options_stmt_counter + 1
 
+
 options_all_statements_set = (
         options_statements_set
-        | optview_statements_set
-        | optviewserver_statements_set
-        | optviewzone_statements_set
-        | optviewzoneserver_statements_set
-        | optzone_statements_set
+        ^ optview_statements_set
+        ^ optviewserver_statements_set
+        ^ optviewzone_statements_set
+        ^ optviewzoneserver_statements_set
+        ^ optzone_statements_set
 )
 
 options_all_statements_series = (
     OneOrMore(
-        (
-            options_all_statements_set
-        )
-    )('')
-)('')
+        options_all_statements_set
+    )
+)
 
 clause_stmt_options = (
     Keyword('options').setParseAction(counter_options).suppress()
     - Group(
         lbrack
-        - options_all_statements_series
+        - ZeroOrMore(options_all_statements_set)
         + rbrack
     )('')
     + semicolon

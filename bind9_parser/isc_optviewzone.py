@@ -13,7 +13,7 @@ from pyparsing import Group, Keyword, Optional,\
     Literal, ZeroOrMore, CaselessLiteral
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, isc_boolean, path_name, \
     seconds_type, days_type, minute_type, quoted_path_name,\
-    size_spec, name_base, fqdn_name
+    size_spec, name_base, fqdn_name, check_options
 from bind9_parser.isc_inet import ip4_addr, ip_port, \
     inet_ip_port_keyword_and_wildcard_element, ip6_addr,\
     inet_ip_port_keyword_and_number_element, ip46_addr_or_prefix,\
@@ -133,11 +133,24 @@ optviewzone_stmt_auto_dnssec = (
     + semicolon
 )
 
+optviewzone_stmt_check_sibling = (
+        Keyword('check-sibling').suppress()
+        + check_options
+        + semicolon
+).setName('check-sibling ( warn | fail | ignore );')  # [ Opt View Zone ] v9.4+
+
 optviewzone_stmt_dialup = (
-    Keyword('dialup')
-    - isc_boolean('dialup')
+    Keyword('dialup').suppress()
+    - ( 
+        Literal('notify-passive')
+        | Literal('notify')
+        | Literal('no')
+        | Literal('yes')
+        | Literal('passive')
+        | Literal('refresh')
+    )('dialup')
     + semicolon
-)
+).setName('dialup [ notify | notify-passive | passive | refresh | yes | no ];')
 
 optviewzone_stmt_dnssec_policy = (
     Keyword('dnssec-policy')
@@ -422,55 +435,54 @@ optviewzone_stmt_zone_statistics = (
 #  Keywords are in dictionary-order, but with longest pattern as
 #  having been listed firstly
 optviewzone_statements_set = (
-        optviewzone_stmt_allow_notify
-        | optviewzone_stmt_allow_query_on
-        | optviewzone_stmt_allow_query
-        | optviewzone_stmt_allow_transfer
-        | optviewzone_stmt_allow_update_forwarding
-        | optviewzone_stmt_allow_update_on
-        | optviewzone_stmt_allow_update
-        | optviewzone_stmt_allow_v6_synthesis
-        | optviewzone_stmt_alt_transfer_source_v6
-        | optviewzone_stmt_alt_transfer_source
-        | optviewzone_stmt_auto_dnssec
-        | optviewzone_stmt_dialup
-        | optviewzone_stmt_dnssec_loadkeys_interval
-        | optviewzone_stmt_forwarders
-        | optviewzone_stmt_forward
-        | optviewzone_stmt_ixfr_from_differences
-        | optviewzone_stmt_ixfr_tmp_file
-        | optviewzone_stmt_key_directory
-        | optviewzone_stmt_maintain_ixfr_base
-        | optviewzone_stmt_masterfile_format
-        | optviewzone_stmt_max_journal_size
-        | optviewzone_stmt_max_refresh_time
-        | optviewzone_stmt_max_retry_time
-        | optviewzone_stmt_max_transfer_idle_in
-        | optviewzone_stmt_max_transfer_idle_out
-        | optviewzone_stmt_max_transfer_time_in
-        | optviewzone_stmt_max_transfer_time_out
-        | optviewzone_stmt_min_refresh_time
-        | optviewzone_stmt_min_retry_time
-        | optviewzone_stmt_multi_master
-        | optviewzone_stmt_notify_source_v6
-        | optviewzone_stmt_notify_source
-        | optviewzone_stmt_notify
-        | optviewzone_stmt_provide_ixfr
-        | optviewzone_stmt_request_ixfr
-        | optviewzone_stmt_request_nsid
-        | optviewzone_stmt_sig_validity_interval  # BUG works here?
-        | optviewzone_stmt_transfer_format
-        | optviewzone_stmt_transfer_source_v6
-        | optviewzone_stmt_transfer_source
-        | optviewzone_stmt_use_alt_transfer_source
-        | optviewzone_stmt_zone_statistics
+         optviewzone_stmt_allow_notify
+        ^ optviewzone_stmt_allow_query_on
+        ^ optviewzone_stmt_allow_query
+        ^ optviewzone_stmt_allow_transfer
+        ^ optviewzone_stmt_allow_update_forwarding
+        ^ optviewzone_stmt_allow_update_on
+        ^ optviewzone_stmt_allow_update
+        ^ optviewzone_stmt_allow_v6_synthesis
+        ^ optviewzone_stmt_alt_transfer_source_v6
+        ^ optviewzone_stmt_alt_transfer_source
+        ^ optviewzone_stmt_auto_dnssec
+        ^ optviewzone_stmt_check_sibling
+        ^ optviewzone_stmt_dialup
+        ^ optviewzone_stmt_dnssec_loadkeys_interval
+        ^ optviewzone_stmt_forwarders
+        ^ optviewzone_stmt_forward
+        ^ optviewzone_stmt_ixfr_from_differences
+        ^ optviewzone_stmt_ixfr_tmp_file
+        ^ optviewzone_stmt_key_directory
+        ^ optviewzone_stmt_maintain_ixfr_base
+        ^ optviewzone_stmt_masterfile_format
+        ^ optviewzone_stmt_max_journal_size
+        ^ optviewzone_stmt_max_refresh_time
+        ^ optviewzone_stmt_max_retry_time
+        ^ optviewzone_stmt_max_transfer_idle_in
+        ^ optviewzone_stmt_max_transfer_idle_out
+        ^ optviewzone_stmt_max_transfer_time_in
+        ^ optviewzone_stmt_max_transfer_time_out
+        ^ optviewzone_stmt_min_refresh_time
+        ^ optviewzone_stmt_min_retry_time
+        ^ optviewzone_stmt_multi_master
+        ^ optviewzone_stmt_notify_source_v6
+        ^ optviewzone_stmt_notify_source
+        ^ optviewzone_stmt_notify
+        ^ optviewzone_stmt_provide_ixfr
+        ^ optviewzone_stmt_request_ixfr
+        ^ optviewzone_stmt_request_nsid
+        ^ optviewzone_stmt_sig_validity_interval  # BUG works here?
+        ^ optviewzone_stmt_transfer_format
+        ^ optviewzone_stmt_transfer_source_v6
+        ^ optviewzone_stmt_transfer_source
+        ^ optviewzone_stmt_use_alt_transfer_source
+        ^ optviewzone_stmt_zone_statistics
 )
 
 # No need to keep the ordering of statements, stick in a dictionarized Dict {}
 optviewzone_statements_series = (
     ZeroOrMore(
-        (
             optviewzone_statements_set
-        )
     )
 )

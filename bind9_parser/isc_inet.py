@@ -99,6 +99,8 @@ ip4_addr_or_wildcard.setName('<ip4_addr_or_wildcard>')
 ip4s_prefix = Combine(ip4_addr + '/' - ip4s_subnet)
 ip4s_prefix.setName('<ip4subnet>')
 
+
+
 # Apparently, pyparsing_common.ipv6_address cannot the following:
 #  - do device index suffix of "%eth0" or "%1"
 #  - Support IPv4 notation after short or mixed IPv6
@@ -295,7 +297,7 @@ _ip6_addr = Combine(
     | ip6_0_1_addr
     | ip6_0_0_addr
     | ip6_full_addr
-)
+)('ip6_addr')
 
 ip6_addr = _ip6_addr
 ip6_addr.setName('<ip6_addr_only>')
@@ -314,7 +316,7 @@ ip6_addr_or_index = Combine(
 )
 ip6_addr_or_index.setName('<ip6_addr_or_device_index>')
 
-ip6s_prefix = Combine(ip6_addr + '/' - ip6s_subnet)
+ip6s_prefix = Combine(ip6_addr - '/' - ip6s_subnet)
 ip6s_prefix.setName('<ip6_with_subnet_only>')
 
 ip6_addr_or_wildcard = (
@@ -333,9 +335,9 @@ ip46_addr.setName('<ip46_addr>')
 # ip46_addr_or_prefix is just about every possible IP addressing methods out there
 ip46_addr_or_prefix = (
         ip6s_prefix   # strict IPv6 with subnet only; Lookahead via '/'
-        | ip4s_prefix   # strict IPv6 with subnet only; Lookahead via '/'
-        | ip4_addr    # Lookahead via 'non-hex'
-        | _ip6_addr   # no device index here
+        ^ ip4s_prefix   # strict IPv6 with subnet only; Lookahead via '/'
+        ^ ip4_addr    # Lookahead via 'non-hex'
+        ^ _ip6_addr   # no device index here
 )
 ip46_addr_or_prefix.setName('ip4^ip6^ip4/s^ip6/s')
 

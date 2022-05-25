@@ -211,26 +211,32 @@ deny-answer-addresses {
     fe80::/10;
     64:ff9b::/96;
 } except-from { "Your.Domain"; };""",
-            {
-                'deny_answer_addresses': {
-                    'aml': [
-                        {'addr': '0.0.0.0'},
-                        {'addr': '10.0.0.0/8'},
-                        {'addr': '172.16.0.0/12'},
-                        {'addr': '192.168.0.0/16'},
-                        {'addr': '169.254.0.0/16'},
-                        {'addr': '::/80',
-                         'ip6s_subnet': '80'},
-                        {'addr': 'fe80::/10',
-                         'ip6s_subnet': '10'},
-                        {'addr': '64:ff9b::/96',
-                         'ip6s_subnet': '96'}],
-                    'name': '"Your.Domain"'}}
+            {'deny_answer_addresses': {'aml': [{'addr': '0.0.0.0'},
+                                               {'addr': '10.0.0.0/8'},
+                                               {'addr': '172.16.0.0/12'},
+                                               {'addr': '192.168.0.0/16'},
+                                               {'addr': '169.254.0.0/16'},
+                                               {'addr': '::/80',
+                                                'ip6s_subnet': '80'},
+                                               {'addr': 'fe80::/10',
+                                                'ip6s_subnet': '10'},
+                                               {'addr': '64:ff9b::/96',
+                                                'ip6s_subnet': '96'}]}}
         )
 
     def test_isc_options_stmt_deny_answer_aliases_passing(self):
         assertParserResultDictTrue(options_stmt_deny_answer_aliases,
                                    'deny-answer-aliases { 128.0.0.1; };',
+                                   {
+                                       'deny_answer_aliases': [
+                                           {'name': '128.0.0.1'}
+                                       ]
+                                   })
+
+    def test_isc_options_stmt_deny_answer_aliases_failing(self):
+        assertParserResultDictFalse(
+            options_stmt_deny_answer_aliases,
+            'deny-answer-addresses { 127.0.0.1 } except-from { "172.in-addr.arpa."; };',
                                    {
                                        'deny_answer_aliases': [
                                            {'name': '128.0.0.1'}

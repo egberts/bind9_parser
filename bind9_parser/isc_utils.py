@@ -378,6 +378,7 @@ check_options = (
         | Literal('fail')
         | Literal('ignore')
 )('check_type')
+check_options.setName('( warn | fail | ignore )')
 
 seconds_type = Word(nums).setParseAction(
     lambda toks: int(toks[0]), max=11

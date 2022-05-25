@@ -18,12 +18,13 @@ from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     byte_type, run_me, path_name, check_options, \
     quoted_path_name, size_spec, exclamation, iso8601_duration, view_name
 from bind9_parser.isc_aml import aml_nesting, aml_choices
-from bind9_parser.isc_inet import ip4_addr, ip6_addr, \
+from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip6s_prefix, \
     inet_ip_port_keyword_and_number_element, \
     inet_ip_port_keyword_and_wildcard_element
 from bind9_parser.isc_zone import zone_name
 from bind9_parser.isc_domain import quoted_domain_generic_fqdn, \
-    domain_generic_fqdn, rr_fqdn_w_absolute, rr_domain_name_type, quotable_domain_generic_fqdn
+    domain_generic_fqdn, rr_fqdn_w_absolute, rr_domain_name_type, quotable_domain_generic_fqdn, \
+    soa_rname
 
 optview_stmt_acache_cleaning_interval = (
     Keyword('acache-cleaning-interval').suppress()
@@ -58,10 +59,10 @@ optview_stmt_allow_new_zones = (
 ).setName('allow-new-zones <boolean>;')
 
 optview_stmt_allow_query_cache = (
-    Keyword('allow-query-cache').suppress()
-    - Group(
-        aml_nesting('')
-    )('allow_query_cache')
+        Keyword('allow-query-cache').suppress()
+        - Group(
+    aml_nesting('')
+)('allow_query_cache')
 ).setName('allow-query-cache <aml>;')
 
 optview_stmt_allow_query_cache_on = (
@@ -150,12 +151,6 @@ optview_stmt_check_names = (
 )('check_names')
 optview_stmt_check_names.setName('check-names [ primary | secondary | response | master | slave ] <options>;')
 
-optview_stmt_check_sibling = (
-        Keyword('check-sibling').suppress()
-        + check_options('check_sibling')
-        + semicolon
-).setName('check-sibling <options>;')  # [ Opt View Zone ] v9.4+
-
 optview_stmt_check_spf = (
         Keyword('check-spf').suppress()
         - check_options('check_spf')
@@ -181,24 +176,117 @@ optview_stmt_cleaning_interval = (
         + semicolon
 ).setName('cleaning-interval <minutes>')
 
+#  deny-answer-addresses
+optview_stmt_deny_answer_addresses = (
+        Keyword('deny-answer-addresses').suppress()
+        - Group(
+            aml_nesting('')
+        )('deny_answer_addresses')
+).setName('deny-answer-addresses <aml>;')
+
+#  deny-answer aliases
+optview_stmt_deny_answer_aliases = (
+        Keyword('deny-answer-aliases').suppress()
+        - Group(
+            aml_nesting('')
+        )('deny_answer_aliases')
+).setName('deny-answer-aliases <aml>;')
+
 # disable-empty-zone  zone_name ;
 # disable-empty-zone "168.192.IN-ADDR.ARPA";
 optview_stmt_disable_empty_zone = (
         Keyword('disable-empty-zone').suppress()
         - Group(
+            (
                 zone_name('')
-                | Combine(squote + zone_name + squote)('')
-                | Combine(dquote + zone_name + dquote)('')
-        )('')
+                | Combine(squote - zone_name - squote)('')
+                | Combine(dquote - zone_name - dquote)('')
+            )
+        )('disable_empty_zone*')  # multiple-statement
         + semicolon
-)('disable_empty_zone')  # multiple-statement
+)
 optview_stmt_disable_empty_zone.setName('disable-empty-zone <quotable-zone-name>;')
+
+# dns64 {} ###############################################################
+optview_dns64_group_element_break_dnssec = (
+        Keyword('break-dnssec')
+        - isc_boolean('break_dnssec')
+        + semicolon
+).setName('break-dnssec <boolean>;')
+
+optview_dns64_group_element_clients = (
+        Keyword('clients')
+        - aml_nesting('clients')  # already includes terminating semicolon
+)
+optview_dns64_group_element_clients.setName('clients <aml>;')
+
+optview_dns64_group_element_exclude = (
+        Keyword('exclude')
+        - aml_nesting('exclude')  # already includes terminating semicolon
+)
+optview_dns64_group_element_exclude.setName('exclude <aml>;')
+
+optview_dns64_group_element_mapped = (
+        Keyword('mapped')
+        - aml_nesting('mapped')  # already includes terminating semicolon
+)
+optview_dns64_group_element_exclude.setName('mapped <aml>;')
+
+optview_dns64_group_element_recursive_only = (
+        Keyword('recursive-only')
+        - isc_boolean('recursive_only')
+        + semicolon
+).setName('recursive-only <boolean>')
+optview_dns64_group_element_suffix = (
+        Keyword('suffix')
+        - ip6_addr('suffix')
+        + semicolon
+).setName('suffix <ip6-addr>')
+
+optview_dns64_group_set = (
+    optview_dns64_group_element_break_dnssec
+    | optview_dns64_group_element_clients
+    | optview_dns64_group_element_exclude
+    | optview_dns64_group_element_mapped
+    | optview_dns64_group_element_recursive_only
+    | optview_dns64_group_element_suffix
+)
+
+optview_stmt_dns64 = (
+    Keyword('dns64').suppress()
+    - Group(
+        ip6s_prefix  # that includes support for '/99' prefix
+        + lbrack
+        - (
+            OneOrMore(optview_dns64_group_set)
+        )
+        + rbrack
+    )('dns64*')
+    + semicolon
+).setName("""
+dns64 <netprefix> {
+                break-dnssec <boolean>;
+                clients { <address_match_element>; ... };
+                exclude { <address_match_element>; ... };
+                mapped { <address_match_element>; ... };
+                recursive-only <boolean>;
+                suffix <ipv6_address>; """)
+
+#
+optview_stmt_dns64_contact = (
+    Keyword('dns64-contact').suppress()
+    - Group(
+        soa_rname('soa_rname')
+    )('dns64_contact')
+    + semicolon
+)
+optview_stmt_dns64_contact.setName('dns64-contact <soa_rname>;')
 
 #  dnssec-accept-expired <boolean>; [ Opt View ]  # v9.4.0+
 optview_stmt_dnssec_accept_expired = (
-        Keyword('dnssec-accept-expired').suppress()
-        - isc_boolean('dnssec_accept_expired')
-        + semicolon
+    Keyword('dnssec-accept-expired').suppress()
+    - isc_boolean('dnssec_accept_expired')
+    + semicolon
 ).setName('dnssec-accept-expired <boolean>;')
 
 # dnssec-enable <boolean>; [ Opt View  ]  # v9.3.0+
@@ -295,11 +383,11 @@ optview_stmt_dual_stack_servers.setName('dual-stack-servers [ port <port> ] { [ 
 soa_name_type = rr_fqdn_w_absolute  # might be name_type
 
 optview_stmt_empty_contact = (
-    Keyword('empty-contact').suppress()
-    - Group(
-        soa_name_type('soa_contact_name')
-        + semicolon
-    )('empty_contact')  # Dict (not a multiple-statement)
+        Keyword('empty-contact').suppress()
+        - Group(
+    soa_name_type('soa_contact_name')
+    + semicolon
+)('empty_contact')  # Dict (not a multiple-statement)
 )('')
 optview_stmt_empty_contact.setName('empty-contact <soa_rname>;')
 
@@ -927,56 +1015,59 @@ optview_stmt_sortlist.setName('sortlist <aml>;')
 # Keywords are in dictionary-order, but with longest pattern as having been listed firstly
 optview_statements_set = (
     optview_stmt_acache_cleaning_interval
-    | optview_stmt_acache_enable
-    | optview_stmt_additional_from_auth
-    | optview_stmt_additional_from_cache
-    | optview_stmt_allow_new_zones
-    | optview_stmt_allow_query_cache_on
-    | optview_stmt_allow_query_cache
-    | optview_stmt_allow_recursion_on
-    | optview_stmt_allow_recursion
-    | optview_stmt_attach_cache
-    | optview_stmt_auth_nxdomain
-    | optview_stmt_cache_file
-    | optview_stmt_check_dup_records
-    | optview_stmt_check_integrity
-    | optview_stmt_check_mx_cname
-    | optview_stmt_check_mx
-    | optview_stmt_check_names
-    | optview_stmt_check_sibling
-    | optview_stmt_check_spf
-    | optview_stmt_check_srv_cname
-    | optview_stmt_check_wildcard
-    | optview_stmt_cleaning_interval
-    | optview_stmt_disable_empty_zone
-    | optview_stmt_dnssec_accept_expired
-    | optview_stmt_dnssec_enable
-    | optview_stmt_dnssec_lookaside
-    | optview_stmt_dnssec_must_be_secure
-    | optview_stmt_dnssec_validation
-    | optview_stmt_dual_stack_servers
-    | optview_stmt_empty_contact
-    | optview_stmt_empty_zones_enable
-    | optview_stmt_fetch_glue
-    | optview_stmt_files
-    | optview_stmt_heartbeat_interval
-    | optview_stmt_hostname
-    | optview_stmt_lame_ttl
-    | optview_stmt_managed_keys_directory
-    | optview_stmt_max_cache_size
-    | optview_stmt_max_cache_ttl
-    | optview_stmt_max_ncache_ttl
-    | optview_stmt_minimal_responses
-    | optview_stmt_preferred_glue
-    | optview_stmt_query_source_v6
-    | optview_stmt_query_source
-    | optview_stmt_rate_limit
-    | optview_stmt_recursion
-    | optview_stmt_response_policy
-    | optview_stmt_rfc2308_type1
-    | optview_stmt_root_delegation_only
-    | optview_stmt_rrset_order
-    | optview_stmt_sortlist
+    ^ optview_stmt_acache_enable
+    ^ optview_stmt_additional_from_auth
+    ^ optview_stmt_additional_from_cache
+    ^ optview_stmt_allow_new_zones
+    ^ optview_stmt_allow_query_cache_on
+    ^ optview_stmt_allow_query_cache
+    ^ optview_stmt_allow_recursion_on
+    ^ optview_stmt_allow_recursion
+    ^ optview_stmt_attach_cache
+    ^ optview_stmt_auth_nxdomain
+    ^ optview_stmt_cache_file
+    ^ optview_stmt_check_dup_records
+    ^ optview_stmt_check_integrity
+    ^ optview_stmt_check_mx_cname
+    ^ optview_stmt_check_mx
+    ^ optview_stmt_check_names
+    ^ optview_stmt_check_spf
+    ^ optview_stmt_check_srv_cname
+    ^ optview_stmt_check_wildcard
+    ^ optview_stmt_cleaning_interval
+    ^ optview_stmt_deny_answer_addresses
+    ^ optview_stmt_deny_answer_aliases
+    ^ optview_stmt_disable_empty_zone
+    ^ optview_stmt_dns64_contact
+    ^ optview_stmt_dns64
+    ^ optview_stmt_dnssec_accept_expired
+    ^ optview_stmt_dnssec_enable
+    ^ optview_stmt_dnssec_lookaside
+    ^ optview_stmt_dnssec_must_be_secure
+    ^ optview_stmt_dnssec_validation
+    ^ optview_stmt_dual_stack_servers
+    ^ optview_stmt_empty_contact
+    ^ optview_stmt_empty_zones_enable
+    ^ optview_stmt_fetch_glue
+    ^ optview_stmt_files
+    ^ optview_stmt_heartbeat_interval
+    ^ optview_stmt_hostname
+    ^ optview_stmt_lame_ttl
+    ^ optview_stmt_managed_keys_directory
+    ^ optview_stmt_max_cache_size
+    ^ optview_stmt_max_cache_ttl
+    ^ optview_stmt_max_ncache_ttl
+    ^ optview_stmt_minimal_responses
+    ^ optview_stmt_preferred_glue
+    ^ optview_stmt_query_source_v6
+    ^ optview_stmt_query_source
+    ^ optview_stmt_rate_limit
+    ^ optview_stmt_recursion
+    ^ optview_stmt_response_policy
+    ^ optview_stmt_rfc2308_type1
+    ^ optview_stmt_root_delegation_only
+    ^ optview_stmt_rrset_order
+    ^ optview_stmt_sortlist
 )
 
 optview_statements_series = (

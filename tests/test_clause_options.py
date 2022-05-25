@@ -79,62 +79,81 @@ avoid-v6-udp-ports { 4; 5; 6; };""",
              'avoid_v6_udp_ports': ['4', '5', '6']}
             )
 
-    def test_isc_options_all_statement_set_b_to_c_passing(self):
+    def test_isc_options_all_statement_set_check_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'b' to 'c'; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
             """
+    deny-answer-addresses { 127.0.0.1; } except-from { "172.in-addr.arpa."; };
+""",
+            {'deny_answer_addresses': {'aml': [{'addr': '127.0.0.1'}]}}
+        )
+
+    def test_isc_options_all_statement_set_b_to_c_passing(self):
+        """ Clause options; Statement Set All; keywords starting from 'b' to 'c'; passing mode """
+        assertParserResultDictTrue(
+            options_all_statements_series, """
 bindkeys-file "dir/file";
 blackhole { 127.0.0.1; };
-catalog-zones { 
-    zone "cat_zone1" 
-        zone-directory "dir/cat_zone_file1" 
-        in-memory no
-        min-update-interval 1H; 
-    zone "cat_zone2" 
-        zone-directory "dir/cat_zone_file2" 
-        in-memory yes
-        min-update-interval 2H; 
-    };
 check-dup-records ignore;
 check-dup-records warn;
 check-integrity no;
 check-mx fail;
 check-mx-cname ignore;
 check-names primary ignore;
-check-sibling no;
+check-sibling warn;
 check-spf warn;
 check-srv-cname fail;
 check-wildcard no;
 clients-per-query 10;
 cookie-algorithm aes;
-cookie-secret "cookie_secret"; // may occur multiple times
+cookie-secret "cookie_secret";
 coresize default;
 """,
-            {}
+            {'bindkeys_file': '"dir/file"',
+             'blackhole': {'aml': [{'addr': '127.0.0.1'}]},
+             'check_dup_records': 'warn',
+             'check_integrity': 'no',
+             'check_mx': 'fail',
+             'check_mx_cname': 'ignore',
+             'check_names': [{'result_status': 'ignore',
+                              'zone_type': 'primary'}],
+             'check_spf': 'warn',
+             'check_srv_cname': 'fail',
+             'check_type': 'warn',
+             'check_wildcard': 'no',
+             'clients_per_query': 10,
+             'cookie_algorithm': 'aes',
+             'cookie_secret': '"cookie_secret"',
+             'coresize': ['default']}
         )
+
+    x = """
+"""
+
     def test_isc_options_all_statement_set_d_passing(self):
         """ Clause options; Statement Set All; keywords starting wtih 'd'; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
             """
-deny-answer-addresses { 127.0.0.1; } except-from { "172.in-addr.arpa." };
-deny-answer-aliases { 127.0.0.1; } except-from { "172.in-addr.arpa." };
+deny-answer-addresses { 127.0.0.2; };
+deny-answer-addresses { 127.0.0.1; } except-from { "172.in-addr.arpa."; };
+deny-answer-aliases { 127.0.0.1; } except-from { "172.in-addr.arpa."; };
 dialup notify-passive;
 directory "dir/file";
-disable-algorithms "172.in-addr.arpa." { "AES512"; "SHA512" };
-disable-ds-digests "." { "RSA512" };
-disable-empty-zone "172.16.0.0/22";
-dns64 172.16.0.0/22 {
-    break-dnssec no;
-    clients { 127.0.0.1; 127.0.0.2; };
-    exclude { 127.0.0.1; };
-    mapped { 127.0.0.2; };
+disable-algorithms "aaaaaaaaaaaaaaaaa" { AES512; SHA512; };
+disable-algorithms "172.in-addr.arpa." { AES512; SHA512; RSASHA512; };
+disable-ds-digests "." { RSASHA512; };
+disable-empty-zone "127.in-addr.arpa";
+dns64 64:ff9b::/96 { 
+    break-dnssec yes;
     recursive-only no;
-    suffix fec2:: ;
+    clients { 127.0.0.1; };
+    exclude { 127.0.0.1; };
+    mapped   { 127.0.0.1; };
     };
-dns64-contact "dns64-contact-string-content";
-dns64-server "dns64-server-string-content";
+dns64-contact dns64.contact.string.content;
+dns64-server dns64-server-string-content;
 dnskey-sig-validity 3;
 dnsrps-enable no;
 dnskey-sig-validity 3;
@@ -158,6 +177,7 @@ dscp 14;
 dump-file "dir/file";""",
             {}
         )
+
     def test_isc_options_all_statement_set_e_to_i_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'e' to 'i'; passing mode """
         assertParserResultDictTrue(
@@ -190,6 +210,7 @@ ixfr-from-differences primary;
 """,
             {}
         )
+
     def test_isc_options_all_statement_set_k_to_m_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'k' to 'm'; passing mode """
         assertParserResultDictTrue(
@@ -237,6 +258,7 @@ minimal-responses no-auth-recursive;
 multi-master no;""",
             {}
         )
+
     def test_isc_options_all_statement_set_n_to_r_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'n' to 'r'; passing mode """
         assertParserResultDictTrue(
@@ -380,16 +402,6 @@ avoid-v4-udp-ports { 1; 2; 3; };
 avoid-v6-udp-ports { 4; 5; 6; };
 bindkeys-file "dir/file";
 blackhole { 127.0.0.1; };
-catalog-zones { 
-    zone "cat_zone1" 
-        zone-directory "dir/cat_zone_file1" 
-        in-memory no
-        min-update-interval 1H; 
-    zone "cat_zone2" 
-        zone-directory "dir/cat_zone_file2" 
-        in-memory yes
-        min-update-interval 2H; 
-    };
 check-dup-records ignore;
 check-dup-records warn;
 check-integrity no;
@@ -610,6 +622,7 @@ zone-statistics terse;
 """,
             {'ip_port': '53', 'version_string': '5'}
         )
+
     def test_isc_options_all_statements_set_failing(self):
         """ Clause options; Statement Set All; failing mode """
         test_data = [
@@ -618,19 +631,25 @@ zone-statistics terse;
         result = options_all_statements_set.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
 
-    def test_isc_options_all_statement_series_passing(self):
-        """ Clause options; Statement Series All; passing mode """
+    def test_isc_options_all_statement_series_1_passing(self):
+        """ Clause options; Statement Series 1; passing mode """
         test_data = [
             'version 5; port 53;',
             'version 5; coresize unlimited; pid-file "/var/run/named.pid";',
             ]
         result = options_all_statements_series.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_options_all_statement_series_2_passing(self):
+        """ Clause options; Statement Series 2; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
             'version 5; port 53;',
             {'ip_port': '53', 'version_string': '5'}
         )
+
+    def test_isc_options_all_statement_series_3_passing(self):
+        """ Clause options; Statement Series 3; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
             'version 5; coresize unlimited; pid-file "/var/run/named.pid";',
@@ -638,14 +657,17 @@ zone-statistics terse;
              'pid_file_path_name': '"/var/run/named.pid"',
              'version_string': '5'}
         )
+
+    def test_isc_options_all_statement_series_4_passing(self):
+        """ Clause options; Statement Series 4; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
             'version 5; port 53;',
             {'ip_port': '53', 'version_string': '5'}
         )
 
-    def test_isc_options_all_statements_series_failing(self):
-        """ Clause options; Statement Series All; failing mode """
+    def test_isc_options_all_statements_series_5_failing(self):
+        """ Clause options; Statement Series 5; failing mode """
         test_data = [
             'version 5; moresize unlimited; pid-file "/var/run/named.pid";',
         ]
