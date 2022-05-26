@@ -288,7 +288,7 @@ options_stmt_dnstap_identity = (
         + (
                 Keyword('none')
                 ^ Keyword('hostname')
-                ^ fqdn_name_dequoted('dnstap-identity')
+                ^ fqdn_name_dequoted('dnstap_identity')
         )
         + semicolon
 )
