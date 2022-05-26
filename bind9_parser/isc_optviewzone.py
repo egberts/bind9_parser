@@ -10,7 +10,7 @@ Description: isc_optviewzone covers configuration options that
              goes into 'options', 'view', AND 'zone'.
 """
 from pyparsing import Group, Keyword, Optional,\
-    Literal, ZeroOrMore, CaselessLiteral
+    Literal, ZeroOrMore, CaselessLiteral, ungroup, Combine
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, isc_boolean, path_name, \
     seconds_type, days_type, minute_type, quoted_path_name,\
     size_spec, name_base, fqdn_name, check_options
@@ -19,6 +19,7 @@ from bind9_parser.isc_inet import ip4_addr, ip_port, \
     inet_ip_port_keyword_and_number_element, ip46_addr_or_prefix,\
     ip4_addr_or_wildcard, ip6_addr_or_wildcard, inet_dscp_port_keyword_and_number_element
 from bind9_parser.isc_aml import aml_nesting
+from bind9_parser.isc_domain import soa_rname
 
 
 optviewzone_stmt_allow_notify = (
@@ -135,7 +136,7 @@ optviewzone_stmt_auto_dnssec = (
 
 optviewzone_stmt_check_sibling = (
         Keyword('check-sibling').suppress()
-        + check_options
+        + check_options('check_sibling')
         + semicolon
 ).setName('check-sibling ( warn | fail | ignore );')  # [ Opt View Zone ] v9.4+
 
@@ -152,15 +153,43 @@ optviewzone_stmt_dialup = (
     + semicolon
 ).setName('dialup [ notify | notify-passive | passive | refresh | yes | no ];')
 
-optviewzone_stmt_dnssec_policy = (
-    Keyword('dnssec-policy')
-    - name_base('dnssec_name')
+# range (1, 3660 <10-year>)
+optviewzone_stmt_dnskey_sig_validity = (
+        Keyword('dnskey-sig-validity')
+        - days_type('dnskey_sig_validity')
+        + semicolon
+)
+
+optviewzone_stmt_dnssec_dnskey_kskonly = (
+    Keyword('dnssec-dnskey-kskonly')
+    - name_base('dnssec_dnskey_kskonly')
     + semicolon
+)
+
+optviewzone_stmt_dnssec_policy = (
+        Keyword('dnssec-policy')
+        - name_base('dnssec_policy')
+        + semicolon
 )
 
 optviewzone_stmt_dnssec_loadkeys_interval = (
     Keyword('dnssec-loadkeys-interval').suppress()
     + minute_type('dnssec_loadkeys_interval')
+    + semicolon
+)
+
+optviewzone_stmt_dnssec_secure_to_insecure = (
+    Keyword('dnssec-secure-to-insecure')
+    - isc_boolean('dnssec_secure_to_insecure')
+    + semicolon
+)
+
+optviewzone_stmt_dnssec_update_mode = (
+    Keyword('dnssec-update-mode')
+    - (
+            Literal('maintain')
+            | Literal('no-resign')
+    )('dnssec_update_mode')
     + semicolon
 )
 
@@ -175,9 +204,9 @@ optviewzone_stmt_forward = (
 )
 
 forwarders_ip46_addr_prefix_port_element = (
-    ip46_addr_or_prefix('addr')
-    + Optional(inet_ip_port_keyword_and_number_element)
-    + Optional(inet_dscp_port_keyword_and_number_element)
+    ip46_addr_or_prefix('ip_addr')   # .setName() must be same as ip46_addr
+    - Optional(inet_ip_port_keyword_and_number_element)
+    - Optional(inet_dscp_port_keyword_and_number_element)
     + semicolon
 )
 
@@ -185,7 +214,7 @@ forwarders_ip46_addr_prefix_port_series = (
     ZeroOrMore(
         Group(
             forwarders_ip46_addr_prefix_port_element
-        )
+        )('forwarder*')
     )
 )
 
@@ -197,11 +226,9 @@ optviewzone_stmt_forwarders = (
     Keyword('forwarders').suppress()
     + Group(
         Optional(inet_ip_port_keyword_and_number_element)
-        + Optional(inet_dscp_port_keyword_and_number_element)
+        - Optional(inet_dscp_port_keyword_and_number_element)
         + lbrack
-        + (
-            forwarders_ip46_addr_prefix_port_series
-        )('forwarders_list')
+        - forwarders_ip46_addr_prefix_port_series('')
         + rbrack
         + semicolon
     )('forwarders')
@@ -448,7 +475,12 @@ optviewzone_statements_set = (
         ^ optviewzone_stmt_auto_dnssec
         ^ optviewzone_stmt_check_sibling
         ^ optviewzone_stmt_dialup
+        ^ optviewzone_stmt_dnskey_sig_validity
+        ^ optviewzone_stmt_dnssec_dnskey_kskonly
         ^ optviewzone_stmt_dnssec_loadkeys_interval
+        ^ optviewzone_stmt_dnssec_policy
+        ^ optviewzone_stmt_dnssec_secure_to_insecure
+        ^ optviewzone_stmt_dnssec_update_mode
         ^ optviewzone_stmt_forwarders
         ^ optviewzone_stmt_forward
         ^ optviewzone_stmt_ixfr_from_differences
