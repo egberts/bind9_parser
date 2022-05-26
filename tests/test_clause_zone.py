@@ -74,15 +74,17 @@ class TestClauseZone(unittest.TestCase):
 
     def test_isc_clause_zone__all_stmts_set_combo(self):
         """ Clause zone; All Zone statement 'combo' (from various isc_[opt][view][opt][server].py); passing mode """
-        test_string = """zone public { forwarders { 5.6.7.8; 1.2.3.4; }; database abcd; also-notify {mymaster; 1.2.3.4;}; notify-to-soa yes; };"""
+        test_string = """zone public { forwarders { 5.6.7.8; 1.2.3.4; }; 
+database abcd; also-notify {mymaster; 1.2.3.4;}; 
+notify-to-soa yes; };"""
         assertParserResultDictTrue(
             clause_stmt_zone_standalone,
             test_string,
             {'zones': [{'also-notify': {'remote': [{'primary_name': 'mymaster'},
                                                    {'addr': '1.2.3.4'}]},
                         'database': 'abcd',
-                        'forwarders': {'forwarders_list': [{'addr': '5.6.7.8'},
-                                                           {'addr': '1.2.3.4'}]},
+                        'forwarders': {'forwarder': [{'ip_addr': '5.6.7.8'},
+                                                     {'ip_addr': '1.2.3.4'}]},
                         'notify_to_soa': 'yes',
                         'zone_name': 'public'}]}
         )
@@ -93,34 +95,35 @@ class TestClauseZone(unittest.TestCase):
         result = clause_stmt_zone_standalone.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
-        expected_data = { 'zones': [ { 'forwarders': { 'forwarders_list': [ { 'addr': '1.2.3.4'}]},
-                    'type': 'forward',
-                    'zone_name': 'black'}]}
-
+    def test_isc_clause_zone__clause_stmt_single2a(self):
         assertParserResultDictTrue(
             clause_stmt_zone_standalone,
-            test_data,
-            expected_data
+            """zone black {type forward; forwarders {1.2.3.4;};};""",
+            {'zones': [{'forwarders': {'forwarder': [{'ip_addr': '1.2.3.4'}]},
+                        'type': 'forward',
+                        'zone_name': 'black'}]}
         )
-
 
     def test_isc_clause_zone__clause_stmt_zone_series_3_passing(self):
         """ Clause zone; Statement zone series 3; passing mode """
         test_data = 'zone black { type forward; forwarders { 1.2.3.4;}; };' + \
             'zone red {type master; file "x"; allow-update {any;};};' + \
             'zone white.com {type master; file "y"; allow-query {1.2.3.4;};};'
-        expected_result = { 'zones': [ { 'forwarders': { 'forwarders_list': [ { 'addr': '1.2.3.4'}]},
-               'type': 'forward',
-               'zone_name': 'black'},
-             { 'allow_update': {'aml': [{'addr': 'any'}]},
-               'file': '"x"',
-               'type': 'master',
-               'zone_name': 'red'},
-             { 'allow_query': {'aml': [{'addr': '1.2.3.4'}]},
-               'file': '"y"',
-               'type': 'master',
-               'zone_name': 'white.com'}]}
-        assertParserResultDictTrue(clause_stmt_zone_series, test_data, expected_result)
+        assertParserResultDictTrue(
+            clause_stmt_zone_series,
+            test_data,
+            {'zones': [{'forwarders': {'forwarder': [{'ip_addr': '1.2.3.4'}]},
+                        'type': 'forward',
+                        'zone_name': 'black'},
+                       {'allow_update': {'aml': [{'addr': 'any'}]},
+                        'file': '"x"',
+                        'type': 'master',
+                        'zone_name': 'red'},
+                       {'allow_query': {'aml': [{'addr': '1.2.3.4'}]},
+                        'file': '"y"',
+                        'type': 'master',
+                        'zone_name': 'white.com'}]}
+        )
 
 
     def test_isc_clause_zone__clause_stmt_zone_standalone_dict_passing(self):

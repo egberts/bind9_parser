@@ -19,6 +19,7 @@ from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     quoted_path_name, size_spec, exclamation, iso8601_duration, view_name
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip6s_prefix, \
+    ip6_optional_prefix, \
     inet_ip_port_keyword_and_number_element, \
     inet_ip_port_keyword_and_wildcard_element
 from bind9_parser.isc_zone import zone_name
@@ -195,14 +196,14 @@ optview_stmt_deny_answer_aliases = (
 # disable-empty-zone  zone_name ;
 # disable-empty-zone "168.192.IN-ADDR.ARPA";
 optview_stmt_disable_empty_zone = (
-        Keyword('disable-empty-zone').suppress()
-        - Group(
-            (
-                zone_name('')
-                | Combine(squote - zone_name - squote)('')
-                | Combine(dquote - zone_name - dquote)('')
-            )
-        )('disable_empty_zone*')  # multiple-statement
+    Keyword('disable-empty-zone').suppress()
+    - Group(
+    (
+        zone_name('')
+        | Combine(squote - zone_name - squote)('')
+        | Combine(dquote - zone_name - dquote)('')
+    )
+)('disable_empty_zone*')  # multiple-statement
         + semicolon
 )
 optview_stmt_disable_empty_zone.setName('disable-empty-zone <quotable-zone-name>;')
@@ -255,7 +256,7 @@ optview_dns64_group_set = (
 optview_stmt_dns64 = (
     Keyword('dns64').suppress()
     - Group(
-        ip6s_prefix  # that includes support for '/99' prefix
+        ip6_optional_prefix('netprefix')  # that includes support for '/99' prefix
         + lbrack
         - (
             OneOrMore(optview_dns64_group_set)
@@ -282,6 +283,27 @@ optview_stmt_dns64_contact = (
 )
 optview_stmt_dns64_contact.setName('dns64-contact <soa_rname>;')
 
+optview_stmt_dns64_server = (
+        Keyword('dns64-server').suppress()
+        - Group(
+            soa_rname('soa_rname')
+        )('dns64_server')
+        + semicolon
+)
+optview_stmt_dns64_server.setName('dns64-server <soa_rname>;')
+
+# dnsrps-enable <boolean>; [ Opt View  ]  # v9.3.0+
+optview_stmt_dnsrps_enable = (
+        Keyword('dnsrps-enable').suppress()
+        - isc_boolean('dnsrps_enable')
+        + semicolon
+).setName('dnsrps-enable <boolean>;')
+
+optview_stmt_dnsrps_options = (
+        Keyword('dnsrps-options').suppress()
+        - Word(alphanums, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
+)('dnsrps_options')
+
 #  dnssec-accept-expired <boolean>; [ Opt View ]  # v9.4.0+
 optview_stmt_dnssec_accept_expired = (
     Keyword('dnssec-accept-expired').suppress()
@@ -296,7 +318,6 @@ optview_stmt_dnssec_enable = (
         + semicolon
 ).setName('dnssec-enable <boolean>;')
 
-# dnssec-lookaside domain trust-anchor domain; [ Opt View ]  # v9.3.0+ (when obsoleted???)
 # Obsoleted first noted at 9.15.0, must be before...
 optview_stmt_dnssec_lookaside = (
         Keyword('dnssec-lookaside').suppress()
@@ -317,10 +338,12 @@ optview_stmt_dnssec_lookaside.setName('dnssec-lookaside [ auto | no | <fqdn> tru
 optview_stmt_dnssec_must_be_secure = (
     Keyword('dnssec-must-be-secure').suppress()
     - Group(
-        rr_fqdn_w_absolute('domain')
-        - isc_boolean('accept_secured_answers')
-    )('dnssec_must_be_secure')
-    + semicolon
+        (
+            quotable_domain_generic_fqdn('fqdn')
+            - isc_boolean('dnssec_secured')
+        )
+    )('dnssec_must_be_secure*')  # multiple-statement
+    - semicolon
 ).setName('dnssec-must-be-secure <fqdn> domain <boolean>;')
 
 # dnssec-validation ( yes | no );
@@ -332,6 +355,30 @@ optview_stmt_dnssec_validation = (
     )('dnssec_validation')
     + semicolon
 ).setName('dnssec-validation [ auto | yes | no ];')
+
+# dnstap [ { ( all | auth | client | forwarder | resolver | update ) [
+#             ( query | response ) ]; ... };  #  since v9.11
+optview_stmt_dnstap = (
+    Keyword('dnstap').suppress()
+    - Group(
+        lbrack
+        - OneOrMore(
+            (
+                Keyword('all')
+                | Keyword('auth')
+                | Keyword('client')
+                | Keyword('forwarder')
+                | Keyword('resolver')
+                | Keyword('update')
+                | Keyword('query')
+                | Keyword('response')
+            )
+            - semicolon
+        )
+        - rbrack
+    )('dnstap')
+    + semicolon
+)
 
 #  dual-stack-servers [ port <pg_num> ]
 #                     { ( <domain_name> [port <p_num>] |
@@ -1039,12 +1086,15 @@ optview_statements_set = (
     ^ optview_stmt_deny_answer_aliases
     ^ optview_stmt_disable_empty_zone
     ^ optview_stmt_dns64_contact
+    ^ optview_stmt_dns64_server
     ^ optview_stmt_dns64
+    ^ optview_stmt_dnsrps_enable
     ^ optview_stmt_dnssec_accept_expired
     ^ optview_stmt_dnssec_enable
     ^ optview_stmt_dnssec_lookaside
     ^ optview_stmt_dnssec_must_be_secure
     ^ optview_stmt_dnssec_validation
+    ^ optview_stmt_dnstap
     ^ optview_stmt_dual_stack_servers
     ^ optview_stmt_empty_contact
     ^ optview_stmt_empty_zones_enable

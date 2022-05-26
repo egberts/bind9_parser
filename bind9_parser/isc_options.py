@@ -17,7 +17,7 @@ from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
     isc_boolean, fqdn_name, key_id, krb5_principal_name,\
     exclamation, quoted_path_name, squote, dquote, algorithm_name_list_series,\
     fqdn_name_dequoted, fqdn_name_dequotable, key_secret, quotable_name, \
-    algorithm_name
+    algorithm_name, size_spec_nodefault
 from bind9_parser.isc_inet import ip_port,\
     inet_dscp_port_keyword_and_number_element,\
     inet_ip_port_keyword_and_number_element
@@ -169,19 +169,19 @@ options_stmt_deny_answer_addresses = (
                 Group(
                     (
                         exclamation('not')
-                        + aml_nesting
+                        - aml_nesting
                     )
                     | (
                         exclamation('not')
-                        + aml_choices
-                        + semicolon
+                        - aml_choices
+                        - semicolon
                     )
                     | (
                         aml_nesting
                     )
                     | (
                         aml_choices
-                        + semicolon
+                        - semicolon
                     )  # never set a ResultsLabel here, you get duplicate but un-nested 'addr'
                 )  # never set a ResultsLabel here, you get no []
             )
@@ -189,11 +189,15 @@ options_stmt_deny_answer_addresses = (
         + rbrack
         # NOSEMICOLON HERE!
         - Optional(
-            Keyword('except-from')
+            Keyword('except-from').suppress()
             + lbrack
-            - OneOrMore(quoted_domain_generic_fqdn)
-            - semicolon
-            - rbrack
+            - OneOrMore(
+                Group(
+                    fqdn_name_dequoted('fqdn')
+                    + semicolon
+                )('except_from*')
+            )
+            + rbrack
         )
         + semicolon
     )('deny_answer_addresses')
@@ -206,24 +210,27 @@ options_stmt_deny_answer_aliases = (
     Keyword('deny-answer-aliases').suppress()
     - Group(
         lbrack
-        - OneOrMore(
-            Group(
-                name_type('name')
-                + semicolon
+        + (
+            ZeroOrMore(
+                ungroup(fqdn_name_dequoted)
+                - semicolon
             )
-        )
-        + rbrack
+        )('name_list')
+        - rbrack
+        # NOSEMICOLON HERE!
         - Optional(
             Keyword('except-from').suppress()
-            + lbrack
-            - Group(
-                name_type('name')
-                + semicolon
+            - lbrack
+            - OneOrMore(
+                Group(
+                    fqdn_name_dequoted('fqdn')
+                    - semicolon
+                )('except_from*')
             )
-            + rbrack
+            - rbrack
         )
+        - semicolon
     )('deny_answer_aliases')
-    + semicolon
 )
 options_stmt_deny_answer_aliases.setName('deny-answer-aliases [ except-from { <quotable-fqdn>; } ];')
 
@@ -263,15 +270,70 @@ options_stmt_disable_ds_digests = (
     + Group(
         fqdn_name('domain_name')
         + lbrack
-        + OneOrMore(
-            algorithm_name
-            + semicolon
+        - OneOrMore(
+            Combine(
+                ungroup(algorithm_name)
+                + semicolon
+            )('algorithm_name*')  # multiple elements ('*') required here
         )
         + rbrack
     )('disable_ds_digests*')
     + semicolon
 )
 options_stmt_disable_ds_digests.setName('disable-ds-digests <quotable-fqdn> { <algorithm> ; ... };')
+
+#   dnstap-identity ( <quoted_string> | none | hostname ); [ Opt ]; since v9.11
+options_stmt_dnstap_identity = (
+        Keyword('dnstap-identity').suppress()
+        + (
+                Keyword('none')
+                ^ Keyword('hostname')
+                ^ fqdn_name_dequoted('dnstap-identity')
+        )
+        + semicolon
+)
+options_stmt_dnstap_identity.setName('dnstap-identity ( <quotable-fqdn> | none | hostname );')
+
+#   dnstap-output; [ Opt ]; since v9.11
+#          dnstap-output ( file | unix ) <quoted_string> [ size ( unlimited |
+#             <size> ) ] [ versions ( unlimited | <integer> ) ] [ suffix (
+#             increment | timestamp ) ];
+options_stmt_dnstap_output_element_size = (
+    Keyword('size').suppress()
+    + ungroup(size_spec_nodefault)('size')
+)
+
+options_stmt_dnstap_output_element_versions = (
+    Keyword('versions').suppress()
+    + (
+        Keyword('unlimited')
+        ^ number_type('versions')
+    )
+)
+options_stmt_dnstap_output_element_suffix = (
+    Keyword('suffix').suppress()
+    + (
+        Literal('increment')
+        | Literal('timestamp')
+    )
+)
+options_stmt_dnstap_output_element = (
+        options_stmt_dnstap_output_element_size
+        ^ options_stmt_dnstap_output_element_versions
+        ^ options_stmt_dnstap_output_element_suffix
+)
+
+options_stmt_dnstap_output = (
+    Keyword('dnstap-output').suppress()
+    - Optional(
+        Keyword('file')
+        | Keyword('unix')
+    )
+    - quoted_path_name
+    - OneOrMore(options_stmt_dnstap_output_element)
+    - semicolon
+)
+options_stmt_dnstap_output.setName('dnstap-output ( <quotable-fqdn> | none | hostname );')
 
 #  dscp <integer>;
 options_stmt_dscp = inet_dscp_port_keyword_and_number_element
@@ -675,6 +737,8 @@ options_statements_set = (
     ^ options_stmt_deny_answer_aliases
     ^ options_stmt_directory
     ^ options_stmt_dscp
+    ^ options_stmt_dnstap_identity
+    ^ options_stmt_dnstap_output
     ^ options_stmt_dump_file
     ^ options_stmt_fake_iquery
     ^ options_stmt_flush_zones_on_shutdown

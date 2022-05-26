@@ -297,7 +297,7 @@ _ip6_addr = Combine(
     | ip6_0_1_addr
     | ip6_0_0_addr
     | ip6_full_addr
-)('ip6_addr')
+)
 
 ip6_addr = _ip6_addr
 ip6_addr.setName('<ip6_addr_only>')
@@ -317,6 +317,17 @@ ip6_addr_or_index = Combine(
 ip6_addr_or_index.setName('<ip6_addr_or_device_index>')
 
 ip6s_prefix = Combine(ip6_addr - '/' - ip6s_subnet)
+ip6s_prefix.setName('<ip6_with_subnet_only>')
+
+ip6_optional_prefix = (
+        Group(
+            ip6_addr('ip_addr')
+            - Optional(
+                '/'
+                - ip6s_subnet('prefix')
+            )
+        )('ip6_addr')
+)
 ip6s_prefix.setName('<ip6_with_subnet_only>')
 
 ip6_addr_or_wildcard = (

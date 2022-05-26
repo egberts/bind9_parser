@@ -21,6 +21,13 @@ from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_auto_dnssec, \
     optviewzone_stmt_check_sibling, \
     optviewzone_stmt_dialup, \
+    optviewzone_stmt_dnskey_sig_validity, \
+    optviewzone_stmt_dnssec_dnskey_kskonly, \
+    optviewzone_stmt_dnssec_policy, \
+    optviewzone_stmt_dnssec_secure_to_insecure, \
+    optviewzone_stmt_dnssec_update_mode, \
+    forwarders_ip46_addr_prefix_port_element, \
+    forwarders_ip46_addr_prefix_port_series, \
     optviewzone_stmt_forwarders, \
     optviewzone_stmt_forward, \
     optviewzone_stmt_ixfr_from_differences, \
@@ -315,17 +322,71 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_dialup_passing(self):
         """ Clause options/view/zone; Statement dialup; passing """
-        test_string = [
-            'dialup yes;'
-        ]
-        result = optviewzone_stmt_dialup.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
         assertParserResultDictTrue(
             optviewzone_stmt_dialup,
             'dialup no;',
             {'dialup': 'no'}
         )
 
+    def test_isc_optviewzone_stmt_dnskey_sig_validity(self):
+        """ Clause options/view/zone; Statement 'dnskey-sig-validity'; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_dnskey_sig_validity,
+            'dnskey-sig-validity 3660;',
+            {'dnskey_sig_validity': 3660}
+        )
+
+    def test_isc_optviewzone_stmt_dnssec_dnskey_kskonly(self):
+        """ Clause options/view/zone; Statement 'dnssec-dnskey-kskonly'; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_dnssec_dnskey_kskonly,
+            'dnssec-dnskey-kskonly yes;',
+            {'dnssec_dnskey_kskonly': 'yes'}
+        )
+
+    def test_isc_optviewzone_stmt_dnssec_policy(self):
+        """ Clause options/view/zone; Statement 'dnssec-policy'; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_dnssec_policy,
+            'dnssec-policy my-policy;',
+            {'dnssec_policy': 'my-policy'}
+        )
+
+    def test_isc_optviewzone_stmt_dnssec_secure_to_insecure(self):
+        """ Clause options/view/zone; Statement 'dnssec-secure-to-insecure'; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_dnssec_secure_to_insecure,
+            'dnssec-secure-to-insecure yes;',
+            {'dnssec_secure_to_insecure': 'yes'}
+        )
+
+    def test_isc_optviewzone_stmt_dnssec_update_mode(self):
+        """ Clause options/view/zone; Statement 'dnssec-update-mode'; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_dnssec_update_mode,
+            'dnssec-update-mode no-resign;',
+            {'dnssec_update_mode': 'no-resign'}
+        )
+
+    def test_isc_optviewzone_forwarders_group_element(self):
+        """ Clause options/view/zone; Statement 'forwarders' group; passing"""
+        assertParserResultDictTrue(
+            forwarders_ip46_addr_prefix_port_element,
+            '1.1.1.1 port 53;',
+            {'ip_addr': '1.1.1.1', 'ip_port': '53'}
+        )
+        
+    def test_isc_optviewzone_forwarders_group_series(self):
+        """ Clause options/view/zone; Statement 'forwarders' group series 2-element; passing"""
+        assertParserResultDictTrue(
+            forwarders_ip46_addr_prefix_port_series,
+            '1.1.1.1 port 53; ffa1::1 port 123 dscp 2;',
+            {'forwarder': [{'ip_addr': '1.1.1.1', 'ip_port': '53'},
+                           {'dscp_port': 2,
+                            'ip_addr': 'ffa1::1',
+                            'ip_port': '123'}]}
+        )
+        
     def test_isc_optviewzone_stmt_forwarders_passing(self):
         """ Clause options/view/zone; Statement forwarders; passing """
         test_string = [
@@ -354,9 +415,10 @@ class TestOptionsViewZone(unittest.TestCase):
             optviewzone_stmt_forwarders,
             'forwarders port 44  dscp 4 { 2.2.2.2 port 53; fe08::8 dscp 3; };',
             {'forwarders': {'dscp_port': 4,
-                            'forwarders_list': [{'addr': '2.2.2.2', 'ip_port': '53'},
-                                      {'addr': 'fe08::8',
-                                       'dscp_port': 3}],
+                            'forwarder': [{'ip_addr': '2.2.2.2',
+                                           'ip_port': '53'},
+                                          {'dscp_port': 3,
+                                           'ip_addr': 'fe08::8'}],
                             'ip_port': '44'}}
         )
 
@@ -942,7 +1004,7 @@ class TestOptionsViewZone(unittest.TestCase):
              'dialup': 'yes',
              'dnssec_loadkeys_interval': 3600,
              'forward': 'only',
-             'forwarders': {'forwarders_list': [{'addr': '1.1.1.1'}],
+             'forwarders': {'forwarder': [{'ip_addr': '1.1.1.1'}],
                             'ip_port': '53'},
              'ixfr_from_differences': 'slave',
              'ixfr_tmp_file': '/tmp/junk.dat',

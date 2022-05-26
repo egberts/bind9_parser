@@ -31,11 +31,13 @@ from bind9_parser.isc_optview import \
     optview_stmt_cleaning_interval, \
     optview_stmt_dns64, \
     optview_stmt_dns64_contact, \
+    optview_stmt_dnsrps_enable, \
     optview_stmt_dnssec_accept_expired, \
     optview_stmt_dnssec_enable, \
     optview_stmt_dnssec_lookaside, \
     optview_stmt_dnssec_must_be_secure, \
     optview_stmt_dnssec_validation, \
+    optview_stmt_dnstap, \
     optview_stmt_dual_stack_servers, \
     optview_stmt_disable_empty_zone, \
     optview_stmt_empty_contact, \
@@ -394,9 +396,9 @@ dns64 64:ff9b::/96 {
                         'break_dnssec': 'yes',
                         'clients': [{'addr': '127.0.0.1'}],
                         'exclude': [{'addr': '127.0.0.1'}],
-                        'ip6_addr': '64:ff9b::',
-                        'ip6s_subnet': '96',
                         'mapped': [{'addr': '127.0.0.1'}],
+                        'netprefix': {'ip_addr': '64:ff9b::',
+                                      'prefix': '96'},
                         'recursive_only': 'no'}]}
         )
 
@@ -463,11 +465,10 @@ dns64 64:ff9b::/96 {
         assertParserResultDictTrue(
             optview_stmt_dnssec_must_be_secure,
             'dnssec-must-be-secure www.example.com. no;',
-            {
-                'dnssec_must_be_secure': {
-                    'accept_secured_answers': 'no',
-                    'domain': 'www.example.com.'}}
+            {'dnssec_must_be_secure': [{'dnssec_secured': 'no',
+                                        'fqdn': 'www.example.com.'}]}
         )
+
 
     def test_isc_optview_stmt_dnssec_validation_passing(self):
         """ Clause options/view; Statement dnssec-validation; passing """
@@ -484,6 +485,21 @@ dns64 64:ff9b::/96 {
             {'dnssec_validation': 'auto'}
         )
 
+    def test_isc_optview_stmt_dnstap(self):
+        """ Clause options/view; Statement dnstap; passing """
+        test_string = [
+            'dnstap { all; };',
+            'dnstap { forwarder; resolver; };',
+            'dnstap { update; client; };',
+        ]
+        result = optview_stmt_dnstap.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+        assertParserResultDictTrue(
+            optview_stmt_dnstap,
+            'dnstap { all; forwarder; resolver; update; client; };',
+            {'dnstap': 'auto'}
+        )
     def test_isc_optview_stmt_dual_stack_servers_passing(self):
         """ Clause options/view; Statement dual-stack-servers; passing """
         test_string = [
@@ -536,6 +552,14 @@ dns64 64:ff9b::/96 {
             optview_stmt_disable_empty_zone,
             'disable-empty-zone example.com.;',
             {'disable_empty_zone': [{'zone_name': 'example.com.'}]}
+        )
+
+    def test_isc_optview_stmt_dnsrps_enable_passing(self):
+        """ Clause options/view; Statement 'dnsrps-enable'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_dnsrps_enable,
+            'dnsrps-enable yes;',
+            {'dnsrps_enable': 'yes'}
         )
 
     def test_isc_optview_stmt_empty_contact_passing(self):
@@ -1287,7 +1311,7 @@ dns64 64:ff9b::/96 {
             'dnssec-enable yes;' +
             'check-spf fail;' +
             'check-srv-cname warn;' +
-            'dnssec-must-be-secure www.example.com. no;' +
+            'dnssec-must-be-secure "www.example.com." no;' +
             'empty-contact admin.example.com;' +
             'files default;' +
             'check-dup-records ignore;' +
@@ -1340,8 +1364,8 @@ dns64 64:ff9b::/96 {
              'dnssec_accept_expired': 'False',
              'dnssec_enable': 'yes',
              'dnssec_lookaside': ['auto'],
-             'dnssec_must_be_secure': {'accept_secured_answers': 'no',
-                                       'domain': 'www.example.com.'},
+             'dnssec_must_be_secure': [{'dnssec_secured': 'no',
+                                        'fqdn': '"www.example.com."'}],
              'dnssec_validation': 'auto',
              'dual_stack_servers': {'addrs': [{'domain': '"bastion1.example.com"',
                                                'ip_port': '693'}],

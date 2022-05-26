@@ -13,10 +13,11 @@ from bind9_parser.isc_options import options_statements_set, options_statements_
 from bind9_parser.isc_clause_options import clause_stmt_options, options_all_statements_set,\
     options_all_statements_series
 
+
 class TestClauseOptions(unittest.TestCase):
     """ Clause options """
 
-    def test_isc_options_all_statement_set_passing(self):
+    def test_isc_clause_options_all_statement_set_passing(self):
         """ Clause options; Statement Set All; passing mode """
         test_data = [
             'version 5;',
@@ -25,7 +26,7 @@ class TestClauseOptions(unittest.TestCase):
         result = options_all_statements_set.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
-    def test_isc_options_all_statement_set_a_passing(self):
+    def test_isc_clause_options_all_statement_set_a_passing(self):
         """ Clause options; Statement Set All; keywords starting wtih 'a'; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
@@ -79,17 +80,18 @@ avoid-v6-udp-ports { 4; 5; 6; };""",
              'avoid_v6_udp_ports': ['4', '5', '6']}
             )
 
-    def test_isc_options_all_statement_set_check_passing(self):
+    def test_isc_clause_options_all_statement_set_check_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'b' to 'c'; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
             """
     deny-answer-addresses { 127.0.0.1; } except-from { "172.in-addr.arpa."; };
 """,
-            {'deny_answer_addresses': {'aml': [{'addr': '127.0.0.1'}]}}
+            {'deny_answer_addresses': {'aml': [{'addr': '127.0.0.1'}],
+                                       'except_from': [{'fqdn': '172.in-addr.arpa.'}]}}
         )
 
-    def test_isc_options_all_statement_set_b_to_c_passing(self):
+    def test_isc_clause_options_all_statement_set_b_to_c_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'b' to 'c'; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series, """
@@ -118,9 +120,9 @@ coresize default;
              'check_mx_cname': 'ignore',
              'check_names': [{'result_status': 'ignore',
                               'zone_type': 'primary'}],
+             'check_sibling': 'warn',
              'check_spf': 'warn',
              'check_srv_cname': 'fail',
-             'check_type': 'warn',
              'check_wildcard': 'no',
              'clients_per_query': 10,
              'cookie_algorithm': 'aes',
@@ -131,14 +133,24 @@ coresize default;
     x = """
 """
 
-    def test_isc_options_all_statement_set_d_passing(self):
+    def test_isc_clause_options_all_statement_set_d_passing(self):
         """ Clause options; Statement Set All; keywords starting wtih 'd'; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
             """
-deny-answer-addresses { 127.0.0.2; };
-deny-answer-addresses { 127.0.0.1; } except-from { "172.in-addr.arpa."; };
-deny-answer-aliases { 127.0.0.1; } except-from { "172.in-addr.arpa."; };
+deny-answer-addresses { 127.0.0.2/24; };
+deny-answer-addresses { 127.0.0.1/24; } except-from { "172.in-addr.arpa."; };
+deny-answer-aliases { "example.test"; "test.example"; } except-from { "172.in-addr.arpa."; };
+deny-answer-addresses {
+    0.0.0.0; 
+    10.0.0.0/8;
+    172.16.0.0/12;
+    192.168.0.0/16;
+    169.254.0.0/16;
+    ::/80;
+    fe80::/10;
+    64:ff9b::/96;
+} except-from { "Your.Domain"; };
 dialup notify-passive;
 directory "dir/file";
 disable-algorithms "aaaaaaaaaaaaaaaaa" { AES512; SHA512; };
@@ -153,12 +165,11 @@ dns64 64:ff9b::/96 {
     mapped   { 127.0.0.1; };
     };
 dns64-contact dns64.contact.string.content;
-dns64-server dns64-server-string-content;
+dns64-server dns64.server.string.content;
 dnskey-sig-validity 3;
 dnsrps-enable no;
 dnskey-sig-validity 3;
 dnsrps-enable no;
-# dnsrps-options { <unspecified-text> };
 dnssec-accept-expired no;
 dnssec-dnskey-kskonly no;
 dnssec-loadkeys-interval 1;
@@ -168,7 +179,7 @@ dnssec-policy my_policy;
 dnssec-secure-to-insecure no;
 dnssec-update-mode no-resign;
 dnssec-validation auto;
-dnstap { all response; }; [
+dnstap { all; response; };
 dnstap-identity none;
 dnstap-output file "dir/file" size unlimited versions 5 suffix timestamp;
 dnstap-version none;
@@ -178,7 +189,7 @@ dump-file "dir/file";""",
             {}
         )
 
-    def test_isc_options_all_statement_set_e_to_i_passing(self):
+    def test_isc_clause_options_all_statement_set_e_to_i_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'e' to 'i'; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
@@ -211,7 +222,7 @@ ixfr-from-differences primary;
             {}
         )
 
-    def test_isc_options_all_statement_set_k_to_m_passing(self):
+    def test_isc_clause_options_all_statement_set_k_to_m_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'k' to 'm'; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
@@ -259,7 +270,7 @@ multi-master no;""",
             {}
         )
 
-    def test_isc_options_all_statement_set_n_to_r_passing(self):
+    def test_isc_clause_options_all_statement_set_n_to_r_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'n' to 'r'; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
@@ -307,7 +318,7 @@ rrset-order { class IN A example.test; };""",
             {}
         )
         
-    def test_isc_options_all_statement_set_s_to_z_passing(self):
+    def test_isc_clause_options_all_statement_set_s_to_z_passing(self):
         """ Clause options; Statement Set All; keywords starting from 's' to 'z'; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
@@ -373,7 +384,7 @@ zone-statistics terse;""",
             {}
         )
 
-    def test_isc_options_all_statement_set_all_passing(self):
+    def test_isc_clause_options_all_statement_set_all_passing(self):
         """ Clause options; Statement Set All ; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
@@ -389,7 +400,6 @@ allow-recursion-on { 127.0.0.1; };
 allow-transfer port 855 { 127.0.0.1; };
 allow-update { 127.0.0.1; };
 allow-update-forwarding { 127.0.0.1; };
-also-notify port 856 { 127.0.0.1; key ABC_KEY; tls TLS_NAME; };
 alt-transfer-source * port *;
 alt-transfer-source * port * dscp 1;
 alt-transfer-source-v6 * port * dscp 2;
@@ -397,7 +407,6 @@ answer-cookie no;
 attach-cache ABC_CACHE;
 auth-nxdomain no;
 auto-dnssec off;
-automatic-interface-scan off;
 avoid-v4-udp-ports { 1; 2; 3; };
 avoid-v6-udp-ports { 4; 5; 6; };
 bindkeys-file "dir/file";
@@ -408,22 +417,16 @@ check-integrity no;
 check-mx fail;
 check-mx-cname ignore;
 check-names primary ignore;
-check-sibling no;
 check-spf warn;
 check-srv-cname fail;
 check-wildcard no;
 clients-per-query 10;
 cookie-algorithm aes;
-cookie-secret "cookie_secret"; // may occur multiple times
+cookie-secret "cookie_secret";
 coresize default;
 datasize 1G;
-deny-answer-addresses { 127.0.0.1; } except-from { "172.in-addr.arpa." };
-deny-answer-aliases { 127.0.0.1; } except-from { "172.in-addr.arpa." };
 dialup notify-passive;
 directory "dir/file";
-disable-algorithms "172.in-addr.arpa." { "AES512"; "SHA512" };
-disable-ds-digests "." { "RSA512" };
-disable-empty-zone "172.16.0.0/22";
 dns64 172.16.0.0/22 {
     break-dnssec no;
     clients { 127.0.0.1; 127.0.0.2; };
@@ -448,7 +451,7 @@ dnssec-policy my_policy;
 dnssec-secure-to-insecure no;
 dnssec-update-mode no-resign;
 dnssec-validation auto;
-dnstap { all response; }; [
+dnstap { all; response; }; 
 dnstap-identity none;
 dnstap-output file "dir/file" size unlimited versions 5 suffix timestamp;
 dnstap-version none;
@@ -467,7 +470,7 @@ flush-zones-on-shutdown no;
 forward only;
 forwarders port 753 { 127.0.0.1; };
 geoip-directory none;
-glue-cache no; // deprecated
+glue-cache no;
 heartbeat-interval 60;
 hostname none;
 http-listener-clients 5;
@@ -528,7 +531,7 @@ notify-rate 60;
 notify-source * port * dscp 4;
 notify-source-v6 * port * dscp 5;
 notify-to-soa no;
-nsec3-test-zone no; // test only
+nsec3-test-zone no;
 nta-lifetime 60m;
 nta-recheck 24h;
 nxdomain-redirect "redirect.example.test.";
@@ -551,7 +554,7 @@ request-expire no;
 request-ixfr no;
 request-nsid no;
 require-server-cookie no;
-reserved-sockets 30;  // deprecated
+reserved-sockets 30;
 resolver-nonbackoff-tries 25;
 resolver-query-timeout 24;
 resolver-retry-interval 23;
@@ -583,7 +586,7 @@ stale-cache-enable no;
 stale-refresh-time 8h;
 startup-notify-rate 5;
 statistics-file "dir/file";
-suppress-initial-notify no;  // obsolete
+suppress-initial-notify no;
 synth-from-dnssec no;
 tcp-advertised-timeout 60;
 tcp-clients 60;
@@ -605,7 +608,7 @@ transfer-source-v6 ffec::1 port 60 dscp 11;
 transfers-in 60;
 transfers-out 60;
 transfers-per-ns 60;
-trust-anchor-telemetry no; // experimental
+trust-anchor-telemetry no;
 try-tcp-refresh no;
 udp-receive-buffer 60;
 udp-send-buffer 60;
@@ -619,11 +622,19 @@ version "funky dns server, uh?";
 zero-no-soa-ttl no;
 zero-no-soa-ttl-cache no;
 zone-statistics terse;
+automatic-interface-scan off;
+also-notify port 856 { 127.0.0.1; key ABC_KEY; tls TLS_NAME; };
+check-sibling no;
+deny-answer-addresses { 127.0.0.1; } except-from { "172.in-addr.arpa." };
+deny-answer-aliases { 127.0.0.1; } except-from { "172.in-addr.arpa." };
+disable-algorithms "172.in-addr.arpa." { "AES512"; "SHA512" };
+disable-ds-digests "." { "RSA512" };
+disable-empty-zone "172.16.0.0/22";
 """,
             {'ip_port': '53', 'version_string': '5'}
         )
 
-    def test_isc_options_all_statements_set_failing(self):
+    def test_isc_clause_options_all_statements_set_failing(self):
         """ Clause options; Statement Set All; failing mode """
         test_data = [
             'also-notify localhost;',
@@ -631,7 +642,7 @@ zone-statistics terse;
         result = options_all_statements_set.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
 
-    def test_isc_options_all_statement_series_1_passing(self):
+    def test_isc_clause_options_all_statement_series_1_passing(self):
         """ Clause options; Statement Series 1; passing mode """
         test_data = [
             'version 5; port 53;',
@@ -640,7 +651,7 @@ zone-statistics terse;
         result = options_all_statements_series.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
-    def test_isc_options_all_statement_series_2_passing(self):
+    def test_isc_clause_options_all_statement_series_2_passing(self):
         """ Clause options; Statement Series 2; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
@@ -648,7 +659,7 @@ zone-statistics terse;
             {'ip_port': '53', 'version_string': '5'}
         )
 
-    def test_isc_options_all_statement_series_3_passing(self):
+    def test_isc_clause_options_all_statement_series_3_passing(self):
         """ Clause options; Statement Series 3; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
@@ -658,7 +669,7 @@ zone-statistics terse;
              'version_string': '5'}
         )
 
-    def test_isc_options_all_statement_series_4_passing(self):
+    def test_isc_clause_options_all_statement_series_4_passing(self):
         """ Clause options; Statement Series 4; passing mode """
         assertParserResultDictTrue(
             options_all_statements_series,
@@ -666,7 +677,7 @@ zone-statistics terse;
             {'ip_port': '53', 'version_string': '5'}
         )
 
-    def test_isc_options_all_statements_series_5_failing(self):
+    def test_isc_clause_options_all_statements_series_5_failing(self):
         """ Clause options; Statement Series 5; failing mode """
         test_data = [
             'version 5; moresize unlimited; pid-file "/var/run/named.pid";',

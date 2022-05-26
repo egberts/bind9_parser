@@ -11,7 +11,7 @@ from bind9_parser.isc_utils import unit_test_booleans, assertParserResultDict,\
 from bind9_parser.isc_options import \
     options_stmt_acache_cleaning_interval,options_stmt_acache_enable,\
     options_stmt_answer_cookie, options_stmt_automatic_interface_scan,\
-    options_ip_port_series, options_stmt_avoid_v4_udp_ports,\
+    options_stmt_avoid_v4_udp_ports,\
     options_stmt_avoid_v6_udp_ports, options_stmt_bindkeys_file,\
     options_stmt_blackhole, options_stmt_cache_file,\
     options_stmt_coresize, options_stmt_datasize,\
@@ -20,12 +20,14 @@ from bind9_parser.isc_options import \
     options_stmt_disable_algorithms, options_multiple_stmt_disable_algorithms,\
     options_stmt_disable_ds_digests,\
     options_multiple_stmt_disable_ds_digests,\
-    options_stmt_dscp, options_stmt_dump_file,\
+    options_stmt_dnstap_identity,\
+    options_stmt_dnstap_output,\
+    options_stmt_dump_file,\
     options_stmt_fake_iquery, options_stmt_flush_zones_on_shutdown,\
     options_stmt_has_old_clients,\
     options_stmt_hostname_statistics, options_stmt_hostname_statistics_max,\
     options_stmt_interface_interval, options_stmt_listen_on,\
-    options_multiple_stmt_listen_on, options_multiple_stmt_listen_on_v6,\
+    options_multiple_stmt_listen_on, \
     options_stmt_listen_on_v6, options_stmt_match_mapped_addresses,\
     options_stmt_max_rsa_exponent_size, options_stmt_memstatistics,\
     options_stmt_memstatistics_file, options_stmt_multiple_cnames,\
@@ -102,7 +104,7 @@ class TestOptions(unittest.TestCase):
             options_stmt_avoid_v6_udp_ports,
             'avoid-v6-udp-ports { 15; 43; 50; };',
             {'avoid_v6_udp_ports': ['15', '43', '50']},
-                               True)
+            True)
 
     def test_isc_options_stmt_avoid_v6_udp_ports_2port_passing(self):
         """ Clause options; Statement avoid-v6-udp-ports 2-port; passing mode """
@@ -113,10 +115,11 @@ class TestOptions(unittest.TestCase):
 
     def test_isc_options_stmt_bindkeys_file(self):
         """ Clause options; Statement bindkeys-file; passing mode """
-        assertParserResultDict(options_stmt_bindkeys_file,
-                  'bindkeys-file "/dev/null";',
-                               {'bindkeys_file': '"/dev/null"'},
-                               True)
+        assertParserResultDict(
+            options_stmt_bindkeys_file,
+            'bindkeys-file "/dev/null";',
+            {'bindkeys_file': '"/dev/null"'},
+            True)
 
     def test_isc_options_stmt_blackhole_passing(self):
         """ Clause options; Statement blackhole; passing mode """
@@ -169,9 +172,14 @@ class TestOptions(unittest.TestCase):
     def test_isc_options_stmt_deny_answer_addresses2_passing(self):
         assertParserResultDictTrue(
             options_stmt_deny_answer_addresses,
-            'deny-answer-addresses { any; } except-from { "string"; };',
-            {'deny_answer_addresses': {'aml': [{'addr': 'any'}],
-                                       'name': '"string"'}}
+            'deny-answer-addresses { 127.0.0.1/8; 192.168.0.0/16; 10.0.0.0/8; 172.16.0.0/12; }' +
+            ' except-from { "example.test"; "home.arpa"; };',
+            {'deny_answer_addresses': {'aml': [{'addr': '127.0.0.1/8'},
+                                               {'addr': '192.168.0.0/16'},
+                                               {'addr': '10.0.0.0/8'},
+                                               {'addr': '172.16.0.0/12'}],
+                                       'except_from': [{'fqdn': 'example.test'},
+                                                       {'fqdn': 'home.arpa'}]}}
         )
 
     def test_isc_options_stmt_deny_answer_addresses3_passing(self):
@@ -191,9 +199,10 @@ class TestOptions(unittest.TestCase):
     def test_isc_options_stmt_deny_answer_addresses5_passing(self):
         assertParserResultDictTrue(
             options_stmt_deny_answer_addresses,
-            'deny-answer-addresses { 192.0.2.0/24; } except-from { "example.net"; };',
+            'deny-answer-addresses { 192.0.2.0/24; } except-from { "example.test"; "test.example"; };',
             {'deny_answer_addresses': {'aml': [{'addr': '192.0.2.0/24'}],
-                                       'name': '"example.net"'}}
+                                       'except_from': [{'fqdn': 'example.test'},
+                                                       {'fqdn': 'test.example'}]}}
         )
 
     # Reference: https://superuser.com/a/1332837/415567
@@ -221,27 +230,26 @@ deny-answer-addresses {
                                                {'addr': 'fe80::/10',
                                                 'ip6s_subnet': '10'},
                                                {'addr': '64:ff9b::/96',
-                                                'ip6s_subnet': '96'}]}}
+                                                'ip6s_subnet': '96'}],
+                                       'except_from': [{'fqdn': 'Your.Domain'}]}}
         )
 
     def test_isc_options_stmt_deny_answer_aliases_passing(self):
-        assertParserResultDictTrue(options_stmt_deny_answer_aliases,
-                                   'deny-answer-aliases { 128.0.0.1; };',
-                                   {
-                                       'deny_answer_aliases': [
-                                           {'name': '128.0.0.1'}
-                                       ]
-                                   })
+        assertParserResultDictTrue(
+            options_stmt_deny_answer_aliases,
+            'deny-answer-aliases { "example.test"; };',
+            {'deny_answer_aliases': {'name_list': ['example.test']}}
+        )
 
     def test_isc_options_stmt_deny_answer_aliases_failing(self):
         assertParserResultDictFalse(
             options_stmt_deny_answer_aliases,
-            'deny-answer-addresses { 127.0.0.1 } except-from { "172.in-addr.arpa."; };',
-                                   {
-                                       'deny_answer_aliases': [
-                                           {'name': '128.0.0.1'}
-                                       ]
-                                   })
+            # it is missing a semicolon between 'test.example' and 'home.arpa'
+            'deny-answer-aliases { "test.example" "home.arpa."; } except-from { "172.in-addr.arpa."; };',
+            {'deny_answer_aliases': {'except_from': [{'fqdn': '172.in-addr.arpa.'}],
+                                     'name_list': ['test.example',
+                                                   'home.arpa.']}}
+        )
 
     def test_isc_options_stmt_directory_passing(self):
         assertParserResultDictTrue(options_stmt_directory,
@@ -267,6 +275,7 @@ deny-answer-addresses {
             {'disable_algorithms': [{'algorithm_name': ['sha512'],
                                      'domain_name': 'example.com.'}]}
         )
+
     def test_isc_options_stmt_disable_algorithms_3_passing(self):
         assertParserResultDictTrue(
             options_stmt_disable_algorithms,
@@ -296,21 +305,37 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_disable_ds_digests,
             'disable-ds-digests example.com { hmac; cbc32; };',
-            {'disable_ds_digests': [{'digest_list': ['hmac', 'cbc32'],
+            {'disable_ds_digests': [{'algorithm_name': ['hmac', 'cbc32'],
                                      'domain_name': 'example.com'}]}
             )
 
     def test_isc_options_stmt_part_disable_ds_digests_passing(self):
         assertParserResultDictTrue(
             options_multiple_stmt_disable_ds_digests,
-            'disable-ds-digests example.com { hmac; cbc32; };'\
-                'disable-ds-digests bing.com { crc32; };',
-            {'disable_ds_digests': [{'digest_list': ['hmac', 'cbc32'],
+            'disable-ds-digests example.com { hmac; cbc32; };'
+            'disable-ds-digests bing.com { crc32; };',
+            {'disable_ds_digests': [{'algorithm_name': ['hmac', 'cbc32'],
                                      'domain_name': 'example.com'},
-                                    {'digest_list': ['crc32'],
-                                     'domain_name': 'bing.com'}]}
+                                    {'algorithm_name': ['crc32'],
+                                     'domain_name': 'bing.com'},
+                                    [{'algorithm_name': ['hmac', 'cbc32'],
+                                      'domain_name': 'example.com'},
+                                     {'algorithm_name': ['crc32'],
+                                      'domain_name': 'bing.com'}]]}
             )
 
+    def test_isc_options_stmt_dnstap_identity(self):
+        assertParserResultDictTrue(
+            options_stmt_dnstap_identity,
+            'dnstap-identity "example.com.";',
+            {'dnstap_identity': 'example.com."'}
+        )
+    def test_isc_options_stmt_dnstap_output(self):
+        assertParserResultDictTrue(
+            options_stmt_dnstap_output,
+            'dnstap-output file "dir/file" size 1G suffix timestamp versions 5;',
+            {'dnstap_output': 'dir/file'}
+        )
     def test_isc_options_stmt_dump_file_passing(self):
         assertParserResultDictTrue(options_stmt_dump_file, 'dump-file "/tmp/crapola";', {'dump_file': '"/tmp/crapola"'})
 
@@ -318,6 +343,7 @@ deny-answer-addresses {
         assertParserResultDictTrue(options_stmt_interface_interval,
                                    'interface-interval 3600;',
                                    {'interface_interval': 3600})
+
     def test_isc_options_stmt_listen_on1_passing(self):
         assertParserResultDictTrue(
             options_stmt_listen_on,
@@ -333,7 +359,6 @@ deny-answer-addresses {
                 ]
             }
         )
-
 
     def test_isc_options_stmt_listen_on2_passing(self):
         assertParserResultDictTrue(
@@ -441,7 +466,7 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_server_id,
             "server-id 'example.pro.';",
-            {'server_id_name': '\'example.pro.\''})  #ending period is allowed in FQDN here
+            {'server_id_name': '\'example.pro.\''})  # ending period is allowed in FQDN here
         assertParserResultDictTrue(
             options_stmt_server_id,
             "server-id\texample.info;",
@@ -479,9 +504,7 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_tkey_dhkey,
             'tkey-dhkey "www-site-1.example.com" 17;',
-            {'tkey_dhkey': [{'host_name': '"www-site-1.example.com"',
-                             'key_tag': 17},
-                           ]}
+            {'tkey_dhkey': [{'host_name': '"www-site-1.example.com"', 'key_tag': 17}]}
         )
 
     def test_isc_clause_options_tkey_dhkey_pasing(self):
@@ -539,7 +562,6 @@ deny-answer-addresses {
 
         assertParserResultDictFalse(options_stmt_version, "version = '1.0.15';", {})
 
-
     def test_isc_options_all_statement_set_passing(self):
         """ Clause options; Statement Set All; passing mode """
         test_data = [
@@ -555,12 +577,12 @@ deny-answer-addresses {
         ]
         result = options_statements_set.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
+
     def test_isc_options_statments_set_passing(self):
         assertParserResultDictTrue(options_statements_set, 'version a;', {'version_string': 'a'})
 
     def test_isc_options_statements_series_passing(self):
         assertParserResultDictTrue(options_statements_series, 'version a; version b;', {'version_string': 'b'})
-
 
 # options_all_statements_series
 
@@ -584,4 +606,3 @@ deny-answer-addresses {
 
 if __name__ == '__main__':
     unittest.main()
-
