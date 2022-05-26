@@ -498,7 +498,7 @@ dns64 64:ff9b::/96 {
         assertParserResultDictTrue(
             optview_stmt_dnstap,
             'dnstap { all; forwarder; resolver; update; client; };',
-            {'dnstap': 'auto'}
+            {'dnstap': ['all', 'forwarder', 'resolver', 'update', 'client']}
         )
     def test_isc_optview_stmt_dual_stack_servers_passing(self):
         """ Clause options/view; Statement dual-stack-servers; passing """

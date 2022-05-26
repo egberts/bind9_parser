@@ -328,14 +328,16 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_dnstap_identity,
             'dnstap-identity "example.com.";',
-            {'dnstap_identity': 'example.com."'}
+            {'dnstap_identity': 'example.com.'}
         )
+
     def test_isc_options_stmt_dnstap_output(self):
         assertParserResultDictTrue(
             options_stmt_dnstap_output,
             'dnstap-output file "dir/file" size 1G suffix timestamp versions 5;',
-            {'dnstap_output': 'dir/file'}
+            {'quoted_path_name': '"dir/file"', 'size': 1, 'versions': 5}
         )
+
     def test_isc_options_stmt_dump_file_passing(self):
         assertParserResultDictTrue(options_stmt_dump_file, 'dump-file "/tmp/crapola";', {'dump_file': '"/tmp/crapola"'})
 
