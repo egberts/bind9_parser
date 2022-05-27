@@ -58,7 +58,7 @@ print(result.asDict()):
 
 # Why Did I Do This?
 
-I see lots of Python scripts for ISC Bind Zone files, but not its configuration.
+I see lots of Python scripts for ISC Bind Zone files, but not its configuration.  This Bind9 Parser (in Python) has to do the following:
 
 * verification of settings against actual environment setting
 * security audit
