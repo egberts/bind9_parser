@@ -60,19 +60,20 @@ print(result.asDict()):
 
 I see lots of Python scripts for ISC Bind Zone files, but not its configuration.
 
-Also, I have many logics for doing a security audit against the named.conf, but no way to automate it.
+* verification of settings against actual environment setting
+* security audit
+* massive unit testing of Bind 9 using pre-canned configurations
+* implement CISecurity against Bind 9 
 
+Closest cousin of Bind configuration format is NGINX config.
 
-The closest cousin of Bind configuration format is NGINX config.
-
-The closest Python (and configuration file parser) I could find was
+Closest Python (and configuration file) parser that I could find was
 [liuyangc3/nginx_config_parser](https://github.com/liuyangc3/nginx_config_parser) on GitHub here.
 
-On GitHub, I have found lots of generator, beautifier, lint, builder, change detector for Bind9, but no really good parser for Bind9 configuration file.
+Lots of generator, beautifier, lint, builder, change detector for Bind9 everywhere, but not a Python parser for Bind9 configuration file.
 
-I built a complete parser that will work on version 4.9 to 9.15.  Why did I name
-it Bind9-parser?  Because I started out only to cover Bind version 9.0 to 9.15.
-I later expanded it to cover 4.9 on up.
+Works for Bind 4.9 to latest v9.19.1.
+
 
 # Quick HOWTO
 
@@ -80,7 +81,7 @@ To take your `named.conf` file and output a Pythonized variable containing ALL
 of the settings found:
 
 ```shell
-bin/dump-named-conf.py examples/named-conf/named-oracle.conf
+./dump-named-conf.py examples/named-conf/named-oracle.conf
 ```
 and the output of the Python array variable is:
 ```console
@@ -219,8 +220,10 @@ python3 -munittest tests/test_*.py
 
 # Status
 
-At the moment, my focus is on the remaining breakage of 'options' clause where I'm busy doing unit-testing, but it is largely ready
+At the moment, my focus is on the remaining breakage of just the unittesting scripts for  top-level 'options' clause where I'm busy doing unit-testing, but the EBNF is largely deployed and ready
 to go and should work for a large percentage of deployed `named.conf`. It takes time to validate each clause and statement.
+
+In the future, I do expect some minor tweaks for conversion to integer from strings, perhaps some argument validation.  Might be some forgotten aspect of EBNF like (1:N, or 1:1, or even 1:*).
 
 Enjoy the parser.
 
