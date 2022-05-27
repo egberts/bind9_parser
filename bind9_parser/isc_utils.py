@@ -237,6 +237,14 @@ quoted_key_secret = (
     ^ keysecret_dquotable
 )('key_secret')
 quoted_key_secret.setName('<quoted_key_secret')
+
+keysecret_dedquoted = Combine(Char('"').suppress() + Word(charset_keysecret_dquotable, max=32765) + Char('"').suppress())
+keysecret_desquoted = Combine(Char("'").suppress() + Word(charset_keysecret_squotable, max=32765) + Char("'").suppress())
+key_secret_dequoted = (
+        keysecret_desquoted
+        ^ keysecret_dedquoted
+)('key_secret')
+
 g_expose_secrets = False
 
 charset_key_id_base = alphanums + '_-'

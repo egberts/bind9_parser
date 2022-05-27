@@ -29,16 +29,6 @@ from bind9_parser.isc_optview import \
     optview_stmt_check_srv_cname, \
     optview_stmt_check_wildcard, \
     optview_stmt_cleaning_interval, \
-    optview_stmt_dns64, \
-    optview_stmt_dns64_contact, \
-    optview_stmt_dnsrps_enable, \
-    optview_stmt_dnssec_accept_expired, \
-    optview_stmt_dnssec_enable, \
-    optview_stmt_dnssec_lookaside, \
-    optview_stmt_dnssec_must_be_secure, \
-    optview_stmt_dnssec_validation, \
-    optview_stmt_dnstap, \
-    optview_stmt_dual_stack_servers, \
     optview_stmt_disable_algorithms, \
     optview_stmt_disable_algorithms, optview_multiple_stmt_disable_algorithms, \
     optview_stmt_disable_ds_digests, \
@@ -46,6 +36,18 @@ from bind9_parser.isc_optview import \
     optview_multiple_stmt_disable_algorithms, \
     optview_stmt_disable_ds_digests, \
     optview_stmt_disable_empty_zone, \
+    optview_stmt_dns64, \
+    optview_stmt_dns64_contact, \
+    optview_stmt_dns64_server, \
+    optview_stmt_dnsrps_enable, \
+    optview_stmt_dnsrps_options, \
+    optview_stmt_dnssec_accept_expired, \
+    optview_stmt_dnssec_enable, \
+    optview_stmt_dnssec_lookaside, \
+    optview_stmt_dnssec_must_be_secure, \
+    optview_stmt_dnssec_validation, \
+    optview_stmt_dnstap, \
+    optview_stmt_dual_stack_servers, \
     optview_stmt_empty_contact, \
     optview_stmt_empty_zones_enable, \
     optview_stmt_fetch_glue, \
@@ -409,138 +411,6 @@ dns64 64:ff9b::/96 {
                         'recursive_only': 'no'}]}
         )
 
-    def test_isc_optview_stmt_dns64_contact_passing(self):
-        """ Clause options/view; Statement 'dns64-contact'; passing """
-        assertParserResultDictTrue(
-            optview_stmt_dns64_contact,
-            'dns64-contact johndoe.example.test;',
-            {'dns64_contact': {'soa_rname': 'johndoe.example.test'}}
-        )
-
-    def test_isc_optview_stmt_dnssec_accept_expired_passing(self):
-        """ Clause options/view; Statement dnssec-accept-expired; passing """
-        assertParserResultDictTrue(
-            optview_stmt_dnssec_accept_expired,
-            'dnssec-accept-expired False;',
-            {'dnssec_accept_expired': 'False'}
-        )
-
-    def test_isc_optview_stmt_dnssec_enable_passing(self):
-        """ Clause options/view; Statement dnssec-enable; passing """
-        test_string = [
-            'dnssec-enable yes;'
-        ]
-        result = optview_stmt_dnssec_enable.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-        assertParserResultDictTrue(
-            optview_stmt_dnssec_enable,
-            'dnssec-enable yes;',
-            {'dnssec_enable': 'yes'}
-        )
-
-    def test_isc_optview_stmt_dnssec_lookaside_passing(self):
-        """ Clause options/view; Statement dnssec-lookaside; passing """
-        test_string = [
-            'dnssec-lookaside auto;',
-            'dnssec-lookaside string trust-anchor string2;',
-            'dnssec-lookaside no;'
-        ]
-        result = optview_stmt_dnssec_lookaside.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-        assertParserResultDictTrue(
-            optview_stmt_dnssec_lookaside,
-            'dnssec-lookaside example-dlv.com trust-anchor prepend_key_name;',
-            {
-                'dnssec_lookaside': {
-                    'trust_anchor_method': {
-                        'prepend_key_name': 'prepend_key_name',
-                        'rr_set': 'example-dlv.com'}}}
-        )
-        assertParserResultDictTrue(
-            optview_stmt_dnssec_lookaside,
-            'dnssec-lookaside auto;',
-            {'dnssec_lookaside': ['auto']}
-        )
-
-    def test_isc_optview_stmt_dnssec_must_be_secure_passing(self):
-        """ Clause options/view; Statement dnssec-must-be-secure; passing """
-        test_string = [
-            'dnssec-must-be-secure tlv.example.com. yes;'
-        ]
-        result = optview_stmt_dnssec_must_be_secure.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-        assertParserResultDictTrue(
-            optview_stmt_dnssec_must_be_secure,
-            'dnssec-must-be-secure www.example.com. no;',
-            {'dnssec_must_be_secure': [{'dnssec_secured': 'no',
-                                        'fqdn': 'www.example.com.'}]}
-        )
-
-
-    def test_isc_optview_stmt_dnssec_validation_passing(self):
-        """ Clause options/view; Statement dnssec-validation; passing """
-        test_string = [
-            'dnssec-validation no;',
-            'dnssec-validation yes;',
-            'dnssec-validation auto;',
-        ]
-        result = optview_stmt_dnssec_validation.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-        assertParserResultDictTrue(
-            optview_stmt_dnssec_validation,
-            'dnssec-validation auto;',
-            {'dnssec_validation': 'auto'}
-        )
-
-    def test_isc_optview_stmt_dnstap(self):
-        """ Clause options/view; Statement dnstap; passing """
-        test_string = [
-            'dnstap { all; };',
-            'dnstap { forwarder; resolver; };',
-            'dnstap { update; client; };',
-        ]
-        result = optview_stmt_dnstap.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-
-        assertParserResultDictTrue(
-            optview_stmt_dnstap,
-            'dnstap { all; forwarder; resolver; update; client; };',
-            {'dnstap': ['all', 'forwarder', 'resolver', 'update', 'client']}
-        )
-    def test_isc_optview_stmt_dual_stack_servers_passing(self):
-        """ Clause options/view; Statement dual-stack-servers; passing """
-        test_string = [
-            'dual-stack-servers { 1.1.1.1; };',
-            'dual-stack-servers { 2.2.2.2 port 563; };',
-            'dual-stack-servers { fe0a::1; };',
-            'dual-stack-servers { fe0a::2 port 771; };',
-            'dual-stack-servers port 593 { 3.3.3.3; };',
-            'dual-stack-servers port 593 { "bastion1.example.com" port 693; };',
-            'dual-stack-servers port 593 { "bastion2.example.com" port 893; };',
-            'dual-stack-servers port 593 { "bastion3.example.com" port 893; "bastion4.example.com" port 993; };',
-        ]
-        result = optview_stmt_dual_stack_servers.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-        assertParserResultDictTrue(
-            optview_stmt_dual_stack_servers,
-            'dual-stack-servers port 593 { "dmz.example.com" port 893; "hidden-dns.example.com" port 993; };',
-            {
-                'dual_stack_servers': {
-                    'addrs': [
-                        {
-                            'domain': '"dmz.example.com"',
-                            'ip_port': '893'
-                        },
-                        {
-                            'domain': '"hidden-dns.example.com"',
-                            'ip_port': '993'
-                        }
-                    ],
-                    'ip_port': '593'
-                }
-            }
-        )
-
     def test_isc_optview_stmt_disable_algorithms_passing(self):
         """ Clause options/view; Statement disable-algorithms; passing """
         test_string = [
@@ -648,12 +518,160 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             {'disable_empty_zone': [{'zone_name': 'example.com.'}]}
         )
 
+    def test_isc_optview_stmt_dns64_contact_passing(self):
+        """ Clause options/view; Statement 'dns64-contact'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_dns64_contact,
+            'dns64-contact johndoe.example.test;',
+            {'dns64_contact': {'soa_rname': 'johndoe.example.test'}}
+        )
+
+    def test_isc_optview_stmt_dns64_server_passing(self):
+        """ Clause options/view; Statement 'dns64-server'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_dns64_server,
+            'dns64-server johndoe.example.test;',
+            {'dns64_server': {'soa_rname': 'johndoe.example.test'}}
+        )
+
     def test_isc_optview_stmt_dnsrps_enable_passing(self):
         """ Clause options/view; Statement 'dnsrps-enable'; passing """
         assertParserResultDictTrue(
             optview_stmt_dnsrps_enable,
             'dnsrps-enable yes;',
             {'dnsrps_enable': 'yes'}
+        )
+
+    def test_isc_optview_stmt_dnsrps_options_passing(self):
+        """ Clause options/view; Statement 'dnsrps-options'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_dnsrps_options,
+            'dnsrps-options { "gee whiz, fancy stuff goes here"; };',
+            {'dnsrps_options': ['gee whiz, fancy stuff goes here']}
+        )
+
+    def test_isc_optview_stmt_dnssec_accept_expired_passing(self):
+        """ Clause options/view; Statement dnssec-accept-expired; passing """
+        assertParserResultDictTrue(
+            optview_stmt_dnssec_accept_expired,
+            'dnssec-accept-expired False;',
+            {'dnssec_accept_expired': 'False'}
+        )
+
+    def test_isc_optview_stmt_dnssec_enable_passing(self):
+        """ Clause options/view; Statement dnssec-enable; passing """
+        test_string = [
+            'dnssec-enable yes;'
+        ]
+        result = optview_stmt_dnssec_enable.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_dnssec_enable,
+            'dnssec-enable yes;',
+            {'dnssec_enable': 'yes'}
+        )
+
+    def test_isc_optview_stmt_dnssec_lookaside_passing(self):
+        """ Clause options/view; Statement dnssec-lookaside; passing """
+        test_string = [
+            'dnssec-lookaside auto;',
+            'dnssec-lookaside string trust-anchor string2;',
+            'dnssec-lookaside no;'
+        ]
+        result = optview_stmt_dnssec_lookaside.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_dnssec_lookaside,
+            'dnssec-lookaside example-dlv.com trust-anchor prepend_key_name;',
+            {
+                'dnssec_lookaside': {
+                    'trust_anchor_method': {
+                        'prepend_key_name': 'prepend_key_name',
+                        'rr_set': 'example-dlv.com'}}}
+        )
+        assertParserResultDictTrue(
+            optview_stmt_dnssec_lookaside,
+            'dnssec-lookaside auto;',
+            {'dnssec_lookaside': ['auto']}
+        )
+
+    def test_isc_optview_stmt_dnssec_must_be_secure_passing(self):
+        """ Clause options/view; Statement dnssec-must-be-secure; passing """
+        test_string = [
+            'dnssec-must-be-secure tlv.example.com. yes;'
+        ]
+        result = optview_stmt_dnssec_must_be_secure.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_dnssec_must_be_secure,
+            'dnssec-must-be-secure www.example.com. no;',
+            {'dnssec_must_be_secure': [{'dnssec_secured': 'no',
+                                        'fqdn': 'www.example.com.'}]}
+        )
+
+    def test_isc_optview_stmt_dnssec_validation_passing(self):
+        """ Clause options/view; Statement dnssec-validation; passing """
+        test_string = [
+            'dnssec-validation no;',
+            'dnssec-validation yes;',
+            'dnssec-validation auto;',
+        ]
+        result = optview_stmt_dnssec_validation.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_dnssec_validation,
+            'dnssec-validation auto;',
+            {'dnssec_validation': 'auto'}
+        )
+
+    def test_isc_optview_stmt_dnstap(self):
+        """ Clause options/view; Statement dnstap; passing """
+        test_string = [
+            'dnstap { all; };',
+            'dnstap { forwarder; resolver; };',
+            'dnstap { update; client; };',
+        ]
+        result = optview_stmt_dnstap.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+        assertParserResultDictTrue(
+            optview_stmt_dnstap,
+            'dnstap { all; forwarder; resolver; update; client; };',
+            {'dnstap': ['all', 'forwarder', 'resolver', 'update', 'client']}
+        )
+
+    def test_isc_optview_stmt_dual_stack_servers_passing(self):
+        """ Clause options/view; Statement dual-stack-servers; passing """
+        test_string = [
+            'dual-stack-servers { 1.1.1.1; };',
+            'dual-stack-servers { 2.2.2.2 port 563; };',
+            'dual-stack-servers { fe0a::1; };',
+            'dual-stack-servers { fe0a::2 port 771; };',
+            'dual-stack-servers port 593 { 3.3.3.3; };',
+            'dual-stack-servers port 593 { "bastion1.example.com" port 693; };',
+            'dual-stack-servers port 593 { "bastion2.example.com" port 893; };',
+            'dual-stack-servers port 593 { "bastion3.example.com" port 893; "bastion4.example.com" port 993; };',
+        ]
+        result = optview_stmt_dual_stack_servers.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_dual_stack_servers,
+            'dual-stack-servers port 593 { "dmz.example.com" port 893; "hidden-dns.example.com" port 993; };',
+            {
+                'dual_stack_servers': {
+                    'addrs': [
+                        {
+                            'domain': '"dmz.example.com"',
+                            'ip_port': '893'
+                        },
+                        {
+                            'domain': '"hidden-dns.example.com"',
+                            'ip_port': '993'
+                        }
+                    ],
+                    'ip_port': '593'
+                }
+            }
         )
 
     def test_isc_optview_stmt_empty_contact_passing(self):

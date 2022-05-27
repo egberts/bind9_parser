@@ -206,13 +206,10 @@ dump-file "dir/file";""",
                                                    'test.example']},
              'dialup': 'notify-passive',
              'directory': 'dir/file',
-             'disable_algorithms': [{'algorithm_name': ['AES512',
-                                                        'SHA512'],
-                                     'domain_name': 'aaaaaaaaaaaaaaaaa'},
-                                    {'algorithm_name': ['AES512',
-                                                        'SHA512',
-                                                        'RSASHA512'],
-                                     'domain_name': '172.in-addr.arpa.'}],
+             'disable_algorithms': {'algorithms': ['AES512',
+                                                   'SHA512',
+                                                   'RSASHA512'],
+                                    'domain_name': '172.in-addr.arpa.'},
              'disable_ds_digests': [{'algorithm_name': ['RSASHA512'],
                                      'domain_name': '.'}],
              'disable_empty_zone': [{'zone_name': '127.in-addr.arpa'}],
@@ -257,7 +254,7 @@ edns-udp-size 512;
 empty-contact empty-contact-string-content;
 empty-server empty-server-string-content;
 empty-zones-enable no;
-fetch-quota-params 5 1.0 1.0 1.0;
+fetch-quota-params 5 10 10 10;
 fetches-per-server 5 drop;
 fetches-per-zone 4 drop;
 files unlimited;
@@ -486,21 +483,21 @@ coresize default;
 datasize 1G;
 dialup notify-passive;
 directory "dir/file";
-dns64 172.16.0.0/22 {
-    break-dnssec no;
-    clients { 127.0.0.1; 127.0.0.2; };
-    exclude { 127.0.0.1; };
-    mapped { 127.0.0.2; };
+dns64 64:ff9b::/96 { 
+    break-dnssec yes;
     recursive-only no;
-    suffix fec2:: ;
+    clients { 127.0.0.1; };
+    exclude { 127.0.0.1; };
+    mapped   { 127.0.0.1; };
     };
-dns64-contact "dns64-contact-string-content";
-dns64-server "dns64-server-string-content";
+
+dns64-contact dns64.contact.string.content;
+dns64-server dns64.server.string.content;
 dnskey-sig-validity 3;
 dnsrps-enable no;
 dnskey-sig-validity 3;
 dnsrps-enable no;
-# dnsrps-options { <unspecified-text> };
+dnsrps-options { "<unspecified-text>"; };
 dnssec-accept-expired no;
 dnssec-dnskey-kskonly no;
 dnssec-loadkeys-interval 1;
@@ -515,7 +512,6 @@ dnstap-identity none;
 dnstap-output file "dir/file" size unlimited versions 5 suffix timestamp;
 dnstap-version none;
 dscp 14;
-# dual-stack-servers { ( <quoted_string> [ port
 dump-file "dir/file";
 edns-udp-size 512;
 empty-contact "empty-contact-string-content";

@@ -17,8 +17,10 @@ Description: Provides View-related grammar in PyParsing engine
              clause_stmt_view_standalone (that is in clause_view.py/test_clause_view.py)
 """
 from pyparsing import Group, Keyword, ZeroOrMore
-from bind9_parser.isc_utils import semicolon, isc_boolean
+from bind9_parser.isc_utils import semicolon, isc_boolean, lbrack, rbrack
+from bind9_parser.isc_inet import ip46_addr_or_prefix
 from bind9_parser.isc_aml import aml_nesting
+from bind9_parser.isc_server import server_statement_series
 from bind9_parser.isc_clause_trusted_keys import clause_stmt_trusted_keys_set
 
 
@@ -45,11 +47,28 @@ view_stmt_match_recursive_only = (
     + semicolon
 )('')
 
+# re-include 'server' clause as a 'view' statement here
+view_stmt_server = (
+    Keyword('server').suppress()
+    - Group(
+        ip46_addr_or_prefix('ip_addr')
+        + lbrack
+        + Group(
+            server_statement_series
+        )('configs')
+        + rbrack
+    )('')
+    + semicolon
+)('server')
+view_stmt_server.setName('server <netprefix> { ... };')
+
+
 # Keywords are in dictionary-order, but with longest pattern as having been listed firstly
 view_statements_set = (
     view_stmt_match_recursive_only
     | view_stmt_match_destinations
     | view_stmt_match_clients
+    | view_stmt_server
     # Don't put clause_stmt_trusted_keys here, you'll get a circular dependency at Python-level
     # Insert the clause_stmt_trusted_keys into isc_clause_view.py instead
 )

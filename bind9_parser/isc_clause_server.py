@@ -19,8 +19,8 @@ from bind9_parser.isc_optviewzoneserver import optviewzoneserver_statements_set
 # BUG: 'edns' and 'edns-udp-size' are reversed and needs unreversing
 server_all_statements_set = (
     optviewserver_statements_set # make optviewserver_statements_set firstly due to 'edns-udp-size' pattern
-    | optviewzoneserver_statements_set
-    | server_statement_set  # make server_statement_set last due to 'edns' pattern
+    ^ optviewzoneserver_statements_set
+    ^ server_statement_set  # make server_statement_set last due to 'edns' pattern
 )
 
 server_all_statements_series = (
@@ -33,15 +33,15 @@ clause_stmt_server_standalone = (
     Keyword('server').suppress()
     - Group(
         ip46_addr_or_prefix('ip_addr')
-        + lbrack
-        + Group(
+        - lbrack
+        - Group(
             server_all_statements_series
         )('configs')
-        + rbrack
+        - rbrack
     )('')
-    + semicolon
+    - semicolon
 )('server')
-clause_stmt_server_standalone.setName('server { ... };')
+clause_stmt_server_standalone.setName('server <netprefix> { ... };')
 
 clause_stmt_server_series = (
     ZeroOrMore(

@@ -48,9 +48,9 @@ optviewserver_stmt_transfer_format = (
 # having been listed firstly
 optviewserver_statements_set = (
     optviewserver_stmt_provide_ixfr
-    | optviewserver_stmt_request_ixfr
-    | optviewserver_stmt_transfer_format
-    | optviewserver_stmt_edns_udp_size
+    ^ optviewserver_stmt_request_ixfr
+    ^ optviewserver_stmt_transfer_format
+    ^ optviewserver_stmt_edns_udp_size
 )
 
 optviewserver_statements_series = (

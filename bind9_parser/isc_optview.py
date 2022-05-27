@@ -18,7 +18,7 @@ from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     byte_type, run_me, dequoted_path_name, check_options, \
     size_spec, exclamation, iso8601_duration, view_name, \
     algorithm_name, fqdn_name_dequoted, fqdn_name_dequotable,\
-    algorithm_name_list_series
+    algorithm_name_list_series, charset_filename_base
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip6s_prefix, \
     ip6_optional_prefix, \
@@ -331,9 +331,20 @@ optview_stmt_dnsrps_enable = (
         + semicolon
 ).setName('dnsrps-enable <boolean>;')
 
+dnsrps_option_charset = charset_filename_base + ' '  # add whatever char you need here, but not '{};'
 optview_stmt_dnsrps_options = (
         Keyword('dnsrps-options').suppress()
-        - Word(alphanums, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
+        - lbrack
+        - Optional(
+            Literal('"').suppress() | Literal("'").suppress()
+        )
+        - Word(dnsrps_option_charset, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
+        - Optional(
+            Literal('"').suppress() | Literal("'").suppress()
+        )
+        - Optional(semicolon)
+        - rbrack
+        - semicolon
 )('dnsrps_options')
 
 #  dnssec-accept-expired <boolean>; [ Opt View ]  # v9.4.0+
@@ -913,7 +924,7 @@ optview_stmt_response_policy_element_dnsrps_enable = (
 
 optview_stmt_response_policy_element_dnsrps_options = (
     Keyword('dnsrps-options').suppress()
-    - Word(alphanums, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
+    - Word(dnsrps_option_charset, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
     )
 
 optview_stmt_response_policy_zone_element_set = (
@@ -1145,6 +1156,7 @@ optview_statements_set = (
     ^ optview_stmt_dns64_server
     ^ optview_stmt_dns64
     ^ optview_stmt_dnsrps_enable
+    ^ optview_stmt_dnsrps_options
     ^ optview_stmt_dnssec_accept_expired
     ^ optview_stmt_dnssec_enable
     ^ optview_stmt_dnssec_lookaside
