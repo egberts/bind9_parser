@@ -1,9 +1,60 @@
-
-# **BACK-TO-BETA RELEASE - BACK-TO-BETA RELEASE**
-
 # bind9-parser
 
-I needed a parser in Python that can handle ISC Bind configuration file.
+I needed a parser for `named.conf` (ISC Bind configuration file) ... in Python.
+
+It has to be able to output a pythonized variable of all settings found in `named.conf`, up to version 9.19.1.
+
+# Quick, Show It To Me
+
+What does the Python variable name look like if I parsed [`named-zytrax.conf`](https://github.com/egberts/bind9_parser/blob/master/examples/named-conf/named-zytrax.conf).
+
+```command
+$ ./dump-named-conf.py examples/named-conf/named-zytrax.conf
+```
+
+```python
+print(result.asDict()):
+{'logging': [{'channel': [{'channel_name': 'example_log',
+                           'path_name': '/var/log/named/example.log',
+                           'print_category': 'yes',
+                           'print_severity': 'yes',
+                           'print_time': 'yes',
+                           'severity': ['info'],
+                           'size_spec': [2,
+                                         'm'],
+                           'versions': 3}]},
+             {'category_group': [{'categories': ['example_log'],
+                                  'category_group_name': 'default'}]}],
+ 'options': [{'allow-recursion': {'aml': [{'ip4_addr': '192.168.3.0',
+                                           'prefix': '24'}]},
+              'allow_transfer': {'aml': [{'acl_name': '"none"'}]},
+              'directory': '/var/named',
+              'version_string': 'get '
+                                'lost'}],
+ 'zones': [{'file': 'root.servers',
+            'type': 'hint',
+            'zone_name': '.'},
+           {'allow_transfer': {'aml': [{'ip4_addr': '192.168.23.1'},
+                                       {'ip4_addr': '192.168.23.2'}]},
+            'class': 'in',
+            'file': 'master/master.example.com',
+            'type': 'master',
+            'zone_name': 'example.com'},
+           {'allow_update': {'aml': [{'keyword': 'none'}]},
+            'class': 'in',
+            'file': 'master.localhost',
+            'type': 'master',
+            'zone_name': 'localhost'},
+           {'allow_update': {'aml': [{'keyword': 'none'}]},
+            'class': 'in',
+            'file': 'localhost.rev',
+            'type': 'master',
+            'zone_name': '0.0.127.in-addr.arpa'},
+           {'class': 'in',
+            'file': '192.168.0.rev',
+            'type': 'master',
+            'zone_name': '0.168.192.IN-ADDR.ARPA'}]}
+```
 
 # Why Did I Do This?
 
