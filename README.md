@@ -1,24 +1,79 @@
-
-# **BACK-TO-BETA RELEASE - BACK-TO-BETA RELEASE**
-
 # bind9-parser
 
-I needed a parser in Python that can handle ISC Bind configuration file.
+I needed a parser for `named.conf` (ISC Bind configuration file) ... in Python.
+
+It has to be able to output a pythonized variable of all settings found in `named.conf`, up to version 9.19.1.
+
+# Quick Demo
+
+What does the Python variable name look like if I parsed [`named-zytrax.conf`](https://github.com/egberts/bind9_parser/blob/master/examples/named-conf/named-zytrax.conf).
+
+```command
+$ ./dump-named-conf.py examples/named-conf/named-zytrax.conf
+```
+
+```python
+print(result.asDict()):
+{'logging': [{'channel': [{'channel_name': 'example_log',
+                           'path_name': '/var/log/named/example.log',
+                           'print_category': 'yes',
+                           'print_severity': 'yes',
+                           'print_time': 'yes',
+                           'severity': ['info'],
+                           'size_spec': [2,
+                                         'm'],
+                           'versions': 3}]},
+             {'category_group': [{'categories': ['example_log'],
+                                  'category_group_name': 'default'}]}],
+ 'options': [{'allow-recursion': {'aml': [{'ip4_addr': '192.168.3.0',
+                                           'prefix': '24'}]},
+              'allow_transfer': {'aml': [{'acl_name': '"none"'}]},
+              'directory': '/var/named',
+              'version_string': 'get '
+                                'lost'}],
+ 'zones': [{'file': 'root.servers',
+            'type': 'hint',
+            'zone_name': '.'},
+           {'allow_transfer': {'aml': [{'ip4_addr': '192.168.23.1'},
+                                       {'ip4_addr': '192.168.23.2'}]},
+            'class': 'in',
+            'file': 'master/master.example.com',
+            'type': 'master',
+            'zone_name': 'example.com'},
+           {'allow_update': {'aml': [{'keyword': 'none'}]},
+            'class': 'in',
+            'file': 'master.localhost',
+            'type': 'master',
+            'zone_name': 'localhost'},
+           {'allow_update': {'aml': [{'keyword': 'none'}]},
+            'class': 'in',
+            'file': 'localhost.rev',
+            'type': 'master',
+            'zone_name': '0.0.127.in-addr.arpa'},
+           {'class': 'in',
+            'file': '192.168.0.rev',
+            'type': 'master',
+            'zone_name': '0.168.192.IN-ADDR.ARPA'}]}
+```
 
 # Why Did I Do This?
 
-I see lots of Python scripts for ISC Bind Zone files, but not its configuration.
+I see lots of Python scripts for ISC Bind Zone files, but not its configuration.  This Bind9 Parser (in Python) has to do or at least pave the way for the following:
 
-The closest cousin of Bind configuration format is NGINX config.
+* verification of settings against actual environment setting
+* security audit
+* massive unit testing of Bind 9 using pre-canned configurations
+* implement CISecurity against Bind 9 
 
-The closest Python (and configuration file parser) I could find was
+Closest cousin of Bind configuration format is NGINX config.
+
+Closest Python (and configuration file) parser that I could find was
 [liuyangc3/nginx_config_parser](https://github.com/liuyangc3/nginx_config_parser) on GitHub here.
 
-On GitHub, I have found lots of generator, beautifier, lint, builder, change detector for Bind9, but no really good parser for Bind9 configuration file.
+Lots of generator, beautifier, lint, builder, change detector for Bind9 everywhere, but not a Python parser for Bind9 configuration file.
 
-I built a complete parser that will work on version 4.9 to 9.15.  Why did I name
-it Bind9-parser?  Because I started out only to cover Bind version 9.0 to 9.15.
-I later expanded it to cover 4.9 on up.
+Works for Bind 4.9 to latest v9.19.1.
+
 
 # Quick HOWTO
 
@@ -26,7 +81,7 @@ To take your `named.conf` file and output a Pythonized variable containing ALL
 of the settings found:
 
 ```shell
-bin/dump-named-conf.py examples/named-conf/named-oracle.conf
+./dump-named-conf.py examples/named-conf/named-oracle.conf
 ```
 and the output of the Python array variable is:
 ```console
@@ -65,7 +120,7 @@ To install this package, consult README.install.md
 # Features
 
 Features:
-* 'include' statements are also supported (my favorite)
+* 'include' statements are also folded into the parser
 * Relative directory support (not stuck on /etc/bind or /var/lib/bind)
   * Useful for testing many config files in their respective local subdirectory(s).
 * Support for Bind 4.8 to v9.15.1 (working on Bind10)
@@ -122,9 +177,9 @@ I didn't reformat it.  But the following snippet of bash execution will
 parse it just fine:
 ```bash
 cd bind9_parser/examples
-python3 parse_bind.py /tmp/github-issue-10.named.conf
+python3 dump-named-conf.py ./tests/bug-reports/github-issue-10.named.conf
 ```
-To obtain a Python list variable, the same `parse_bind9.py` will get you this output:
+To obtain a Python list variable, the same `dump-named-conf.py` will get you this output:
 ```python
 [['"trusted"',
   [[['192.168.23.0/24']],
@@ -137,7 +192,7 @@ To obtain a Python list variable, the same `parse_bind9.py` will get you this ou
    ['"exampleaa.com"', 'master', '"external/master.exampleaa.com"']]]]
 result: {'view': [{'view_name': '"badguys"', 'configs': {'match_clients': {'aml': [{'acl_name': '"any"'}]}, 'recursion': 'no', 'zone': {'zone_name': '"exampleaa.com"', 'type': 'master', 'file': '"external/master.exampleaa.com"'}}}]}
 ```
-To obtain a Python dictionary variable, again the same `bind9_parser.py` will get you this result:
+To obtain a Python dictionary variable, again the same `dump-named-conf.py` will get you this result:
 ```python
 print(result.asDict()):
 { 'view': [ {
@@ -158,9 +213,19 @@ I hope this helps.
 # Unit Tests
 A massive unit tests files are supplied (under `tests/` subdirectory) to ensure that future breakage does not occur.
 
-At the moment, breakage is occurring in the `zone` clause and multiple thereof.
+I use JetBrain PyCharm to unittest these modules.  However, you can also do it from a command line:
+```console
+python3 -munittest tests/test_*.py
+```
 
-# Others
+# Status
+
+At the moment, my focus is on the remaining breakage of just the unittesting scripts for  top-level 'options' clause where I'm busy doing unit-testing, but the EBNF is largely deployed and ready
+to go and should work for a large percentage of deployed `named.conf`. It takes time to validate each clause and statement.
+
+In the future, I do expect some minor tweaks for conversion to integer from strings, perhaps some argument validation.  Might be some forgotten aspect of EBNF like (1:N, or 1:1, or even 1:*).
+
+Enjoy the parser.
 
 
 # Coverages
