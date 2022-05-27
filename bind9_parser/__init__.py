@@ -28,8 +28,8 @@ bind9_parser module - Classes and methods to define and execute parsing grammars
 
 """
 
-__version__ = "0.9.10.1"
-__versionTime__ = "20 May 2022 04:47 UTC"
+__version__ = "0.9.11.1"
+__versionTime__ = "27 May 2022 05:10 UTC"
 __author__ = "Steve Egbert <egberts@yahoo.com>"
 
 from bind9_parser.isc_acl import *
