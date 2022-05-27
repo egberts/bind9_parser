@@ -54,13 +54,13 @@ view chaos {
     };
 };
 view xyz { database this_one; dlz that_one; }; """
-        expected_result = { 'views': [ { 'match_clients': {'aml': [{'addr': 'any'}]},
+        expected_result = { 'views': [ { 'match_clients': {'aml': [{'keyword': 'any'}]},
                'view_name': 'chaos',
-               'zones': [ { 'allow_transfer': { 'aml': [ { 'addr': 'none'}]},
-                            'allow_update': { 'aml': [ { 'addr': 'none'}]},
-                            'file': '"/var/lib/bind/internal/master/db.bind"',
+               'zones': [ { 'allow_transfer': { 'aml': [ { 'keyword': 'none'}]},
+                            'allow_update': { 'aml': [ { 'keyword': 'none'}]},
+                            'file': '/var/lib/bind/internal/master/db.bind',
                             'type': 'master',
-                            'zone_name': '"bind"'}]},
+                            'zone_name': 'bind'}]},
              { 'database': 'this_one',
                'dlz': 'that_one',
                'view_name': 'xyz'}]}
@@ -75,7 +75,7 @@ view xyz { database this_one; dlz that_one; }; """
             clause_stmt_view_series,
             'view red { match-clients { any; }; };' +
             'view green { database those_are; };',
-            {'views': [{'match_clients': {'aml': [{'addr': 'any'}]},
+            {'views': [{'match_clients': {'aml': [{'keyword': 'any'}]},
                         'view_name': 'red'},
                        {'database': 'those_are', 'view_name': 'green'}]}
         )
@@ -88,11 +88,11 @@ zone "home" IN {
     file "/var/lib/bind/internal/master/db.home";
     allow-update { none; };
 };"""
-        expected_result = { 'zones': [ { 'allow_update': {'aml': [{'addr': 'none'}]},
+        expected_result = { 'zones': [ { 'allow_update': {'aml': [{'keyword': 'none'}]},
                'class': 'IN',
-               'file': '"/var/lib/bind/internal/master/db.home"',
+               'file': '/var/lib/bind/internal/master/db.home',
                'type': 'master',
-               'zone_name': '"home"'}]}
+               'zone_name': 'home'}]}
         assertParserResultDictTrue( view_all_statements_series, test_string, expected_result)
 
     def test_isc_view_all_statements_series_passing(self):
@@ -157,8 +157,8 @@ zone "home" IN {
             {'allow-recursion': {'aml': [{'acl_name': 'trusted_cablesupport_acl'}]},
              'allow_query': {'aml': [{'acl_name': 'trusted_cablesupport_acl'}]},
              'allow_query_cache': {'aml': [{'acl_name': 'trusted_cablesupport_acl'}]},
-             'allow_transfer': {'aml': [{'addr': 'none'}]},
-             'allow_update': {'aml': [{'addr': 'none'}]},
+             'allow_transfer': {'aml': [{'keyword': 'none'}]},
+             'allow_update': {'aml': [{'keyword': 'none'}]},
              'database': 'this_database_name',
              'disable_empty_zone': [{'zone_name': 'yes'}],
              'dlz': 'given_database_zone',
@@ -172,37 +172,37 @@ zone "home" IN {
                                'key_id': '243',
                                'protocol_type': '1',
                                'pubkey_base64': 'ASDASDASDASD+ASDASDASDASD/ASDASDASSD'}],
-             'zones': [{'allow_update': {'aml': [{'addr': 'none'}]},
+             'zones': [{'allow_update': {'aml': [{'keyword': 'none'}]},
                         'class': 'IN',
-                        'file': '"/var/lib/bind/internal/master/db.home"',
+                        'file': '/var/lib/bind/internal/master/db.home',
                         'type': 'master',
-                        'zone_name': '"home"'},
+                        'zone_name': 'home'},
                        {'allow_update': {'aml': [{'key_id': ['DDNS_UPDATER']}]},
                         'class': 'IN',
-                        'file': '"/var/lib/bind/internal/master/db.ip4.1.168.192"',
+                        'file': '/var/lib/bind/internal/master/db.ip4.1.168.192',
                         'forwarders': [],
                         'notify': 'no',
                         'type': 'master',
-                        'zone_name': '"1.168.192.in-addr.arpa"'},
-                       {'allow_update': {'aml': [{'addr': 'none'}]},
+                        'zone_name': '1.168.192.in-addr.arpa'},
+                       {'allow_update': {'aml': [{'keyword': 'none'}]},
                         'class': 'IN',
-                        'file': '"/var/lib/bind/internal/master/db.localhost"',
+                        'file': '/var/lib/bind/internal/master/db.localhost',
                         'forwarders': [],
                         'notify': 'no',
                         'type': 'master',
-                        'zone_name': '"localhost"'},
-                       {'allow_update': {'aml': [{'addr': 'none'}]},
+                        'zone_name': 'localhost'},
+                       {'allow_update': {'aml': [{'keyword': 'none'}]},
                         'class': 'IN',
-                        'file': '"/var/lib/bind/internal/master/db.ip4.127"',
+                        'file': '/var/lib/bind/internal/master/db.ip4.127',
                         'forwarders': [],
                         'notify': 'no',
                         'type': 'master',
-                        'zone_name': '"0.0.127.in-addr.arpa"'},
+                        'zone_name': '0.0.127.in-addr.arpa'},
                        {'class': 'IN',
                         'delegation-only': 'yes',
-                        'file': '"/var/lib/bind/internal/master/db.cache.home"',
+                        'file': '/var/lib/bind/internal/master/db.cache.home',
                         'type': 'hint',
-                        'zone_name': '"."'}]}
+                        'zone_name': '.'}]}
         )
 
 

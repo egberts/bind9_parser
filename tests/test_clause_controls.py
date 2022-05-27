@@ -40,7 +40,7 @@ class TestClauseControls(unittest.TestCase):
         expected_result = {
             'allow': {  # noticed no '[', because there is exactly ONE 'allow'
                 'aml': [
-                    {'addr': '127.0.0.1'}
+                    {'ip4_addr': '127.0.0.1'}
                 ]
             }
         }
@@ -96,16 +96,16 @@ class TestClauseControls(unittest.TestCase):
                     'control_server_addr': '8.8.8.8',
                     'allow':
                         {'aml': [
-                            {'addr': 'any'}]}}}
+                            {'keyword': 'any'}]}}}
         assertParserResultDict(controls_inet_set, test_data, expected_result, True)
 
     def test_isc_clause_controls_controls_inet_set_failing(self):
         """ Clause controls; Element controls_inet_set; passing """
         test_data = 'inet localhost allow { };'
-        expected_result = {'inet': [{'addr': 'localhost', 'allow': []}]}
+        expected_result = {'inet': [{'keyword': 'localhost', 'allow': []}]}
         assertParserResultDict(controls_inet_set, test_data, expected_result, False)
         test_data = 'inet any allow { };'
-        expected_result = {'inet': [{'addr': 'any', 'allow': []}]}
+        expected_result = {'inet': [{'keyword': 'any', 'allow': []}]}
         assertParserResultDict(controls_inet_set, test_data, expected_result, False)
 
     def test_isc_controls_unix_group_passing(self):
@@ -114,7 +114,7 @@ class TestClauseControls(unittest.TestCase):
         expected_result = {
             'unix': {
                 'gid': 101,
-                'path_name': '"/tmp/x"',
+                'path_name': '/tmp/x',
                 'perm': 666,
                 'uid': 101
             }
@@ -168,8 +168,8 @@ class TestClauseControls(unittest.TestCase):
                     'inet': {
                         'allow': {
                             'aml': [
-                                {'addr': '128.0.0.5'},
-                                {'addr': '128.0.0.6'}
+                                {'ip4_addr': '128.0.0.5'},
+                                {'ip4_addr': '128.0.0.6'}
                             ]
                         },
                         'control_server_addr': '128.0.0.4',
@@ -183,7 +183,7 @@ class TestClauseControls(unittest.TestCase):
     def test_isc_controls_statement_single_inet_allow_passing(self):
         """ Clause controls; Single statement, inet-allow; passing mode """
         test_data = 'controls { inet 128.0.0.2 allow {localhost;}; };'
-        expected_result = {'controls': [{'inet': {'allow': {'aml': [{'addr': 'localhost'}]},
+        expected_result = {'controls': [{'inet': {'allow': {'aml': [{'keyword': 'localhost'}]},
                                                   'control_server_addr': '128.0.0.2'}}]}
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
     def test_isc_controls_statement_single_port_inet_allow_passing(self):
@@ -218,7 +218,7 @@ class TestClauseControls(unittest.TestCase):
     def test_isc_controls_statement_single_inet_port_allow_key_passing(self):
         """ Clause controls; single statement, inet-port-allow-key; passing mode """
         test_data = 'controls { inet 128.0.0.7 port 8005 allow { 128.0.0.8; } keys { rndc-key4; };};'
-        expected_result = {'controls': [{'inet': {'allow': {'aml': [{'addr': '128.0.0.8'}]},
+        expected_result = {'controls': [{'inet': {'allow': {'aml': [{'ip4_addr': '128.0.0.8'}]},
                                                   'control_server_addr': '128.0.0.7',
                                                   'ip_port_w': '8005',
                                                   'keys': [{'key_id': 'rndc-key4'}]}}]}
@@ -227,8 +227,8 @@ class TestClauseControls(unittest.TestCase):
     def test_isc_controls_statement_single_inet_port_allow_list_key_passing(self):
         """ Clause controls; single statement, inet-port-allow-list-key; passing mode """
         test_data = 'controls { inet 128.0.0.9 port 8006 allow { 128.0.0.10; 128.0.0.11;} read-only yes; };'
-        expected_result = {'controls': [{'inet': {'allow': {'aml': [{'addr': '128.0.0.10'},
-                                                                    {'addr': '128.0.0.11'}]},
+        expected_result = {'controls': [{'inet': {'allow': {'aml': [{'ip4_addr': '128.0.0.10'},
+                                                                    {'ip4_addr': '128.0.0.11'}]},
                                                   'control_server_addr': '128.0.0.9',
                                                   'ip_port_w': '8006',
                                                   'read-only': 'yes'}}]}
@@ -243,7 +243,7 @@ class TestClauseControls(unittest.TestCase):
                 {
                     'inet': {
                         'allow': {
-                            'aml': [{'addr': 'localhost'}]
+                            'aml': [{'keyword': 'localhost'}]
                         },
                         'control_server_addr': '128.0.0.12'
                     }
@@ -264,7 +264,7 @@ class TestClauseControls(unittest.TestCase):
         """ Clause controls; statement, unix; passing mode """
         test_data = 'controls { unix "/tmp/x" perm 0666 owner 101 group 101; };'
         expected_result = {'controls': [{'unix': {'gid': 101,
-                                                  'path_name': '"/tmp/x"',
+                                                  'path_name': '/tmp/x',
                                                   'perm': 666,
                                                   'uid': 101}}]}
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
@@ -273,10 +273,10 @@ class TestClauseControls(unittest.TestCase):
         """ Clause controls; Multiple Element statement, passing mode """
         test_data = 'controls { unix "/tmp/x" perm 0666 owner 101 group 101; inet 128.0.0.12 allow {localhost;}; };'
         expected_result = {'controls': [{'unix': {'gid': 101,
-                                                  'path_name': '"/tmp/x"',
+                                                  'path_name': '/tmp/x',
                                                   'perm': 666,
                                                   'uid': 101}},
-                                        {'inet': {'allow': {'aml': [{'addr': 'localhost'}]},
+                                        {'inet': {'allow': {'aml': [{'keyword': 'localhost'}]},
                                                   'control_server_addr': '128.0.0.12'}}]}
         assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
 
@@ -298,8 +298,8 @@ class TestClauseControls(unittest.TestCase):
             controls { inet 128.0.0.2 allow {localhost;}; };
             controls { inet 128.0.0.4 port 8004 allow { 128.0.0.5; 128.0.0.6;} keys { public_rndc_key3; }; };
         """
-        expected_result = {'controls': [{'inet': {'allow': {'aml': [{'addr': '128.0.0.5'},
-                                                                    {'addr': '128.0.0.6'}]},
+        expected_result = {'controls': [{'inet': {'allow': {'aml': [{'ip4_addr': '128.0.0.5'},
+                                                                    {'ip4_addr': '128.0.0.6'}]},
                                                   'control_server_addr': '128.0.0.4',
                                                   'ip_port_w': '8004',
                                                   'keys': [{'key_id': 'public_rndc_key3'}]}}]}
@@ -317,17 +317,17 @@ controls {
     };
 """
         expected_result = {'controls': [{'unix': {'gid': 333,
-                                                  'path_name': '"/tmp/x"',
+                                                  'path_name': '/tmp/x',
                                                   'perm': 770,
                                                   'uid': 222}},
-                                        {'inet': {'allow': {'aml': [{'addr': 'localhost'}]},
+                                        {'inet': {'allow': {'aml': [{'keyword': 'localhost'}]},
                                                   'control_server_addr': '128.0.0.13'}},
                                         {'inet': {'allow': {'aml': [{'acl_name': '"rndc-users"'}]},
                                                   'control_server_addr': '*',
                                                   'ip_port_w': '8008',
                                                   'keys': [{'key_id': '"rndc-remote5"'}]}},
                                         {'unix': {'gid': 666,
-                                                  'path_name': '"/tmp/x"',
+                                                  'path_name': '/tmp/x',
                                                   'perm': 444,
                                                   'uid': 555}}]}
         my_csc = clause_stmt_control_series.setWhitespaceChars(' \t\n')

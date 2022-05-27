@@ -30,24 +30,24 @@ from bind9_parser.isc_rr import rr_domain_name_or_root
 # };
 primaries_element_list = (
     (
-        ip4_addr('addr')
+        ip4_addr('ip4_addr')
         + Optional(inet_ip_port_keyword_and_number_element)
         + Optional(key_id_keyword_and_name_pair)
         + semicolon
     )
     | (
-            ip6_addr('addr')
+            ip6_addr('ip6_addr')
             + Optional(inet_ip_port_keyword_and_number_element)
             + Optional(key_id_keyword_and_name_pair)
             + semicolon
     )
     | (
-            primary_id('addr')
+            primary_id('primary_name')
             + Optional(key_id_keyword_and_name_pair)
             + semicolon
     )   # TODO investigate if a series of primary_id is supported in primaries clause
     | (
-            primary_id('addr')
+            primary_id('primary_name')
             + semicolon
     )
 )

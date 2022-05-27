@@ -67,9 +67,9 @@ optviewzoneserver_also_notify_subgroup_element2.setName('[ ( <ip4>  <port> | <ip
 optviewzoneserver_also_notify_subgroup_series = (
     OneOrMore(
         Group(
-        optviewzoneserver_also_notify_subgroup_element2
-        - Optional(optviewzoneserver_also_notify_subgroup_subelement1)
-        + semicolon
+            optviewzoneserver_also_notify_subgroup_element2
+            - Optional(optviewzoneserver_also_notify_subgroup_subelement1)
+            + semicolon
         )('remote*')
     )
 ).setName('( [ ( <ip4>  <port> | <ip6>  <port> | <primary_name> ] ) [ key <key_id_name> ] [ tls <tls_algorithm_name> ]')

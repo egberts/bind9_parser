@@ -191,6 +191,18 @@ quotable_domain_generic_fqdn = (
 )
 quotable_domain_generic_fqdn.setName('<quotable_domain_name>')
 
+dequoted_domain_generic_fqdn = (
+        Combine(squote.suppress() - domain_generic_fqdn - squote.suppress())
+        | Combine(dquote.suppress() - domain_generic_fqdn - dquote.suppress())
+)
+dequotable_domain_generic_fqdn = (
+        Combine(squote.suppress() - domain_generic_fqdn - squote.suppress())
+        | Combine(dquote.suppress() - domain_generic_fqdn - dquote.suppress())
+        | domain_generic_fqdn
+)
+dequotable_domain_generic_fqdn.setName('<quotable_domain_name>')
+
+quoted_domain_generic_fqdn.setName('<quoted_domain_name>')
 #  Following is commonly used in association with DNS zone records
 rr_fqdn_w_absolute = Combine(
     domain_generic_fqdn

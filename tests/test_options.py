@@ -13,7 +13,7 @@ from bind9_parser.isc_options import \
     options_stmt_answer_cookie, options_stmt_automatic_interface_scan,\
     options_stmt_avoid_v4_udp_ports,\
     options_stmt_avoid_v6_udp_ports, options_stmt_bindkeys_file,\
-    options_stmt_blackhole, options_stmt_cache_file,\
+    options_stmt_blackhole, \
     options_stmt_coresize, options_stmt_datasize,\
     options_stmt_deallocate_on_exit, options_stmt_deny_answer_addresses,\
     options_stmt_deny_answer_aliases, options_stmt_directory,\
@@ -118,7 +118,7 @@ class TestOptions(unittest.TestCase):
         assertParserResultDict(
             options_stmt_bindkeys_file,
             'bindkeys-file "/dev/null";',
-            {'bindkeys_file': '"/dev/null"'},
+            {'bindkeys_file': '/dev/null'},
             True)
 
     def test_isc_options_stmt_blackhole_passing(self):
@@ -126,26 +126,20 @@ class TestOptions(unittest.TestCase):
         assertParserResultDictTrue(
             options_stmt_blackhole,
             'blackhole { 127.0.0.1; { localhost; localnets; }; !{ any; }; { none; }; };',
-            {'blackhole': {'aml': [{'addr': '127.0.0.1'},
-                                   {'aml': [{'addr': 'localhost'},
-                                            {'addr': 'localnets'}]},
-                                   {'aml': [{'addr': 'any'}], 'not': '!'},
-                                   {'aml': [{'addr': 'none'}]}]}})
+            {'blackhole': {'aml': [{'ip4_addr': '127.0.0.1'},
+                                   {'aml': [{'keyword': 'localhost'},
+                                            {'keyword': 'localnets'}]},
+                                   {'aml': [{'keyword': 'any'}], 'not': '!'},
+                                   {'aml': [{'keyword': 'none'}]}]}})
         assertParserResultDictTrue(options_stmt_blackhole,
                                    'blackhole { 127.0.0.1; };',
                                    {
                                        'blackhole': {
                                            'aml': [
-                                               {'addr': '127.0.0.1'}
+                                               {'ip4_addr': '127.0.0.1'}
                                            ]
                                        }
                                    })
-
-    def test_isc_options_stmt_cache_file_passing(self):
-        assertParserResultDictTrue(
-            options_stmt_cache_file,
-            'cache-file "/tmp/file";',
-            {'cache_file': '"/tmp/file"'})
 
     def test_isc_options_stmt_coresize_passing(self):
         assertParserResultDictTrue(
@@ -165,7 +159,7 @@ class TestOptions(unittest.TestCase):
             {
                 'deny_answer_addresses': {
                     'aml': [
-                        {'addr': '128.0.0.1'}
+                        {'ip4_addr': '128.0.0.1'}
                     ]
                 }})
 
@@ -174,10 +168,14 @@ class TestOptions(unittest.TestCase):
             options_stmt_deny_answer_addresses,
             'deny-answer-addresses { 127.0.0.1/8; 192.168.0.0/16; 10.0.0.0/8; 172.16.0.0/12; }' +
             ' except-from { "example.test"; "home.arpa"; };',
-            {'deny_answer_addresses': {'aml': [{'addr': '127.0.0.1/8'},
-                                               {'addr': '192.168.0.0/16'},
-                                               {'addr': '10.0.0.0/8'},
-                                               {'addr': '172.16.0.0/12'}],
+            {'deny_answer_addresses': {'aml': [{'ip4_addr': '127.0.0.1',
+                                                'prefix': '8'},
+                                               {'ip4_addr': '192.168.0.0',
+                                                'prefix': '16'},
+                                               {'ip4_addr': '10.0.0.0',
+                                                'prefix': '8'},
+                                               {'ip4_addr': '172.16.0.0',
+                                                'prefix': '12'}],
                                        'except_from': [{'fqdn': 'example.test'},
                                                        {'fqdn': 'home.arpa'}]}}
         )
@@ -186,21 +184,23 @@ class TestOptions(unittest.TestCase):
         assertParserResultDictTrue(
             options_stmt_deny_answer_addresses,
             'deny-answer-addresses { any; };',
-            {'deny_answer_addresses': {'aml': [{'addr': 'any'}]}}
+            {'deny_answer_addresses': {'aml': [{'keyword': 'any'}]}}
         )
 
     def test_isc_options_stmt_deny_answer_addresses4_passing(self):
         assertParserResultDictTrue(
             options_stmt_deny_answer_addresses,
             'deny-answer-addresses { 192.0.2.0/24; };',
-            {'deny_answer_addresses': {'aml': [{'addr': '192.0.2.0/24'}]}}
+            {'deny_answer_addresses': {'aml': [{'ip4_addr': '192.0.2.0',
+                                                'prefix': '24'}]}}
         )
 
     def test_isc_options_stmt_deny_answer_addresses5_passing(self):
         assertParserResultDictTrue(
             options_stmt_deny_answer_addresses,
             'deny-answer-addresses { 192.0.2.0/24; } except-from { "example.test"; "test.example"; };',
-            {'deny_answer_addresses': {'aml': [{'addr': '192.0.2.0/24'}],
+            {'deny_answer_addresses': {'aml': [{'ip4_addr': '192.0.2.0',
+                                                'prefix': '24'}],
                                        'except_from': [{'fqdn': 'example.test'},
                                                        {'fqdn': 'test.example'}]}}
         )
@@ -220,17 +220,21 @@ deny-answer-addresses {
     fe80::/10;
     64:ff9b::/96;
 } except-from { "Your.Domain"; };""",
-            {'deny_answer_addresses': {'aml': [{'addr': '0.0.0.0'},
-                                               {'addr': '10.0.0.0/8'},
-                                               {'addr': '172.16.0.0/12'},
-                                               {'addr': '192.168.0.0/16'},
-                                               {'addr': '169.254.0.0/16'},
-                                               {'addr': '::/80',
-                                                'ip6s_subnet': '80'},
-                                               {'addr': 'fe80::/10',
-                                                'ip6s_subnet': '10'},
-                                               {'addr': '64:ff9b::/96',
-                                                'ip6s_subnet': '96'}],
+            {'deny_answer_addresses': {'aml': [{'ip4_addr': '0.0.0.0'},
+                                               {'ip4_addr': '10.0.0.0',
+                                                'prefix': '8'},
+                                               {'ip4_addr': '172.16.0.0',
+                                                'prefix': '12'},
+                                               {'ip4_addr': '192.168.0.0',
+                                                'prefix': '16'},
+                                               {'ip4_addr': '169.254.0.0',
+                                                'prefix': '16'},
+                                               {'ip6_addr': '::',
+                                                'prefix': '80'},
+                                               {'ip6_addr': 'fe80::',
+                                                'prefix': '10'},
+                                               {'ip6_addr': '64:ff9b::',
+                                                'prefix': '96'}],
                                        'except_from': [{'fqdn': 'Your.Domain'}]}}
         )
 
@@ -254,11 +258,11 @@ deny-answer-addresses {
     def test_isc_options_stmt_directory_passing(self):
         assertParserResultDictTrue(options_stmt_directory,
                                    'directory "/etc/bind/";',
-                                   {'directory': '"/etc/bind/"'})
+                                   {'directory': '/etc/bind/'})
 
         assertParserResultDictTrue(options_stmt_directory,
                                    'directory \'/etc/bind/\';',
-                                   {'directory': '\'/etc/bind/\''})
+                                   {'directory': '/etc/bind/'})
 
     def test_isc_options_stmt_disable_algorithms_passing(self):
         assertParserResultDictTrue(
@@ -335,11 +339,11 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_dnstap_output,
             'dnstap-output file "dir/file" size 1G suffix timestamp versions 5;',
-            {'quoted_path_name': '"dir/file"', 'size': 1, 'versions': 5}
+            {'quoted_path_name': 'dir/file', 'size': 1, 'versions': 5}
         )
 
     def test_isc_options_stmt_dump_file_passing(self):
-        assertParserResultDictTrue(options_stmt_dump_file, 'dump-file "/tmp/crapola";', {'dump_file': '"/tmp/crapola"'})
+        assertParserResultDictTrue(options_stmt_dump_file, 'dump-file "/tmp/crapola";', {'dump_file': '/tmp/crapola'})
 
     def test_isc_options_stmt_interface_interval_passing(self):
         assertParserResultDictTrue(options_stmt_interface_interval,
@@ -354,7 +358,7 @@ deny-answer-addresses {
                 'listen_on': [
                     {
                         'aml': [
-                            {'addr': '127.0.0.1'}
+                            {'ip4_addr': '127.0.0.1'}
                         ],
                         'ip_port': '553'
                     },
@@ -366,9 +370,9 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_multiple_stmt_listen_on,
             'listen-on port 553 { 127.0.0.1;}; listen-on port 1553 { 192.168.1.1; };',
-            {'listen_on': [{'aml': [{'addr': '127.0.0.1'}],
+            {'listen_on': [{'aml': [{'ip4_addr': '127.0.0.1'}],
                             'ip_port': '553'},
-                           {'aml': [{'addr': '192.168.1.1'}],
+                           {'aml': [{'ip4_addr': '192.168.1.1'}],
                             'ip_port': '1553'}]}
         )
 
@@ -376,8 +380,8 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_listen_on,
             'listen-on { ! 10.0.1.1; any;};',
-            {'listen_on': [{'aml': [{'addr': '10.0.1.1', 'not': '!'},
-                                    {'addr': 'any'}]}]}
+            {'listen_on': [{'aml': [{'ip4_addr': '10.0.1.1', 'not': '!'},
+                                    {'keyword': 'any'}]}]}
         )
 
     def test_isc_options_stmt_listen_on_v6_passing(self):
@@ -387,7 +391,7 @@ deny-answer-addresses {
             {
                 'listen_on_v6': [
                     {'aml': [
-                        {'addr': '3231::1'}]}]}
+                        {'ip6_addr': '3231::1'}]}]}
         )
 
     def test_isc_options_stmt_mapped_addresses_passing(self):
@@ -406,13 +410,13 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_memstatistics_file,
             'memstatistics-file "/tmp/junk-stat.dat";',
-            {'memstatistics_file': '"/tmp/junk-stat.dat"'})
+            {'memstatistics_file': '/tmp/junk-stat.dat'})
 
     def test_isc_options_stmt_pid_file_passing(self):
         assertParserResultDictTrue(
             options_stmt_pid_file,
             'pid-file "/tmp/junk-pid.dat";',
-            {'pid_file_path_name': '"/tmp/junk-pid.dat"'})
+            {'pid_file_path_name': '/tmp/junk-pid.dat'})
 
     def test_isc_options_stmt_port_passing(self):
         assertParserResultDictTrue(
@@ -430,13 +434,13 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_random_device,
             'random-device "/dev/null";',
-            {'random_device_path_name': '"/dev/null"'})
+            {'random_device_path_name': '/dev/null'})
 
     def test_isc_options_stmt_recursing_file_passing(self):
         assertParserResultDictTrue(
             options_stmt_recursing_file,
             'recursing-file "/tmp/recursing-file.dat";',
-            {'recursing_file_path_name': '"/tmp/recursing-file.dat"'})
+            {'recursing_file_path_name': '/tmp/recursing-file.dat'})
 
     def test_isc_options_stmt_recursive_clients_passing(self):
         assertParserResultDictTrue(
@@ -460,15 +464,15 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_server_id,
             'server-id "example.com";',
-            {'server_id_name': '"example.com"'})
+            {'server_id_name': 'example.com'})
         assertParserResultDictTrue(
             options_stmt_server_id,
             'server-id \'example.net\';',
-            {'server_id_name': '\'example.net\''})
+            {'server_id_name': 'example.net'})
         assertParserResultDictTrue(
             options_stmt_server_id,
             "server-id 'example.pro.';",
-            {'server_id_name': '\'example.pro.\''})  # ending period is allowed in FQDN here
+            {'server_id_name': 'example.pro.'})  # ending period is allowed in FQDN here
         assertParserResultDictTrue(
             options_stmt_server_id,
             "server-id\texample.info;",
@@ -476,7 +480,7 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_server_id,
             "\tserver-id\t \'example.biz\'\t;\t",
-            {'server_id_name': '\'example.biz\''})
+            {'server_id_name': 'example.biz'})
 
     def test_isc_options_stmt_stacksize_passing(self):
         assertParserResultDictTrue(
@@ -488,7 +492,7 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_statistics_file,
             'statistics-file "/tmp/stat.dat";',
-            {'statistics_file_path_name': '"/tmp/stat.dat"'})
+            {'statistics_file_path_name': '/tmp/stat.dat'})
 
     def test_isc_options_stmt_tcp_clients_passing(self):
         assertParserResultDictTrue(
@@ -506,16 +510,16 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_tkey_dhkey,
             'tkey-dhkey "www-site-1.example.com" 17;',
-            {'tkey_dhkey': [{'host_name': '"www-site-1.example.com"', 'key_tag': 17}]}
+            {'tkey_dhkey': [{'host_name': 'www-site-1.example.com', 'key_tag': 17}]}
         )
 
     def test_isc_clause_options_tkey_dhkey_pasing(self):
         assertParserResultDictTrue(
             options_multiple_stmt_tkey_dhkey,
             'tkey-dhkey "www-site-1.example.com" 17; tkey-dhkey "www-site-2.example.com" 44317;',
-            {'tkey_dhkey': [{'host_name': '"www-site-1.example.com"',
+            {'tkey_dhkey': [{'host_name': 'www-site-1.example.com',
                              'key_tag': 17},
-                            {'host_name': '"www-site-2.example.com"',
+                            {'host_name': 'www-site-2.example.com',
                              'key_tag': 44317}]}
         )
 
@@ -523,7 +527,7 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_tkey_domain,
             'tkey-domain "example.com";',
-            {'tkey_domain': '"example.com"'}
+            {'tkey_domain': 'example.com'}
             )
 
     def test_isc_clause_options_tkey_gssapi_credential_passing(self):
@@ -556,8 +560,8 @@ deny-answer-addresses {
 
     def test_isc_clause_options_version_passing(self):
         # assertParserResultDictTrue(options_stmt_version, 'version 1.0.15;', {'version_string': '1.0.15'})
-        assertParserResultDictTrue(options_stmt_version, 'version "1.0.15";', {'version_string': '"1.0.15"'})
-        assertParserResultDictTrue(options_stmt_version, "version '1.0.15';", {'version_string': '\'1.0.15\''})
+        assertParserResultDictTrue(options_stmt_version, 'version "1.0.15";', {'version_string': '1.0.15'})
+        assertParserResultDictTrue(options_stmt_version, "version '1.0.15';", {'version_string': '1.0.15'})
 
         # Multiline test
         print("\nMulti-line tests:")

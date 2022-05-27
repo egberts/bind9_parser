@@ -86,7 +86,7 @@ class TestClauseServer(unittest.TestCase):
         assertParserResultDictTrue(
             clause_stmt_server_standalone,
             'server 4.4.4.4 { edns yes; };',
-            {'server': [{'addr': '4.4.4.4', 'configs': {'edns': 'yes'}}]}
+            {'server': [{'configs': {'edns': 'yes'}, 'ip_addr': '4.4.4.4'}]}
         )
 
     def test_isc_clause_stmt_server_standalone_dict2_passing(self):
@@ -97,15 +97,14 @@ class TestClauseServer(unittest.TestCase):
             ' padding 53; provide-ixfr yes; query-source *; query-source address *; query-source-v6 *;' +
             ' request-expire yes; request-ixfr yes; request-nsid yes; send-cookie yes; tcp-keepalive yes; ' +
             ' tcp-only yes; transfer-format one-answer; transfer-source *; transfer-source-v6 *; transfers 36; };',
-            {'server': [{'addr': '3.4.5.6',
-                         'configs': {'bogus': 'yes',
+            {'server': [{'configs': {'bogus': 'yes',
                                      'edns': 'no',
                                      'edns_udp_size': 102,
                                      'edns_version': 2,
                                      'keys': 'my_key_name_to_private_dns',
                                      'max_udp_size': 32768,
-                                     'notify_source': {'addr': '*'},
-                                     'notify_source_v6': {'addr': '*'},
+                                     'notify_source': {'ip4_addr': '*'},
+                                     'notify_source_v6': {'ip6_addr': '*'},
                                      'padding': 53,
                                      'provide_ixfr': 'yes',
                                      'query_source': {'ip4_addr_w': '*'},
@@ -119,7 +118,8 @@ class TestClauseServer(unittest.TestCase):
                                      'transfer_format': 'one-answer',
                                      'transfer_source': {'ip4_addr_w': '*'},
                                      'transfer_source_v6': {'ip6_addr_w': '*'},
-                                     'transfers': 36}}]}
+                                     'transfers': 36},
+                         'ip_addr': '3.4.5.6'}]}
         )
 
     def test_isc_clause_stmt_server_standalone_failing(self):
@@ -136,8 +136,8 @@ class TestClauseServer(unittest.TestCase):
             clause_stmt_server_series,
             'server 3.3.3.3 { edns yes; };' +
             'server 4.4.4.4 { edns yes; };',
-            {'server': [{'addr': '3.3.3.3', 'configs': {'edns': 'yes'}},
-                         {'addr': '4.4.4.4', 'configs': {'edns': 'yes'}}]}
+            {'server': [{'ip_addr': '3.3.3.3', 'configs': {'edns': 'yes'}},
+                         {'ip_addr': '4.4.4.4', 'configs': {'edns': 'yes'}}]}
         )
 
 if __name__ == '__main__':

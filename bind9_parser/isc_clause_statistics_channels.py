@@ -33,7 +33,7 @@ clause_stmt_statistics_channels_standalone = (
         + OneOrMore(
             Keyword('inet').suppress()
             + Group(
-                Optional(ip46_addr_or_wildcard('addr'))
+                Optional(ip46_addr_or_wildcard('ip_addr'))
                 - Optional(inet_ip_port_keyword_and_wildcard_element('ip_port_w'))
                 + OneOrMore(semicolon)
             )('statistics_channels*')

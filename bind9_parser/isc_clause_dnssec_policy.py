@@ -24,9 +24,9 @@ Description:
         zone-propagation-delay 2h;
     };
 """
-from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, iso8601_duration, name_base,\
-    isc_file_name, lbrack, rbrack, quoted_path_name
+from pyparsing import Word, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums
+from bind9_parser.isc_utils import semicolon, iso8601_duration, name_base,\
+    lbrack, rbrack, dequoted_path_name
 
 # NOTE: If any declaration here is to be used OUTSIDE of 
 # the 'dnssec-policy' clause, it should instead be defined in isc_utils.py
@@ -54,7 +54,9 @@ dnssecpolicy_keys_element = (
         + lbrack
         + Group (
             dnssecpolicy_keys_type('type')
-            - Optional(quoted_path_name('key_directory'))
+            - Optional(
+                dequoted_path_name('key_directory')
+            )
             + Group (
                 Keyword('lifetime').suppress()
                 + (

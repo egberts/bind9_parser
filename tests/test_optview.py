@@ -149,8 +149,8 @@ class TestOptionsView(unittest.TestCase):
         assertParserResultDictTrue(
             optview_stmt_allow_query_cache_on,
             'allow-query-cache-on { localnets; localhost; };',
-            {'allow_query_cache_on': {'aml': [{'addr': 'localnets'},
-                                              {'addr': 'localhost'}]}}
+            {'allow_query_cache_on': {'aml': [{'keyword': 'localnets'},
+                                              {'keyword': 'localhost'}]}}
         )
 
     def test_isc_optview_stmt_allow_query_cache_passing(self):
@@ -163,8 +163,8 @@ class TestOptionsView(unittest.TestCase):
         assertParserResultDictTrue(
             optview_stmt_allow_query_cache,
             'allow-query-cache { localnets; localhost; };',
-            {'allow_query_cache': {'aml': [{'addr': 'localnets'},
-                                           {'addr': 'localhost'}]}}
+            {'allow_query_cache': {'aml': [{'keyword': 'localnets'},
+                                           {'keyword': 'localhost'}]}}
         )
 
     def test_isc_optview_stmt_allow_recursion_on_passing(self):
@@ -177,7 +177,7 @@ class TestOptionsView(unittest.TestCase):
         assertParserResultDictTrue(
             optview_stmt_allow_recursion_on,
             'allow-recursion-on { any; };',
-            {'allow-recursion-on': {'aml': [{'addr': 'any'}]}}
+            {'allow-recursion-on': {'aml': [{'keyword': 'any'}]}}
         )
 
     def test_isc_optview_stmt_allow_recursion_passing(self):
@@ -190,8 +190,8 @@ class TestOptionsView(unittest.TestCase):
         assertParserResultDictTrue(
             optview_stmt_allow_recursion,
             'allow-recursion { localnets; localhost; };',
-            {'allow-recursion': {'aml': [{'addr': 'localnets'},
-                                         {'addr': 'localhost'}]}}
+            {'allow-recursion': {'aml': [{'keyword': 'localnets'},
+                                         {'keyword': 'localhost'}]}}
         )
 
     def test_isc_optview_stmt_attach_cache_passing(self):
@@ -241,7 +241,7 @@ class TestOptionsView(unittest.TestCase):
         assertParserResultDictTrue(
             optview_stmt_cache_file,
             'cache-file "/dev/null";',
-            {'cache_file': '"/dev/null"'}
+            {'cache_file': '/dev/null'}
         )
 
     def test_isc_optview_stmt_check_dup_records_passing(self):
@@ -377,7 +377,7 @@ class TestOptionsView(unittest.TestCase):
         assertParserResultDictTrue(
             optview_stmt_disable_empty_zone,
             'disable-empty-zone "127.in-addr.arpa";',
-            {'disable_empty_zone': [{'zone_name': '"127.in-addr.arpa"'}]}
+            {'disable_empty_zone': [{'zone_name': '127.in-addr.arpa'}]}
         )
 
     def test_isc_optview_stmt_optview_stmt_dns64_passing(self):
@@ -392,12 +392,12 @@ dns64 64:ff9b::/96 {
     exclude { 127.0.0.1; };
     mapped   { 127.0.0.1; };
     };""",
-            {'dns64': [{'aml': [{'addr': '127.0.0.1'}],
+            {'dns64': [{'aml': [{'ip4_addr': '127.0.0.1'}],
                         'break_dnssec': 'yes',
-                        'clients': [{'addr': '127.0.0.1'}],
-                        'exclude': [{'addr': '127.0.0.1'}],
-                        'mapped': [{'addr': '127.0.0.1'}],
-                        'netprefix': {'ip_addr': '64:ff9b::',
+                        'clients': [{'ip4_addr': '127.0.0.1'}],
+                        'exclude': [{'ip4_addr': '127.0.0.1'}],
+                        'mapped': [{'ip4_addr': '127.0.0.1'}],
+                        'netprefix': {'ip6_addr': '64:ff9b::',
                                       'prefix': '96'},
                         'recursive_only': 'no'}]}
         )
@@ -546,7 +546,7 @@ dns64 64:ff9b::/96 {
         assertParserResultDictTrue(
             optview_stmt_disable_empty_zone,
             'disable-empty-zone ".";',
-            {'disable_empty_zone': [{'zone_name': '"."'}]}
+            {'disable_empty_zone': [{'zone_name': '.'}]}
         )
         assertParserResultDictTrue(
             optview_stmt_disable_empty_zone,
@@ -687,7 +687,7 @@ dns64 64:ff9b::/96 {
         assertParserResultDictTrue(
             optview_stmt_managed_keys_directory,
             'managed-keys-directory "/var/lib/bind9/managed-keys/public/";',
-            {'managed_keys_directory': '"/var/lib/bind9/managed-keys/public/"'}
+            {'managed_keys_directory': '/var/lib/bind9/managed-keys/public/'}
         )
 
     def test_isc_optview_stmt_max_cache_size_passing(self):
@@ -856,7 +856,7 @@ dns64 64:ff9b::/96 {
         assertParserResultDictTrue(
             optview_stmt_rate_limit,
             'rate-limit { exempt-clients { 5.5.5.5; }; slip 5; window 6; responses-per-second 60; };',
-            {'rate_limit': [{'addr': '5.5.5.5'},
+            {'rate_limit': [{'ip4_addr': '5.5.5.5'},
                             {'slip': 5},
                             {'window': 6},
                             {'responses_per_second': 60}]}
@@ -1138,8 +1138,8 @@ dns64 64:ff9b::/96 {
                              {'order': 'cyclic'}]}
         )
 
-    # XXXX optview_stmt_sortlist
-    def test_isc_optview_stmt_sortlist_passing(self):
+    # optview_stmt_sortlist
+    def test_isc_optview_stmt_sortlist_1_passing(self):
         """ Clause options/view; Statement sortlist; passing """
         test_string = [
             'sortlist { localhost; localnets; };',
@@ -1152,12 +1152,19 @@ dns64 64:ff9b::/96 {
         ]
         result = optview_stmt_sortlist.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    # optview_stmt_sortlist
+    def test_isc_optview_stmt_sortlist_2_passing(self):
+        """ Clause options/view; Statement sortlist; passing """
         assertParserResultDictTrue(
             optview_stmt_sortlist,
             'sortlist { localhost; localnets; };',
-            {'sortlist': {'aml': [{'addr': 'localhost'},
-                                  {'addr': 'localnets'}]}}
+            {'sortlist': {'aml': [{'keyword': 'localhost'},
+                                  {'keyword': 'localnets'}]}}
         )
+
+    def test_isc_optview_stmt_sortlist_3_passing(self):
+        """ Clause options/view; Statement sortlist 2; passing """
         assertParserResultDictTrue(
             optview_stmt_sortlist,
             """sortlist { 
@@ -1165,32 +1172,22 @@ dns64 64:ff9b::/96 {
         { localnets; 192.168.1.0/24; 
             { 192.168.2.0/24; 192.168.3.0/24; }; }; }; 
     { 192.168.1.0/24; { 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; };""",
-            {
-                'sortlist': {
-                    'aml': [
-                        {
-                            'aml': [
-                                {'addr': 'localhost'},
-                                {'aml': [
-                                    {'addr': 'localnets'},
-                                    {'addr': '192.168.1.0/24'},
-                                    {'aml': [
-                                        {'addr': '192.168.2.0/24'},
-                                        {'addr': '192.168.3.0/24'}
-                                    ]}
-                                ]}
-                            ]
-                        },
-                        {
-                            'aml': [
-                                {'addr': '192.168.1.0/24'},
-                                {
-                                    'aml': [
-                                        {'addr': '192.168.1.0/24'},
-                                        {
-                                            'aml': [
-                                                {'addr': '192.168.2.0/24'},
-                                                {'addr': '192.168.3.0/24'}]}]}]}]}}
+            {'sortlist': {'aml': [{'aml': [{'keyword': 'localhost'},
+                                           {'aml': [{'keyword': 'localnets'},
+                                                    {'ip4_addr': '192.168.1.0',
+                                                     'prefix': '24'},
+                                                    {'aml': [{'ip4_addr': '192.168.2.0',
+                                                              'prefix': '24'},
+                                                             {'ip4_addr': '192.168.3.0',
+                                                              'prefix': '24'}]}]}]},
+                                  {'aml': [{'ip4_addr': '192.168.1.0',
+                                            'prefix': '24'},
+                                           {'aml': [{'ip4_addr': '192.168.1.0',
+                                                     'prefix': '24'},
+                                                    {'aml': [{'ip4_addr': '192.168.2.0',
+                                                              'prefix': '24'},
+                                                             {'ip4_addr': '192.168.3.0',
+                                                              'prefix': '24'}]}]}]}]}}
         )
 
     def test_isc_optview_statements_set_passing(self):
@@ -1261,8 +1258,8 @@ dns64 64:ff9b::/96 {
         assertParserResultDictTrue(
             optview_statements_set,
             'sortlist { localhost; localnets; };',
-            {'sortlist': {'aml': [{'addr': 'localhost'},
-                                  {'addr': 'localnets'}]}}
+            {'sortlist': {'aml': [{'keyword': 'localhost'},
+                                  {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optview_stmt_statements_set_failing(self):
@@ -1339,17 +1336,17 @@ dns64 64:ff9b::/96 {
              'acache_enable': 'no',
              'additional_from_auth': 'yes',
              'additional_from_cache': 'yes',
-             'allow-recursion': {'aml': [{'addr': 'localnets'},
-                                         {'addr': 'localhost'}]},
-             'allow-recursion-on': {'aml': [{'addr': 'any'}]},
+             'allow-recursion': {'aml': [{'keyword': 'localnets'},
+                                         {'keyword': 'localhost'}]},
+             'allow-recursion-on': {'aml': [{'keyword': 'any'}]},
              'allow_new_zones': '0',
-             'allow_query_cache': {'aml': [{'addr': 'localnets'},
-                                           {'addr': 'localhost'}]},
-             'allow_query_cache_on': {'aml': [{'addr': 'localnets'},
-                                              {'addr': 'localhost'}]},
+             'allow_query_cache': {'aml': [{'keyword': 'localnets'},
+                                           {'keyword': 'localhost'}]},
+             'allow_query_cache_on': {'aml': [{'keyword': 'localnets'},
+                                              {'keyword': 'localhost'}]},
              'attach_cache': 'dmz_view',
              'auth_nxdomain': 'no',
-             'cache_file': '"/dev/null"',
+             'cache_file': '/dev/null',
              'check_dup_records': 'ignore',
              'check_integrity': 'no',
              'check_mx': 'warn',
@@ -1360,7 +1357,7 @@ dns64 64:ff9b::/96 {
              'check_srv_cname': 'warn',
              'check_wildcard': 'yes',
              'cleaning_interval': 480,
-             'disable_empty_zone': [{'zone_name': '"."'}],
+             'disable_empty_zone': [{'zone_name': '.'}],
              'dnssec_accept_expired': 'False',
              'dnssec_enable': 'yes',
              'dnssec_lookaside': ['auto'],
@@ -1377,7 +1374,7 @@ dns64 64:ff9b::/96 {
              'heartbeat_interval': 3600,
              'hostname': {'name': 'example.com'},
              'lame_ttl': 32,
-             'managed_keys_directory': '"/var/lib/bind9/managed-keys/public/"',
+             'managed_keys_directory': '/var/lib/bind9/managed-keys/public/',
              'max_cache_size': [2048000],
              'max_cache_ttl': 3600,
              'minimal_responses': 'yes',
@@ -1392,8 +1389,8 @@ dns64 64:ff9b::/96 {
              'root_delegation_only': {'domains': ['name1',
                                                   'name2',
                                                   'name3']},
-             'sortlist': {'aml': [{'addr': 'localhost'},
-                                  {'addr': 'localnets'}]}}
+             'sortlist': {'aml': [{'keyword': 'localhost'},
+                                  {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optview_stmt_statements_series_failing(self):

@@ -10,16 +10,15 @@ Description: isc_optviewzone covers configuration options that
              goes into 'options', 'view', AND 'zone'.
 """
 from pyparsing import Group, Keyword, Optional,\
-    Literal, ZeroOrMore, CaselessLiteral, ungroup, Combine
-from bind9_parser.isc_utils import lbrack, rbrack, semicolon, isc_boolean, path_name, \
-    seconds_type, days_type, minute_type, quoted_path_name,\
+    Literal, ZeroOrMore, CaselessLiteral, ungroup
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon, isc_boolean, \
+    seconds_type, days_type, minute_type, dequoted_path_name,\
     size_spec, name_base, fqdn_name, check_options
 from bind9_parser.isc_inet import ip4_addr, ip_port, \
     inet_ip_port_keyword_and_wildcard_element, ip6_addr,\
     inet_ip_port_keyword_and_number_element, ip46_addr_or_prefix,\
     ip4_addr_or_wildcard, ip6_addr_or_wildcard, inet_dscp_port_keyword_and_number_element
 from bind9_parser.isc_aml import aml_nesting
-from bind9_parser.isc_domain import soa_rname
 
 
 optviewzone_stmt_allow_notify = (
@@ -204,7 +203,7 @@ optviewzone_stmt_forward = (
 )
 
 forwarders_ip46_addr_prefix_port_element = (
-    ip46_addr_or_prefix('ip_addr')   # .setName() must be same as ip46_addr
+    ungroup(ip46_addr_or_prefix)('ip_addr')   # .setName() must be same as ip46_addr
     - Optional(inet_ip_port_keyword_and_number_element)
     - Optional(inet_dscp_port_keyword_and_number_element)
     + semicolon
@@ -247,17 +246,17 @@ optviewzone_stmt_ixfr_from_differences = (
     + semicolon
 )
 
-# ixfr-tmp-file <path_name:; [ Opt View Zone ]  #  v8.0 to v8.4; now inert
+# ixfr-tmp-file "<path_name>"; [ Opt View Zone ]  #  v8.0 to v8.4; now inert
 optviewzone_stmt_ixfr_tmp_file = (
     Keyword('ixfr-tmp-file').suppress()
-    + path_name('ixfr_tmp_file')
+    + dequoted_path_name('ixfr_tmp_file')
     + semicolon
-)
+).setName('ixfr-tmp-file <quoted_file_path>')
 
-# key-directory path_name; [ Opt View Zone]
+# key-directory "<path_name>"; [ Opt View Zone]
 optviewzone_stmt_key_directory = (
     Keyword('key-directory').suppress()
-    - quoted_path_name('key_directory')
+    - dequoted_path_name('key_directory')
     + semicolon
 )
 
@@ -366,7 +365,7 @@ optviewzone_stmt_notify = (
 optviewzone_stmt_notify_source = (
     Keyword('notify-source').suppress()
     - Group(
-        ip4_addr_or_wildcard('addr')
+        ip4_addr_or_wildcard
         + Optional(inet_ip_port_keyword_and_wildcard_element)
         + Optional(inet_dscp_port_keyword_and_number_element)
     )('notify_source')
@@ -377,7 +376,7 @@ optviewzone_stmt_notify_source = (
 optviewzone_stmt_notify_source_v6 = (
     Keyword('notify-source-v6').suppress()
     - Group(
-        ip6_addr_or_wildcard('addr')
+        ip6_addr_or_wildcard('ip6_addr')
         + Optional(inet_ip_port_keyword_and_wildcard_element)
         + Optional(inet_dscp_port_keyword_and_number_element)
     )('notify_source_v6')
@@ -426,7 +425,7 @@ optviewzone_stmt_transfer_format = (
 optviewzone_stmt_transfer_source = (
     Keyword('transfer-source').suppress()
     + Group(
-        ip4_addr_or_wildcard('addr')
+        ip4_addr_or_wildcard('ip4_addr')
         + Optional(inet_ip_port_keyword_and_wildcard_element)
         + Optional(inet_dscp_port_keyword_and_number_element)
     )('transfer_source')
@@ -437,7 +436,7 @@ optviewzone_stmt_transfer_source = (
 optviewzone_stmt_transfer_source_v6 = (
     Keyword('transfer-source-v6').suppress()
     - Group(
-        ip6_addr_or_wildcard('addr')
+        ip6_addr_or_wildcard('ip6_addr')
         - Optional(inet_ip_port_keyword_and_wildcard_element)
         - Optional(inet_dscp_port_keyword_and_number_element)
     )('transfer_source_v6')

@@ -64,25 +64,25 @@ class TestAML(unittest.TestCase):
         assertParserResultDict(key_id_keyword_and_name_pair, 'key myKey3', {'key_id_WRONG': 'myKey3'}, False)
 
     def test_aml_choices_passing(self):
-        assertParserResultDict(aml_choices, 'any', {'addr': 'any'}, True)
-        assertParserResultDict(aml_choices, 'none', {'addr': 'none'}, True)
-        assertParserResultDict(aml_choices, 'localhost', {'addr': 'localhost'}, True)
-        assertParserResultDict(aml_choices, 'localnets', {'addr': 'localnets'}, True)
-        assertParserResultDict(aml_choices, '1.1.1.1', {'addr': '1.1.1.1'}, True)
-        assertParserResultDict(aml_choices, '2.2.2.2/2', {'addr': '2.2.2.2/2'}, True)
-        assertParserResultDict(aml_choices, 'fe03::3', {'addr': 'fe03::3'}, True)
+        assertParserResultDict(aml_choices, 'any', {'keyword': 'any'}, True)
+        assertParserResultDict(aml_choices, 'none', {'keyword': 'none'}, True)
+        assertParserResultDict(aml_choices, 'localhost', {'keyword': 'localhost'}, True)
+        assertParserResultDict(aml_choices, 'localnets', {'keyword': 'localnets'}, True)
+        assertParserResultDict(aml_choices, '1.1.1.1', {'ip4_addr': '1.1.1.1'}, True)
+        assertParserResultDict(aml_choices, '2.2.2.2/2', {'ip4_addr': '2.2.2.2', 'prefix': '2'}, True)
+        assertParserResultDict(aml_choices, 'fe03::3', {'ip6_addr': 'fe03::3'}, True)
         assertParserResultDict(aml_choices, 'master_nameservers_acl',
                                {'acl_name': 'master_nameservers_acl'}, True)
         assertParserResultDict(aml_choices, 'example', {'acl_name': 'example'}, True)
         assertParserResultDict(aml_choices, 'key MyKeyId', {'key_id': ['MyKeyId']}, True)
         test_datas = [
             ['key myKeyId', {'key_id': ['myKeyId']}],
-            ['127.0.0.1', {'addr': '127.0.0.1'}],
-            ['localnets', {'addr': 'localnets'}],
-            ['any', {'addr': 'any'}],
-            ['none', {'addr': 'none'}],
-            ['localhost', {'addr': 'localhost'}],
-            ['10.0.0.1/8', {'addr': '10.0.0.1/8'}],
+            ['127.0.0.1', {'ip4_addr': '127.0.0.1'}],
+            ['localnets', {'keyword': 'localnets'}],
+            ['any', {'keyword': 'any'}],
+            ['none', {'keyword': 'none'}],
+            ['localhost', {'keyword': 'localhost'}],
+            ['10.0.0.1/8', {'ip4_addr': '10.0.0.1', 'prefix': '8'}],
             ['example.com', {'acl_name': 'example.com'}]
             # FQDN-style are valid master name, but treated lik a hostname
         ]
@@ -99,12 +99,12 @@ class TestAML(unittest.TestCase):
         """ Element AML; Type ip4s_prefix; passing"""
         assertParserResultDict(aml_choices,
                                 '10.10.10.10/10',
-                               {'addr': '10.10.10.10/10'}
+                               {'ip4_addr': '10.10.10.10', 'prefix': '10'}
                                , True)
 
     def test_isc_aml_ip4s_prefix_failing(self):
         """ Element AML; Type ip4s_prefix; failing"""
-        assertParserResultDict(aml_choices, '10.10.10.10/1000', {'addr': ['10.10.10.10/1000']}, False)
+        assertParserResultDict(aml_choices, '10.10.10.10/1000', {'ip_addr': ['10.10.10.10/1000']}, False)
 
     def test_isc_aml_aml_nesting_failing(self):
         """Purposely failing Address Match List (AML) name"""
@@ -172,30 +172,30 @@ class TestAML(unittest.TestCase):
         #  Must be in same ordering as expected result
         expected_result = {
             'aml': [
-                {'addr': 'localhost'},
-                {'addr': '127.0.0.1'},
-                {'addr': '10.0.0.1/8'},
+                {'keyword': 'localhost'},
+                {'ip_addr': '127.0.0.1'},
+                {'ip_addr': '10.0.0.1/8'},
                 {'aml': [
                     {'acl_name_WRONG': 'master_nameservers'},
                     {'acl_name': 'slave_bastion_host'}
                 ]},
                 {'aml': [
-                    {'addr': 'any'},
-                    {'addr': 'none'},
-                    {'addr': 'localnets'}
+                    {'keyword': 'any'},
+                    {'keyword': 'none'},
+                    {'keyword': 'localnets'}
                 ]}
             ]}
         assertParserResultDict(aml_nesting, test_data, expected_result, False)
 
     def test_aml_choices_nested_passing(self):
         """ Clause ACL; List AML Choices; passing """
-        assertParserResultDict(aml_choices, 'any', {'addr': 'any'}, True)
-        assertParserResultDict(aml_choices, 'none', {'addr': 'none'}, True)
-        assertParserResultDict(aml_choices, 'localhost', {'addr': 'localhost'}, True)
-        assertParserResultDict(aml_choices, 'localnets', {'addr': 'localnets'}, True)
-        assertParserResultDict(aml_choices, '1.1.1.1', {'addr': '1.1.1.1'}, True)
-        assertParserResultDict(aml_choices, '2.2.2.2/2', {'addr': '2.2.2.2/2'}, True)
-        assertParserResultDict(aml_choices, 'fe03::3', {'addr': 'fe03::3'}, True)
+        assertParserResultDict(aml_choices, 'any', {'keyword': 'any'}, True)
+        assertParserResultDict(aml_choices, 'none', {'keyword': 'none'}, True)
+        assertParserResultDict(aml_choices, 'localhost', {'keyword': 'localhost'}, True)
+        assertParserResultDict(aml_choices, 'localnets', {'keyword': 'localnets'}, True)
+        assertParserResultDict(aml_choices, '1.1.1.1', {'ip4_addr': '1.1.1.1'}, True)
+        assertParserResultDict(aml_choices, '2.2.2.2/2', {'ip4_addr': '2.2.2.2', 'prefix': '2'}, True)
+        assertParserResultDict(aml_choices, 'fe03::3', {'ip6_addr': 'fe03::3'}, True)
         assertParserResultDict(aml_choices, 'key my_own_key_id', {'key_id': ['my_own_key_id']}, True)
         assertParserResultDict(aml_choices, 'master_nameservers_acl', {'acl_name': 'master_nameservers_acl'}, True)
 
@@ -218,15 +218,15 @@ class TestAML(unittest.TestCase):
     def test_aml_nesting_forward_passing(self):
         assertParserResultDict(aml_nesting,
                                 '{ 1.1.1.1; { 127.0.0.1;}; };',
-                               {'aml': [{'addr': '1.1.1.1'}, {'aml': [{'addr': '127.0.0.1'}]}]},
+                               {'aml': [{'ip4_addr': '1.1.1.1'}, {'aml': [{'ip4_addr': '127.0.0.1'}]}]},
                                True)
         assertParserResultDict(aml_nesting,
                                 '{ { 8.8.8.8; }; };',
-                               {'aml': [{'aml': [{'addr': '8.8.8.8'}]}]},
+                               {'aml': [{'aml': [{'ip4_addr': '8.8.8.8'}]}]},
                                True)
         assertParserResultDict(aml_nesting,
                                 '{ { { 9.9.9.9; }; }; };',
-                               {'aml': [{'aml': [{'aml': [{'addr': '9.9.9.9'}]}]}]},
+                               {'aml': [{'aml': [{'aml': [{'ip4_addr': '9.9.9.9'}]}]}]},
                                True)
 
     def test_aml_nesting_forward_exclamation_passing(self):
@@ -236,9 +236,9 @@ class TestAML(unittest.TestCase):
                                     'aml': [
                                         {
                                             'aml': [
-                                                {'addr': '1.1.1.1'},
+                                                {'ip4_addr': '1.1.1.1'},
                                                 {'aml': [
-                                                    {'addr': '127.0.0.1'}
+                                                    {'ip4_addr': '127.0.0.1'}
                                                 ]
                                                 }
                                             ],
@@ -251,8 +251,8 @@ class TestAML(unittest.TestCase):
                                 '{ ! 11.11.11.11; { 192.168.1.1;}; };',
                                {
                                     'aml': [
-                                        {'addr': '11.11.11.11', 'not': '!'},
-                                        {'aml': [{'addr': '192.168.1.1'}]}
+                                        {'ip4_addr': '11.11.11.11', 'not': '!'},
+                                        {'aml': [{'ip4_addr': '192.168.1.1'}]}
                                     ]
                                 },
                                True)
@@ -260,18 +260,18 @@ class TestAML(unittest.TestCase):
                                 '{ 3.3.3.3; ! { 127.0.0.1;}; };',
                                {
                                     'aml': [
-                                        {'addr': '3.3.3.3'},
-                                        {'aml': [{'addr': '127.0.0.1'}], 'not': '!'}
+                                        {'ip4_addr': '3.3.3.3'},
+                                        {'aml': [{'ip4_addr': '127.0.0.1'}], 'not': '!'}
                                     ]},
                                True)
         assertParserResultDict(aml_nesting,
                                 '{ 4.4.4.4; { ! 127.0.0.1;}; };',
                                {
                                     'aml': [
-                                        {'addr': '4.4.4.4'},
+                                        {'ip4_addr': '4.4.4.4'},
                                         {'aml': [
                                             {
-                                                'addr': '127.0.0.1',
+                                                'ip4_addr': '127.0.0.1',
                                                 'not': '!'
                                             }
                                         ]}
@@ -280,22 +280,22 @@ class TestAML(unittest.TestCase):
         assertParserResultDict(aml_nesting,
                                 '{ 5.5.5.5; { 127.0.0.1;}; };',
                                {'aml': [
-                                    {'addr': '5.5.5.5'},
+                                    {'ip4_addr': '5.5.5.5'},
                                     {'aml': [
-                                        {'addr': '127.0.0.1'}]}]},
+                                        {'ip4_addr': '127.0.0.1'}]}]},
                                True)
         assertParserResultDict(aml_nesting,
                                 '{ { 6.6.6.6; }; };',
                                {'aml': [
                                     {'aml': [
-                                        {'addr': '6.6.6.6'}]}]},
+                                        {'ip4_addr': '6.6.6.6'}]}]},
                                True)
         assertParserResultDict(aml_nesting,
                                 '{ { { 7.7.7.7; }; }; };',
                                {'aml': [
                                     {'aml': [
                                         {'aml': [
-                                            {'addr': '7.7.7.7'}]}]}]},
+                                            {'ip4_addr': '7.7.7.7'}]}]}]},
                                True)
 
     def test_aml_nesting_first_addr(self):
@@ -307,35 +307,35 @@ class TestAML(unittest.TestCase):
 
     def test_aml_nesting_first_addr_series(self):
         test_data = """{ localhost; any; none; };"""
-        expected_result = {'aml': [{'addr': 'localhost'}, {'addr': 'any'}, {'addr': 'none'}]}
+        expected_result = {'aml': [{'keyword': 'localhost'}, {'keyword': 'any'}, {'keyword': 'none'}]}
         assertParserResultDict(aml_nesting, test_data, expected_result, True)
 
     def test_aml_nesting_first_nest(self):
         test_data = """{ localhost; }; """
-        expected_result = {'aml': [{'addr': 'localhost'}]}
+        expected_result = {'aml': [{'keyword': 'localhost'}]}
         assertParserResultDict(aml_nesting, test_data, expected_result, True)
 
     def test_aml_nesting_first_two_nests(self):
         test_data = """{ { localhost; }; }; """
-        expected_result = {'aml': [{'aml': [{'addr': 'localhost'}]}]}
+        expected_result = {'aml': [{'aml': [{'keyword': 'localhost'}]}]}
         assertParserResultDict(aml_nesting, test_data, expected_result, True)
 
     def test_aml_nesting_first_combo(self):
         test_data = """ { localhost; { none; }; };"""
-        expected_result = {'aml': [{'addr': 'localhost'}, {'aml': [{'addr': 'none'}]}]}
+        expected_result = {'aml': [{'keyword': 'localhost'}, {'aml': [{'keyword': 'none'}]}]}
         assertParserResultDict(aml_nesting, test_data, expected_result, True)
 
     def test_aml_nesting_first_deep_combo(self):
         test_data = """{ { none; }; localhost; { none; { any; }; }; };"""
-        expected_result = {'aml': [{'aml': [{'addr': 'none'}]},
-                                   {'addr': 'localhost'},
-                                   {'aml': [{'addr': 'none'}, {'aml': [{'addr': 'any'}]}]}]}
+        expected_result = {'aml': [{'aml': [{'keyword': 'none'}]},
+                                   {'keyword': 'localhost'},
+                                   {'aml': [{'keyword': 'none'}, {'aml': [{'keyword': 'any'}]}]}]}
         assertParserResultDict(aml_nesting, test_data, expected_result, True)
 
     # test_aml_nesting_flat is not a valid ISC syntax but an interim syntax checker
     def test_aml_nesting_flat(self):
         test_data = """{ localhost; };"""
-        expected_result = {'aml': [{'addr': 'localhost'}]}
+        expected_result = {'aml': [{'keyword': 'localhost'}]}
         assertParserResultDict(aml_nesting, test_data, expected_result, True)
 
     def test_isc_aml_aml_nesting_passing(self):

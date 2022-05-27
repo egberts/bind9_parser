@@ -73,7 +73,7 @@ class TestClauseHttp(unittest.TestCase):
         test_string = 'plugin query "../../../plugins/.libs/filter-aaaa.so" { filter-a-on-v4 yes; };'
         expected_result = { 'config': [['filter-a-on-v4 yes']],
   'flag': 'query',
-  'quoted_path_name': '"../../../plugins/.libs/filter-aaaa.so"'}
+  'quoted_path_name': '../../../plugins/.libs/filter-aaaa.so'}
         assertParserResultDictTrue(
             clause_stmt_plugin_standalone,
             test_string,
@@ -83,7 +83,7 @@ class TestClauseHttp(unittest.TestCase):
         """ Test Clause 'plugin'; set; passing """
         test_string = 'plugin "../../../filter-aaaa.so" { filter-aaaa yes; };'
         expected_result = { 'config': [['filter-aaaa yes']],
-  'quoted_path_name': '"../../../filter-aaaa.so"'}
+  'quoted_path_name': '../../../filter-aaaa.so'}
         assertParserResultDictTrue(
             clause_stmt_plugin_set,
             test_string,
@@ -94,7 +94,7 @@ class TestClauseHttp(unittest.TestCase):
         test_string = 'plugin query "../../../filter-a.so" { filter-aaaa yes; };'
         expected_result = { 'config': [['filter-aaaa yes']],
   'flag': 'query',
-  'quoted_path_name': '"../../../filter-a.so"'}
+  'quoted_path_name': '../../../filter-a.so'}
         assertParserResultDictTrue(
             clause_stmt_plugin_set,
             test_string,
@@ -107,7 +107,7 @@ plugin "../../../filter-a.so" { filter-a yes; };
 plugin query "../../../filter-aaaa.so" { filter-aaaa yes; };"""
         expected_result = { 'config': [['filter-a yes'], ['filter-aaaa yes']],
   'flag': 'query',
-  'quoted_path_name': '"../../../filter-aaaa.so"'}
+  'quoted_path_name': '../../../filter-aaaa.so'}
         assertParserResultDictTrue(
             clause_stmt_plugin_series,
             test_string,

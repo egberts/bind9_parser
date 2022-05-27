@@ -9,22 +9,20 @@ Title: Statements Used Only By 'options' Clause
 Description: Various 'options' statement that is used
              only by 'options' clause.
 """
-from pyparsing import Group, Keyword, OneOrMore, Optional, Word,\
+from pyparsing import Group, Keyword, Optional, \
     ZeroOrMore, OneOrMore, Combine, Literal, ungroup
 from pyparsing import pyparsing_common
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
-    name_type, path_name, number_type, seconds_type, \
+    name_type, dequotable_path_name, number_type, seconds_type, \
     isc_boolean, fqdn_name, key_id, krb5_principal_name,\
-    exclamation, quoted_path_name, squote, dquote, algorithm_name_list_series,\
-    fqdn_name_dequoted, fqdn_name_dequotable, key_secret, quotable_name, \
+    exclamation, dequoted_path_name, squote, dquote, algorithm_name_list_series,\
+    fqdn_name_dequoted, fqdn_name_dequotable, quotable_name, \
     algorithm_name, size_spec_nodefault
 from bind9_parser.isc_inet import ip_port,\
     inet_dscp_port_keyword_and_number_element,\
     inet_ip_port_keyword_and_number_element
-from bind9_parser.isc_domain import domain_generic_fqdn,\
-    domain_charset_alphanums_dash_underscore, domain_fqdn,\
-    quoted_domain_generic_fqdn
-from bind9_parser.isc_aml import  aml_nesting, aml_choices
+from bind9_parser.isc_domain import dequotable_domain_generic_fqdn
+from bind9_parser.isc_aml import aml_nesting, aml_choices
 
 
 options_stmt_acache_cleaning_interval = (
@@ -63,7 +61,7 @@ options_ip_port_list = (
 options_ip_port_series = (
     OneOrMore(
         ungroup(
-        options_ip_port_list
+            options_ip_port_list
         )
     )('options_ip_port_series_OneOrMore')
 )
@@ -90,7 +88,7 @@ options_stmt_avoid_v6_udp_ports.setName('avoid-v6-udp-ports { port; ... };')
 #  bindkey-file <path_name>; [ Opt ]    #  v9.5.0 to Feb 2017
 options_stmt_bindkeys_file = (
     Keyword('bindkeys-file').suppress()
-    - quoted_path_name('bindkeys_file')
+    - dequoted_path_name('bindkeys_file')
     + semicolon
 )
 options_stmt_bindkeys_file.setName('bindkeys-file <quoted-filespec>;')
@@ -103,14 +101,7 @@ options_stmt_blackhole = (
 )
 options_stmt_blackhole.setName('blackhole <aml>;')
 
-
-#  cache-file <path_name>    # used for ISC internal testing
-options_stmt_cache_file = (
-    Keyword('cache-file').suppress()
-    + quoted_path_name('cache_file')
-    + semicolon
-)
-options_stmt_cache_file.setName('cache-file <quoted-filespec>;')
+# cache-file <path_name> moved to isc_optview.py
 
 options_stmt_clients_per_query = (
         Keyword('clients-per-query').suppress()
@@ -182,7 +173,7 @@ options_stmt_deny_answer_addresses = (
                     | (
                         aml_choices
                         - semicolon
-                    )  # never set a ResultsLabel here, you get duplicate but un-nested 'addr'
+                    )  # never set a ResultsLabel here, you get duplicate but un-nested 'ip_addr'
                 )  # never set a ResultsLabel here, you get no []
             )
         )('aml')
@@ -236,7 +227,7 @@ options_stmt_deny_answer_aliases.setName('deny-answer-aliases [ except-from { <q
 
 options_stmt_directory = (
     Keyword('directory').suppress()
-    - quoted_path_name('directory')
+    - dequoted_path_name('directory')
     + semicolon
 )
 options_stmt_directory.setName('directory <quotable-fqdn>;')
@@ -329,7 +320,7 @@ options_stmt_dnstap_output = (
         Keyword('file')
         | Keyword('unix')
     )
-    - quoted_path_name
+    - dequoted_path_name
     - OneOrMore(options_stmt_dnstap_output_element)
     - semicolon
 )
@@ -341,7 +332,7 @@ options_stmt_dscp = inet_dscp_port_keyword_and_number_element
 # dump-file <path_name>; [ Opt ]    # Introduced in v8.1, active at v9.6.3
 options_stmt_dump_file = (
     Keyword('dump-file').suppress()
-    - quoted_path_name('dump_file')
+    - dequoted_path_name('dump_file')
     + semicolon
 )
 options_stmt_dump_file.setName('dump-file <quoted-filespec>;')
@@ -417,7 +408,7 @@ options_stmt_listen_on_v6.setName('listen-on-v6 [ <port> ] { <aml>; ... };')
 # lock-file <path_name>; [ Opt ]    # Introduced in v9.15???
 options_stmt_lock_file = (
     Keyword('lock-file').suppress()
-    - quoted_path_name('lock_file')
+    - dequoted_path_name('lock_file')
     + semicolon
 )
 options_stmt_lock_file.setName('lock-file <quoted-filespec>;')
@@ -449,7 +440,7 @@ options_stmt_memstatistics.setName('memstatistics <boolean>;')
 #  memstatistics-file <path_name>; [ Opt ]  # v8.0 to v9.1.8; now inert
 options_stmt_memstatistics_file = (
     Keyword('memstatistics-file').suppress()
-    - quoted_path_name('memstatistics_file')
+    - dequoted_path_name('memstatistics_file')
     + semicolon
 )
 options_stmt_memstatistics_file.setName('memstatistics-file <quoted-filespec>;')
@@ -465,7 +456,7 @@ options_stmt_multiple_cnames.setName('multiple-cnames <boolean>;')
 #  named-xfer <path_name>; [ Opt ]   Introduced in 8.1, still inert @ v9.10.3
 options_stmt_named_xfer = (
     Keyword('named-xfer').suppress()
-    - path_name('named_xfer_path_name')
+    - dequoted_path_name('named_xfer_path_name')
     + semicolon
 )
 options_stmt_named_xfer.setName('named-xfer <quoted-filespec>;')
@@ -473,7 +464,7 @@ options_stmt_named_xfer.setName('named-xfer <quoted-filespec>;')
 # pid-file "path_to_file"; [ Opt ]  # v8.1+
 options_stmt_pid_file = (
     Keyword('pid-file').suppress()
-    - quoted_path_name('pid_file_path_name')
+    - dequoted_path_name('pid_file_path_name')
     + semicolon
 )
 options_stmt_pid_file.setName('pid-file <quoted-filespec>;')
@@ -504,7 +495,7 @@ options_stmt_querylog.setName('querylog <boolean>;')
 #   random-device "device_name" ; [ Opt ]
 options_stmt_random_device = (
     Keyword('random-device').suppress()
-    - quoted_path_name('random_device_path_name')
+    - dequoted_path_name('random_device_path_name')
     + semicolon
 )
 options_stmt_random_device.setName('random-device <quoted-filespec>;')
@@ -512,7 +503,7 @@ options_stmt_random_device.setName('random-device <quoted-filespec>;')
 #   recursing-file "path_to_file"; [ Opt ]  # v9.5.0+
 options_stmt_recursing_file = (
     Keyword('recursing-file').suppress()
-    - quoted_path_name('recursing_file_path_name')
+    - dequoted_path_name('recursing_file_path_name')
     + semicolon
 )
 options_stmt_recursing_file.setName('recursing-file <quoted-filespec>;')
@@ -536,7 +527,7 @@ options_stmt_resolver_query_timeout.setName('resolver-query-timeout <seconds>;')
 #  secroots-file <path_name>; [ Opt ]    # v9.5.0+
 options_stmt_secroots_file = (
     Keyword('secroots-file').suppress()
-    - quoted_path_name('secroots_file_path_name')
+    - dequoted_path_name('secroots_file_path_name')
     + semicolon
 )
 options_stmt_secroots_file.setName('secroots-file <quoted-filespec>;')
@@ -557,7 +548,7 @@ options_stmt_server_id_name.setName('<server_id_string>')
 options_stmt_server_id = (
     Keyword('server-id').suppress()
     - (
-        quoted_domain_generic_fqdn
+        dequotable_domain_generic_fqdn
         | options_stmt_server_id_name('server_id_name')
 
     )('server_id_name')
@@ -581,7 +572,7 @@ options_stmt_session_keyname.setName('session-keyname <key_id>;')
 
 options_stmt_session_keyfile = (
     Keyword('session-keyfile').suppress()
-    - quoted_path_name('session_keyfile_path_name')
+    - dequoted_path_name('session_keyfile_path_name')
     + semicolon
 )
 options_stmt_session_keyfile.setName('session-keyfile <quotable_filespec>;')
@@ -597,7 +588,7 @@ options_stmt_stacksize.setName('stacksize <size>;')
 #   statistics-file path_name; [ Opt ]  # v8.0+, inert at v9.0.0
 options_stmt_statistics_file = (
     Keyword('statistics-file').suppress()
-    - quoted_path_name('statistics_file_path_name')
+    - dequoted_path_name('statistics_file_path_name')
     + semicolon
 )
 options_stmt_statistics_file.setName('statistics-file <quotable_filespec>;')
@@ -620,12 +611,13 @@ options_stmt_tcp_listen_queue.setName('tcp-listen-queue <integer>;')
 
 #   tkey-dhkey keyname_base key_tag; [ Opt ]
 options_tkey_dhkey_tag = number_type
-# options_tkey_dhkey_tag.setName('<key_tag>')  # do not do THAT!  it overwrites number_type.setName()!!!! And confuses everyone else!
+# options_tkey_dhkey_tag.setName('<key_tag>')  # do not do THAT!
+# it overwrites number_type.setName()!!!! And confuses everyone else!
 
 options_stmt_tkey_dhkey = (
     Keyword('tkey-dhkey').suppress()
     - Group(
-        quoted_domain_generic_fqdn('host_name')
+        dequotable_domain_generic_fqdn('host_name')
         - options_tkey_dhkey_tag('key_tag')
     )
     + semicolon
@@ -635,7 +627,7 @@ options_stmt_tkey_dhkey.setName('tkey-dhkey <hostname> [ <key-tag> ];')
 #   tkey-domain domainname; [ Opt ]
 options_stmt_tkey_domain = (
     Keyword('tkey-domain').suppress()
-    - quoted_domain_generic_fqdn('tkey_domain')
+    - dequotable_domain_generic_fqdn('tkey_domain')
     + semicolon
 )
 options_stmt_tkey_domain.setName('tkey-domain <fqdn>;')
@@ -654,7 +646,7 @@ options_stmt_tkey_gssapi_credential.setName('tkey-gssapi-credential "<principal-
 #  tkey-gssapi-keytab; [ Opt ]
 options_stmt_tkey_gssapi_keytab = (
     Keyword('tkey-gssapi-keytab').suppress()
-    - quoted_path_name('tkey_gssapi_keytab_path_name')
+    - dequoted_path_name('tkey_gssapi_keytab_path_name')
     + semicolon
 )
 options_stmt_tkey_gssapi_keytab.setName('tkey-gssapi-keytab "<quoted-filespec>";')
@@ -683,7 +675,7 @@ options_stmt_transfers_per_ns = (
 options_stmt_transfers_per_ns.setName('transfers-per_ns "<nanoseconds>";')
 
 # version_string is latest as quoted_path_name, but it's path_name for backward compatibility
-options_version_string = path_name
+options_version_string = dequotable_path_name
 options_version_string.setName('<version_string>')
 
 #   version version_string; [ Opt ]
@@ -694,7 +686,7 @@ options_stmt_version = (
 )
 options_stmt_version.setName('version <quotable-string>;')
 
-#######  Multiple-statement support  ##############3
+#  Multiple-statement support  #
 options_multiple_stmt_disable_ds_digests = ZeroOrMore(
     options_stmt_disable_ds_digests
 )('disable_ds_digests')
@@ -726,7 +718,6 @@ options_statements_set = (
     ^ options_stmt_avoid_v6_udp_ports
     ^ options_stmt_bindkeys_file
     ^ options_stmt_blackhole
-    ^ options_stmt_cache_file
     ^ options_stmt_clients_per_query
     ^ options_stmt_cookie_algorithm
     ^ options_stmt_cookie_secret

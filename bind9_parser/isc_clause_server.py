@@ -32,7 +32,7 @@ server_all_statements_series = (
 clause_stmt_server_standalone = (
     Keyword('server').suppress()
     - Group(
-        ip46_addr_or_prefix('addr')
+        ip46_addr_or_prefix('ip_addr')
         + lbrack
         + Group(
             server_all_statements_series

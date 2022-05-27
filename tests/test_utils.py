@@ -7,6 +7,7 @@ import unittest
 from pyparsing import pythonStyleComment, cppStyleComment
 from bind9_parser.isc_utils import assertParserResultDictTrue,\
     isc_boolean, isc_file_name, \
+    dequotable_path_name, \
     acl_name, acl_name_dquotable, acl_name_squotable, \
     key_secret, key_id, key_id_keyword_and_name_pair, \
     view_name, view_name_dquotable, view_name_squotable, \
@@ -105,6 +106,25 @@ class TestConfigUtils(unittest.TestCase):
         ]
         result = isc_file_name.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
+
+    def test_isc_utils_isc_dequotable_path_name_passing(self):
+        """ ISC Utilities; Type dequotable_path_name; passing """
+        test_data = [
+            '"fil/enamewithoutatype"',
+            "'fil\"e\"name.type'",
+            '\'a/b/c/d/e/f/g/h/file_expanded.type"\'',
+            "\"file-hyphenated.type\"",
+        ]
+        result = dequotable_path_name.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_isc_dequotable_path_name_assert_passing(self):
+        """ ISC Utilities; Type dequotable_path_name assert; passing """
+        assertParserResultDictTrue(
+            dequotable_path_name,
+            '"fil/enamewithoutatype"',
+            {'path_name': 'fil/enamewithoutatype'}
+        )
 
     def test_isc_utils_path_name_passing(self):
         """Path name convention (UNIX-only)"""
@@ -331,9 +351,10 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type zone_name; List/Dict; passing """
         test_data = 'white-lab.example.net'
         expected_result = {'zone_name': 'white-lab.example.net'}
-        assertParserResultDictTrue(zone_name,
-                                        test_data,
-                                        expected_result)
+        assertParserResultDictTrue(
+            zone_name,
+            test_data,
+            expected_result)
 
     def test_isc_zone_name_quoted_passing(self):
         """ ISC Utilities; Type Zone Name; Quoted; passing """

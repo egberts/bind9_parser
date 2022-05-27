@@ -150,12 +150,15 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_notify_source.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_server_stmt_notify_source_2_passing(self):
+        """ Clause server; Statement notify-source; passing mode """
         assertParserResultDictTrue(
             server_stmt_notify_source,
-            'notify-source 127.0.0.1 port 15 dscp 1;',  # Missing 'addr'
+            'notify-source 127.0.0.1 port 15 dscp 1;',  # Missing 'ip_addr'
             {
                 'notify_source': {
-                    'addr': '127.0.0.1',
+                    'ip4_addr': '127.0.0.1',
                     'dscp_port': 1,
                     'ip_port_w': '15'}}
         )
@@ -180,12 +183,15 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_notify_source_v6.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_server_stmt_notify_source_v6_2_passing(self):
+        """ Clause server; Statement notify-source-v6; passing mode """
         assertParserResultDictTrue(
             server_stmt_notify_source_v6,
-            'notify-source-v6 fe09::1 port 19 dscp 2;',  # Missing 'addr'
+            'notify-source-v6 fe09::1 port 19 dscp 2;',  # Missing 'ip_addr'
             {
                 'notify_source_v6': {
-                    'addr': 'fe09::1',
+                    'ip6_addr': 'fe09::1',
                     'dscp_port': 2,
                     'ip_port_w': '19'}}
         )
@@ -465,11 +471,14 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_transfer_source_v6.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_server_stmt_transfer_source_v6_passing(self):
+        """ Clause server; Statement transfer-source-v6; passing mode """
         assertParserResultDictTrue(
             server_stmt_transfer_source_v6,
             'transfer-source-v6 ff01::1 port * dscp 7;',
             {'transfer_source_v6': {'dscp_port': 7,
-                                    'ip6_addr_w': 'ff01::1',
+                                    'ip6_addr': 'ff01::1',
                                     'ip_port_w': '*'}}
         )
 

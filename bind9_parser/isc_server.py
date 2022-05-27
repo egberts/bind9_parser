@@ -9,7 +9,7 @@ Title: Statements Used Only By server Clause.
 Description: Provides server-related grammar in PyParsing engine
              for ISC-configuration style
 """
-from pyparsing import Group, Keyword, Word, nums, Optional, Literal, ZeroOrMore
+from pyparsing import Group, Keyword, Word, nums, Optional, Literal, ZeroOrMore, ungroup
 from bind9_parser.isc_utils import isc_boolean, semicolon, number_type, \
     key_id, byte_type
 from bind9_parser.isc_inet import ip4_addr_or_wildcard, ip6_addr_or_wildcard,\
@@ -71,7 +71,7 @@ server_stmt_max_udp_size = (
 server_stmt_notify_source = (
     Keyword('notify-source')
     + Group(
-        ip4_addr_or_wildcard('addr')
+        ip4_addr_or_wildcard('ip4_addr')
         + Optional(inet_ip_port_keyword_and_wildcard_element)
         + Optional(inet_dscp_port_keyword_and_number_element)
     )('notify_source')
@@ -85,7 +85,7 @@ server_stmt_notify_source = (
 server_stmt_notify_source_v6 = (
     Keyword('notify-source-v6')
     + Group(
-        ip6_addr_or_wildcard('addr')
+        ip6_addr_or_wildcard('ip6_addr_w')
         + Optional(inet_ip_port_keyword_and_wildcard_element)
         + Optional(inet_dscp_port_keyword_and_number_element)
     )('notify_source_v6')
@@ -210,7 +210,7 @@ server_stmt_transfer_source = (
 server_stmt_transfer_source_v6 = (
     Keyword('transfer-source-v6').suppress()
     - Group(
-        ip6_addr_or_wildcard('ip6_addr_w')
+        ungroup(ip6_addr_or_wildcard)('ip6_addr')
         + Optional(inet_ip_port_keyword_and_wildcard_element)
         + Optional(inet_dscp_port_keyword_and_number_element)
     )('transfer_source_v6')

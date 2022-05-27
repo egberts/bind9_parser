@@ -15,7 +15,7 @@ from pyparsing import Word, Group, Optional, Keyword, Literal, \
     srange, OneOrMore, ZeroOrMore, ungroup
 from bind9_parser.isc_utils import semicolon, number_type, \
     isc_boolean, lbrack, rbrack, \
-    name_type, quoted_path_name, size_spec
+    name_type, dequoted_path_name, size_spec
 
 logging_chan_name = Word(srange('[a-zA-Z0-9]') + '_-', max=63)
 logging_chan_name.setName('<channel_name>')
@@ -56,7 +56,7 @@ logging_chan_file_path_size_element = (
 
 logging_chan_file_path_element = (
     Keyword('file').suppress()
-    - quoted_path_name('path_name')('path_name')
+    - dequoted_path_name('path_name')('path_name')
     - Optional(logging_chan_file_path_version_element)
     - Optional(logging_chan_file_path_size_element)
 )

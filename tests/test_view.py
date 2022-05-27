@@ -25,7 +25,7 @@ class TestView(unittest.TestCase):
         assertParserResultDictTrue(
             view_stmt_match_clients,
             'match-clients { 8.8.8.8; };',
-            {'match_clients': {'aml': [{'addr': '8.8.8.8'}]}}
+            {'match_clients': {'aml': [{'ip4_addr': '8.8.8.8'}]}}
         )
 
     def test_isc_view_stmt_match_client_failing(self):
@@ -54,7 +54,7 @@ class TestView(unittest.TestCase):
         assertParserResultDictTrue(
             view_stmt_match_destinations,
             'match-destinations { 8.8.8.8; };',
-            {'match_destinations': {'aml': [{'addr': '8.8.8.8'}]}}
+            {'match_destinations': {'aml': [{'ip4_addr': '8.8.8.8'}]}}
         )
 
     def test_isc_view_stmt_match_destination_failing(self):

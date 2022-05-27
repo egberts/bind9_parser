@@ -126,6 +126,40 @@ quoted_path_name = (
 )
 quoted_path_name.setName('<quoted_path_name>')
 
+# dequote/dequotable
+dequotable_path_name = (
+    (
+        Combine(
+            dquote.suppress()
+            + pathname_base_dquote
+            + dquote.suppress()
+        )
+        ^ Combine(
+            squote.suppress()
+            + pathname_base_squote
+            + squote.suppress()
+        )
+        ^ pathname_base
+    )('path_name')
+)
+dequotable_path_name.setName('<path_name>')
+
+dequoted_path_name = (
+    (
+        Combine(
+            dquote.suppress()
+            + pathname_base_dquote
+            + dquote.suppress()
+        )
+        ^ Combine(
+            squote.suppress()
+            + pathname_base_squote
+            + squote.suppress()
+        )
+    )('quoted_path_name')
+)
+dequoted_path_name.setName('<quoted_path_name>')
+
 # Bind9 naming convention
 
 charset_name_base = alphanums + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
@@ -148,6 +182,21 @@ quoted_name = (
 quoted_name.setName('<quoted_name>')
 name_type = quotable_name
 
+# dequotable_name
+name_dedquotable = Combine(Char('"').suppress() + Word(charset_name_dquotable, max=62) + Char('"').suppress())
+name_desquotable = Combine(Char("'").suppress() + Word(charset_name_squotable, max=62) + Char("'").suppress())
+dequotable_name = (
+        name_desquotable
+        ^ name_dedquotable
+        ^ name_base
+)('name')
+dequotable_name.setName('<quotable_name>')
+
+dequoted_name = (
+    name_desquotable
+    ^ name_dedquotable
+)('name')
+dequoted_name.setName('<quoted_name>')
 
 # Quoteable acl name
 # acl_name can begin with a digit/alpha/certain-symbol
@@ -281,11 +330,21 @@ zone_name_dquotable = Combine(dquote + Word(charset_zone_name_dquotable) + dquot
 zone_name_squotable = Combine(squote + Word(charset_zone_name_squotable) + squote)('zone_name')
 
 zone_name = (
-        zone_name_dquotable
-        | zone_name_squotable
-        | zone_name_base
+    zone_name_dquotable
+    | zone_name_squotable
+    | zone_name_base
 )('zone_name')
 zone_name.setName('<zone_name>')
+
+zone_name_dedquotable = Combine(dquote.suppress() + Word(charset_zone_name_dquotable) + dquote.suppress())('zone_name')
+zone_name_desquotable = Combine(squote.suppress() + Word(charset_zone_name_squotable) + squote.suppress())('zone_name')
+dequotable_zone_name = (
+    zone_name_dedquotable
+    | zone_name_desquotable
+    | zone_name_base
+)('zone_name')
+dequotable_zone_name.setName('<zone_name>')
+
 
 # Quoteable fqdn name
 charset_fqdn_name_base = alphanums + '_-.'
@@ -343,10 +402,10 @@ fqdn_name_dequotable.setName('<fqdn-name(dequotable)>')
 charset_krb5_username = alphanums + '-+_.'
 charset_krb5_realm = fqdn_name
 
-krb5_realm_name = fqdn_name('<realm>')('realm')
+krb5_realm_name = fqdn_name_dequotable('<realm>')('realm')
 krb5_primary_name = Word(charset_krb5_username, min=3, max=32)('primary')
 krb5_instance_name = Word(charset_krb5_username, min=3, max=256)('instance')  # limited to length of FQDN
-####krb5_principal_name max=(254+1+16))  # limited to length of FQDN + '/' + URI
+#  krb5_principal_name max=(254+1+16))  # limited to length of FQDN + '/' + URI
 krb5_principal_name_base = (
         Combine(
             krb5_primary_name
@@ -438,7 +497,7 @@ database_name_type = Word(alphanums + '_-.', max=63)('dlz_name')
 charset_master_name_base = alphanums + '_-'
 master_name_base = Word(charset_master_name_base, max=62)
 
-master_name = (master_name_base)('master_name')
+master_name = master_name_base('master_name')
 master_name.setName('<master_name>')
 
 # iso8601 is not a naive nor aware ISO time-interval

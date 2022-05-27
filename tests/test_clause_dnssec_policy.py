@@ -145,23 +145,23 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = """
 dnssec-policy strict {
-     keys { csk lifetime 1d algorithm SHA256 256; };
-     keys { ksk "/var/lib/named/primary/dnssec.key" lifetime 365D algorithm SHA386 386; };
-     };"""
-        expected_result = { 'dnssec_policy': [ { 'dnssec_policy_name': 'strict',
+    keys { csk lifetime 1d algorithm SHA256 256; };
+    keys { ksk "/var/lib/named/primary/dnssec.key" lifetime 365D algorithm SHA386 386; };
+    };"""
+        assertParserResultDictTrue(
+            clause_stmt_dnssecpolicy_set,
+            test_string,
+            { 'dnssec_policy': [ { 'dnssec_policy_name': 'strict',
                        'keys': [ { 'algorithm': { 'algorithm_name': 'SHA256',
                                                   'algorithm_size': '256'},
                                    'lifetime': { 'iso8601_duration': '1d'},
                                    'type': 'csk'},
                                  { 'algorithm': { 'algorithm_name': 'SHA386',
                                                   'algorithm_size': '386'},
-                                   'key_directory': '"/var/lib/named/primary/dnssec.key"',
+                                   'key_directory': '/var/lib/named/primary/dnssec.key',
                                    'lifetime': { 'iso8601_duration': '365D'},
                                    'type': 'ksk'}]}]}
-        assertParserResultDictTrue(
-            clause_stmt_dnssecpolicy_set,
-            test_string,
-            expected_result)
+        )
 
     def test_clause_stmt_dnssecpolicy_series_passing(self):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """

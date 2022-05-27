@@ -26,19 +26,13 @@ References:
   * https://egbert.net/blog/articles/dns-rr-key.html
 
 """
-from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums
-
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
-        iso8601_duration, quotable_name, fqdn_name, quoted_base64, \
-        lbrack, rbrack, quoted_name, quoted_path_name, isc_boolean
-
 from bind9_parser.isc_trusted_keys import trusted_keys_stmt_set, \
         trusted_keys_stmt_series
 
 clause_stmt_trusted_keys_standalone = trusted_keys_stmt_set
 
 clause_stmt_trusted_keys_set = trusted_keys_stmt_set
-clause_stmt_trusted_keys_set.setName(\
+clause_stmt_trusted_keys_set.setName(
     """trusted-keys { 
         string ( 
             static-key |

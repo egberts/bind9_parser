@@ -652,14 +652,14 @@ class TestINET(unittest.TestCase):
         assertParserResultDictTrue(
             ip46_addr_and_port_list,
             '1.1.1.1;',
-            {'addr': '1.1.1.1'}
+            {'ip_addr': '1.1.1.1'}
         )
     def test_isc_inet_ip46_addr_and_port_list_1_ip4_port_passing(self):
         """INET clause, IPv4 and port; one IPv4 with port; passing"""
         assertParserResultDictTrue(
             ip46_addr_and_port_list,
             '2.2.2.2 port 2222;',
-            {'addr': '2.2.2.2', 'ip_port': '2222'}
+            {'ip_addr': '2.2.2.2', 'ip_port': '2222'}
         )
 
     def test_isc_inet_ip4_addr_semicolon_failing(self):

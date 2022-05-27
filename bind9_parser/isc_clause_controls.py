@@ -10,7 +10,7 @@ Description
 """
 from pyparsing import Keyword, Group, Optional, Literal, OneOrMore, ZeroOrMore
 from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
-    isc_boolean, quoted_path_name, number_type, \
+    isc_boolean, dequoted_path_name, number_type, \
     exclamation, key_id
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip46_addr_or_wildcard, \
@@ -43,7 +43,7 @@ controls_inet_allow_element = Group(
                 | (
                         aml_choices
                         + semicolon
-                )  # never set a ResultsLabel here, you get duplicate but un-nested 'addr'
+                )  # never set a ResultsLabel here, you get duplicate but un-nested 'ip_addr'
             )  # never set a ResultsLabel here, you get no []
         )(None)
     )('aml')
@@ -91,7 +91,7 @@ controls_unix_set = (
     Group(
         Keyword('unix').suppress()
         + (
-                quoted_path_name('path_name')
+                dequoted_path_name('path_name')
                 + Literal('perm').suppress()
                 + number_type('perm')  # TODO Check if 'controls unix perm/owner/group is numeric-only or not
                 + Literal('owner').suppress()

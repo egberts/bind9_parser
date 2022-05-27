@@ -53,20 +53,20 @@ auto-dnssec off;
 automatic-interface-scan no;
 avoid-v4-udp-ports { 1; 2; 3; };
 avoid-v6-udp-ports { 4; 5; 6; };""",
-            {'allow-recursion': {'aml': [{'addr': '127.0.0.1'}]},
-             'allow-recursion-on': {'aml': [{'addr': '127.0.0.1'}]},
+            {'allow-recursion': {'aml': [{'ip4_addr': '127.0.0.1'}]},
+             'allow-recursion-on': {'aml': [{'ip4_addr': '127.0.0.1'}]},
              'allow_new_zones': 'yes',
-             'allow_notify': {'aml': [{'addr': '127.0.0.1'}]},
-             'allow_query': {'aml': [{'addr': 'any'}]},
-             'allow_query_cache': {'aml': [{'addr': 'none'}]},
-             'allow_query_cache_on': {'aml': [{'addr': '127.0.0.1'}]},
-             'allow_query_on': {'aml': [{'addr': '127.0.0.1'}]},
-             'allow_transfer': {'aml': [{'addr': '127.0.0.1'}],
+             'allow_notify': {'aml': [{'ip4_addr': '127.0.0.1'}]},
+             'allow_query': {'aml': [{'keyword': 'any'}]},
+             'allow_query_cache': {'aml': [{'keyword': 'none'}]},
+             'allow_query_cache_on': {'aml': [{'ip4_addr': '127.0.0.1'}]},
+             'allow_query_on': {'aml': [{'ip4_addr': '127.0.0.1'}]},
+             'allow_transfer': {'aml': [{'ip4_addr': '127.0.0.1'}],
                                 'ip_port': '855'},
-             'allow_update': {'aml': [{'addr': '127.0.0.1'}]},
-             'allow_update_forwarding': {'aml': [{'addr': '127.0.0.1'}]},
+             'allow_update': {'aml': [{'ip4_addr': '127.0.0.1'}]},
+             'allow_update_forwarding': {'aml': [{'ip4_addr': '127.0.0.1'}]},
              'also-notify': {'port': '856',
-                             'remote': [{'addr': '127.0.0.1',
+                             'remote': [{'ip4_addr': '127.0.0.1',
                                          'key_id': 'ABC_KEY',
                                          'tls_algorithm_name': 'SSLv3'}]},
              'alt_transfer_source': {'dscp_port': 1, 'ip_port_w': '*'},
@@ -87,7 +87,7 @@ avoid-v6-udp-ports { 4; 5; 6; };""",
             """
     deny-answer-addresses { 127.0.0.1; } except-from { "172.in-addr.arpa."; };
 """,
-            {'deny_answer_addresses': {'aml': [{'addr': '127.0.0.1'}],
+            {'deny_answer_addresses': {'aml': [{'ip4_addr': '127.0.0.1'}],
                                        'except_from': [{'fqdn': '172.in-addr.arpa.'}]}}
         )
 
@@ -112,8 +112,8 @@ cookie-algorithm aes;
 cookie-secret "cookie_secret";
 coresize default;
 """,
-            {'bindkeys_file': '"dir/file"',
-             'blackhole': {'aml': [{'addr': '127.0.0.1'}]},
+            {'bindkeys_file': 'dir/file',
+             'blackhole': {'aml': [{'ip4_addr': '127.0.0.1'}]},
              'check_dup_records': 'warn',
              'check_integrity': 'no',
              'check_mx': 'fail',
@@ -665,7 +665,7 @@ disable-empty-zone "172.16.0.0/22";
             options_all_statements_series,
             'version 5; coresize unlimited; pid-file "/var/run/named.pid";',
             {'coresize': ['unlimited'],
-             'pid_file_path_name': '"/var/run/named.pid"',
+             'pid_file_path_name': '/var/run/named.pid',
              'version_string': '5'}
         )
 

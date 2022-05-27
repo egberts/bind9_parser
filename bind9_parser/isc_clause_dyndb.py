@@ -8,10 +8,9 @@ Title: Clause statement for Dynamic Database
 
 Description:
 """
-import unittest
-from pyparsing import Group, Keyword, Word, ZeroOrMore, OneOrMore
+from pyparsing import Group, Keyword, Word, OneOrMore
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, \
-    isc_file_name, quoted_path_name, charset_filename_base
+    isc_file_name, dequoted_path_name, charset_filename_base
 
 # TODO For dyndb_driver_content, haven't figured out how to allow curly braces inside quotes yet
 dyndb_custom_driver_configuration = (
@@ -26,7 +25,7 @@ dyndb_database_name = (
 )('db_name')
 
 dyndb_dynamic_module_name = (
-    quoted_path_name
+    dequoted_path_name
 )('module_filename')
 
 clause_stmt_dyndb_standalone = (

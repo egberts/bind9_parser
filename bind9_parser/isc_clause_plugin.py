@@ -14,12 +14,11 @@ Description:
         [ { unspecified-text } ]
         ;
 """
-from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
-        iso8601_duration, quotable_name,\
-        lbrack, rbrack, quoted_name, quoted_path_name, config_base
+from pyparsing import Keyword, ZeroOrMore, OneOrMore, Optional
+from bind9_parser.isc_utils import semicolon, \
+        lbrack, rbrack, dequoted_path_name, config_base
 
-# NOTE: If any declaration here is to be used OUTSIDE of 
+# NOTE: If any declaration here is to be used outside
 # the 'plugin' clause, it should instead be defined within isc_utils.py
 
 plugin_config_line_element = (
@@ -36,7 +35,7 @@ plugin_config_element = (
 clause_stmt_plugin_standalone = (
         Keyword('plugin').suppress()
         + Optional(Keyword('query')('flag'))
-        + quoted_path_name
+        + dequoted_path_name
         + plugin_config_element
         + semicolon
 ).setName('plugin [ query ] <quoted_string> { text ; ... };')
@@ -44,6 +43,5 @@ clause_stmt_plugin_standalone = (
 clause_stmt_plugin_set = clause_stmt_plugin_standalone.setName('plugin [ query ] <quoted_string> { text ; ... };')
 
 # {0-*} statement
-clause_stmt_plugin_series = ZeroOrMore( clause_stmt_plugin_set )
+clause_stmt_plugin_series = ZeroOrMore(clause_stmt_plugin_set)
 clause_stmt_plugin_series.setName('plugin [ query ] <string> { ... }; ...')
-

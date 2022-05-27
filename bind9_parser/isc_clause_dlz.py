@@ -12,13 +12,13 @@ Description:
 from pyparsing import Group, CaselessKeyword, alphanums, Word, ZeroOrMore, OneOrMore
 from bind9_parser.isc_utils import semicolon, name_type, isc_boolean, \
         lbrack, rbrack, dlz_name_type,\
-        path_name
+        dequoted_path_name
 
 
-#  database <string>;
+#  database "<string>";
 dlz_database_element = (
     CaselessKeyword('database').suppress()
-    - path_name('db_args')
+    - dequoted_path_name('db_args')
     + semicolon
 )
 

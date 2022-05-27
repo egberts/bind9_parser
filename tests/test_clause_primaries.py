@@ -64,14 +64,14 @@ class TestClausePrimaries(unittest.TestCase):
         expected_result = {
             'primary_list': [
                 {
-                    'addr': 'primary_subdomain',
+                    'ip_addr': 'primary_subdomain',
                     'key_id': '"primary_key_maker"'}]}
         assertParserResultDictTrue(primaries_element_series, test_string, expected_result)
         test_string = 'primary_recon_border_gateway key "My_Secret_Company_Key";'
         expected_result = {
             'primary_list': [
                 {
-                    'addr': 'primary_recon_border_gateway',
+                    'ip_addr': 'primary_recon_border_gateway',
                     'key_id': '"My_Secret_Company_Key"'}]}
         assertParserResultDictTrue(primaries_element_series, test_string, expected_result)
 
@@ -80,7 +80,7 @@ class TestClausePrimaries(unittest.TestCase):
         test_string = 'netspeed 150000000'
         expected_result = {
             'primary_list': [
-                {'addr': 'primary_recon_border_gateway', 'key_id': '"My_Secret_Company_Key"'}
+                {'ip_addr': 'primary_recon_border_gateway', 'key_id': '"My_Secret_Company_Key"'}
             ]
         }
         assertParserResultDictFalse(primaries_element_series, test_string, expected_result)
@@ -93,7 +93,7 @@ class TestClausePrimaries(unittest.TestCase):
                 {
                     'primary_id': 'ns1',
                     'primary_list': [
-                        {'addr': '127.0.0.1'}
+                        {'ip_addr': '127.0.0.1'}
                     ]
                 }
             ]
@@ -103,14 +103,14 @@ class TestClausePrimaries(unittest.TestCase):
 # primaries example.com { primaries; my_secondaries; };
     def test_isc_clause_stmt_primaries_ACLname_passing(self):
         """ Primaries clause, ACL usages; passing mode"""
-        test_string = 'primaries example.com { primaries; my_secondaries; };'
+        test_string = 'primaries 127.0.0.1 { 172.16.0.1; 10.0.0.1; };'
         expected_result = {
             'primaries': [
                 {
-                    'primary_id': 'example.com',
+                    'primary_id': '127.0.0.1',
                     'primary_list': [
-                        {'addr': 'primaries'},
-                        {'addr': 'my_secondaries'}
+                        {'ip4_addr': '172.16.0.1'},
+                        {'ip4_addr': '10.0.0.1'}
                     ]
                 }
             ]

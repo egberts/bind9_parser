@@ -37,7 +37,7 @@ class TestClauseHttp(unittest.TestCase):
     def test_tls_ca_file_passing(self):
         """ Test Clause 'tls'; 'ca-file'; passing """
         test_string = 'ca-file "/etc/bind/cakeys/stuff.pem";'
-        expected_result = {'ca_file': '"/etc/bind/cakeys/stuff.pem"'}
+        expected_result = {'ca_file': '/etc/bind/cakeys/stuff.pem'}
         assertParserResultDictTrue(
             tls_stmt_ca_file_element,
             test_string,
@@ -46,7 +46,7 @@ class TestClauseHttp(unittest.TestCase):
     def test_tls_cert_file_passing(self):
         """ Test Clause 'tls'; 'cert-file'; passing """
         test_string = "cert-file '/etc/pki/cacert.key';"
-        expected_result = {'cert_file': "'/etc/pki/cacert.key'"}
+        expected_result = {'cert_file': '/etc/pki/cacert.key'}
         assertParserResultDictTrue(
             tls_stmt_cert_file_element,
             test_string,
@@ -64,7 +64,7 @@ class TestClauseHttp(unittest.TestCase):
     def test_tls_dhparam_file_passing(self):
         """ Test Clause 'tls'; 'dhparam-file'; passing """
         test_string = 'dhparam-file "dhparam.md5";'
-        expected_result = {'dhparam_file': '"dhparam.md5"'}
+        expected_result = {'dhparam_file': 'dhparam.md5'}
         assertParserResultDictTrue(
             tls_stmt_dhparam_file_element,
             test_string,
@@ -73,7 +73,7 @@ class TestClauseHttp(unittest.TestCase):
     def test_tls_key_file_passing(self):
         """ Test Clause 'tls'; 'key-file'; passing """
         test_string = 'key-file "key.key";'
-        expected_result = {'key_file': '"key.key"'}
+        expected_result = {'key_file': 'key.key'}
         assertParserResultDictTrue(
             tls_stmt_key_file_element,
             test_string,
@@ -91,7 +91,7 @@ class TestClauseHttp(unittest.TestCase):
     def test_tls_protocols_passing(self):
         """ Test Clause 'tls'; 'protocols'; passing """
         test_string = "protocols {  'TLSv1.2'; TLSv1.3; };"
-        expected_result = {'protocols': ["'TLSv1.2'", 'TLSv1.3']}
+        expected_result = {'protocols': ['TLSv1.2', 'TLSv1.3']}
         assertParserResultDictTrue(
             tls_stmt_protocols_element,
             test_string,
@@ -118,7 +118,7 @@ class TestClauseHttp(unittest.TestCase):
     def test_tls_stmt_element_set_ca_file_passing(self):
         """ Test Clause 'tls'; element set 'ca-file'; passing """
         test_string = 'ca-file "/etc/pki/tunnel/ca-cert.crt.pem";';
-        expected_result = {'ca_file': '"/etc/pki/tunnel/ca-cert.crt.pem"'}
+        expected_result = {'ca_file': '/etc/pki/tunnel/ca-cert.crt.pem'}
         assertParserResultDictTrue(
             tls_stmt_element_set,
             test_string,
@@ -127,7 +127,7 @@ class TestClauseHttp(unittest.TestCase):
     def test_tls_stmt_element_set_cert_file_passing(self):
         """ Test Clause 'tls'; element set 'cert-file'; passing """
         test_string = 'cert-file "/etc/pki/tunnel/cert.crt.pem";'
-        expected_result = {'cert_file': '"/etc/pki/tunnel/cert.crt.pem"'}
+        expected_result = {'cert_file': '/etc/pki/tunnel/cert.crt.pem'}
         assertParserResultDictTrue(
             tls_stmt_element_set,
             test_string,
@@ -136,7 +136,7 @@ class TestClauseHttp(unittest.TestCase):
     def test_stmt_clause_tls_set_passing(self):
         """ Test Clause 'tls'; element set 'ciphers'; passing """
         test_string = "ciphers 'aes256-sha256';"
-        expected_result = {'ciphers': "'aes256-sha256'"}
+        expected_result = {'ciphers': 'aes256-sha256'}
         assertParserResultDictTrue(
             tls_stmt_element_set,
             test_string,
@@ -154,13 +154,13 @@ class TestClauseHttp(unittest.TestCase):
     protocols { TLSv1.2; 'TLSv1.3'; };
     prefer-server-ciphers yes;
     cert-file '/etc/pki/cacert.key'; """
-        expected_result = { 'ca_file': '"/etc/bind/cakeys/stuff.pem"',
-  'cert_file': "'/etc/pki/cacert.key'",
+        expected_result = { 'ca_file': '/etc/bind/cakeys/stuff.pem',
+  'cert_file': '/etc/pki/cacert.key',
   'ciphers': 'aes256',
-  'dhparam_file': '"dhparam.md5"',
-  'key_file': '"key.key"',
+  'dhparam_file': 'dhparam.md5',
+  'key_file': 'key.key',
   'prefer_server_ciphers': 'yes',
-  'protocols': ['TLSv1.2', "'TLSv1.3'"],
+  'protocols': ['TLSv1.2', 'TLSv1.3'],
   'remote_hostname': 'example.test',
   'session_tickets': 'no'}
         assertParserResultDictTrue(
@@ -183,20 +183,20 @@ class TestClauseHttp(unittest.TestCase):
         session-tickets yes;
         };
     """
-        expected_result = { 'tls': [ { 'ca_file': '"/etc/pki/wfh/ca-cert.crt.pem"',
-             'cert_file': '"/etc/pki/wfh/cert.crt.pem"',
-             'ciphers': "'aes256-sha256'",
-             'dhparam_file': '"/etc/pki/wfh/dhparam.md5"',
-             'key_file': '"/etc/pki/wfh/cert.key.pem"',
-             'prefer_server_ciphers': 'yes',
-             'protocols': ["'TLSv1.2'", "'TLSv1.3'"],
-             'remote_hostname': '"example.test"',
-             'session_tickets': 'yes',
-             'tls_name': 'work_from_home'}]}
         assertParserResultDictTrue(
             clause_stmt_tls_standalone,
             test_string,
-            expected_result)
+            {'tls': [{'ca_file': '/etc/pki/wfh/ca-cert.crt.pem',
+                      'cert_file': '/etc/pki/wfh/cert.crt.pem',
+                      'ciphers': 'aes256-sha256',
+                      'dhparam_file': '/etc/pki/wfh/dhparam.md5',
+                      'key_file': '/etc/pki/wfh/cert.key.pem',
+                      'prefer_server_ciphers': 'yes',
+                      'protocols': ['TLSv1.2', 'TLSv1.3'],
+                      'remote_hostname': '"example.test"',
+                      'session_tickets': 'yes',
+                      'tls_name': 'work_from_home'}]}
+            )
 
         """########################################################"""
 
@@ -237,40 +237,40 @@ tls private_tunnel {
     session-tickets yes;
     };
 """
-        expected_result = { 'tls': [ { 'ca_file': '"/etc/pki/wfh/ca-cert.crt.pem"',
-             'cert_file': '"/etc/pki/wfh/cert.crt.pem"',
-             'ciphers': "'aes256-sha256'",
-             'dhparam_file': '"/etc/pki/wfh/dhparam.md5"',
-             'key_file': '"/etc/pki/wfh/cert.key.pem"',
-             'prefer_server_ciphers': 'yes',
-             'protocols': ["'TLSv1.2'", "'TLSv1.3'"],
-             'remote_hostname': '"example.test"',
-             'session_tickets': 'yes',
-             'tls_name': 'work_from_home'},
-           { 'ca_file': '"/etc/pki/tunnel-public/ca-cert.crt.pem"',
-             'cert_file': '"/etc/pki/tunnel-public/cert.crt.pem"',
-             'ciphers': "'aes256-sha256'",
-             'dhparam_file': '"/etc/pki/tunnel-public/dhparam.md5"',
-             'key_file': '"/etc/pki/tunnel-public/cert.key.pem"',
-             'prefer_server_ciphers': 'yes',
-             'protocols': ["'TLSv1.2'", "'TLSv1.3'"],
-             'remote_hostname': '"example.test"',
-             'session_tickets': 'yes',
-             'tls_name': 'public_tunnel'},
-           { 'ca_file': '"/etc/pki/tunnel-private/ca-cert.crt.pem"',
-             'cert_file': '"/etc/pki/tunnel-private/cert.crt.pem"',
-             'ciphers': "'aes256-sha256'",
-             'dhparam_file': '"/etc/pki/tunnel-private/dhparam.md5"',
-             'key_file': '"/etc/pki/tunnel-private/cert.key.pem"',
-             'prefer_server_ciphers': 'yes',
-             'protocols': ["'TLSv1.2'", "'TLSv1.3'"],
-             'remote_hostname': '"example.test"',
-             'session_tickets': 'yes',
-             'tls_name': 'private_tunnel'}]}
         assertParserResultDictTrue(
             clause_stmt_tls_series,
             test_string,
-            expected_result)
+            {'tls': [{'ca_file': '/etc/pki/wfh/ca-cert.crt.pem',
+                      'cert_file': '/etc/pki/wfh/cert.crt.pem',
+                      'ciphers': 'aes256-sha256',
+                      'dhparam_file': '/etc/pki/wfh/dhparam.md5',
+                      'key_file': '/etc/pki/wfh/cert.key.pem',
+                      'prefer_server_ciphers': 'yes',
+                      'protocols': ['TLSv1.2', 'TLSv1.3'],
+                      'remote_hostname': '"example.test"',
+                      'session_tickets': 'yes',
+                      'tls_name': 'work_from_home'},
+                     {'ca_file': '/etc/pki/tunnel-public/ca-cert.crt.pem',
+                      'cert_file': '/etc/pki/tunnel-public/cert.crt.pem',
+                      'ciphers': 'aes256-sha256',
+                      'dhparam_file': '/etc/pki/tunnel-public/dhparam.md5',
+                      'key_file': '/etc/pki/tunnel-public/cert.key.pem',
+                      'prefer_server_ciphers': 'yes',
+                      'protocols': ['TLSv1.2', 'TLSv1.3'],
+                      'remote_hostname': '"example.test"',
+                      'session_tickets': 'yes',
+                      'tls_name': 'public_tunnel'},
+                     {'ca_file': '/etc/pki/tunnel-private/ca-cert.crt.pem',
+                      'cert_file': '/etc/pki/tunnel-private/cert.crt.pem',
+                      'ciphers': 'aes256-sha256',
+                      'dhparam_file': '/etc/pki/tunnel-private/dhparam.md5',
+                      'key_file': '/etc/pki/tunnel-private/cert.key.pem',
+                      'prefer_server_ciphers': 'yes',
+                      'protocols': ['TLSv1.2', 'TLSv1.3'],
+                      'remote_hostname': '"example.test"',
+                      'session_tickets': 'yes',
+                      'tls_name': 'private_tunnel'}]}
+        )
 
 
 if __name__ == '__main__':

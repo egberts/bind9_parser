@@ -78,8 +78,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_notify,
             'allow-notify { localhost; localnets; };',
-            {'allow_notify': {'aml': [{'addr': 'localhost'},
-                                      {'addr': 'localnets'}]}}
+            {'allow_notify': {'aml': [{'keyword': 'localhost'},
+                                      {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optviewzone_stmt_allow_query_on_passing(self):
@@ -96,7 +96,7 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_query_on,
             'allow-query-on { any; };',
-            {'allow_query_on': {'aml': [{'addr': 'any'}]}}
+            {'allow_query_on': {'aml': [{'keyword': 'any'}]}}
         )
 
     def test_isc_optviewzone_stmt_allow_query_passing(self):
@@ -112,7 +112,7 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_query,
             'allow-query { any; };',
-            {'allow_query': {'aml': [{'addr': 'any'}]}}
+            {'allow_query': {'aml': [{'keyword': 'any'}]}}
         )
 
     def test_isc_optviewzone_stmt_allow_transfer_passing(self):
@@ -128,8 +128,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_transfer,
             'allow-transfer { localhost; localnets; };',
-            {'allow_transfer': {'aml': [{'addr': 'localhost'},
-                                           {'addr': 'localnets'}]}}
+            {'allow_transfer': {'aml': [{'keyword': 'localhost'},
+                                           {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optviewzone_stmt_allow_transfer_port_passing(self):
@@ -137,8 +137,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_transfer,
             'allow-transfer port 53 { localhost; localnets; };',
-            {'allow_transfer': {'aml': [{'addr': 'localhost'},
-                                        {'addr': 'localnets'}],
+            {'allow_transfer': {'aml': [{'keyword': 'localhost'},
+                                        {'keyword': 'localnets'}],
                                 'ip_port': '53'}}
         )
 
@@ -147,8 +147,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_transfer,
             'allow-transfer transport mystring { localhost; localnets; };',
-            {'allow_transfer': {'aml': [{'addr': 'localhost'},
-                                        {'addr': 'localnets'}],
+            {'allow_transfer': {'aml': [{'keyword': 'localhost'},
+                                        {'keyword': 'localnets'}],
                                 'fqdn_name': 'mystring'}}
         )
 
@@ -157,8 +157,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_transfer,
             'allow-transfer port 53 transport mystring { localhost; localnets; };',
-            {'allow_transfer': {'aml': [{'addr': 'localhost'},
-                                        {'addr': 'localnets'}],
+            {'allow_transfer': {'aml': [{'keyword': 'localhost'},
+                                        {'keyword': 'localnets'}],
                                 'fqdn_name': 'mystring',
                                 'ip_port': '53'}}
         )
@@ -176,8 +176,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_transfer,
             'allow-transfer { localhost; localnets; };',
-            {'allow_transfer': {'aml': [{'addr': 'localhost'},
-                                        {'addr': 'localnets'}]}}
+            {'allow_transfer': {'aml': [{'keyword': 'localhost'},
+                                        {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optviewzone_stmt_allow_update_on_passing(self):
@@ -193,8 +193,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_update_on,
             'allow-update-on { localhost; localnets; };',
-            {'allow_update_on': {'aml': [{'addr': 'localhost'},
-                                         {'addr': 'localnets'}]}}
+            {'allow_update_on': {'aml': [{'keyword': 'localhost'},
+                                         {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optviewzone_stmt_allow_update_forwarding_passing(self):
@@ -207,8 +207,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_update_forwarding,
             'allow-update-forwarding { localhost; localnets; };',
-            {'allow_update_forwarding': {'aml': [{'addr': 'localhost'},
-                                                 {'addr': 'localnets'}]}}
+            {'allow_update_forwarding': {'aml': [{'keyword': 'localhost'},
+                                                 {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optviewzone_stmt_allow_update_passing(self):
@@ -221,8 +221,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_update,
             'allow-update { localhost; localnets; };',
-            {'allow_update': {'aml': [{'addr': 'localhost'},
-                                      {'addr': 'localnets'}]}}
+            {'allow_update': {'aml': [{'keyword': 'localhost'},
+                                      {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optviewzone_stmt_allow_v6_synthesis_passing(self):
@@ -235,8 +235,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_allow_v6_synthesis,
             'allow-v6-synthesis { localhost; localnets; };',
-            {'allow_v6_synthesis': {'aml': [{'addr': 'localhost'},
-                                            {'addr': 'localnets'}]}}
+            {'allow_v6_synthesis': {'aml': [{'keyword': 'localhost'},
+                                            {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optviewzone_stmt_alt_transfer_source_v6_passing(self):
@@ -455,13 +455,13 @@ class TestOptionsViewZone(unittest.TestCase):
     def test_isc_optviewzone_stmt_ixfr_tmp_file_passing(self):
         """ Clause options/view/zone; Statement ixfr-tmp-file; passing """
         test_string = [
-            'ixfr-tmp-file /tmp/junk.dat;'
+            'ixfr-tmp-file "/tmp/junk.dat";'
         ]
         result = optviewzone_stmt_ixfr_tmp_file.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
         assertParserResultDictTrue(
             optviewzone_stmt_ixfr_tmp_file,
-            'ixfr-tmp-file /tmp/junk.dat;',
+            'ixfr-tmp-file "/tmp/junk.dat";',
             {'ixfr_tmp_file': '/tmp/junk.dat'}
         )
 
@@ -477,7 +477,7 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_key_directory,
             'key-directory "/tmp/keydir/";',
-            {'key_directory': '"/tmp/keydir/"'}
+            {'key_directory': '/tmp/keydir/'}
         )
 
     def test_isc_optviewzone_stmt_dnssec_loadkeys_interval_passing(self):
@@ -514,7 +514,7 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_notify_source_v6,
             'notify-source-v6 fe11::123 port * dscp 5;',
-            {'notify_source_v6': {'addr': 'fe11::123',
+            {'notify_source_v6': {'ip6_addr': 'fe11::123',
                                   'dscp_port': 5,
                                   'ip_port_w': '*'}}
         )
@@ -537,10 +537,13 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_notify_source.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_notify_source_2_passing(self):
+        """ Clause options/view/zone; Statement notify-source 2; passing """
         assertParserResultDictTrue(
             optviewzone_stmt_notify_source,
             'notify-source * port 153 dscp 1;',
-            {'notify_source': {'addr': '*', 'dscp_port': 1, 'ip_port_w': '153'}}
+            {'notify_source': {'ip4_addr': '*', 'dscp_port': 1, 'ip_port_w': '153'}}
         )
 
     def test_isc_optviewzone_stmt_notify_passing(self):
@@ -791,7 +794,7 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_transfer_source_v6,
             'transfer-source-v6 fe12::5 port * dscp 1;',
-            {'transfer_source_v6': {'addr': 'fe12::5',
+            {'transfer_source_v6': {'ip6_addr': 'fe12::5',
                                     'dscp_port': 1,
                                     'ip_port_w': '*'}}
         )
@@ -831,7 +834,7 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_transfer_source,
             'transfer-source 4.4.4.4 port 53 dscp 1;',
-            {'transfer_source': {'addr': '4.4.4.4',
+            {'transfer_source': {'ip4_addr': '4.4.4.4',
                                  'dscp_port': 1,
                                  'ip_port_w': '53'}}
         )
@@ -878,7 +881,7 @@ class TestOptionsViewZone(unittest.TestCase):
             'max-refresh-time 3600;',
             'maintain-ixfr-base yes;',
             'dnssec-loadkeys-interval 3600;',
-            'ixfr-tmp-file /tmp/junk.dat;',
+            'ixfr-tmp-file "/tmp/junk.dat";',
             'notify-source 3.3.3.3 port 253;',
             'max-retry-time 3600;',
             'notify-source-v6 * port 53;',
@@ -921,8 +924,8 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_statements_set,
             'allow-update { localhost; localnets; };',
-            {'allow_update': {'aml': [{'addr': 'localhost'},
-                                      {'addr': 'localnets'}]}}
+            {'allow_update': {'aml': [{'keyword': 'localhost'},
+                                      {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optviewzone_stmt_statements_set_failing(self):
@@ -950,7 +953,7 @@ class TestOptionsViewZone(unittest.TestCase):
             'max-refresh-time 3600;' +
             'maintain-ixfr-base yes;' +
             'dnssec-loadkeys-interval 3600;' +
-            'ixfr-tmp-file /tmp/junk.dat;' +
+            'ixfr-tmp-file "/tmp/junk.dat";' +
             'notify-source 3.3.3.3 port 253;' +
             'check-sibling warn;' +
             'max-retry-time 3600;' +
@@ -984,19 +987,19 @@ class TestOptionsViewZone(unittest.TestCase):
             'allow-update { localhost; localnets; };' +
             'allow-query-on { any; };' +
             'allow-query { any; };',
-            {'allow_notify': {'aml': [{'addr': 'localhost'},
-                                      {'addr': 'localnets'}]},
-             'allow_query': {'aml': [{'addr': 'any'}]},
-             'allow_query_on': {'aml': [{'addr': 'any'}]},
-             'allow_transfer': {'aml': [{'addr': 'localhost'},
-                                        {'addr': 'localnets'}]},
-             'allow_update': {'aml': [{'addr': 'localhost'},
-                                      {'addr': 'localnets'}]},
-             'allow_update_forwarding': {'aml': [{'addr': 'localhost'},
-                                                 {'addr': 'localnets'}]},
-             'allow_update_on': {'aml': [{'addr': 'any'}]},
-             'allow_v6_synthesis': {'aml': [{'addr': 'localhost'},
-                                            {'addr': 'localnets'}]},
+            {'allow_notify': {'aml': [{'keyword': 'localhost'},
+                                      {'keyword': 'localnets'}]},
+             'allow_query': {'aml': [{'keyword': 'any'}]},
+             'allow_query_on': {'aml': [{'keyword': 'any'}]},
+             'allow_transfer': {'aml': [{'keyword': 'localhost'},
+                                        {'keyword': 'localnets'}]},
+             'allow_update': {'aml': [{'keyword': 'localhost'},
+                                      {'keyword': 'localnets'}]},
+             'allow_update_forwarding': {'aml': [{'keyword': 'localhost'},
+                                                 {'keyword': 'localnets'}]},
+             'allow_update_on': {'aml': [{'keyword': 'any'}]},
+             'allow_v6_synthesis': {'aml': [{'keyword': 'localhost'},
+                                            {'keyword': 'localnets'}]},
              'alt_transfer_source': ['*'],
              'alt_transfer_source_v6': {'dscp_port': 7, 'ip_port_w': '53'},
              'auto_dnssec': 'maintain',
@@ -1008,7 +1011,7 @@ class TestOptionsViewZone(unittest.TestCase):
                             'ip_port': '53'},
              'ixfr_from_differences': 'slave',
              'ixfr_tmp_file': '/tmp/junk.dat',
-             'key_directory': '"/tmp/keydir/"',
+             'key_directory': '/tmp/keydir/',
              'maintain_ixfr_base': 'yes',
              'masterfile_format': 'text',
              'max_journal_size': [30000],
@@ -1022,18 +1025,18 @@ class TestOptionsViewZone(unittest.TestCase):
              'min_retry_time': 3600,
              'multi_master': 'yes',
              'notify': 'master-only',
-             'notify_source': {'addr': '3.3.3.3', 'ip_port_w': '253'},
-             'notify_source_v6': {'addr': '*', 'ip_port_w': '53'},
+             'notify_source': {'ip4_addr': '3.3.3.3', 'ip_port_w': '253'},
+             'notify_source_v6': {'ip6_addr': '*', 'ip_port_w': '53'},
              'provide_ixfr': 'yes',
              'request_ixfr': 'yes',
              'request_nsid': 'yes',
              'sig_validity_interval': 7,
              'transfer_format': 'many-answers',
-             'transfer_source': {'addr': '4.4.4.4',
-                                 'dscp_port': 1,
+             'transfer_source': {'dscp_port': 1,
+                                 'ip4_addr': '4.4.4.4',
                                  'ip_port_w': '53'},
-             'transfer_source_v6': {'addr': 'fe12::4',
-                                    'dscp_port': 1,
+             'transfer_source_v6': {'dscp_port': 1,
+                                    'ip6_addr': 'fe12::4',
                                     'ip_port_w': '53'},
              'use_alt_transfer_source': 'yes',
              'zone_statistics': 'yes'}

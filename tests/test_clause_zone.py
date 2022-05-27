@@ -33,7 +33,7 @@ class TestClauseZone(unittest.TestCase):
     def test_isc_clause_zone__all_stmts_set_file(self):
         """ Clause zone; All Zone statement file from isc_zone.py via zone_statements_set; passing mode """
         test_string = 'file "a.b.type";'
-        expected_result = {'file': '"a.b.type"'}
+        expected_result = {'file': 'a.b.type'}
         assertParserResultDictTrue(
             zone_all_stmts_set,
             test_string,
@@ -57,7 +57,7 @@ class TestClauseZone(unittest.TestCase):
             zone_all_stmts_set,
             test_string,
             {'also-notify': {'remote': [{'primary_name': 'mymaster'},
-                                        {'addr': '1.2.3.4'}]}}
+                                        {'ip_addr': '1.2.3.4'}]}}
         )
 
     def test_isc_clause_zone__all_stmts_set_database(self):
@@ -81,7 +81,7 @@ notify-to-soa yes; };"""
             clause_stmt_zone_standalone,
             test_string,
             {'zones': [{'also-notify': {'remote': [{'primary_name': 'mymaster'},
-                                                   {'addr': '1.2.3.4'}]},
+                                                   {'ip_addr': '1.2.3.4'}]},
                         'database': 'abcd',
                         'forwarders': {'forwarder': [{'ip_addr': '5.6.7.8'},
                                                      {'ip_addr': '1.2.3.4'}]},
@@ -115,12 +115,12 @@ notify-to-soa yes; };"""
             {'zones': [{'forwarders': {'forwarder': [{'ip_addr': '1.2.3.4'}]},
                         'type': 'forward',
                         'zone_name': 'black'},
-                       {'allow_update': {'aml': [{'addr': 'any'}]},
-                        'file': '"x"',
+                       {'allow_update': {'aml': [{'keyword': 'any'}]},
+                        'file': 'x',
                         'type': 'master',
                         'zone_name': 'red'},
-                       {'allow_query': {'aml': [{'addr': '1.2.3.4'}]},
-                        'file': '"y"',
+                       {'allow_query': {'aml': [{'ip4_addr': '1.2.3.4'}]},
+                        'file': 'y',
                         'type': 'master',
                         'zone_name': 'white.com'}]}
         )
@@ -160,13 +160,13 @@ notify-to-soa yes; };"""
                 'zones': [{
                     'allow_update': {
                         'aml': [
-                            {'addr': 'none'}
+                            {'keyword': 'none'}
                         ]
                     },
                    'class': 'IN',
-                   'file': '"/var/lib/bind/internal/master/db.home"',
+                   'file': '/var/lib/bind/internal/master/db.home',
                    'type': 'master',
-                   'zone_name': '"home"'
+                   'zone_name': 'home'
                 }
               ]
             }
@@ -209,40 +209,40 @@ notify-to-soa yes; };"""
         file "/var/lib/bind/internal/master/db.cache.home";
         };
     """
-        expected_result = { 'zones': [ { 'allow_update': {'aml': [{'addr': 'none'}]},
-               'class': 'IN',
-               'file': '"/var/lib/bind/internal/master/db.home"',
-               'type': 'master',
-               'zone_name': '"first_zone"'},
-             { 'allow_update': { 'aml': [ { 'key_id': [ 'DDNS_UPDATER']}]},
-               'class': 'IN',
-               'file': '"/var/lib/bind/internal/master/db.ip4.1.168.192"',
-               'forwarders': [],
-               'notify': 'no',
-               'type': 'master',
-               'zone_name': '"second_zone"'},
-             { 'allow_update': {'aml': [{'addr': 'none'}]},
-               'class': 'IN',
-               'file': '"/var/lib/bind/internal/master/db.localhost"',
-               'forwarders': [],
-               'notify': 'no',
-               'type': 'master',
-               'zone_name': '"third_zone"'},
-             { 'allow_update': {'aml': [{'addr': 'none'}]},
-               'class': 'IN',
-               'file': '"/var/lib/bind/internal/master/db.ip4.127"',
-               'forwarders': [],
-               'notify': 'no',
-               'type': 'master',
-               'zone_name': '"fourth_zone"'},
-             { 'class': 'IN',
-               'delegation-only': 'yes',
-               'file': '"/var/lib/bind/internal/master/db.cache.home"',
-               'type': 'hint',
-               'zone_name': '"fifth_zone"'}]}
         assertParserResultDictTrue(
             clause_stmt_zone_series,
-            test_data, expected_result
+            test_data,
+            {'zones': [{'allow_update': {'aml': [{'keyword': 'none'}]},
+                        'class': 'IN',
+                        'file': '/var/lib/bind/internal/master/db.home',
+                        'type': 'master',
+                        'zone_name': 'first_zone'},
+                       {'allow_update': {'aml': [{'key_id': ['DDNS_UPDATER']}]},
+                        'class': 'IN',
+                        'file': '/var/lib/bind/internal/master/db.ip4.1.168.192',
+                        'forwarders': [],
+                        'notify': 'no',
+                        'type': 'master',
+                        'zone_name': 'second_zone'},
+                       {'allow_update': {'aml': [{'keyword': 'none'}]},
+                        'class': 'IN',
+                        'file': '/var/lib/bind/internal/master/db.localhost',
+                        'forwarders': [],
+                        'notify': 'no',
+                        'type': 'master',
+                        'zone_name': 'third_zone'},
+                       {'allow_update': {'aml': [{'keyword': 'none'}]},
+                        'class': 'IN',
+                        'file': '/var/lib/bind/internal/master/db.ip4.127',
+                        'forwarders': [],
+                        'notify': 'no',
+                        'type': 'master',
+                        'zone_name': 'fourth_zone'},
+                       {'class': 'IN',
+                        'delegation-only': 'yes',
+                        'file': '/var/lib/bind/internal/master/db.cache.home',
+                        'type': 'hint',
+                        'zone_name': 'fifth_zone'}]}
         )
 
     def test_isc_clause_stmt_zone_series_multiplezone_passing(self):
@@ -271,33 +271,32 @@ zone "fifth_zone" in{
   type master;
   file "192.168.0.rev";
 };"""
-        expected_result = { 'zones': [ { 'file': '"root.servers"',
-               'type': 'hint',
-               'zone_name': '"first_zone"'},
-             { 'allow_transfer': { 'aml': [ { 'addr': '192.168.23.1'},
-                                            { 'addr': '192.168.23.2'}]},
-               'class': 'in',
-               'file': '"master/master.example.com"',
-               'type': 'master',
-               'zone_name': '"second_zone"'},
-             { 'allow_update': {'aml': [{'addr': 'none'}]},
-               'class': 'in',
-               'file': '"master.localhost"',
-               'type': 'master',
-               'zone_name': '"third_zone"'},
-             { 'allow_update': {'aml': [{'addr': 'none'}]},
-               'class': 'in',
-               'file': '"localhost.rev"',
-               'type': 'master',
-               'zone_name': '"fourth_zone"'},
-             { 'class': 'in',
-               'file': '"192.168.0.rev"',
-               'type': 'master',
-               'zone_name': '"fifth_zone"'}]}
         assertParserResultDictTrue(
             clause_stmt_zone_series,
             test_string,
-            expected_result
+            {'zones': [{'file': 'root.servers',
+                        'type': 'hint',
+                        'zone_name': 'first_zone'},
+                       {'allow_transfer': {'aml': [{'ip4_addr': '192.168.23.1'},
+                                                   {'ip4_addr': '192.168.23.2'}]},
+                        'class': 'in',
+                        'file': 'master/master.example.com',
+                        'type': 'master',
+                        'zone_name': 'second_zone'},
+                       {'allow_update': {'aml': [{'keyword': 'none'}]},
+                        'class': 'in',
+                        'file': 'master.localhost',
+                        'type': 'master',
+                        'zone_name': 'third_zone'},
+                       {'allow_update': {'aml': [{'keyword': 'none'}]},
+                        'class': 'in',
+                        'file': 'localhost.rev',
+                        'type': 'master',
+                        'zone_name': 'fourth_zone'},
+                       {'class': 'in',
+                        'file': '192.168.0.rev',
+                        'type': 'master',
+                        'zone_name': 'fifth_zone'}]}
         )
 
 

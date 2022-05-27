@@ -6,7 +6,6 @@ Description:  Performs unit test on the isc_clauses.py source file.
 """
 
 import unittest
-from pyparsing import ParseException, ParseBaseException
 from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
 from bind9_parser.isc_clauses import \
     optional_clause_stmt_set,\
@@ -34,22 +33,21 @@ class TestClauseALL(unittest.TestCase):
             optional_clause_stmt_set,
             test_string,
             {'acl': [{'acl_name': 'MY_BASTION_HOSTS',
-                      'aml_series': [{'aml': [{'addr': '4.4.4.4'},
-                                              {'addr': '3.3.3.3'},
-                                              {'addr': '2.2.2.2'},
-                                              {'addr': '1.1.1.1'}]}]}]}
+                      'aml_series': [{'aml': [{'ip4_addr': '4.4.4.4'},
+                                              {'ip4_addr': '3.3.3.3'},
+                                              {'ip4_addr': '2.2.2.2'},
+                                              {'ip4_addr': '1.1.1.1'}]}]}]}
         )
 
     def test_isc_clause_clause_stmt_optional_set_passing(self):
         """ Clause, All; Statements group; passing """
         test_string = 'acl MY_BASTION_HOSTS { 4.4.4.4; 3.3.3.3; 2.2.2.2; 1.1.1.1; };'
         expected_result = { 'acl': [ { 'acl_name': 'MY_BASTION_HOSTS',
-             'aml_series': [ { 'aml': [ {'addr': '4.4.4.4'},
-                                        {'addr': '3.3.3.3'},
-                                        {'addr': '2.2.2.2'},
-                                        {'addr': '1.1.1.1'}]}]}]}
+             'aml_series': [ { 'aml': [ {'ip4_addr': '4.4.4.4'},
+                                        {'ip4_addr': '3.3.3.3'},
+                                        {'ip4_addr': '2.2.2.2'},
+                                        {'ip4_addr': '1.1.1.1'}]}]}]}
         assertParserResultDictTrue(optional_clause_stmt_set, test_string, expected_result)
-
 
     def test_isc_clause_stmt_multiplezone_passing(self):
         """ Clause, All; Zone Statements group; passing """
@@ -77,33 +75,32 @@ class TestClauseALL(unittest.TestCase):
       type master;
       file "192.168.0.rev";
     };"""
-        expected_result = { 'zones': [ { 'file': '"root.servers"',
-               'type': 'hint',
-               'zone_name': '"."'},
-             { 'allow_transfer': { 'aml': [ { 'addr': '192.168.23.1'},
-                                            { 'addr': '192.168.23.2'}]},
-               'class': 'in',
-               'file': '"master/master.example.com"',
-               'type': 'master',
-               'zone_name': '"example.com"'},
-             { 'allow_update': {'aml': [{'addr': 'none'}]},
-               'class': 'in',
-               'file': '"master.localhost"',
-               'type': 'master',
-               'zone_name': '"localhost"'},
-             { 'allow_update': {'aml': [{'addr': 'none'}]},
-               'class': 'in',
-               'file': '"localhost.rev"',
-               'type': 'master',
-               'zone_name': '"0.0.127.in-addr.arpa"'},
-             { 'class': 'in',
-               'file': '"192.168.0.rev"',
-               'type': 'master',
-               'zone_name': '"0.168.192.IN-ADDR.ARPA"'}]}
         assertParserResultDictTrue(
             optional_clause_stmt_series,
             test_string,
-            expected_result
+            {'zones': [{'file': 'root.servers',
+                        'type': 'hint',
+                        'zone_name': '.'},
+                       {'allow_transfer': {'aml': [{'ip4_addr': '192.168.23.1'},
+                                                   {'ip4_addr': '192.168.23.2'}]},
+                        'class': 'in',
+                        'file': 'master/master.example.com',
+                        'type': 'master',
+                        'zone_name': 'example.com'},
+                       {'allow_update': {'aml': [{'keyword': 'none'}]},
+                        'class': 'in',
+                        'file': 'master.localhost',
+                        'type': 'master',
+                        'zone_name': 'localhost'},
+                       {'allow_update': {'aml': [{'keyword': 'none'}]},
+                        'class': 'in',
+                        'file': 'localhost.rev',
+                        'type': 'master',
+                        'zone_name': '0.0.127.in-addr.arpa'},
+                       {'class': 'in',
+                        'file': '192.168.0.rev',
+                        'type': 'master',
+                        'zone_name': '0.168.192.IN-ADDR.ARPA'}]}
         )
 
     def test_isc_clause_optional_clause_stmt_series_passing(self):
@@ -112,7 +109,7 @@ class TestClauseALL(unittest.TestCase):
             optional_clause_stmt_series,
             'acl MY_BASTION_HOSTS { 4.4.4.4; 3.3.3.3; 2.2.2.2; 1.1.1.1; };' +
             'controls { inet 128.0.0.9 port 8006 allow { 128.0.0.10; 128.0.0.11;} read-only yes; };' +
-            'dlz your_IBM_2 { database RSDMS; search no; };' +
+            'dlz your_IBM_2 { database "RSDMS"; search no; };' +
             'dyndb "example-ldap" "/usr/lib64/bind/ldap.so" { uri "ldap://ldap.example.com"; base "cn=dns, dc=example,dc=com"; auth_method "none"; };' +
             'key dyndns { algorithm hmac-sha512; secret ABCDEFG; };' +
             'logging { channel salesfolks { file "/tmp/sales.log" size 5M; severity info; print-time no;};'+
@@ -128,15 +125,15 @@ class TestClauseALL(unittest.TestCase):
             ' tcp-only yes; transfer-format one-answer; transfer-source *; transfer-source-v6 *; transfers 36; };' +
             'trusted-keys { abc 1 1 1 "ASBASDASD";};' +
             'zone green { file "/var/lib/bind9/public/masters/db.green.com"; };' +
-            'masters dmz_masters port 7553 dscp 5 { yellow_masters key priv_dns_chan_key5; };'
+            'masters dmz_masters port 7553 dscp 5 { 10.0.0.1 key priv_dns_chan_key5; };'
             '',
             {'acl': [{'acl_name': 'MY_BASTION_HOSTS',
-                      'aml_series': [{'aml': [{'addr': '4.4.4.4'},
-                                              {'addr': '3.3.3.3'},
-                                              {'addr': '2.2.2.2'},
-                                              {'addr': '1.1.1.1'}]}]}],
-             'controls': [{'inet': {'allow': {'aml': [{'addr': '128.0.0.10'},
-                                                      {'addr': '128.0.0.11'}]},
+                      'aml_series': [{'aml': [{'ip4_addr': '4.4.4.4'},
+                                              {'ip4_addr': '3.3.3.3'},
+                                              {'ip4_addr': '2.2.2.2'},
+                                              {'ip4_addr': '1.1.1.1'}]}]}],
+             'controls': [{'inet': {'allow': {'aml': [{'ip4_addr': '128.0.0.10'},
+                                                      {'ip4_addr': '128.0.0.11'}]},
                                     'control_server_addr': '128.0.0.9',
                                     'ip_port_w': '8006',
                                     'read-only': 'yes'}}],
@@ -149,22 +146,22 @@ class TestClauseALL(unittest.TestCase):
                                              'base "cn=dns, '
                                              'dc=example,dc=com"; '
                                              'auth_method "none"; ',
-                        'module_filename': '"/usr/lib64/bind/ldap.so"'}],
+                        'module_filename': '/usr/lib64/bind/ldap.so'}],
              'key': [{'algorithm': 'hmac-sha512',
                       'key_id': 'dyndns',
                       'secret': 'ABCDEFG'}],
              'logging': [{'channel': [{'channel_name': 'salesfolks',
-                                       'path_name': '"/tmp/sales.log"',
+                                       'path_name': '/tmp/sales.log',
                                        'print_time': 'no',
                                        'severity': ['info'],
                                        'size_spec': [5, 'M']}]},
                          {'channel': [{'channel_name': 'accounting',
-                                       'path_name': '"/tmp/acct.log"',
+                                       'path_name': '/tmp/acct.log',
                                        'print_time': 'no',
                                        'severity': ['info'],
                                        'size_spec': [30, 'M']}]},
                          {'channel': [{'channel_name': 'badguys',
-                                       'path_name': '"/tmp/alert"',
+                                       'path_name': '/tmp/alert',
                                        'print_time': 'yes',
                                        'severity': {'debug': [77]},
                                        'size_spec': [255, 'G']}]}],
@@ -176,17 +173,16 @@ class TestClauseALL(unittest.TestCase):
              'primaries': [{'dscp_port': 5,
                             'ip_port': '7553',
                             'primary_id': 'dmz_masters',
-                            'primary_list': [{'addr': 'yellow_masters',
+                            'primary_list': [{'ip4_addr': '10.0.0.1',
                                               'key_id': 'priv_dns_chan_key5'}]}],
-             'server': [{'addr': '3.4.5.6',
-                         'configs': {'bogus': 'yes',
+             'server': [{'configs': {'bogus': 'yes',
                                      'edns': 'no',
                                      'edns_udp_size': 102,
                                      'edns_version': 2,
                                      'keys': 'my_key_name_to_private_dns',
                                      'max_udp_size': 32768,
-                                     'notify_source': {'addr': '*'},
-                                     'notify_source_v6': {'addr': '*'},
+                                     'notify_source': {'ip4_addr': '*'},
+                                     'notify_source_v6': {'ip6_addr': '*'},
                                      'padding': 53,
                                      'provide_ixfr': 'yes',
                                      'query_source': {'ip4_addr_w': '*'},
@@ -200,15 +196,16 @@ class TestClauseALL(unittest.TestCase):
                                      'transfer_format': 'one-answer',
                                      'transfer_source': {'ip4_addr_w': '*'},
                                      'transfer_source_v6': {'ip6_addr_w': '*'},
-                                     'transfers': 36}}],
+                                     'transfers': 36},
+                         'ip_addr': '3.4.5.6'}],
              'trusted_keys': [{'algorithm_id': '1',
                                'domain': 'abc',
                                'key_id': '1',
                                'protocol_type': '1',
                                'pubkey_base64': 'ASBASDASD'}],
-             'zones': [{'file': '"/var/lib/bind9/public/masters/db.example.com"',
+             'zones': [{'file': '/var/lib/bind9/public/masters/db.example.com',
                         'zone_name': 'red'},
-                       {'file': '"/var/lib/bind9/public/masters/db.green.com"',
+                       {'file': '/var/lib/bind9/public/masters/db.green.com',
                         'zone_name': 'green'}]}
         )
 

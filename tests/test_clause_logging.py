@@ -125,17 +125,17 @@ class TestClauseLogging(unittest.TestCase):
     def test_isc_logging_chan_file_path_element_passing(self):
         """ Clause logging; Element File path; passing mode """
         test_string = 'file "simple-relative-filename"'
-        expected_result = {'path_name': '"simple-relative-filename"'}
+        expected_result = {'path_name': 'simple-relative-filename'}
         assertParserResultDictTrue(logging_chan_file_path_element,
                                    test_string,
                                    expected_result, 'did not detect missing semicolon')
         test_string = 'file "/tmp/unquoted-key_id"'
-        expected_result = {'path_name': '"/tmp/unquoted-key_id"'}
+        expected_result = {'path_name': '/tmp/unquoted-key_id'}
         assertParserResultDictTrue(logging_chan_file_path_element,
                                    test_string,
                                    expected_result, 'did not detect missing semicolon')
         test_string = 'file "/tmp/spaced-out key_id"'
-        expected_result = {'path_name': '"/tmp/spaced-out key_id"'}
+        expected_result = {'path_name': '/tmp/spaced-out key_id'}
         assertParserResultDictTrue(logging_chan_file_path_element,
                            test_string,
                            expected_result, 'did not detect missing semicolon')
@@ -145,12 +145,12 @@ class TestClauseLogging(unittest.TestCase):
 #                                   test_string,
 #                                   expected_result, 'did not detect missing semicolon')
         test_string = "file '/tmp/spaced-out key_id2'"
-        expected_result = {'path_name': "'/tmp/spaced-out key_id2'"}
+        expected_result = {'path_name': '/tmp/spaced-out key_id2'}
         assertParserResultDictTrue(logging_chan_file_path_element,
                                    test_string,
                                    expected_result, 'did not detect missing semicolon')
         test_string = 'file \'/dev/null\''
-        expected_result = {'path_name': '\'/dev/null\''}
+        expected_result = {'path_name': '/dev/null'}
         assertParserResultDictTrue(logging_chan_file_path_element,
                                    test_string,
                                    expected_result, 'did not detect missing semicolon')
@@ -158,7 +158,7 @@ class TestClauseLogging(unittest.TestCase):
     def test_isc_logging_chan_file_path_element_failing(self):
         """ Clause logging; Element File path; failing mode """
         test_string = 'file "/control_r\rsubdir/unquoted-key_id"'
-        expected_result = {'path_name': '"/control_r\rsubdir/unquoted-key_id"'}
+        expected_result = {'path_name': '/control_r\rsubdir/unquoted-key_id'}
         assertParserResultDictFalse(logging_chan_file_path_element,
                                    test_string,
                                    expected_result, 'did not detect missing semicolon')
@@ -176,7 +176,7 @@ class TestClauseLogging(unittest.TestCase):
     def test_isc_logging_chan_file_method_passing(self):
         """ Clause logging; Element File Method; passing mode """
         test_string = 'file "unquoted-key_id";'
-        expected_result = {'path_name': '"unquoted-key_id"'}
+        expected_result = {'path_name': 'unquoted-key_id'}
         assertParserResultDictTrue(logging_chan_file_method,
                                     test_string,
                                     expected_result)
@@ -501,7 +501,7 @@ class TestClauseLogging(unittest.TestCase):
         """ Clause logging; Statement Channel; passing mode """
         test_string = 'channel bleep { file "/tmp/x" size 38M; severity warning;};'
         expected_result = { 'channel': [ { 'channel_name': 'bleep',
-                 'path_name': '"/tmp/x"',
+                 'path_name': '/tmp/x',
                  'severity': ['warning'],
                  'size_spec': [38, 'M']}]}
         assertParserResultDictTrue(logging_stmt_channel_set,
@@ -511,7 +511,7 @@ class TestClauseLogging(unittest.TestCase):
     def test_isc_logging_stmt_channel2_passing(self):
         test_string = 'channel klaxon { file "/tmp/x" size 38M; };'
         expected_result = { 'channel': [ { 'channel_name': 'klaxon',
-                 'path_name': '"/tmp/x"',
+                 'path_name': '/tmp/x',
                  'size_spec': [38, 'M']}]}
         assertParserResultDictTrue(logging_stmt_channel_set,
                                    test_string,
@@ -564,7 +564,7 @@ class TestClauseLogging(unittest.TestCase):
         """ Clause logging; Statement Logging; passing mode """
         test_string = 'logging { channel siren { file "/tmp/x" size 30M; severity info; print-time yes;}; };'
         expected_result = { 'logging': [ { 'channel': [ { 'channel_name': 'siren',
-                                'path_name': '"/tmp/x"',
+                                'path_name': '/tmp/x',
                                 'print_time': 'yes',
                                 'severity': ['info'],
                                 'size_spec': [30, 'M']}]}]}
@@ -575,7 +575,7 @@ class TestClauseLogging(unittest.TestCase):
     def test_isc_clause_stmt_logging2_passing(self):
         test_string = 'logging { channel floodwatch { file "/tmp/x" size 30M; print-time yes; severity info;}; };'
         expected_result = { 'logging': [ { 'channel': [ { 'channel_name': 'floodwatch',
-                                'path_name': '"/tmp/x"',
+                                'path_name': '/tmp/x',
                                 'print_time': 'yes',
                                 'severity': ['info'],
                                 'size_spec': [30, 'M']}]}]}
@@ -586,7 +586,7 @@ class TestClauseLogging(unittest.TestCase):
     def test_isc_clause_stmt_logging3_passing(self):
         test_string = 'logging { channel tv { file "/tmp/x" size 30M; severity info; print-time yes;}; };'
         expected_result = { 'logging': [ { 'channel': [ { 'channel_name': 'tv',
-                                'path_name': '"/tmp/x"',
+                                'path_name': '/tmp/x',
                                 'print_time': 'yes',
                                 'severity': ['info'],
                                 'size_spec': [30, 'M']}]}]}
@@ -597,7 +597,7 @@ class TestClauseLogging(unittest.TestCase):
     def test_isc_clause_stmt_logging4_passing(self):
         test_string = 'logging { channel office_vpn { file "/tmp/x" size 42M; severity critical; print-time no;}; };'
         expected_result = { 'logging': [ { 'channel': [ { 'channel_name': 'office_vpn',
-                                'path_name': '"/tmp/x"',
+                                'path_name': '/tmp/x',
                                 'print_time': 'no',
                                 'severity': ['critical'],
                                 'size_spec': [42, 'M']}]}]}
@@ -612,17 +612,17 @@ class TestClauseLogging(unittest.TestCase):
         ' channel accounting { file "/tmp/acct.log" size 30M; severity info; print-time no;};'\
         ' channel badguys { file "/tmp/alert" size 255G; severity debug 77; print-time yes;}; };'
         expected_result = { 'logging': [ { 'channel': [ { 'channel_name': 'salesfolks',
-                                'path_name': '"/tmp/sales.log"',
+                                'path_name': '/tmp/sales.log',
                                 'print_time': 'no',
                                 'severity': ['info'],
                                 'size_spec': [5, 'M']}]},
                { 'channel': [ { 'channel_name': 'accounting',
-                                'path_name': '"/tmp/acct.log"',
+                                'path_name': '/tmp/acct.log',
                                 'print_time': 'no',
                                 'severity': ['info'],
                                 'size_spec': [30, 'M']}]},
                { 'channel': [ { 'channel_name': 'badguys',
-                                'path_name': '"/tmp/alert"',
+                                'path_name': '/tmp/alert',
                                 'print_time': 'yes',
                                 'severity': {'debug': [77]},
                                 'size_spec': [255, 'G']}]}]}

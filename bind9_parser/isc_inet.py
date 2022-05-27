@@ -88,6 +88,7 @@ ip4s_subnet = _ip4s_subnet
 ip4s_subnet.setName('<ip4_subnet>')
 
 ip4_addr = pyparsing_common.ipv4_address
+ip4_addr('ip4_addr')
 ip4_addr.setName('<ip4_addr>')
 
 ip4_addr_or_wildcard = (
@@ -297,9 +298,10 @@ _ip6_addr = Combine(
     | ip6_0_1_addr
     | ip6_0_0_addr
     | ip6_full_addr
-)
+)('ip6_addr')
 
 ip6_addr = _ip6_addr
+ip6_addr('ip6_addr')
 ip6_addr.setName('<ip6_addr_only>')
 
 ip6_addr_index = Combine(ip6_addr + _ip6_device_index)
@@ -312,7 +314,7 @@ ip6_ll_zone_index_addr = _ip6_ll_zone_index_addr
 
 ip6_addr_or_index = Combine(
     ip6_addr + Optional(_ip6_device_index)
-    #### | ip6_addr_prefix   # prefix is provided by ip6_addr_prefix
+    #  | ip6_addr_prefix   # prefix is provided by ip6_addr_prefix
 )
 ip6_addr_or_index.setName('<ip6_addr_or_device_index>')
 
@@ -320,20 +322,20 @@ ip6s_prefix = Combine(ip6_addr - '/' - ip6s_subnet)
 ip6s_prefix.setName('<ip6_with_subnet_only>')
 
 ip6_optional_prefix = (
-        Group(
-            ip6_addr('ip_addr')
-            - Optional(
-                '/'
-                - ip6s_subnet('prefix')
-            )
-        )('ip6_addr')
+    Group(
+        ip6_addr('ip6_addr')
+        - Optional(
+            '/'
+            - ip6s_subnet('prefix')
+        )
+    )('ip6_addr')
 )
 ip6s_prefix.setName('<ip6_with_subnet_only>')
 
 ip6_addr_or_wildcard = (
-        wildcard_name
-        | ip6_addr
-)
+        ungroup(wildcard_name
+        | ip6_addr)
+)('ip6_addr_w')
 
 # There is no ip46_addr_or_index ... yet
 
@@ -392,7 +394,7 @@ ip46_addr_list = Group(
 )
 
 ip46_addr_and_port_list_set = (
-        ip46_addr('addr')
+        ungroup(ip46_addr)('ip_addr')
         - Optional(
             ungroup(
                 inet_ip_port_keyword_and_number_element

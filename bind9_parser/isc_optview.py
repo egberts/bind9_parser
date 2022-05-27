@@ -15,14 +15,14 @@ from pyparsing import Group, Keyword, OneOrMore, Literal, \
     ungroup
 from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     squote, dquote, number_type, name_type, minute_type, seconds_type, \
-    byte_type, run_me, path_name, check_options, \
-    quoted_path_name, size_spec, exclamation, iso8601_duration, view_name
+    byte_type, run_me, dequoted_path_name, check_options, \
+    size_spec, exclamation, iso8601_duration, view_name
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip6s_prefix, \
     ip6_optional_prefix, \
     inet_ip_port_keyword_and_number_element, \
     inet_ip_port_keyword_and_wildcard_element
-from bind9_parser.isc_zone import zone_name
+from bind9_parser.isc_utils import dequotable_zone_name
 from bind9_parser.isc_domain import quoted_domain_generic_fqdn, \
     domain_generic_fqdn, rr_fqdn_w_absolute, rr_domain_name_type, quotable_domain_generic_fqdn, \
     soa_rname
@@ -103,9 +103,10 @@ optview_stmt_auth_nxdomain = (
 ).setName('auth-nxdomain <boolean>;')
 
 #  cache-file <path_name>  # [ Opt View ]
+#    (moved from isc_options.py sometime in v9.8?)
 optview_stmt_cache_file = (
     Keyword('cache-file').suppress()
-    - path_name('cache_file')
+    - dequoted_path_name('cache_file')
     + semicolon
 ).setName('cache-file <quoted-path_name>;')
 
@@ -198,13 +199,11 @@ optview_stmt_deny_answer_aliases = (
 optview_stmt_disable_empty_zone = (
     Keyword('disable-empty-zone').suppress()
     - Group(
-    (
-        zone_name('')
-        | Combine(squote - zone_name - squote)('')
-        | Combine(dquote - zone_name - dquote)('')
-    )
-)('disable_empty_zone*')  # multiple-statement
-        + semicolon
+        (
+            dequotable_zone_name('')
+        )
+    )('disable_empty_zone*')  # multiple-statement
+    + semicolon
 )
 optview_stmt_disable_empty_zone.setName('disable-empty-zone <quotable-zone-name>;')
 
@@ -490,7 +489,7 @@ optview_stmt_lame_ttl = (
 
 optview_stmt_managed_keys_directory = (
     Keyword('managed-keys-directory').suppress()
-    - quoted_path_name('managed_keys_directory')
+    - dequoted_path_name('managed_keys_directory')
     + semicolon
 ).setName('managed-keys-directory <quoted-filespec>;')
 
@@ -621,7 +620,7 @@ optview_rate_limit_options = (
                         | (
                             aml_choices
                             + semicolon
-                        )  # never set a ResultsLabel here, you get duplicate but un-nested 'addr'
+                        )  # never set a ResultsLabel here, you get duplicate but un-nested 'ip_addr'
                     )  # never set a ResultsLabel here, you get no []
                 )(None)
             )('')

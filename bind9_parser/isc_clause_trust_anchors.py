@@ -26,12 +26,12 @@ References:
   * https://egbert.net/blog/articles/dns-rr-key.html
 
 """
-from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
-        iso8601_duration, quotable_name, fqdn_name, quoted_base64, \
-        lbrack, rbrack, quoted_name, quoted_path_name, isc_boolean
+from pyparsing import Word, Group, Keyword, ZeroOrMore, OneOrMore, nums
+from bind9_parser.isc_utils import semicolon, \
+        fqdn_name, quoted_base64, \
+        lbrack, rbrack
 
-# NOTE: If any declaration here is to be used OUTSIDE of 
+# NOTE: If any declaration here is to be used outside
 # the 'trust_anchors' clause, it should instead be defined within isc_utils.py
 
 
@@ -126,10 +126,13 @@ clause_stmt_trust_anchors_standalone = (
     + rbrack
     + semicolon
 )
-clause_stmt_trust_anchors_standalone.setName('trust_anchors <string> { ca-file <string>; cert-file <string>; ciphers <string>; dhparam-file <quoted_string>; prefer-server-ciphers <boolean>; protocols { <string>; ... }; remote-hostname <quoted_string>; session-tickets <boolean>; };')
+clause_stmt_trust_anchors_standalone.setName(
+    'trust_anchors <string> { ca-file <string>; cert-file <string>; '
+    + 'ciphers <string>; dhparam-file <quoted_string>; prefer-server-ciphers <boolean>; '
+    + 'protocols { <string>; ... }; remote-hostname <quoted_string>; session-tickets <boolean>; };')
 
 clause_stmt_trust_anchors_set = clause_stmt_trust_anchors_standalone
-clause_stmt_trust_anchors_set.setName(\
+clause_stmt_trust_anchors_set.setName(
     """trust_anchors <string> { 
     ca-file <string>; 
     cert-file <string>; 
@@ -142,6 +145,5 @@ clause_stmt_trust_anchors_set.setName(\
 };""")
 
 # {0-*} statement
-clause_stmt_trust_anchors_series = ZeroOrMore( clause_stmt_trust_anchors_set )
+clause_stmt_trust_anchors_series = ZeroOrMore(clause_stmt_trust_anchors_set)
 clause_stmt_trust_anchors_series.setName('trust_anchors <string> { ... }; ...')
-

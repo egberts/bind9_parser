@@ -28,13 +28,12 @@ References:
   * https://egbert.net/blog/articles/dns-rr-key.html
 
 """
-from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums, ungroup, Combine
+from pyparsing import Word, Group, Keyword, ZeroOrMore, OneOrMore, nums
 
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
-        iso8601_duration, quotable_name, fqdn_name, quoted_base64, \
-        lbrack, rbrack, quoted_name, quoted_path_name, isc_boolean
-
-# NOTE: If any declaration here is to be used OUTSIDE of 
+from bind9_parser.isc_utils import semicolon, \
+        fqdn_name, quoted_base64, \
+        lbrack, rbrack
+# NOTE: If any declaration here is to be used OUTSIDE
 # the 'trusted_keys' clause, it should instead be defined within isc_utils.py
 
 
@@ -97,7 +96,8 @@ trusted_keys_stmt_group_set = (
             - trusted_keys_algorithm_id_integer('algorithm_id')
             - quoted_base64('pubkey_base64')
         )
-        ('trusted_keys*')  # do use '*' in 'trusted_keys' to aggregate multiple 'trusted-keys' together in one list group
+        ('trusted_keys*')
+        # do use '*' in 'trusted_keys' to aggregate multiple 'trusted-keys' together in one list group
     )
     + semicolon
 )
@@ -119,7 +119,7 @@ trusted_keys_stmt_standalone = (
     + rbrack
     + semicolon
 )
-trusted_keys_stmt_standalone.setName(\
+trusted_keys_stmt_standalone.setName(
     """trusted-keys { 
         string ( 
             static-key |
@@ -131,7 +131,7 @@ trusted_keys_stmt_standalone.setName(\
         ... };""")
 
 trusted_keys_stmt_set = trusted_keys_stmt_standalone
-trusted_keys_stmt_set.setName(\
+trusted_keys_stmt_set.setName(
     """trusted-keys { 
         string ( 
             static-key |
@@ -145,8 +145,8 @@ trusted_keys_stmt_set.setName(\
 # {0-*} statement
 trusted_keys_stmt_series = (
     (
-        ZeroOrMore( trusted_keys_stmt_set )
-    )  # do not insert ('trusted_keys') here; we want to capture all subzones into same 'trusted_keys' defined earlier 'by group'
+        ZeroOrMore(trusted_keys_stmt_set)
+    )  # do not insert ('trusted_keys') here; we want to capture all
+    # subzones into same 'trusted_keys' defined earlier 'by group'
 )
 trusted_keys_stmt_series.setName('trusted_keys <string> { ... }; ...')
-

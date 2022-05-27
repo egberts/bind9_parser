@@ -10,36 +10,33 @@ Description: Provides Zone-related grammar in PyParsing engine
              for ISC-configuration style
 """
 from pyparsing import Keyword, Group, Literal, CaselessLiteral, OneOrMore,\
-    ZeroOrMore, Word, Optional, ungroup, Combine, alphanums
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, path_name,\
+    ZeroOrMore, Word, Optional, ungroup, Combine
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, dequoted_path_name,\
     isc_boolean, view_name, isc_file_name,\
-    number_type, key_id, check_options, zone_name, acl_name,\
-    key_id_keyword_and_name_pair, squote, dquote, dlz_name_type,\
-    database_name_type, krb5_realm_name, master_name
-from bind9_parser.isc_inet import ip46_addr_list_series, ip4_addr,\
-    ip6_addr, ip_port, dscp_port, inet_ip_port_keyword_and_number_element,\
+    number_type, check_options, \
+    key_id_keyword_and_name_pair, squote, dquote, \
+    krb5_realm_name, master_name
+from bind9_parser.isc_inet import ip4_addr,\
+    ip6_addr, inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element,\
     ip46_addr_and_port_list
-from bind9_parser.isc_rr import rr_type_series, rr_type_list_series
-from bind9_parser.isc_domain import domain_generic_fqdn,\
-    quotable_domain_generic_fqdn, quoted_domain_generic_fqdn, rr_fqdn_w_absolute
-from bind9_parser.isc_viewzone import viewzone_stmt_database, viewzone_stmt_dlz
-# from bind9_parser.isc_clause_masters import clause_stmt_masters_standalone
+from bind9_parser.isc_rr import rr_type_series
+from bind9_parser.isc_domain import \
+    dequotable_domain_generic_fqdn, rr_fqdn_w_absolute
 
 
-
-######## Zone statements #############################################
+# Zone statements #
 zone_stmt_check_names = (
     Keyword('check-names').suppress()
     - check_options('check_names')
     + semicolon
 )
 
-database_arg = path_name
+database_arg = dequoted_path_name
 zone_stmt_database_former = (
     Keyword('database').suppress()
     - Group(
-        path_name
+        dequoted_path_name
         - ZeroOrMore(
             database_arg('arg')
         )('args')
@@ -55,7 +52,7 @@ zone_stmt_delegation_only = (
 
 zone_stmt_file = (
     Keyword('file').suppress()
-    - path_name('file')
+    - dequoted_path_name('file')
     + semicolon
 )
 
@@ -86,7 +83,7 @@ zone_stmt_ixfr_from_differences = (
 
 zone_stmt_journal = (
     Keyword('journal').suppress()
-    - path_name('journal')
+    - dequoted_path_name('journal')
     + semicolon
 )
 
@@ -163,7 +160,7 @@ zone_stmt_masters = (
                 + rbrack
             )
         )
-    # Had to break out the permutation of port/dscp due to compete with top-level 'masters' clause
+        # Had to break out the permutation of port/dscp due to compete with top-level 'masters' clause
     )('masters_zone')
     + semicolon
 )
@@ -202,7 +199,7 @@ zone_stmt_server_addresses = (
     Keyword('server-addresses').suppress()
     - lbrack
     - OneOrMore(  # at least 1 IP address required
-        Group (
+        Group(
             ip46_addr_and_port_list
         )('server_addresses*')
     )
@@ -257,8 +254,8 @@ zone_update_policy_permission = (
     | CaselessLiteral('deny')
 )
 
-zone_update_policy_identity = (quotable_domain_generic_fqdn | Literal('*'))('identity')
-zone_update_policy_name_field = quotable_domain_generic_fqdn('name_type')
+zone_update_policy_identity = (dequotable_domain_generic_fqdn | Literal('*'))('identity')
+zone_update_policy_name_field = dequotable_domain_generic_fqdn('name_type')
 zone_update_policy_principal_field = krb5_realm_name('name_type')
 
 zone_update_policy_rr_type_series = (
@@ -312,7 +309,7 @@ zone_stmt_update_policy_nonlocal = (
         - zone_update_policy_matchtype('')
         + semicolon
     )
-)('')  # no label here, we're floating this syntax group up by an other referencer
+)('')  # no label here, we're floating this syntax group up by another referencer
 
 zone_stmt_update_policy_nonlocal_series = OneOrMore(zone_stmt_update_policy_nonlocal)
 
@@ -373,7 +370,7 @@ zone_stmt_use_id_pool = (
     + semicolon
 )
 
-################### Multiple-statement ##########################
+# Multiple-statement #
 zone_multiple_stmt_masters = (
     ZeroOrMore(
         (
@@ -382,7 +379,7 @@ zone_multiple_stmt_masters = (
     )('masters')
 )
 
-# Keywords are in dictionary-order, but with longest pattern as having been listed firstly
+# Keywords are in dictionary-order, but with the longest pattern as having been listed firstly
 zone_statements_set = (
     zone_stmt_check_names
     | zone_stmt_delegation_only

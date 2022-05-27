@@ -21,21 +21,21 @@ Description:
     };
 
 """
-from pyparsing import Word, alphanums, Group, Keyword, \
-    ZeroOrMore, OneOrMore, Optional, nums
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
-    iso8601_duration, quotable_name, \
-    lbrack, rbrack, quoted_name, key_id, fqdn_name
+from pyparsing import Group, Keyword, \
+    ZeroOrMore, OneOrMore, Optional, ungroup
+from bind9_parser.isc_utils import semicolon, \
+    quotable_name, \
+    lbrack, rbrack, key_id, fqdn_name
 from bind9_parser.isc_inet import ip46_addr, \
     inet_ip_port_keyword_and_number_element, \
     inet_dscp_port_keyword_and_number_element
 
-# NOTE: If any declaration here is to be used OUTSIDE of 
+# NOTE: If any declaration here is to be used outside
 # the 'parental_agents' clause, it should instead be defined within isc_utils.py
 
 parental_agents_server_address_element = (
         (
-                ip46_addr('ip_addr')
+                ungroup(ip46_addr)('ip_addr')
                 + Optional(inet_ip_port_keyword_and_number_element)
         )
         | fqdn_name('fqdn')
