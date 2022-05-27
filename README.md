@@ -179,7 +179,7 @@ parse it just fine:
 cd bind9_parser/examples
 python3 dump-named-conf.py ./tests/bug-reports/github-issue-10.named.conf
 ```
-To obtain a Python list variable, the same `parse_bind9.py` will get you this output:
+To obtain a Python list variable, the same `dump-named-conf.py` will get you this output:
 ```python
 [['"trusted"',
   [[['192.168.23.0/24']],
@@ -192,7 +192,7 @@ To obtain a Python list variable, the same `parse_bind9.py` will get you this ou
    ['"exampleaa.com"', 'master', '"external/master.exampleaa.com"']]]]
 result: {'view': [{'view_name': '"badguys"', 'configs': {'match_clients': {'aml': [{'acl_name': '"any"'}]}, 'recursion': 'no', 'zone': {'zone_name': '"exampleaa.com"', 'type': 'master', 'file': '"external/master.exampleaa.com"'}}}]}
 ```
-To obtain a Python dictionary variable, again the same `bind9_parser.py` will get you this result:
+To obtain a Python dictionary variable, again the same `dump-named-conf.py` will get you this result:
 ```python
 print(result.asDict()):
 { 'view': [ {
