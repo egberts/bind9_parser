@@ -326,8 +326,24 @@ options_stmt_dnstap_output = (
 )
 options_stmt_dnstap_output.setName('dnstap-output ( <quotable-fqdn> | none | hostname );')
 
+options_stmt_dnstap_version = (
+    Keyword('dnstap-version').suppress()
+    - (
+        Keyword('none')('dnstap-version')
+        | (
+            dequoted_path_name('dnstap-version')
+        )
+    )
+    - semicolon
+)
+options_stmt_dnstap_version.setName('dnstap-version ( none | <quoted_filespec> );;')
+
 #  dscp <integer>;
-options_stmt_dscp = inet_dscp_port_keyword_and_number_element
+options_stmt_dscp = (
+    inet_dscp_port_keyword_and_number_element
+    + semicolon
+)
+options_stmt_dscp.setName('dscp <number>;')
 
 # dump-file <path_name>; [ Opt ]    # Introduced in v8.1, active at v9.6.3
 options_stmt_dump_file = (
@@ -727,9 +743,10 @@ options_statements_set = (
     ^ options_stmt_deny_answer_addresses
     ^ options_stmt_deny_answer_aliases
     ^ options_stmt_directory
-    ^ options_stmt_dscp
     ^ options_stmt_dnstap_identity
     ^ options_stmt_dnstap_output
+    ^ options_stmt_dnstap_version
+    ^ options_stmt_dscp
     ^ options_stmt_dump_file
     ^ options_stmt_fake_iquery
     ^ options_stmt_flush_zones_on_shutdown

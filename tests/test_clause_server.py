@@ -140,5 +140,6 @@ class TestClauseServer(unittest.TestCase):
                          {'ip_addr': '4.4.4.4', 'configs': {'edns': 'yes'}}]}
         )
 
+
 if __name__ == '__main__':
     unittest.main()

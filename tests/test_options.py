@@ -20,8 +20,10 @@ from bind9_parser.isc_options import \
     options_stmt_disable_algorithms, options_multiple_stmt_disable_algorithms,\
     options_stmt_disable_ds_digests,\
     options_multiple_stmt_disable_ds_digests,\
-    options_stmt_dnstap_identity,\
+    options_stmt_dnstap_identity, \
     options_stmt_dnstap_output,\
+    options_stmt_dnstap_version,\
+    options_stmt_dscp,\
     options_stmt_dump_file,\
     options_stmt_fake_iquery, options_stmt_flush_zones_on_shutdown,\
     options_stmt_has_old_clients,\
@@ -340,6 +342,27 @@ deny-answer-addresses {
             options_stmt_dnstap_output,
             'dnstap-output file "dir/file" size 1G suffix timestamp versions 5;',
             {'quoted_path_name': 'dir/file', 'size': 1, 'versions': 5}
+        )
+
+    def test_isc_options_stmt_dnstap_version_file_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_dnstap_version,
+            'dnstap-version "dir/file";',
+            {'dnstap-version': 'dir/file'}
+        )
+
+    def test_isc_options_stmt_dnstap_version_none_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_dnstap_version,
+            'dnstap-version none;',
+            {'dnstap-version': 'none'}
+        )
+
+    def test_isc_options_stmt_dnstap_dscp_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_dscp,
+            'dscp 11;',
+            {'dscp': '11'}
         )
 
     def test_isc_options_stmt_dump_file_passing(self):
