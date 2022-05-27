@@ -365,9 +365,9 @@ optviewzone_stmt_notify = (
 optviewzone_stmt_notify_source = (
     Keyword('notify-source').suppress()
     - Group(
-        ip4_addr_or_wildcard
-        + Optional(inet_ip_port_keyword_and_wildcard_element)
-        + Optional(inet_dscp_port_keyword_and_number_element)
+        ip4_addr_or_wildcard('ip4_addr-w')
+        + Optional(ungroup(inet_ip_port_keyword_and_wildcard_element))('ip4_port_w')
+        + Optional(ungroup(inet_dscp_port_keyword_and_number_element))('dscp_port')
     )('notify_source')
     + semicolon
 )

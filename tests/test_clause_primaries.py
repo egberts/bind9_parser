@@ -60,20 +60,21 @@ class TestClausePrimaries(unittest.TestCase):
 
     def test_isc_primaries_element_series_passing(self):
         """Primaries clause, Primary Element series, passing mode"""
-        test_string = 'primary_subdomain key "primary_key_maker";'
-        expected_result = {
-            'primary_list': [
-                {
-                    'ip_addr': 'primary_subdomain',
-                    'key_id': '"primary_key_maker"'}]}
-        assertParserResultDictTrue(primaries_element_series, test_string, expected_result)
-        test_string = 'primary_recon_border_gateway key "My_Secret_Company_Key";'
-        expected_result = {
-            'primary_list': [
-                {
-                    'ip_addr': 'primary_recon_border_gateway',
-                    'key_id': '"My_Secret_Company_Key"'}]}
-        assertParserResultDictTrue(primaries_element_series, test_string, expected_result)
+        assertParserResultDictTrue(
+            primaries_element_series,
+            'primary_subdomain key "primary_key_maker";',
+            {'primary_list': [{'key_id': '"primary_key_maker"',
+                               'primary_name': 'primary_subdomain'}]}
+        )
+
+    def test_isc_primaries_element_series_2_passing(self):
+        """Primaries clause, Primary Element series, passing mode"""
+        assertParserResultDictTrue(
+            primaries_element_series,
+            'primary_recon_border_gateway key "My_Secret_Company_Key";',
+            {'primary_list': [{'key_id': '"My_Secret_Company_Key"',
+                               'primary_name': 'primary_recon_border_gateway'}]}
+        )
 
     def test_isc_primaries_element_series_failing(self):
         """Primaries clause, Primary Element series, purposely failing mode"""
@@ -87,18 +88,12 @@ class TestClausePrimaries(unittest.TestCase):
 
     def test_isc_clause_stmt_primaries_standalone_passing(self):
         """Primaries clause, passing mode"""
-        test_string = 'primaries ns1 { 127.0.0.1; };'
-        expected_result = {
-            'primaries': [
-                {
-                    'primary_id': 'ns1',
-                    'primary_list': [
-                        {'ip_addr': '127.0.0.1'}
-                    ]
-                }
-            ]
-        }
-        assertParserResultDictTrue(clause_stmt_primaries_standalone, test_string, expected_result)
+        assertParserResultDictTrue(
+            clause_stmt_primaries_standalone,
+            'primaries ns1 { 127.0.0.1; };',
+            {'primaries': [{'primary_id': 'ns1',
+                            'primary_list': [{'ip4_addr': '127.0.0.1'}]}]}
+        )
 
 # primaries example.com { primaries; my_secondaries; };
     def test_isc_clause_stmt_primaries_ACLname_passing(self):
@@ -120,84 +115,60 @@ class TestClausePrimaries(unittest.TestCase):
     def test_isc_clause_stmt_primaries_multielement_passing(self):
         """Primaries clause, passing mode"""
         test_string = 'primaries ns1 { 127.0.0.1; 192.168.1.1; 192.168.6.1; };'
-        expected_result = { 'primaries': [ { 'primary_id': 'ns1',
-                                           'primary_list': [ {'addr': '127.0.0.1'},
-                                                            {'addr': '192.168.1.1'},
-                                                            {'addr': '192.168.6.1'}]}]}
-        assertParserResultDictTrue(clause_stmt_primaries_standalone, test_string, expected_result)
-        test_string = 'primaries ns1 { another_bastion_hosts1; hidden_bastion2; };'
-        expected_result = { 'primaries': [ { 'primary_id': 'ns1',
-                 'primary_list': [ { 'addr': 'another_bastion_hosts1'},
-                                  {'addr': 'hidden_bastion2'}]}]}
-        assertParserResultDictTrue(clause_stmt_primaries_standalone, test_string, expected_result)
-
-    def test_isc_clause_stmt_primaries_series_passing(self):
-        test_string = 'primaries another_bastion_host3 { another_bastion_hosts22; }; primaries third_bastion { hidden_bastion; };'
-        expected_result = {
-            'primaries': [
-                {
-                    'primary_id': 'another_bastion_host3',
-                    'primary_list': [
-                        {'addr': 'another_bastion_hosts22'}
-                    ]
-                },
-                {
-                    'primary_id': 'third_bastion',
-                    'primary_list': [
-                        {'addr': 'hidden_bastion'}
-                    ]
-                }
-            ]
-        }
-        assertParserResultDictTrue(clause_stmt_primaries_series, test_string, expected_result)
-
-    def test_isc_clause_stmt_primaries_standalone3_passing(self):
-        test_string = 'primaries example.com { primaries; };'
-        expected_result = {
-            'primaries': [
-                {
-                    'primary_id': 'example.com',
-                    'primary_list': [
-                        {'addr': 'primaries'}
-                    ]
-                }
-            ]
-        }
-        assertParserResultDictTrue(clause_stmt_primaries_standalone, test_string, expected_result)
-
-    def test_isc_clause_stmt_primaries_standalone4_passing(self):
-        test_string = 'primaries ns2 { 127.0.0.1; localhost; localnets; };'
-        expected_result = {
-            'primaries': [
-                {
-                    'primary_id': 'ns2',
-                    'primary_list': [
-                        {'addr': '127.0.0.1'},
-                        {'addr': 'localhost'},
-                        {'addr': 'localnets'}
-                    ]
-                }
-                ]
-        }
-        assertParserResultDictTrue(clause_stmt_primaries_standalone, test_string, expected_result)
-
-    def test_isc_clause_stmt_primaries_standalone5_passing(self):
-        test_string = 'primaries example.com port 53 { primaries; };'
-        expected_result = {
-            'primaries': [
-                {
-                    'ip_port': '53',
-                    'primary_id': 'example.com',
-                    'primary_list': [
-                        {'addr': 'primaries'}
-                    ]
-                }
-            ]
-        }
         assertParserResultDictTrue(
             clause_stmt_primaries_standalone,
             test_string,
-            expected_result
+            {'primaries': [{'primary_id': 'ns1',
+                            'primary_list': [{'ip4_addr': '127.0.0.1'},
+                                             {'ip4_addr': '192.168.1.1'},
+                                             {'ip4_addr': '192.168.6.1'}]}]}
+        )
+
+    def test_isc_clause_stmt_primaries_multielement_2_passing(self):
+        """Primaries clause 2, passing mode"""
+        assertParserResultDictTrue(
+            clause_stmt_primaries_standalone,
+            'primaries ns1 { another_bastion_hosts1; hidden_bastion2; };',
+            {'primaries': [{'primary_id': 'ns1',
+                            'primary_list': [{'primary_name': 'another_bastion_hosts1'},
+                                             {'primary_name': 'hidden_bastion2'}]}]}
+        )
+
+    def test_isc_clause_stmt_primaries_series_passing(self):
+        assertParserResultDictTrue(
+            clause_stmt_primaries_series,
+            'primaries another_bastion_host3 { another_bastion_hosts22; }; primaries third_bastion { hidden_bastion; };',
+            {'primaries': [{'primary_id': 'another_bastion_host3',
+                            'primary_list': [{'primary_name': 'another_bastion_hosts22'}]},
+                           {'primary_id': 'third_bastion',
+                            'primary_list': [{'primary_name': 'hidden_bastion'}]}]}
+        )
+
+    def test_isc_clause_stmt_primaries_standalone3_passing(self):
+        assertParserResultDictTrue(
+            clause_stmt_primaries_standalone,
+            'primaries example.com { primaries; };',
+            {'primaries': [{'primary_id': 'example.com',
+                            'primary_list': [{'primary_name': 'primaries'}]}]}
+        )
+
+    def test_isc_clause_stmt_primaries_standalone4_passing(self):
+        assertParserResultDictTrue(
+            clause_stmt_primaries_standalone,
+            'primaries ns2 { 127.0.0.1; localhost; localnets; };',
+            {'primaries': [{'primary_id': 'ns2',
+                            'primary_list': [{'ip4_addr': '127.0.0.1'},
+                                             {'primary_name': 'localhost'},
+                                             {'primary_name': 'localnets'}]}]}
+        )
+
+    def test_isc_clause_stmt_primaries_standalone5_passing(self):
+        assertParserResultDictTrue(
+            clause_stmt_primaries_standalone,
+            'primaries example.com port 53 { primaries; };',
+            {'primaries': [{'ip_port': '53',
+                            'primary_id': 'example.com',
+                            'primary_list': [{'primary_name': 'primaries'}]}]}
         )
 
     def isc_test_clause_stmt_primaries_standalone6_passing(self):
@@ -236,26 +207,16 @@ class TestClausePrimaries(unittest.TestCase):
 
     def test_isc_clause_stmt_primaries_series2_passing(self):
         """Primaries clause, Primary statement series; passing mode"""
-        test_string = 'primaries A { B; C; }; primaries D { E; F; };'
-        expected_result = {
-            'primaries': [
-                {
-                    'primary_id': 'A',
-                    'primary_list': [
-                        {'addr': 'B'},
-                        {'addr': 'C'}
-                    ]
-                },
-                {
-                    'primary_id': 'D',
-                    'primary_list': [
-                        {'addr': 'E'},
-                        {'addr': 'F'}
-                    ]
-                }
-            ]
-        }
-        assertParserResultDictTrue(clause_stmt_primaries_series, test_string, expected_result)
+        assertParserResultDictTrue(
+            clause_stmt_primaries_series,
+            'primaries A { B; C; }; primaries D { E; F; };',
+            {'primaries': [{'primary_id': 'A',
+                            'primary_list': [{'primary_name': 'B'},
+                                             {'primary_name': 'C'}]},
+                           {'primary_id': 'D',
+                            'primary_list': [{'primary_name': 'E'},
+                                             {'primary_name': 'F'}]}]}
+        )
 
 
 if __name__ == '__main__':

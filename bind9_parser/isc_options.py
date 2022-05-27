@@ -20,7 +20,7 @@ from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
     algorithm_name, size_spec_nodefault
 from bind9_parser.isc_inet import ip_port,\
     inet_dscp_port_keyword_and_number_element,\
-    inet_ip_port_keyword_and_number_element
+    inet_ip_port_keyword_and_number_element, dscp_port
 from bind9_parser.isc_domain import dequotable_domain_generic_fqdn
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 
@@ -242,36 +242,6 @@ options_stmt_directory.setName('directory <quotable-fqdn>;')
 #             )
 #         )
 
-#   disable-algorithms domain { algorithm ; ... }; [ Opt ]
-options_stmt_disable_algorithms = (
-    Keyword('disable-algorithms').suppress()
-    - Group(
-        fqdn_name_dequotable('domain_name')
-        + lbrack
-        - algorithm_name_list_series
-        + rbrack
-    )('disable_algorithms*')
-    + semicolon
-)
-options_stmt_disable_algorithms.setName('disable-algorithms <quotable-fqdn> { <algorithm> ; ... };')
-
-#   disable-ds-digests domain { digest ; ... }; [ Opt ]
-options_stmt_disable_ds_digests = (
-    Keyword('disable-ds-digests').suppress()
-    + Group(
-        fqdn_name('domain_name')
-        + lbrack
-        - OneOrMore(
-            Combine(
-                ungroup(algorithm_name)
-                + semicolon
-            )('algorithm_name*')  # multiple elements ('*') required here
-        )
-        + rbrack
-    )('disable_ds_digests*')
-    + semicolon
-)
-options_stmt_disable_ds_digests.setName('disable-ds-digests <quotable-fqdn> { <algorithm> ; ... };')
 
 #   dnstap-identity ( <quoted_string> | none | hostname ); [ Opt ]; since v9.11
 options_stmt_dnstap_identity = (
@@ -315,16 +285,18 @@ options_stmt_dnstap_output_element = (
 )
 
 options_stmt_dnstap_output = (
-    Keyword('dnstap-output').suppress()
-    - Optional(
-        Keyword('file')
-        | Keyword('unix')
-    )
-    - dequoted_path_name
-    - OneOrMore(options_stmt_dnstap_output_element)
-    - semicolon
+    Group(
+        Keyword('dnstap-output').suppress()
+        - Optional(
+            Keyword('file')
+            | Keyword('unix')
+        )
+        - dequoted_path_name('path')
+        - OneOrMore(options_stmt_dnstap_output_element)
+        - semicolon
+    )('dnstap-output')
 )
-options_stmt_dnstap_output.setName('dnstap-output ( <quotable-fqdn> | none | hostname );')
+options_stmt_dnstap_output.setName('dnstap-output ( file | unix } <quotable-filepath>;')
 
 options_stmt_dnstap_version = (
     Keyword('dnstap-version').suppress()
@@ -333,14 +305,17 @@ options_stmt_dnstap_version = (
         | (
             dequoted_path_name('dnstap-version')
         )
-    )
+    )('dnstap-version')
     - semicolon
 )
 options_stmt_dnstap_version.setName('dnstap-version ( none | <quoted_filespec> );;')
 
 #  dscp <integer>;
 options_stmt_dscp = (
-    inet_dscp_port_keyword_and_number_element
+    Keyword('dscp').suppress()
+    + (
+        dscp_port('dscp_port')
+    )('dscp')
     + semicolon
 )
 options_stmt_dscp.setName('dscp <number>;')
@@ -703,13 +678,6 @@ options_stmt_version = (
 options_stmt_version.setName('version <quotable-string>;')
 
 #  Multiple-statement support  #
-options_multiple_stmt_disable_ds_digests = ZeroOrMore(
-    options_stmt_disable_ds_digests
-)('disable_ds_digests')
-
-options_multiple_stmt_disable_algorithms = ZeroOrMore(
-    options_stmt_disable_algorithms
-)('disable_algorithms')
 
 options_multiple_stmt_listen_on = ZeroOrMore(
     options_stmt_listen_on
@@ -785,8 +753,6 @@ options_statements_set = (
     ^ options_stmt_transfers_out
     ^ options_stmt_transfers_per_ns
     ^ options_stmt_version
-    ^ options_stmt_disable_algorithms
-    ^ options_stmt_disable_ds_digests
     ^ options_stmt_listen_on_v6
     ^ options_stmt_listen_on
     ^ options_stmt_tkey_dhkey

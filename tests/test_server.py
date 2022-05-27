@@ -189,11 +189,9 @@ class TestServer(unittest.TestCase):
         assertParserResultDictTrue(
             server_stmt_notify_source_v6,
             'notify-source-v6 fe09::1 port 19 dscp 2;',  # Missing 'ip_addr'
-            {
-                'notify_source_v6': {
-                    'ip6_addr': 'fe09::1',
-                    'dscp_port': 2,
-                    'ip_port_w': '19'}}
+            {'notify_source_v6': {'dscp_port': 2,
+                                  'ip6_addr_w': 'fe09::1',
+                                  'ip_port_w': '19'}}
         )
 
     def test_isc_server_stmt_notify_source_v6_failing(self):

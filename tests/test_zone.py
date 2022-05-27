@@ -536,38 +536,38 @@ class TestZone(unittest.TestCase):
         assertParserResultDictTrue(
             zone_stmt_server_addresses,
             'server-addresses { 1.2.3.4; };',
-            {'server_addresses': [{'ip4_addr': '1.2.3.4'}]}
+            {'server_addresses': [{'ip_addr': '1.2.3.4'}]}
         )
     def test_isc_zone_stmt_server_addresses_1_ip6_passing(self):
         """ Test Clause Zone; Statement server-addresses; one IPv6; passing """
         assertParserResultDictTrue(
             zone_stmt_server_addresses,
             'server-addresses { fb03::7; };',
-            {'server_addresses': [{'ip6_addr': 'fb03::7'}]}
+            {'server_addresses': [{'ip_addr': 'fb03::7'}]}
         )
     def test_isc_zone_stmt_server_addresses_1_ip4_port_passing(self):
         """ Test Clause Zone; Statement server-addresses; one IPv4 port; passing """
         assertParserResultDictTrue(
             zone_stmt_server_addresses,
             'server-addresses { 1.2.3.4 port 9553; };',
-            {'server_addresses': [{'ip4_addr': '1.2.3.4', 'ip_port': '9553'}]}
+            {'server_addresses': [{'ip_addr': '1.2.3.4', 'ip_port': '9553'}]}
         )
     def test_isc_zone_stmt_server_addresses_1_ip6_port_passing(self):
         """ Test Clause Zone; Statement server-addresses; one IPv6 port; passing """
         assertParserResultDictTrue(
             zone_stmt_server_addresses,
             'server-addresses { fb03::7 port 4321; };',
-            {'server_addresses': [{'ip6_addr': 'fb03::7', 'ip_port': '4321'}]}
+            {'server_addresses': [{'ip_addr': 'fb03::7', 'ip_port': '4321'}]}
         )
     def test_isc_zone_stmt_server_addresses_mixed_ip46_passing(self):
         """ Test Clause Zone; Statement server-addresses; mixed IPv4/IPv6; passing """
         assertParserResultDictTrue(
             zone_stmt_server_addresses,
             'server-addresses { 1.1.1.1; fb22::2 port 222; 3.3.3.3 port 3333; fc44::4; };',
-            {'server_addresses': [{'ip4_addr': '1.1.1.1'},
-                                  {'ip6_addr': 'fb22::2', 'ip_port': '222'},
-                                  {'ip4_addr': '3.3.3.3', 'ip_port': '3333'},
-                                  {'ip6_addr': 'fc44::4'}]}
+            {'server_addresses': [{'ip_addr': '1.1.1.1'},
+                                  {'ip_addr': 'fb22::2', 'ip_port': '222'},
+                                  {'ip_addr': '3.3.3.3', 'ip_port': '3333'},
+                                  {'ip_addr': 'fc44::4'}]}
         )
     def test_isc_zone_stmt_server_addresses_failing(self):
         """ Test Clause Zone; Statement server-addresses; failing """
@@ -873,8 +873,8 @@ class TestZone(unittest.TestCase):
                 'flags': 53,
                 'key_secret': 'asdfasddfasdfasdf',
                 'protocol': 251},
-            'server_addresses': [ {'ip6_addr': 'fb03::7', 'ip_port': '9553'},
-                        {'ip4_addr': '9.9.9.9'}],
+            'server_addresses': [ {'ip_addr': 'fb03::7', 'ip_port': '9553'},
+                        {'ip_addr': '9.9.9.9'}],
             'server_names': ['example.com'],
             'type': 'forward',
             'update_policy': [ { 'impacting_realm': 'EXAMPLE.COM',

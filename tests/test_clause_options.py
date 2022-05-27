@@ -184,9 +184,68 @@ dnstap-identity none;
 dnstap-output file "dir/file" size unlimited versions 5 suffix timestamp;
 dnstap-version none;
 dscp 14;
-# dual-stack-servers { ( <quoted_string> [ port
 dump-file "dir/file";""",
-            {}
+            {'deny_answer_addresses': {'aml': [{'ip4_addr': '0.0.0.0'},
+                                               {'ip4_addr': '10.0.0.0',
+                                                'prefix': '8'},
+                                               {'ip4_addr': '172.16.0.0',
+                                                'prefix': '12'},
+                                               {'ip4_addr': '192.168.0.0',
+                                                'prefix': '16'},
+                                               {'ip4_addr': '169.254.0.0',
+                                                'prefix': '16'},
+                                               {'ip6_addr': '::',
+                                                'prefix': '80'},
+                                               {'ip6_addr': 'fe80::',
+                                                'prefix': '10'},
+                                               {'ip6_addr': '64:ff9b::',
+                                                'prefix': '96'}],
+                                       'except_from': [{'fqdn': 'Your.Domain'}]},
+             'deny_answer_aliases': {'except_from': [{'fqdn': '172.in-addr.arpa.'}],
+                                     'name_list': ['example.test',
+                                                   'test.example']},
+             'dialup': 'notify-passive',
+             'directory': 'dir/file',
+             'disable_algorithms': [{'algorithm_name': ['AES512',
+                                                        'SHA512'],
+                                     'domain_name': 'aaaaaaaaaaaaaaaaa'},
+                                    {'algorithm_name': ['AES512',
+                                                        'SHA512',
+                                                        'RSASHA512'],
+                                     'domain_name': '172.in-addr.arpa.'}],
+             'disable_ds_digests': [{'algorithm_name': ['RSASHA512'],
+                                     'domain_name': '.'}],
+             'disable_empty_zone': [{'zone_name': '127.in-addr.arpa'}],
+             'dns64': [{'aml': [{'ip4_addr': '127.0.0.1'}],
+                        'break_dnssec': 'yes',
+                        'clients': [{'ip4_addr': '127.0.0.1'}],
+                        'exclude': [{'ip4_addr': '127.0.0.1'}],
+                        'mapped': [{'ip4_addr': '127.0.0.1'}],
+                        'netprefix': {'ip6_addr': '64:ff9b::',
+                                      'prefix': '96'},
+                        'recursive_only': 'no'}],
+             'dns64_contact': {'soa_rname': 'dns64.contact.string.content'},
+             'dns64_server': {'soa_rname': 'dns64.server.string.content'},
+             'dnskey_sig_validity': 3,
+             'dnsrps_enable': 'no',
+             'dnssec_accept_expired': 'no',
+             'dnssec_dnskey_kskonly': 'no',
+             'dnssec_loadkeys_interval': 1,
+             'dnssec_must_be_secure': [{'dnssec_secured': 'yes',
+                                        'fqdn': '"home.arpa."'},
+                                       {'dnssec_secured': 'yes',
+                                        'fqdn': '"example.test."'}],
+             'dnssec_policy': 'my_policy',
+             'dnssec_secure_to_insecure': 'no',
+             'dnssec_update_mode': 'no-resign',
+             'dnssec_validation': 'auto',
+             'dnstap': ['all', 'response'],
+             'dnstap-output': {'path': 'dir/file',
+                               'size': 'unlimited',
+                               'versions': 5},
+             'dnstap-version': 'none',
+             'dscp': 14,
+             'dump_file': 'dir/file'}
         )
 
     def test_isc_clause_options_all_statement_set_e_to_i_passing(self):
@@ -195,8 +254,8 @@ dump-file "dir/file";""",
             options_all_statements_series,
             """
 edns-udp-size 512;
-empty-contact "empty-contact-string-content";
-empty-server "empty-server-string-content";
+empty-contact empty-contact-string-content;
+empty-server empty-server-string-content;
 empty-zones-enable no;
 fetch-quota-params 5 1.0 1.0 1.0;
 fetches-per-server 5 drop;

@@ -57,7 +57,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzoneserver_also_notify_subgroup_element2,
             '127.0.0.1',
-            {'ip4_addr': '127.0.0.1'}
+            {'ip_addr': '127.0.0.1'}
         )
 
     def test_isc_optviewzoneserver_stmt_also_notify_elems_ip6_passing(self):
@@ -65,7 +65,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzoneserver_also_notify_subgroup_element2,
             'fec2::1 port 333',
-            {'ip6_addr': 'fec2::1', 'ip_port': '333'}
+            {'ip_addr': 'fec2::1', 'ip_port': '333'}
         )
 
     def test_isc_optviewzoneserver_stmt_also_notify_group_element_passing(self):
@@ -112,7 +112,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzoneserver_stmt_also_notify,
             'also-notify { 127.0.0.1; };',
-            {'also-notify': {'remote': [{'ip4_addr': '127.0.0.1'}]}}
+            {'also-notify': {'remote': [{'ip_addr': '127.0.0.1'}]}}
         )
 
     def test_isc_optviewzoneserver_stmt_also_notify_2list_passing(self):
@@ -120,8 +120,8 @@ class TestOptionsViewZoneServer(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzoneserver_stmt_also_notify,
             'also-notify { 127.0.0.1; 172.16.1.1; };',
-            {'also-notify': {'remote': [{'ip4_addr': '127.0.0.1'},
-                                        {'ip4_addr': '172.16.1.1'}]}}
+            {'also-notify': {'remote': [{'ip_addr': '127.0.0.1'},
+                                        {'ip_addr': '172.16.1.1'}]}}
             )
 
     def test_isc_optviewzoneserver_stmt_also_notify_full_passing(self):
@@ -134,11 +134,11 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 };""",
             {'also-notify': {'dscp': 5,
                              'port': '567',
-                             'remote': [{'ip6_addr': 'fe01::1',
+                             'remote': [{'ip_addr': 'fe01::1',
                                          'ip_port': '59',
                                          'key_id': 'lockbox9_key',
                                          'tls_algorithm_name': 'TLSv1.3'},
-                                        {'ip4_addr': '172.16.1.1',
+                                        {'ip_addr': '172.16.1.1',
                                          'ip_port': '59',
                                          'key_id': 'lockbox9_key',
                                          'tls_algorithm_name': 'TLSv1.0'}]}}

@@ -16,7 +16,9 @@ from pyparsing import Group, Keyword, OneOrMore, Literal, \
 from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     squote, dquote, number_type, name_type, minute_type, seconds_type, \
     byte_type, run_me, dequoted_path_name, check_options, \
-    size_spec, exclamation, iso8601_duration, view_name
+    size_spec, exclamation, iso8601_duration, view_name, \
+    algorithm_name, fqdn_name_dequoted, fqdn_name_dequotable,\
+    algorithm_name_list_series
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip6s_prefix, \
     ip6_optional_prefix, \
@@ -193,6 +195,37 @@ optview_stmt_deny_answer_aliases = (
             aml_nesting('')
         )('deny_answer_aliases')
 ).setName('deny-answer-aliases <aml>;')
+
+#   disable-algorithms domain { algorithm ; ... }; [ Opt/View ]
+optview_stmt_disable_algorithms = (
+    Keyword('disable-algorithms').suppress()
+    - Group(
+        fqdn_name_dequotable('domain_name')
+        + lbrack
+        - algorithm_name_list_series('algorithms')
+        + rbrack
+    )('disable_algorithms')  # must have '*' here  1-*
+    + semicolon
+)
+optview_stmt_disable_algorithms.setName('disable-algorithms <quotable-fqdn> { <algorithm> ; ... };')
+
+#   disable-ds-digests domain { digest ; ... }; [ Opt ]
+optview_stmt_disable_ds_digests = (
+    Keyword('disable-ds-digests').suppress()
+    + Group(
+        fqdn_name_dequotable('domain_name')
+        + lbrack
+        - OneOrMore(
+            Combine(
+                ungroup(algorithm_name)
+                + semicolon
+            )('algorithm_name*')  # multiple elements ('*') required here
+        )
+        + rbrack
+    )('disable_ds_digests*')
+    + semicolon
+)
+optview_stmt_disable_ds_digests.setName('disable-ds-digests <quotable-fqdn> { <algorithm> ; ... };')
 
 # disable-empty-zone  zone_name ;
 # disable-empty-zone "168.192.IN-ADDR.ARPA";
@@ -429,13 +462,23 @@ optview_stmt_dual_stack_servers.setName('dual-stack-servers [ port <port> ] { [ 
 soa_name_type = rr_fqdn_w_absolute  # might be name_type
 
 optview_stmt_empty_contact = (
-        Keyword('empty-contact').suppress()
-        - Group(
-    soa_name_type('soa_contact_name')
-    + semicolon
-)('empty_contact')  # Dict (not a multiple-statement)
+    Keyword('empty-contact').suppress()
+    - Group(
+        soa_name_type('soa_contact_name')
+        - semicolon
+    )('empty_contact')  # Dict (not a multiple-statement)
 )('')
 optview_stmt_empty_contact.setName('empty-contact <soa_rname>;')
+
+
+optview_stmt_empty_server = (
+    Keyword('empty-server').suppress()
+    - Group(
+        soa_name_type('soa_contact_name')
+        - semicolon
+    )('empty_server')  # Dict (not a multiple-statement)
+)('')
+optview_stmt_empty_server.setName('empty-server <soa_rname>;')
 
 optview_stmt_empty_zones_enable = (
         Keyword('empty-zones-enable').suppress()
@@ -450,6 +493,18 @@ optview_stmt_fetch_glue = (
         + semicolon
 )  # v8.1 to v9.7.0
 optview_stmt_fetch_glue.setName('fetch-glue  <boolean>;')
+
+optview_stmt_fetch_quota_params = (
+    Group(
+        Keyword('fetch-quota-params').suppress()
+        - number_type('moving_avg_recalculate_interval')
+        - number_type('low_threshold')
+        - number_type('high_threshold')
+        - number_type('moving_average_discount_rate')
+        + semicolon
+    )('fetch_quota_params')
+)
+optview_stmt_fetch_quota_params.setName('fetch-quota-params <number> <float> <float> <float>;')
 
 optview_stmt_files = (
     Keyword('files').suppress()
@@ -1083,6 +1138,8 @@ optview_statements_set = (
     ^ optview_stmt_cleaning_interval
     ^ optview_stmt_deny_answer_addresses
     ^ optview_stmt_deny_answer_aliases
+    ^ optview_stmt_disable_algorithms
+    ^ optview_stmt_disable_ds_digests
     ^ optview_stmt_disable_empty_zone
     ^ optview_stmt_dns64_contact
     ^ optview_stmt_dns64_server
@@ -1096,8 +1153,10 @@ optview_statements_set = (
     ^ optview_stmt_dnstap
     ^ optview_stmt_dual_stack_servers
     ^ optview_stmt_empty_contact
+    ^ optview_stmt_empty_server
     ^ optview_stmt_empty_zones_enable
     ^ optview_stmt_fetch_glue
+    ^ optview_stmt_fetch_quota_params
     ^ optview_stmt_files
     ^ optview_stmt_heartbeat_interval
     ^ optview_stmt_hostname
@@ -1124,3 +1183,11 @@ optview_statements_series = (
         optview_statements_set
     )
 )
+
+optview_multiple_stmt_disable_ds_digests = ZeroOrMore(
+    optview_stmt_disable_ds_digests
+)('disable_ds_digests')
+
+optview_multiple_stmt_disable_algorithms = ZeroOrMore(
+    optview_stmt_disable_algorithms
+)('disable_algorithms')

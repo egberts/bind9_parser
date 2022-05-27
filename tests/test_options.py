@@ -17,9 +17,6 @@ from bind9_parser.isc_options import \
     options_stmt_coresize, options_stmt_datasize,\
     options_stmt_deallocate_on_exit, options_stmt_deny_answer_addresses,\
     options_stmt_deny_answer_aliases, options_stmt_directory,\
-    options_stmt_disable_algorithms, options_multiple_stmt_disable_algorithms,\
-    options_stmt_disable_ds_digests,\
-    options_multiple_stmt_disable_ds_digests,\
     options_stmt_dnstap_identity, \
     options_stmt_dnstap_output,\
     options_stmt_dnstap_version,\
@@ -265,71 +262,6 @@ deny-answer-addresses {
         assertParserResultDictTrue(options_stmt_directory,
                                    'directory \'/etc/bind/\';',
                                    {'directory': '/etc/bind/'})
-
-    def test_isc_options_stmt_disable_algorithms_passing(self):
-        assertParserResultDictTrue(
-            options_stmt_disable_algorithms,
-            'disable-algorithms . { sha512; cbc32; };',
-            {'disable_algorithms': [{'algorithm_name': ['sha512', 'cbc32'],
-                                     'domain_name': '.'}]}
-        )
-
-    def test_isc_options_stmt_disable_algorithms_2_passing(self):
-        assertParserResultDictTrue(
-            options_stmt_disable_algorithms,
-            'disable-algorithms "example.com." { sha512; };',
-            {'disable_algorithms': [{'algorithm_name': ['sha512'],
-                                     'domain_name': 'example.com.'}]}
-        )
-
-    def test_isc_options_stmt_disable_algorithms_3_passing(self):
-        assertParserResultDictTrue(
-            options_stmt_disable_algorithms,
-            'disable-algorithms \'172.in-addr.arpa.\' { aes256; sha-1; rsa; };',
-            {'disable_algorithms': [{'algorithm_name': ['aes256',
-                                                        'sha-1',
-                                                        'rsa'],
-                                     'domain_name': '172.in-addr.arpa.'}]}
-        )
-
-    def test_isc_options_stmt_disable_algorithms_4_passing(self):
-        assertParserResultDictTrue(
-            options_multiple_stmt_disable_algorithms,
-            'disable-algorithms example.com { sha512; cbc32; }; disable-algorithms yahoo.com { cbc128; };',
-            {'disable_algorithms': [{'algorithm_name': ['sha512', 'cbc32'],
-                                     'domain_name': 'example.com'},
-                                    {'algorithm_name': ['cbc128'],
-                                     'domain_name': 'yahoo.com'},
-                                    [{'algorithm_name': ['sha512',
-                                                         'cbc32'],
-                                      'domain_name': 'example.com'},
-                                     {'algorithm_name': ['cbc128'],
-                                      'domain_name': 'yahoo.com'}]]}
-        )
-
-    def test_isc_options_stmt_part_disable_ds_digests_1_passing(self):
-        assertParserResultDictTrue(
-            options_stmt_disable_ds_digests,
-            'disable-ds-digests example.com { hmac; cbc32; };',
-            {'disable_ds_digests': [{'algorithm_name': ['hmac', 'cbc32'],
-                                     'domain_name': 'example.com'}]}
-            )
-
-    def test_isc_options_stmt_part_disable_ds_digests_passing(self):
-        assertParserResultDictTrue(
-            options_multiple_stmt_disable_ds_digests,
-            'disable-ds-digests example.com { hmac; cbc32; };'
-            'disable-ds-digests bing.com { crc32; };',
-            {'disable_ds_digests': [{'algorithm_name': ['hmac', 'cbc32'],
-                                     'domain_name': 'example.com'},
-                                    {'algorithm_name': ['crc32'],
-                                     'domain_name': 'bing.com'},
-                                    [{'algorithm_name': ['hmac', 'cbc32'],
-                                      'domain_name': 'example.com'},
-                                     {'algorithm_name': ['crc32'],
-                                      'domain_name': 'bing.com'}]]}
-            )
-
     def test_isc_options_stmt_dnstap_identity(self):
         assertParserResultDictTrue(
             options_stmt_dnstap_identity,
@@ -341,7 +273,7 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_dnstap_output,
             'dnstap-output file "dir/file" size 1G suffix timestamp versions 5;',
-            {'quoted_path_name': 'dir/file', 'size': 1, 'versions': 5}
+            {'dnstap-output': {'path': 'dir/file', 'size': 1, 'versions': 5}}
         )
 
     def test_isc_options_stmt_dnstap_version_file_passing(self):
@@ -362,7 +294,7 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_dscp,
             'dscp 11;',
-            {'dscp': '11'}
+            {'dscp': 11}
         )
 
     def test_isc_options_stmt_dump_file_passing(self):

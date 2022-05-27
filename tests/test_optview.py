@@ -39,10 +39,17 @@ from bind9_parser.isc_optview import \
     optview_stmt_dnssec_validation, \
     optview_stmt_dnstap, \
     optview_stmt_dual_stack_servers, \
+    optview_stmt_disable_algorithms, \
+    optview_stmt_disable_algorithms, optview_multiple_stmt_disable_algorithms, \
+    optview_stmt_disable_ds_digests, \
+    optview_multiple_stmt_disable_ds_digests, \
+    optview_multiple_stmt_disable_algorithms, \
+    optview_stmt_disable_ds_digests, \
     optview_stmt_disable_empty_zone, \
     optview_stmt_empty_contact, \
     optview_stmt_empty_zones_enable, \
     optview_stmt_fetch_glue, \
+    optview_stmt_fetch_quota_params, \
     optview_stmt_files, \
     optview_stmt_heartbeat_interval, \
     optview_stmt_hostname, \
@@ -534,6 +541,93 @@ dns64 64:ff9b::/96 {
             }
         )
 
+    def test_isc_optview_stmt_disable_algorithms_passing(self):
+        """ Clause options/view; Statement disable-algorithms; passing """
+        test_string = [
+            'disable-algorithms "example." { RSASHA512; };',
+            'disable-algorithms "example.test." { RSASHA512; AES512; };',
+            'disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };',
+        ]
+        result = optview_stmt_disable_algorithms.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optview_stmt_disable_algorithms_series_passing(self):
+        """ Clause options/view; Statement disable-algorithms series; passing """
+        assertParserResultDictTrue(
+            optview_multiple_stmt_disable_algorithms,
+            """disable-algorithms "example." { RSASHA512; };
+disable-algorithms "example.test." { RSASHA512; AES512; };
+disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
+            {'disable_algorithms': [{'algorithms': ['RSASHA512'],
+                                     'domain_name': 'example.'},
+                                    {'algorithms': ['RSASHA512', 'AES512'],
+                                     'domain_name': 'example.test.'},
+                                    {'algorithms': ['RSASHA512',
+                                                    'AES512',
+                                                    'ED25519'],
+                                     'domain_name': 'www.example.test.'}]}
+        )
+
+    def test_isc_optview_stmt_disable_algorithms_passing(self):
+        assertParserResultDictTrue(
+            optview_stmt_disable_algorithms,
+            'disable-algorithms . { sha512; cbc32; };',
+            {'disable_algorithms': {'algorithms': ['sha512', 'cbc32'],
+                                    'domain_name': '.'}}
+        )
+
+    def test_isc_optview_stmt_disable_algorithms_2_passing(self):
+        assertParserResultDictTrue(
+            optview_stmt_disable_algorithms,
+            'disable-algorithms "example.com." { sha512; };',
+            {'disable_algorithms': {'algorithms': ['sha512'],
+                                    'domain_name': 'example.com.'}}
+        )
+
+    def test_isc_optview_stmt_disable_algorithms_3_passing(self):
+        assertParserResultDictTrue(
+            optview_stmt_disable_algorithms,
+            'disable-algorithms \'172.in-addr.arpa.\' { aes256; sha-1; rsa; };',
+            {'disable_algorithms': {'algorithms': ['aes256',
+                                                   'sha-1',
+                                                   'rsa'],
+                                    'domain_name': '172.in-addr.arpa.'}}
+        )
+
+    def test_isc_optview_stmt_disable_algorithms_4_passing(self):
+        assertParserResultDictTrue(
+            optview_multiple_stmt_disable_algorithms,
+            'disable-algorithms example.com { sha512; cbc32; }; disable-algorithms yahoo.com { cbc128; };',
+            {'disable_algorithms': [{'algorithms': ['sha512', 'cbc32'],
+                                     'domain_name': 'example.com'},
+                                    {'algorithms': ['cbc128'],
+                                     'domain_name': 'yahoo.com'}]}
+        )
+
+    def test_isc_optview_stmt_part_disable_ds_digests_1_passing(self):
+        assertParserResultDictTrue(
+            optview_stmt_disable_ds_digests,
+            'disable-ds-digests example.com { hmac; cbc32; };',
+            {'disable_ds_digests': [{'algorithm_name': ['hmac', 'cbc32'],
+                                     'domain_name': 'example.com'}]}
+            )
+
+    def test_isc_optview_stmt_part_disable_ds_digests_passing(self):
+        assertParserResultDictTrue(
+            optview_multiple_stmt_disable_ds_digests,
+            'disable-ds-digests example.com { hmac; cbc32; };'
+            'disable-ds-digests bing.com { crc32; };',
+            {'disable_ds_digests': [{'algorithm_name': ['hmac', 'cbc32'],
+                                     'domain_name': 'example.com'},
+                                    {'algorithm_name': ['crc32'],
+                                     'domain_name': 'bing.com'},
+                                    [{'algorithm_name': ['hmac', 'cbc32'],
+                                      'domain_name': 'example.com'},
+                                     {'algorithm_name': ['crc32'],
+                                      'domain_name': 'bing.com'}]]}
+            )
+
+
     def test_isc_optview_stmt_disable_empty_zone_passing(self):
         """ Clause options/view; Statement disable-empty-zone; passing """
         test_string = [
@@ -600,6 +694,26 @@ dns64 64:ff9b::/96 {
             optview_stmt_fetch_glue,
             'fetch-glue yes;',
             {'fetch_glue': 'yes'}
+        )
+
+    def test_isc_optview_stmt_fetch_quota_params_set_passing(self):
+        """ Clause options/view; Statement 'fetch-quota-params'; passing """
+        test_string = [
+            'fetch-quota-params 1 2 3 4;',
+            'fetch-quota-params 2 3 4 5;'
+        ]
+        result = optview_stmt_fetch_quota_params.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optview_stmt_fetch_quota_params_max_passing(self):
+        """ Clause options/view; Statement 'fetch-quota-params'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_fetch_quota_params,
+            'fetch-quota-params 1 2 3 4;',
+            {'fetch_quota_params': {'high_threshold': 3,
+                                    'low_threshold': 2,
+                                    'moving_average_discount_rate': 4,
+                                    'moving_avg_recalculate_interval': 1}}
         )
 
     # XXXX optview_stmt_files

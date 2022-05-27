@@ -104,7 +104,7 @@ class TestClauseServer(unittest.TestCase):
                                      'keys': 'my_key_name_to_private_dns',
                                      'max_udp_size': 32768,
                                      'notify_source': {'ip4_addr': '*'},
-                                     'notify_source_v6': {'ip6_addr': '*'},
+                                     'notify_source_v6': {'ip6_addr_w': '*'},
                                      'padding': 53,
                                      'provide_ixfr': 'yes',
                                      'query_source': {'ip4_addr_w': '*'},
@@ -117,7 +117,7 @@ class TestClauseServer(unittest.TestCase):
                                      'tcp_only': 'yes',
                                      'transfer_format': 'one-answer',
                                      'transfer_source': {'ip4_addr_w': '*'},
-                                     'transfer_source_v6': {'ip6_addr_w': '*'},
+                                     'transfer_source_v6': {'ip6_addr': '*'},
                                      'transfers': 36},
                          'ip_addr': '3.4.5.6'}]}
         )

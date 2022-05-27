@@ -543,7 +543,9 @@ class TestOptionsViewZone(unittest.TestCase):
         assertParserResultDictTrue(
             optviewzone_stmt_notify_source,
             'notify-source * port 153 dscp 1;',
-            {'notify_source': {'ip4_addr': '*', 'dscp_port': 1, 'ip_port_w': '153'}}
+            {'notify_source': {'dscp_port': 1,
+                               'ip4_addr-w': '*',
+                               'ip4_port_w': '153'}}
         )
 
     def test_isc_optviewzone_stmt_notify_passing(self):
@@ -1025,7 +1027,7 @@ class TestOptionsViewZone(unittest.TestCase):
              'min_retry_time': 3600,
              'multi_master': 'yes',
              'notify': 'master-only',
-             'notify_source': {'ip4_addr': '3.3.3.3', 'ip_port_w': '253'},
+             'notify_source': {'ip4_addr-w': '3.3.3.3', 'ip4_port_w': '253'},
              'notify_source_v6': {'ip6_addr': '*', 'ip_port_w': '53'},
              'provide_ixfr': 'yes',
              'request_ixfr': 'yes',
