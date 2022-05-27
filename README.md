@@ -212,9 +212,17 @@ I hope this helps.
 # Unit Tests
 A massive unit tests files are supplied (under `tests/` subdirectory) to ensure that future breakage does not occur.
 
-At the moment, breakage is occurring in the `zone` clause and multiple thereof.
+I use JetBrain PyCharm to unittest these modules.  However, you can also do it from a command line:
+```console
+python3 -munittest tests/test_*.py
+```
 
-# Others
+# Status
+
+At the moment, my focus is on the remaining breakage of 'options' clause where I'm busy doing unit-testing, but it is largely ready
+to go and should work for a large percentage of deployed `named.conf`. It takes time to validate each clause and statement.
+
+Enjoy the parser.
 
 
 # Coverages
