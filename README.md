@@ -4,7 +4,7 @@ I needed a parser for `named.conf` (ISC Bind configuration file) ... in Python.
 
 It has to be able to output a pythonized variable of all settings found in `named.conf`, up to version 9.19.1.
 
-# Quick, Show It To Me
+# Quick Demo
 
 What does the Python variable name look like if I parsed [`named-zytrax.conf`](https://github.com/egberts/bind9_parser/blob/master/examples/named-conf/named-zytrax.conf).
 
@@ -120,7 +120,7 @@ To install this package, consult README.install.md
 # Features
 
 Features:
-* 'include' statements are also supported (my favorite)
+* 'include' statements are also folded into the parser
 * Relative directory support (not stuck on /etc/bind or /var/lib/bind)
   * Useful for testing many config files in their respective local subdirectory(s).
 * Support for Bind 4.8 to v9.15.1 (working on Bind10)
