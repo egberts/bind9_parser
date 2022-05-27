@@ -173,7 +173,7 @@ I didn't reformat it.  But the following snippet of bash execution will
 parse it just fine:
 ```bash
 cd bind9_parser/examples
-python3 parse_bind.py /tmp/github-issue-10.named.conf
+python3 dump-named-conf.py ./tests/bug-reports/github-issue-10.named.conf
 ```
 To obtain a Python list variable, the same `parse_bind9.py` will get you this output:
 ```python
