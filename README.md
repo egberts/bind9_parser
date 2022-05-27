@@ -60,6 +60,9 @@ print(result.asDict()):
 
 I see lots of Python scripts for ISC Bind Zone files, but not its configuration.
 
+Also, I have many logics for doing a security audit against the named.conf, but no way to automate it.
+
+
 The closest cousin of Bind configuration format is NGINX config.
 
 The closest Python (and configuration file parser) I could find was
