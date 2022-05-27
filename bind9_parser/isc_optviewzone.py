@@ -274,10 +274,20 @@ optviewzone_stmt_masterfile_format = (
     + (
             Literal('text')
             | Literal('raw')
-            | Literal('map')
+            | Literal('map')  # removed in v9.19
     )('masterfile_format')
     + semicolon
-)
+).setName('masterfile-format ( text | raw );')
+
+# masterfile-style ( full | relative );
+optviewzone_stmt_masterfile_style = (
+    Keyword('masterfile-style').suppress()
+    + (
+            Literal('full')
+            | Literal('relative')
+    )('masterfile_style')
+    + semicolon
+).setName('masterfile-style ( full | relative );')
 
 #   max-journal-size size_in_bytes; [ Opt, View, Zone ]
 optviewzone_stmt_max_journal_size = (
@@ -487,6 +497,7 @@ optviewzone_statements_set = (
         ^ optviewzone_stmt_key_directory
         ^ optviewzone_stmt_maintain_ixfr_base
         ^ optviewzone_stmt_masterfile_format
+        ^ optviewzone_stmt_masterfile_style
         ^ optviewzone_stmt_max_journal_size
         ^ optviewzone_stmt_max_refresh_time
         ^ optviewzone_stmt_max_retry_time

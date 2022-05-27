@@ -18,7 +18,7 @@ from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     byte_type, run_me, dequoted_path_name, check_options, \
     size_spec, exclamation, iso8601_duration, view_name, \
     algorithm_name, fqdn_name_dequoted, fqdn_name_dequotable,\
-    algorithm_name_list_series, charset_filename_base
+    algorithm_name_list_series, charset_filename_base, size_spec_nodefault, size_spec_plain
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip6s_prefix, \
     ip6_optional_prefix, \
@@ -517,6 +517,28 @@ optview_stmt_fetch_quota_params = (
 )
 optview_stmt_fetch_quota_params.setName('fetch-quota-params <number> <float> <float> <float>;')
 
+optview_stmt_fetches_per_server = (
+    Keyword('fetches-per-server').suppress()
+    - ungroup(number_type)('fetches_per_server')
+    - Optional(
+        Keyword('drop')
+        | Keyword('fail')
+    )('action')
+    - semicolon
+)
+optview_stmt_fetches_per_server.setName('fetches-per-server <fetches_per_query> [ ( drop | fail ) ];')
+
+optview_stmt_fetches_per_zone = (
+    Keyword('fetches-per-zone').suppress()
+    - ungroup(number_type)('fetches_per_zone')
+    - Optional(
+        Keyword('drop')
+        | Keyword('fail')
+    )('action')
+    - semicolon
+)
+optview_stmt_fetches_per_zone.setName('fetches-per-zone <fetches_per_query> [ ( drop | fail ) ];')
+
 optview_stmt_files = (
     Keyword('files').suppress()
     - Group(
@@ -546,12 +568,44 @@ optview_stmt_hostname = (
     )('hostname')
     + semicolon
 ).setName('hostname [ none | hostname | <quotable_fqdn> ];')
+#
+optview_stmt_ipv4only_contact = (
+    Keyword('ipv4only-contact').suppress()
+    - Group(
+        soa_rname('soa_rname')
+    )('ipv4only_contact')
+    + semicolon
+)
+optview_stmt_ipv4only_contact.setName('ipv4only-contact <soa_rname>;')
+
+# dnsrps-enable <boolean>; [ Opt View  ]  # v9.3.0+
+optview_stmt_ipv4only_enable = (
+        Keyword('ipv4only-enable').suppress()
+        - isc_boolean('ipv4only_enable')
+        + semicolon
+).setName('ipv4only-enable <boolean>;')
+
+optview_stmt_ipv4only_server = (
+        Keyword('ipv4only-server').suppress()
+        - Group(
+            soa_rname('soa_rname')
+        )('ipv4only_server')
+        - semicolon
+)
+optview_stmt_ipv4only_server.setName('ipv4only-server <soa_rname>;')
 
 optview_stmt_lame_ttl = (
     Keyword('lame-ttl').suppress()
     - number_type('lame_ttl')
-    + semicolon
+    - semicolon
 ).setName('lame-ttl <integer>;')
+
+optview_stmt_lmdb_mapsize = (
+    Keyword('lmdb-mapsize').suppress()
+    - size_spec_plain('lmdb_mapsize')
+    + semicolon
+)
+optview_stmt_lmdb_mapsize.setName('lmdb-mapsize <sizeval>;')
 
 optview_stmt_managed_keys_directory = (
     Keyword('managed-keys-directory').suppress()
@@ -1169,10 +1223,16 @@ optview_statements_set = (
     ^ optview_stmt_empty_zones_enable
     ^ optview_stmt_fetch_glue
     ^ optview_stmt_fetch_quota_params
+    ^ optview_stmt_fetches_per_server
+    ^ optview_stmt_fetches_per_zone
     ^ optview_stmt_files
     ^ optview_stmt_heartbeat_interval
     ^ optview_stmt_hostname
+    ^ optview_stmt_ipv4only_contact
+    ^ optview_stmt_ipv4only_enable
+    ^ optview_stmt_ipv4only_server
     ^ optview_stmt_lame_ttl
+    ^ optview_stmt_lmdb_mapsize
     ^ optview_stmt_managed_keys_directory
     ^ optview_stmt_max_cache_size
     ^ optview_stmt_max_cache_ttl

@@ -262,7 +262,6 @@ flush-zones-on-shutdown no;
 forward only;
 forwarders port 753 { 127.0.0.1; };
 geoip-directory none;
-glue-cache no; // deprecated
 heartbeat-interval 60;
 hostname none;
 http-listener-clients 5;
@@ -270,12 +269,38 @@ http-port 80;
 http-streams-per-connection 5;
 https-port 443;
 interface-interval 60;
-ipv4only-contact "ipv4only-contact-string-content";
+ipv4only-contact ipv4only.contact.string.content;
 ipv4only-enable no;
-ipv4only-server "ipv4only-contact-string-content";
+ipv4only-server ipv4only.con-tact.string.content;
 ixfr-from-differences primary;
 """,
-            {}
+            {'action': 'drop',
+             'edns_udp_size': 512,
+             'empty_contact': {'soa_contact_name': 'empty-contact-string-content'},
+             'empty_server': {'soa_contact_name': 'empty-server-string-content'},
+             'empty_zones_enable': 'no',
+             'fetch_quota_params': {'high_threshold': 10,
+                                    'low_threshold': 10,
+                                    'moving_average_discount_rate': 10,
+                                    'moving_avg_recalculate_interval': 5},
+             'fetches_per_server': 5,
+             'fetches_per_zone': 4,
+             'files': {'files_count': 'unlimited'},
+             'flush_zones_on_shutdown': 'no',
+             'forward': 'only',
+             'forwarders': {'forwarder': [{'ip_addr': '127.0.0.1'}],
+                            'ip_port': '753'},
+             'heartbeat_interval': 60,
+             'hostname': {'none': 'none'},
+             'http_listener_clients': 5,
+             'http_port': 80,
+             'http_streams_per_connection': 5,
+             'https_port': 443,
+             'interface_interval': 60,
+             'ipv4only_contact': {'soa_rname': 'ipv4only.contact.string.content'},
+             'ipv4only_enable': 'no',
+             'ipv4only_server': {'soa_rname': 'ipv4only.con-tact.string.content'},
+             'ixfr_from_differences': 'primary'}
         )
 
     def test_isc_clause_options_all_statement_set_k_to_m_passing(self):
@@ -288,7 +313,7 @@ key-directory "dir/file";
 lame-ttl 60;
 listen-on port 53 tls TLS_NAME http HTTP_NAME { 127.0.0.1; };
 listen-on-v6 port 53 tls TLS_NAME http HTTP_NAME { ::1; };
-lmdb-mapsize 1M:
+lmdb-mapsize 1M;
 lock-file "dir/file";
 managed-keys-directory "dir/file";
 masterfile-format text;
@@ -525,7 +550,6 @@ flush-zones-on-shutdown no;
 forward only;
 forwarders port 753 { 127.0.0.1; };
 geoip-directory none;
-glue-cache no;
 heartbeat-interval 60;
 hostname none;
 http-listener-clients 5;
@@ -542,7 +566,7 @@ key-directory "dir/file";
 lame-ttl 60;
 listen-on port 53 tls TLS_NAME http HTTP_NAME { 127.0.0.1; };
 listen-on-v6 port 53 tls TLS_NAME http HTTP_NAME { ::1; };
-lmdb-mapsize 1M:
+lmdb-mapsize 1M;
 lock-file "dir/file";
 managed-keys-directory "dir/file";
 masterfile-format text;

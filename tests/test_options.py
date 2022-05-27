@@ -23,11 +23,17 @@ from bind9_parser.isc_options import \
     options_stmt_dscp,\
     options_stmt_dump_file,\
     options_stmt_fake_iquery, options_stmt_flush_zones_on_shutdown,\
-    options_stmt_has_old_clients,\
+    options_stmt_geoip_directory,\
+    options_stmt_has_old_clients, \
+    options_stmt_http_listener_clients, \
+    options_stmt_http_port,\
+    options_stmt_http_streams_per_connection, \
+    options_stmt_https_port,\
     options_stmt_hostname_statistics, options_stmt_hostname_statistics_max,\
-    options_stmt_interface_interval, options_stmt_listen_on,\
-    options_multiple_stmt_listen_on, \
+    options_stmt_interface_interval, options_stmt_keep_response_order,\
+    options_stmt_listen_on, options_multiple_stmt_listen_on, \
     options_stmt_listen_on_v6, options_stmt_match_mapped_addresses,\
+    options_stmt_max_cache_ttl,\
     options_stmt_max_rsa_exponent_size, options_stmt_memstatistics,\
     options_stmt_memstatistics_file, options_stmt_multiple_cnames,\
     options_stmt_named_xfer, options_stmt_pid_file,\
@@ -262,6 +268,14 @@ deny-answer-addresses {
         assertParserResultDictTrue(options_stmt_directory,
                                    'directory \'/etc/bind/\';',
                                    {'directory': '/etc/bind/'})
+
+    def test_isc_options_stmt_dnstap_dscp_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_dscp,
+            'dscp 11;',
+            {'dscp': 11}
+        )
+
     def test_isc_options_stmt_dnstap_identity(self):
         assertParserResultDictTrue(
             options_stmt_dnstap_identity,
@@ -290,20 +304,108 @@ deny-answer-addresses {
             {'dnstap-version': 'none'}
         )
 
-    def test_isc_options_stmt_dnstap_dscp_passing(self):
-        assertParserResultDictTrue(
-            options_stmt_dscp,
-            'dscp 11;',
-            {'dscp': 11}
-        )
-
     def test_isc_options_stmt_dump_file_passing(self):
         assertParserResultDictTrue(options_stmt_dump_file, 'dump-file "/tmp/crapola";', {'dump_file': '/tmp/crapola'})
+
+    def test_isc_options_stmt_geoip_directory(self):
+        """ Clause options; Statement geoip-directory; passing mode """
+        assertParserResultDict(
+            options_stmt_geoip_directory,
+            'geoip-directory "/dev/null";',
+            {'geoip_directory': '/dev/null'},
+            True)
+
+    def test_isc_options_stmt_geoip_ut_directory(self):
+        """ Clause options; Statement geoip-directory unittest; passing mode """
+        test_data = [
+            'geoip-directory none;',
+            'geoip-directory "dir/file";',
+            'geoip-directory "/dir/file with spaces";',
+        ]
+        result = options_stmt_geoip_directory.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_options_stmt_http_listener_clients(self):
+        """ Clause options; Statement http-listener-clients passing mode """
+        assertParserResultDict(
+            options_stmt_http_listener_clients,
+            'http-listener-clients 5;',
+            {'http_listener_clients': 5},
+            True)
+
+    def test_isc_options_stmt_http_listener_clients_ut(self):
+        """ Clause options; Statement http-listener-clients unittest; passing mode """
+        test_data = [
+            'http-listener-clients 5;',
+            'http-listener-clients 0;',
+            'http-listener-clients 10000;',
+        ]
+        result = options_stmt_http_listener_clients.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_options_stmt_http_port(self):
+        """ Clause options; Statement http-port passing mode """
+        assertParserResultDict(
+            options_stmt_http_port,
+            'http-port 5;',
+            {'http_port': 5},
+            True)
+
+    def test_isc_options_stmt_http_streams_per_connection(self):
+        """ Clause options; Statement http-port passing mode """
+        assertParserResultDict(
+            options_stmt_http_streams_per_connection,
+            'http-streams-per-connection 5;',
+            {'http_streams_per_connection': 5},
+            True)
+
+    def test_isc_options_stmt_https_port(self):
+        """ Clause options; Statement https-port passing mode """
+        assertParserResultDict(
+            options_stmt_https_port,
+            'https-port 5;',
+            {'https_port': 5},
+            True)
 
     def test_isc_options_stmt_interface_interval_passing(self):
         assertParserResultDictTrue(options_stmt_interface_interval,
                                    'interface-interval 3600;',
                                    {'interface_interval': 3600})
+
+    def test_isc_options_stmt_keep_response_order_passing(self):
+        """ Clause options; Statement 'keep-response-order'; passing mode """
+        assertParserResultDictTrue(
+            options_stmt_keep_response_order,
+            'keep-response-order { 127.0.0.1; { localhost; localnets; }; !{ any; }; { none; }; };',
+            {'keep-response-order': {'aml': [{'ip4_addr': '127.0.0.1'},
+                                             {'aml': [{'keyword': 'localhost'},
+                                                      {'keyword': 'localnets'}]},
+                                             {'aml': [{'keyword': 'any'}],
+                                              'not': '!'},
+                                             {'aml': [{'keyword': 'none'}]}]}}
+        )
+
+    def test_isc_options_stmt_keep_response_order_2_passing(self):
+        """ Clause options; Statement 'keep-response-order'; passing mode """
+        assertParserResultDictTrue(
+            options_stmt_keep_response_order,
+            'keep-response-order { ! 127.0.0.1; };',
+            {'keep-response-order': {'aml': [{'ip4_addr': '127.0.0.1',
+                                              'not': '!'}]}}
+        )
+
+    def test_isc_options_stmt_listen_on_ut_passing(self):
+        test_data = [
+            'listen-on port 553 { 127.0.0.1; };',
+            'listen-on port 553 tls TLS_STRING { 127.0.0.1; };',
+            'listen-on port 553 http HTTP_STRING { 127.0.0.1; };',
+            'listen-on port 553 dscp 5 http HTTP_STRING { 127.0.0.1; };',
+            'listen-on port 553 tls TLS_STRING http HTTP_STRING { 127.0.0.1; };',
+            'listen-on port 553 dscp 6 tls TLS_STRING http HTTP_STRING { 127.0.0.1; };',
+            'listen-on port 553 dscp 4 { 127.0.0.1; };',
+        ]
+        result = options_stmt_listen_on.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
 
     def test_isc_options_stmt_listen_on1_passing(self):
         assertParserResultDictTrue(
@@ -354,6 +456,13 @@ deny-answer-addresses {
             options_stmt_match_mapped_addresses,
             'match-mapped-addresses yes;',
             {'match_mapped_addresses': 'yes'})
+
+    def test_isc_options_stmt_max_cache_ttl_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_max_cache_ttl,
+            'max-cache-ttl 1W1D7H;',
+            {'max_cache_ttl': '1W1D7H'}
+            )
 
     def test_isc_options_stmt_max_rsa_exponent_size_passing(self):
         assertParserResultDictTrue(

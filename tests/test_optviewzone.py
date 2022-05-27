@@ -39,6 +39,7 @@ from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_notify, \
     optviewzone_stmt_maintain_ixfr_base, \
     optviewzone_stmt_masterfile_format, \
+    optviewzone_stmt_masterfile_style, \
     optviewzone_stmt_max_journal_size, \
     optviewzone_stmt_max_refresh_time, \
     optviewzone_stmt_max_retry_time, \
@@ -582,14 +583,28 @@ class TestOptionsViewZone(unittest.TestCase):
         test_string = [
             'masterfile-format raw;',
             'masterfile-format text;',
-            'masterfile-format map;',
+            # 'masterfile-format map;',  # removed in v9.19
         ]
         result = optviewzone_stmt_masterfile_format.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
         assertParserResultDictTrue(
             optviewzone_stmt_masterfile_format,
-            'masterfile-format map;',
-            {'masterfile_format': 'map'}
+            'masterfile-format text;',
+            {'masterfile_format': 'text'}
+        )
+
+    def test_isc_optviewzone_stmt_masterfile_style_passing(self):
+        """ Clause options/view/zone; Statement masterfile-style; passing """
+        test_string = [
+            'masterfile-style full;',
+            'masterfile-style relative;',
+        ]
+        result = optviewzone_stmt_masterfile_style.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optviewzone_stmt_masterfile_style,
+            'masterfile-style full;',
+            {'masterfile_style': 'full'}
         )
 
     def test_isc_optviewzone_stmt_max_journal_size_passing(self):

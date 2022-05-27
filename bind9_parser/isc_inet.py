@@ -13,7 +13,7 @@ Description: Provides inet-related grammar in PyParsing engine
 from pyparsing import Word, nums, Combine, Group, \
     pyparsing_common, ZeroOrMore, Literal, Keyword,\
     ungroup, OneOrMore, Optional, Regex, Char, alphanums, hexnums
-from bind9_parser.isc_utils import semicolon, squote, dquote
+from bind9_parser.isc_utils import semicolon, squote, dquote, view_name
 
 
 # def ip4_subnet_range_check(strg, loc, toks):
@@ -52,6 +52,22 @@ inet_dscp_port_keyword_and_number_element = (
         )
     # No semicolon here
 )  # ('dscp_port')
+
+inet_http_port_keyword_and_number_element = (
+        Keyword('http').suppress()
+        + (
+            view_name('http_port')
+        )
+    # No semicolon here
+)  # ('http_port')
+
+inet_tls_port_keyword_and_number_element = (
+        Keyword('tls').suppress()
+        + (
+            view_name('tls_port')
+        )
+    # No semicolon here
+)  # ('tls_port')
 
 # ip_port = Word(nums).setParseAction(lambda toks: int(toks[0]), max=5)
 _ip_port = Regex(r'(6553[0-5]|'

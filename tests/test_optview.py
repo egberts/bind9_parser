@@ -52,10 +52,16 @@ from bind9_parser.isc_optview import \
     optview_stmt_empty_zones_enable, \
     optview_stmt_fetch_glue, \
     optview_stmt_fetch_quota_params, \
+    optview_stmt_fetches_per_zone, \
+    optview_stmt_fetches_per_server, \
     optview_stmt_files, \
     optview_stmt_heartbeat_interval, \
     optview_stmt_hostname, \
+    optview_stmt_ipv4only_contact,\
+    optview_stmt_ipv4only_enable,\
+    optview_stmt_ipv4only_server, \
     optview_stmt_lame_ttl, \
+    optview_stmt_lmdb_mapsize, \
     optview_stmt_managed_keys_directory, \
     optview_stmt_max_cache_size, \
     optview_stmt_max_cache_ttl, \
@@ -734,6 +740,44 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
                                     'moving_avg_recalculate_interval': 1}}
         )
 
+    def test_isc_optview_stmt_fetches_per_server_ut_passing(self):
+        """ Clause options/view; Statement 'fetches-per-server unittests'; passing """
+        test_string = [
+            'fetches-per-server 0;',
+            'fetches-per-server 10000;',
+            'fetches-per-server 15 drop;',
+            'fetches-per-server 15 fail;',
+        ]
+        result = optview_stmt_fetches_per_server.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optview_stmt_fetches_per_server_passing(self):
+        """ Clause options/view; Statement 'fetches-per-server'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_fetches_per_server,
+            'fetches-per-server 0 fail;',
+            {'action': 'fail', 'fetches_per_server': 0}
+        )
+
+    def test_isc_optview_stmt_fetches_per_zone_ut_passing(self):
+        """ Clause options/view; Statement 'fetches-per-zone unittests'; passing """
+        test_string = [
+            'fetches-per-zone 0;',
+            'fetches-per-zone 10000;',
+            'fetches-per-zone 15 drop;',
+            'fetches-per-zone 15 fail;',
+        ]
+        result = optview_stmt_fetches_per_zone.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optview_stmt_fetches_per_zone_passing(self):
+        """ Clause options/view; Statement 'fetches-per-zone'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_fetches_per_zone,
+            'fetches-per-zone 0 drop;',
+            {'action': 'drop', 'fetches_per_zone': 0}
+        )
+
     # XXXX optview_stmt_files
     def test_isc_optview_stmt_files_passing(self):
         """ Clause options/view; Statement files; passing """
@@ -793,6 +837,30 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             {'hostname': {'name': 'example.com'}}
         )
 
+    def test_isc_optview_stmt_ipv4only_contact_passing(self):
+        """ Clause options/view; Statement 'ipv4only-contact'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_ipv4only_contact,
+            'ipv4only-contact johndoe.example.test;',
+            {'ipv4only_contact': {'soa_rname': 'johndoe.example.test'}}
+        )
+
+    def test_isc_optview_stmt_ipv4only_enable_passing(self):
+        """ Clause options/view; Statement 'ipv4only-enable'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_ipv4only_enable,
+            'ipv4only-enable yes;',
+            {'ipv4only_enable': 'yes'}
+        )
+
+    def test_isc_optview_stmt_ipv4only_server_passing(self):
+        """ Clause options/view; Statement 'ipv4only-server'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_ipv4only_server,
+            'ipv4only-server johndoe.example.test;',
+            {'ipv4only_server': {'soa_rname': 'johndoe.example.test'}}
+        )
+
     def test_isc_optview_stmt_lame_ttl_passing(self):
         """ Clause options/view; Statement lame-ttl; passing """
         test_string = [
@@ -807,6 +875,25 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             optview_stmt_lame_ttl,
             'lame-ttl 32;',
             {'lame_ttl': 32}
+        )
+
+    def test_isc_optview_stmt_lmdb_mapsize_ut_passing(self):
+        """ Clause options/view; Statement 'lmdb-mapzie; passing """
+        test_string = [
+            'lmdb-mapsize 0;',  # disable caching
+            'lmdb-mapsize 128K;',  # default value
+            'lmdb-mapsize 15M;',  # maximum value
+            'lmdb-mapsize 999G;',  # maximum value
+        ]
+        result = optview_stmt_lmdb_mapsize.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optview_stmt_lmdb_mapsize_passing(self):
+        """ Clause options/view; Statement 'lmdb-mapzie; passing """
+        assertParserResultDictTrue(
+            optview_stmt_lmdb_mapsize,
+            'lmdb-mapsize 32K;',
+            {'lmdb_mapsize': {'amount': 32, 'unit': 'K'}}
         )
 
     def test_isc_optview_stmt_managed_keys_directory_passing(self):

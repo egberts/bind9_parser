@@ -17,10 +17,13 @@ from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
     isc_boolean, fqdn_name, key_id, krb5_principal_name,\
     exclamation, dequoted_path_name, squote, dquote, algorithm_name_list_series,\
     fqdn_name_dequoted, fqdn_name_dequotable, quotable_name, \
-    algorithm_name, size_spec_nodefault
+    algorithm_name, size_spec_nodefault, iso8601_duration
 from bind9_parser.isc_inet import ip_port,\
-    inet_dscp_port_keyword_and_number_element,\
-    inet_ip_port_keyword_and_number_element, dscp_port
+    inet_dscp_port_keyword_and_number_element, \
+    inet_http_port_keyword_and_number_element, \
+    inet_ip_port_keyword_and_number_element, \
+    inet_tls_port_keyword_and_number_element, \
+    dscp_port
 from bind9_parser.isc_domain import dequotable_domain_generic_fqdn
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 
@@ -344,6 +347,16 @@ options_stmt_flush_zones_on_shutdown = (
 )
 options_stmt_flush_zones_on_shutdown.setName('flush-zones-on-shutdown <boolean>;')
 
+options_stmt_geoip_directory = (
+    Keyword('geoip-directory').suppress()
+    - (
+        Keyword('none')
+        | dequoted_path_name('geoip_directory')
+    )
+    + semicolon
+)
+options_stmt_geoip_directory.setName('geoip-directory <quoted-filespec>;')
+
 # has-old-clients <boolean>; [ Opt ]    # v8.1 to v9.7.0
 options_stmt_has_old_clients = (
     Keyword('has-old-clients').suppress()
@@ -356,9 +369,37 @@ options_stmt_has_old_clients.setName('has-old-clients <boolean>;')
 options_stmt_hostname_statistics = (
     Keyword('hostname-statistics').suppress()
     - isc_boolean('hostname_statistics')
-    + semicolon
+    - semicolon
 )
 options_stmt_hostname_statistics.setName('hostname-statistics <boolean>;')
+
+# http-listener-clients <number>;
+options_stmt_http_listener_clients = (
+    Keyword('http-listener-clients').suppress()
+    - number_type('http_listener_clients')
+    - semicolon
+)
+
+# http-port <number>;
+options_stmt_http_port = (
+    Keyword('http-port').suppress()
+    - number_type('http_port')
+    - semicolon
+)
+
+# http-streams-per-connection <number>;
+options_stmt_http_streams_per_connection = (
+    Keyword('http-streams-per-connection').suppress()
+    - number_type('http_streams_per_connection')
+    - semicolon
+)
+
+# https-port <number>;
+options_stmt_https_port = (
+    Keyword('https-port').suppress()
+    - number_type('https_port')
+    - semicolon
+)
 
 # hostname-statistics-max <number>; [ Opt ]  #  v8.1+, still inert
 options_stmt_hostname_statistics_max = (
@@ -372,25 +413,41 @@ options_stmt_hostname_statistics_max.setName('hostname-statistics-max <boolean>;
 options_stmt_interface_interval = (
     Keyword('interface-interval').suppress()
     - number_type('interface_interval')
-    + semicolon
+    - semicolon
 )
 options_stmt_interface_interval.setName('interface-interval <integer>;')
+
+options_stmt_keep_response_order = (
+        Keyword('keep-response-order').suppress()
+        - Group(
+            aml_nesting('')
+        )('keep-response-order')
+)
+options_stmt_keep_response_order.setName('keep-response-order { <aml>; }')
 
 #   listen-on [ port ip_port ] { address_match_nosemicolon }; [Opt, lwres ]
 options_stmt_listen_on = (
         Keyword('listen-on').suppress()
-        + Group(
+        - Group(
             Optional(inet_ip_port_keyword_and_number_element)
+            + Optional(inet_dscp_port_keyword_and_number_element)
+            + Optional(inet_tls_port_keyword_and_number_element)
+            + Optional(inet_http_port_keyword_and_number_element)
             - aml_nesting
         )
 )('listen_on')
-options_stmt_listen_on.setName('listen-on [ <port> ] { <aml>; ... };')
+options_stmt_listen_on.setName(
+    'listen-on [ port <port> ] [ dscp <number> ]'
+    + '[ tls <string> ] [ http <string> ] { <aml>; ... };')
 
 #   listen-on-v6 [ port ip_port ] { address_match_nosemicolon }; [ Opt ]
 options_stmt_listen_on_v6 = (
         Keyword('listen-on-v6').suppress()
-        + Group(
+        - Group(
             Optional(inet_ip_port_keyword_and_number_element)
+            + Optional(inet_dscp_port_keyword_and_number_element)
+            + Optional(inet_tls_port_keyword_and_number_element)
+            + Optional(inet_http_port_keyword_and_number_element)
             - aml_nesting
         )
 )('listen_on_v6')
@@ -411,6 +468,15 @@ options_stmt_match_mapped_addresses = (
     + semicolon
 )
 options_stmt_match_mapped_addresses.setName('match-mapped-addresses <boolean>;')
+
+
+# max-cache-ttl <duration>; [ Opt ]
+options_stmt_max_cache_ttl = (
+    Keyword('max-cache-ttl').suppress()
+    - iso8601_duration('max_cache_ttl')
+    + semicolon
+)
+options_stmt_max_cache_ttl.setName('max-cache-ttl <duration>;')
 
 # max-rsa-exponent-size bits; [ Opt ]
 options_stmt_max_rsa_exponent_size = (
@@ -718,11 +784,21 @@ options_statements_set = (
     ^ options_stmt_dump_file
     ^ options_stmt_fake_iquery
     ^ options_stmt_flush_zones_on_shutdown
+    ^ options_stmt_geoip_directory
     ^ options_stmt_has_old_clients
+    ^ options_stmt_http_listener_clients
+    ^ options_stmt_http_port
+    ^ options_stmt_http_streams_per_connection
+    ^ options_stmt_https_port
     ^ options_stmt_hostname_statistics_max
     ^ options_stmt_hostname_statistics
     ^ options_stmt_interface_interval
+    ^ options_stmt_keep_response_order
+    ^ options_stmt_lock_file
+    ^ options_stmt_listen_on_v6
+    ^ options_stmt_listen_on
     ^ options_stmt_match_mapped_addresses
+    ^ options_stmt_max_cache_ttl
     ^ options_stmt_max_rsa_exponent_size
     ^ options_stmt_memstatistics_file
     ^ options_stmt_memstatistics
@@ -753,8 +829,6 @@ options_statements_set = (
     ^ options_stmt_transfers_out
     ^ options_stmt_transfers_per_ns
     ^ options_stmt_version
-    ^ options_stmt_listen_on_v6
-    ^ options_stmt_listen_on
     ^ options_stmt_tkey_dhkey
 )
 

@@ -477,27 +477,45 @@ byte_type = Word(nums, max=3)('byte').setParseAction(
 byte_type.setName('<byte>')
 
 # Breakout the letter notation (removed Combine())
+size_spec_plain = (
+    Group(
+        Word(nums).setParseAction(lambda toks: int(toks[0]), max=10)('amount')
+        + Optional(
+            (
+            Literal('K')
+            | Literal('k')
+            | Literal('M')
+            | Literal('m')
+            | Literal('G')
+            )('unit')
+        )
+    )('size_spec')
+).setName('<size-spec>')
+
 size_spec_nodefault = (
-        (
-            Word(nums).setParseAction(lambda toks: int(toks[0]), max=10)
-            + Optional(
-                Literal('K')
-                | Literal('k')
-                | Literal('M')
-                | Literal('m')
-                | Literal('G')
-                | Literal('g')
+    (
+            Group(
+                Word(nums).setParseAction(lambda toks: int(toks[0]), max=10)
+                + Optional(
+                    Literal('K')
+                    | Literal('k')
+                    | Literal('M')
+                    | Literal('m')
+                    | Literal('G')
+                    | Literal('g')
             )
         )
         | Literal('unlimited')
-)
+    )
+).setName('( <size-spec> | unlimited )')
 
 size_spec = (
-    (
-            size_spec_nodefault
+    Group(
+            ungroup(size_spec_nodefault)
             | Literal('default')
     )
 )('size')
+size_spec.setName('( <size-spec> | unlimited | default )')
 
 dlz_name_type = Word(alphanums + '_-.', max=63)('dlz_name')
 database_name_type = Word(alphanums + '_-.', max=63)('dlz_name')
