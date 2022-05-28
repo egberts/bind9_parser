@@ -72,6 +72,7 @@ from bind9_parser.isc_optview import \
     optview_stmt_max_zone_ttl, \
     optview_stmt_message_compression, \
     optview_stmt_minimal_responses, \
+    optview_stmt_notify_rate, \
     optview_stmt_preferred_glue, \
     optview_stmt_query_source_v6, \
     optview_stmt_query_source, \
@@ -1088,6 +1089,22 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             optview_stmt_minimal_responses,
             'minimal-responses no;',
             {'minimal_responses': 'no'}
+        )
+
+    #   optview-stmt-notify-rate <integer>  # [Opt, View]
+    def test_isc_optview_stmt_notify_rate_passing(self):
+        """ Clause options/view; Statement 'notify-rate'; passing """
+        test_string = [
+            'notify-rate 0;',  # minimum
+            'notify-rate 20;',  # default
+            'notify-rate 2100000000;', # maximum
+            ]
+        result = optview_stmt_notify_rate.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_notify_rate,
+            'notify-rate 20;',  # default
+            {'notify_rate': 20}
         )
 
     def test_isc_optview_stmt_preferred_glue_passing(self):

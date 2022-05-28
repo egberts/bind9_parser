@@ -734,6 +734,13 @@ optview_stmt_minimal_responses = (
     - semicolon
 ).setName('minimal-responses ( <boolean> | no-auth | no-auth-recursive );')
 
+# notify-rate 60;
+optview_stmt_notify_rate = (
+    Keyword('notify-rate').suppress()
+    - number_type('notify_rate')
+    + semicolon
+).setName('notify-rate <seconds>;')
+
 optview_stmt_preferred_glue = (
     Keyword('preferred-glue').suppress()
     - (
@@ -1347,6 +1354,7 @@ optview_statements_set = (
     ^ optview_stmt_min_retry_time
     ^ optview_stmt_minimal_any
     ^ optview_stmt_minimal_responses
+    ^ optview_stmt_notify_rate
     ^ optview_stmt_preferred_glue
     ^ optview_stmt_query_source_v6
     ^ optview_stmt_query_source

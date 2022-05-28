@@ -4059,7 +4059,7 @@ g_nc_keywords['notify'] = \
         'default': 'yes',
         'validity': {'regex': r'(yes|no|master\-only|explicit)'},
         # In 8.2 to 9.6.3?, yes/no   TODO: when did 'master-only' and 'explicit' got introduced to 'notify'?
-        'found-in': {'options', 'view', 'zone'},
+        'found-in': {'options', 'view'},  # 'zone' gone in v9.18
         # In 8.2, only found in ['zone']['type']['master']
         # In 8.2, only found in ['zone']['type']['slave']
         # In 8.2, only found in ['zone']['type']['stub']
@@ -4092,7 +4092,7 @@ g_nc_keywords['notify-delay'] = \
         'validity': {'range': {0, 1024}},
         'unit': 'second',
         'found-in': {'options', 'view', 'zone'},
-        'introduced': '9.5.0',
+        'introduced': '9.5.0',  # keyword appeared in v9.4
         'topic': 'tuning',
         'zone-type': {'master', 'slave', 'mirror', 'primary', 'secondary'},
         'comment': """The delay, in seconds, between sending sets of notify
@@ -4816,7 +4816,7 @@ g_nc_keywords['resolver-query-timeout'] = \
             Setting it to 0 will result in the default being used.""",
     }
 
-g_nc_keywords['resolver-retries-interval'] = \
+g_nc_keywords['resolver-retry-interval'] = \
     {
         'default': '800',
         'validity': 'integer',

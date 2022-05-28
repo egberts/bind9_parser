@@ -36,11 +36,11 @@ from bind9_parser.isc_options import \
     options_stmt_max_cache_ttl, options_stmt_max_clients_per_query,\
     options_stmt_max_rsa_exponent_size, options_stmt_memstatistics,\
     options_stmt_memstatistics_file, options_stmt_multiple_cnames,\
-    options_stmt_named_xfer, options_stmt_pid_file,\
+    options_stmt_named_xfer, options_stmt_nocookie_udp_size, options_stmt_pid_file,\
     options_stmt_port, options_stmt_prefetch,\
     options_stmt_querylog, options_stmt_random_device,\
     options_stmt_recursing_file, options_stmt_recursive_clients,\
-    options_stmt_resolver_query_timeout, options_stmt_secroots_file,\
+    options_stmt_resolver_query_timeout, options_stmt_reuseport, options_stmt_secroots_file,\
     options_stmt_serial_query_rate, options_stmt_server_id_name,\
     options_stmt_server_id, options_stmt_session_keyalg,\
     options_stmt_session_keyname, options_stmt_session_keyfile,\
@@ -74,6 +74,7 @@ class TestOptions(unittest.TestCase):
             [ 'memstatistics', options_stmt_memstatistics, ],
             [ 'multiple-cnames', options_stmt_multiple_cnames, ],
             [ 'querylog', options_stmt_querylog, ],
+            [ 'reuseport', options_stmt_reuseport, ],
         ]
         unit_test_booleans(self, test_syntax_boolean)
 
@@ -483,11 +484,18 @@ deny-answer-addresses {
             'memstatistics-file "/tmp/junk-stat.dat";',
             {'memstatistics_file': '/tmp/junk-stat.dat'})
 
+    def test_isc_options_stmt_nocookie_udp_size_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_nocookie_udp_size,
+            'nocookie-udp-size 2048;',
+            {'nocookie_udp_size': 2048})
+
     def test_isc_options_stmt_pid_file_passing(self):
         assertParserResultDictTrue(
             options_stmt_pid_file,
             'pid-file "/tmp/junk-pid.dat";',
-            {'pid_file_path_name': '/tmp/junk-pid.dat'})
+            {'pid_file': '/tmp/junk-pid.dat'}
+        )
 
     def test_isc_options_stmt_port_passing(self):
         assertParserResultDictTrue(
@@ -505,13 +513,14 @@ deny-answer-addresses {
         assertParserResultDictTrue(
             options_stmt_random_device,
             'random-device "/dev/null";',
-            {'random_device_path_name': '/dev/null'})
+            {'random_device': '/dev/null'}
+        )
 
     def test_isc_options_stmt_recursing_file_passing(self):
         assertParserResultDictTrue(
             options_stmt_recursing_file,
             'recursing-file "/tmp/recursing-file.dat";',
-            {'recursing_file_path_name': '/tmp/recursing-file.dat'})
+            {'recursing_file': '/tmp/recursing-file.dat'})
 
     def test_isc_options_stmt_recursive_clients_passing(self):
         assertParserResultDictTrue(
@@ -524,6 +533,12 @@ deny-answer-addresses {
             options_stmt_resolver_query_timeout,
             'resolver-query-timeout 3608;',
             {'resolver_query_timeout': 3608})
+
+    def test_isc_options_stmt_reuseport_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_reuseport,
+            'reuseport 60;',
+            {'reuseport': 60})
 
     def test_isc_options_stmt_serial_query_rate_passing(self):
         assertParserResultDictTrue(

@@ -525,13 +525,25 @@ options_stmt_named_xfer = (
 )
 options_stmt_named_xfer.setName('named-xfer <quoted-filespec>;')
 
+# nocookie-udp-size <number>; [ Opt ]
+options_stmt_nocookie_udp_size = (
+    Keyword('nocookie-udp-size').suppress()
+    - number_type('nocookie_udp_size')
+    + semicolon
+)
+options_stmt_nocookie_udp_size.setName('nocookie-udp-size <number>;')
+
+
 # pid-file "path_to_file"; [ Opt ]  # v8.1+
 options_stmt_pid_file = (
     Keyword('pid-file').suppress()
-    - dequoted_path_name('pid_file_path_name')
+    - Optional(
+        Literal('none')
+        | dequoted_path_name('pid_file')
+    )
     + semicolon
 )
-options_stmt_pid_file.setName('pid-file <quoted-filespec>;')
+options_stmt_pid_file.setName('pid-file ( <quoted-filespec> | none );')
 
 options_stmt_port = inet_ip_port_keyword_and_number_element + semicolon
 
@@ -559,7 +571,10 @@ options_stmt_querylog.setName('querylog <boolean>;')
 #   random-device "device_name" ; [ Opt ]
 options_stmt_random_device = (
     Keyword('random-device').suppress()
-    - dequoted_path_name('random_device_path_name')
+    - (
+            Literal('none')
+            | dequoted_path_name('random_device')
+    )
     + semicolon
 )
 options_stmt_random_device.setName('random-device <quoted-filespec>;')
@@ -567,7 +582,10 @@ options_stmt_random_device.setName('random-device <quoted-filespec>;')
 #   recursing-file "path_to_file"; [ Opt ]  # v9.5.0+
 options_stmt_recursing_file = (
     Keyword('recursing-file').suppress()
-    - dequoted_path_name('recursing_file_path_name')
+    - (
+            Literal('none')
+            | dequoted_path_name('recursing_file')
+    )
     + semicolon
 )
 options_stmt_recursing_file.setName('recursing-file <quoted-filespec>;')
@@ -579,6 +597,22 @@ options_stmt_recursive_clients = (
     + semicolon
 )
 options_stmt_recursive_clients.setName('recursive-clients <integer>;')
+
+#   reuseport <boolean>; [ Opt ]
+options_stmt_reuseport = (
+    Keyword('reuseport').suppress()
+    - isc_boolean('reuseport')
+    + semicolon
+)
+options_stmt_recursive_clients.setName('recursive-clients <integer>;')
+
+#   reserved-sockets <number>; [ Opt ]
+options_stmt_reserved_sockets = (
+    Keyword('reserved-sockets').suppress()
+    - number_type('reserved_sockets')
+    + semicolon
+)
+options_stmt_reserved_sockets.setName('reserved-sockets  <integer>;')
 
 #   resolver-query-timeout seconds ; [ Opt ]
 options_stmt_resolver_query_timeout = (
@@ -812,6 +846,7 @@ options_statements_set = (
     ^ options_stmt_memstatistics
     ^ options_stmt_multiple_cnames
     ^ options_stmt_named_xfer
+    ^ options_stmt_nocookie_udp_size
     ^ options_stmt_pid_file
     ^ options_stmt_port
     ^ options_stmt_prefetch
@@ -819,7 +854,9 @@ options_statements_set = (
     ^ options_stmt_random_device
     ^ options_stmt_recursing_file
     ^ options_stmt_recursive_clients
+    ^ options_stmt_reserved_sockets
     ^ options_stmt_resolver_query_timeout
+    ^ options_stmt_reuseport
     ^ options_stmt_secroots_file
     ^ options_stmt_serial_query_rate
     ^ options_stmt_server_id

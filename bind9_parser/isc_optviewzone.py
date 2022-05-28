@@ -376,15 +376,23 @@ optviewzone_stmt_multi_master = (
     + semicolon
 )
 
-#   notify ( yes | no | explicit | master-only ); [ Opt, View, Zone ]
-#  'master-only' is a seen in 9.9.7, not in 9.0
+# notify ( explicit | master-only | primary-only | <boolean> );
 optviewzone_stmt_notify = (
     Keyword('notify').suppress()
-    + (
-            isc_boolean
-            | Literal('explicit')
-            | Literal('master-only')
+    - Group(
+        isc_boolean('notify')
+        | Keyword('explicit')
+        | Keyword('primary-only')
+        | Keyword('master-only')
     )('notify')
+    + semicolon
+)
+optviewzone_stmt_notify.setName('notify ( <boolean> | explicit | primary-only );')
+
+#   notify-delay 0; [ Opt, View, Zone ]
+optviewzone_stmt_notify_delay = (
+    Keyword('notify-delay').suppress()
+    - seconds_type('notify_delay')
     + semicolon
 )
 
@@ -527,9 +535,10 @@ optviewzone_statements_set = (
         ^ optviewzone_stmt_min_refresh_time
         ^ optviewzone_stmt_min_retry_time
         ^ optviewzone_stmt_multi_master
+        ^ optviewzone_stmt_notify  # gone from 'zone' in v9.18
+        ^ optviewzone_stmt_notify_delay
         ^ optviewzone_stmt_notify_source_v6
         ^ optviewzone_stmt_notify_source
-        ^ optviewzone_stmt_notify
         ^ optviewzone_stmt_provide_ixfr
         ^ optviewzone_stmt_request_ixfr
         ^ optviewzone_stmt_request_nsid

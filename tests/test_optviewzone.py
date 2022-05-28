@@ -34,9 +34,6 @@ from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_ixfr_tmp_file, \
     optviewzone_stmt_key_directory, \
     optviewzone_stmt_dnssec_loadkeys_interval, \
-    optviewzone_stmt_notify_source_v6, \
-    optviewzone_stmt_notify_source, \
-    optviewzone_stmt_notify, \
     optviewzone_stmt_maintain_ixfr_base, \
     optviewzone_stmt_masterfile_format, \
     optviewzone_stmt_masterfile_style, \
@@ -52,6 +49,10 @@ from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_min_refresh_time, \
     optviewzone_stmt_min_retry_time, \
     optviewzone_stmt_multi_master, \
+    optviewzone_stmt_notify_delay,\
+    optviewzone_stmt_notify_source_v6, \
+    optviewzone_stmt_notify_source, \
+    optviewzone_stmt_notify, \
     optviewzone_stmt_provide_ixfr, \
     optviewzone_stmt_request_ixfr, \
     optviewzone_stmt_request_nsid, \
@@ -347,6 +348,19 @@ class TestOptionsViewZone(unittest.TestCase):
             {'dnssec_dnskey_kskonly': 'yes'}
         )
 
+    def test_isc_optviewzone_stmt_dnssec_loadkeys_interval_passing(self):
+        """ Clause options/view/zone; Statement dnssec-loadkeys-interval; passing """
+        test_string = [
+            'dnssec-loadkeys-interval 3600;'
+        ]
+        result = optviewzone_stmt_dnssec_loadkeys_interval.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optviewzone_stmt_dnssec_loadkeys_interval,
+            'dnssec-loadkeys-interval 3600;',
+            {'dnssec_loadkeys_interval': 3600}
+        )
+
     def test_isc_optviewzone_stmt_dnssec_policy(self):
         """ Clause options/view/zone; Statement 'dnssec-policy'; passing """
         assertParserResultDictTrue(
@@ -483,90 +497,6 @@ class TestOptionsViewZone(unittest.TestCase):
             {'key_directory': '/tmp/keydir/'}
         )
 
-    def test_isc_optviewzone_stmt_dnssec_loadkeys_interval_passing(self):
-        """ Clause options/view/zone; Statement dnssec-loadkeys-interval; passing """
-        test_string = [
-            'dnssec-loadkeys-interval 3600;'
-        ]
-        result = optviewzone_stmt_dnssec_loadkeys_interval.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-        assertParserResultDictTrue(
-            optviewzone_stmt_dnssec_loadkeys_interval,
-            'dnssec-loadkeys-interval 3600;',
-            {'dnssec_loadkeys_interval': 3600}
-        )
-
-    def test_isc_optviewzone_stmt_notify_source_v6_passing(self):
-        """ Clause options/view/zone; Statement notify-source-v6; passing """
-        test_string = [
-            'notify-source-v6 *;',
-            'notify-source-v6 * port 53;',
-            'notify-source-v6 * port *;',
-            'notify-source-v6 * port 153 dscp 1;',
-            'notify-source-v6 * port * dscp 1;',
-            'notify-source-v6 * dscp 1;',
-            'notify-source-v6 fe11::1;',
-            'notify-source-v6 fe11::1 port *;',
-            'notify-source-v6 fe11::1 port 253;',
-            'notify-source-v6 fe11::1 port * dscp 2;',
-            'notify-source-v6 fe11::1 port 353 dscp 2;',
-            'notify-source-v6 fe11::1 dscp 3;',
-        ]
-        result = optviewzone_stmt_notify_source_v6.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-        assertParserResultDictTrue(
-            optviewzone_stmt_notify_source_v6,
-            'notify-source-v6 fe11::123 port * dscp 5;',
-            {'notify_source_v6': {'ip6_addr': 'fe11::123',
-                                  'dscp_port': 5,
-                                  'ip_port_w': '*'}}
-        )
-
-    def test_isc_optviewzone_stmt_notify_source_passing(self):
-        """ Clause options/view/zone; Statement notify-source; passing """
-        test_string = [
-            'notify-source *;',
-            'notify-source * port 53;',
-            'notify-source * port *;',
-            'notify-source * port 153 dscp 1;',
-            'notify-source * port * dscp 1;',
-            'notify-source * dscp 1;',
-            'notify-source 1.1.1.1;',
-            'notify-source 2.2.2.2 port *;',
-            'notify-source 3.3.3.3 port 253;',
-            'notify-source 4.4.4.4 port * dscp 2;',
-            'notify-source 5.5.5.5 port 353 dscp 2;',
-            'notify-source 6.6.6.6 dscp 3;',
-        ]
-        result = optviewzone_stmt_notify_source.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-
-    def test_isc_optviewzone_stmt_notify_source_2_passing(self):
-        """ Clause options/view/zone; Statement notify-source 2; passing """
-        assertParserResultDictTrue(
-            optviewzone_stmt_notify_source,
-            'notify-source * port 153 dscp 1;',
-            {'notify_source': {'dscp_port': 1,
-                               'ip4_addr-w': '*',
-                               'ip4_port_w': '153'}}
-        )
-
-    def test_isc_optviewzone_stmt_notify_passing(self):
-        """ Clause options/view/zone; Statement notify; passing """
-        test_string = [
-            'notify explicit;',
-            'notify master-only;',
-            'notify yes;',
-            'notify no;',
-        ]
-        result = optviewzone_stmt_notify.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-        assertParserResultDictTrue(
-            optviewzone_stmt_notify,
-            'notify master-only;',
-            {'notify': 'master-only'}
-        )
-
     def test_isc_optviewzone_stmt_maintain_ixfr_base_passing(self):
         """ Clause options/view/zone; Statement maintain-ixfr-base; passing """
         test_string = [
@@ -609,8 +539,8 @@ class TestOptionsViewZone(unittest.TestCase):
             {'masterfile_style': 'full'}
         )
 
-    def test_isc_optviewzone_stmt_max_ixfr_ratio_passing(self):
-        """ Clause options/view/zone; Statement 'max-ixfr-ratio'; passing """
+    def test_isc_optviewzone_stmt_max_ixfr_ratio_ut_passing(self):
+        """ Clause options/view/zone; Statement 'max-ixfr-ratio' unittest; passing """
         test_string = [
             'max-ixfr-ratio 0%;',
             'max-ixfr-ratio 80%;',
@@ -619,10 +549,13 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_max_ixfr_ratio.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_max_ixfr_ratio_passing(self):
+        """ Clause options/view/zone; Statement 'max-ixfr-ratio'; passing """
         assertParserResultDictTrue(
             optviewzone_stmt_max_ixfr_ratio,
             'max-ixfr-ratio 1000%;',
-            {'max_ixfr_ratio': [3, 'M']}
+            {'max-ixfr-ratio': 1000}
         )
 
     def test_isc_optviewzone_stmt_max_journal_size_passing(self):
@@ -769,6 +702,103 @@ class TestOptionsViewZone(unittest.TestCase):
             optviewzone_stmt_multi_master,
             'multi-master no;',
             {'multi_master': 'no'}
+        )
+
+    def test_isc_optviewzone_stmt_notify(self):
+        test_data = [
+            'notify explicit;',
+            'notify primary-only;',
+            'notify master-only;',
+            'notify yes;',
+            'notify no;',
+        ]
+        result = optviewzone_stmt_notify.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_notify_source_v6_passing(self):
+        """ Clause options/view/zone; Statement notify-source-v6; passing """
+        test_string = [
+            'notify-source-v6 *;',
+            'notify-source-v6 * port 53;',
+            'notify-source-v6 * port *;',
+            'notify-source-v6 * port 153 dscp 1;',
+            'notify-source-v6 * port * dscp 1;',
+            'notify-source-v6 * dscp 1;',
+            'notify-source-v6 fe11::1;',
+            'notify-source-v6 fe11::1 port *;',
+            'notify-source-v6 fe11::1 port 253;',
+            'notify-source-v6 fe11::1 port * dscp 2;',
+            'notify-source-v6 fe11::1 port 353 dscp 2;',
+            'notify-source-v6 fe11::1 dscp 3;',
+        ]
+        result = optviewzone_stmt_notify_source_v6.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optviewzone_stmt_notify_source_v6,
+            'notify-source-v6 fe11::123 port * dscp 5;',
+            {'notify_source_v6': {'ip6_addr': 'fe11::123',
+                                  'dscp_port': 5,
+                                  'ip_port_w': '*'}}
+        )
+
+    def test_isc_optviewzone_stmt_notify_source_passing(self):
+        """ Clause options/view/zone; Statement notify-source; passing """
+        test_string = [
+            'notify-source *;',
+            'notify-source * port 53;',
+            'notify-source * port *;',
+            'notify-source * port 153 dscp 1;',
+            'notify-source * port * dscp 1;',
+            'notify-source * dscp 1;',
+            'notify-source 1.1.1.1;',
+            'notify-source 2.2.2.2 port *;',
+            'notify-source 3.3.3.3 port 253;',
+            'notify-source 4.4.4.4 port * dscp 2;',
+            'notify-source 5.5.5.5 port 353 dscp 2;',
+            'notify-source 6.6.6.6 dscp 3;',
+        ]
+        result = optviewzone_stmt_notify_source.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_notify_source_2_passing(self):
+        """ Clause options/view/zone; Statement notify-source 2; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_notify_source,
+            'notify-source * port 153 dscp 1;',
+            {'notify_source': {'dscp_port': 1,
+                               'ip4_addr-w': '*',
+                               'ip4_port_w': '153'}}
+        )
+
+    def test_isc_optviewzone_stmt_notify_passing(self):
+        """ Clause options/view/zone; Statement notify; passing """
+        test_string = [
+            'notify explicit;',
+            'notify master-only;',
+            'notify yes;',
+            'notify no;',
+        ]
+        result = optviewzone_stmt_notify.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optviewzone_stmt_notify,
+            'notify master-only;',
+            {'notify': 'master-only'}
+        )
+
+    def test_isc_optviewzone_stmt_notify_delay_passing(self):
+        """ Clause options/view/zone; Statement 'notify-delay'; passing """
+        test_string = [
+            'notify-delay 0;',  # minimum
+            'notify-delay 60;',  # default
+            'notify-delay 1024;'  # maximum
+        ]
+        result = optviewzone_stmt_notify_delay.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optviewzone_stmt_notify_delay,
+            'notify-delay 60;',  # default
+            {'notify_delay': 60}
         )
 
     #     optviewzone_stmt_provide_ixfr, \
