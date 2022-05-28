@@ -21,13 +21,13 @@ from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     algorithm_name_list_series, charset_filename_base, size_spec_nodefault, size_spec_plain
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip6s_prefix, \
-    ip6_optional_prefix, \
+    ip6_optional_prefix, ip4_addr_or_wildcard, ip6_addr_or_wildcard, \
     inet_ip_port_keyword_and_number_element, \
-    inet_ip_port_keyword_and_wildcard_element
+    inet_ip_port_keyword_and_wildcard_element, dscp_port
 from bind9_parser.isc_utils import dequotable_zone_name
 from bind9_parser.isc_domain import quoted_domain_generic_fqdn, \
     domain_generic_fqdn, rr_fqdn_w_absolute, rr_domain_name_type, quotable_domain_generic_fqdn, \
-    soa_rname
+    soa_rname, dequotable_domain_generic_fqdn, dequoted_domain_generic_fqdn
 
 optview_stmt_acache_cleaning_interval = (
     Keyword('acache-cleaning-interval').suppress()
@@ -92,16 +92,16 @@ optview_stmt_allow_recursion_on = (
 optview_attach_cache_name = name_type  # TODO: Identify when it got obsoleted???
 optview_attach_cache_name.setName('<cache_name>')
 optview_stmt_attach_cache = (
-        Keyword('attach-cache').suppress()
-        - view_name('attach_cache')
-        + semicolon
+    Keyword('attach-cache').suppress()
+    - view_name('attach_cache')
+    + semicolon
 ).setName('attach-cache <view_name>;')
 
 # [auth-nxdomain yes | no;]
 optview_stmt_auth_nxdomain = (
-        Keyword('auth-nxdomain').suppress()
-        - isc_boolean('auth_nxdomain')
-        + semicolon
+    Keyword('auth-nxdomain').suppress()
+    - isc_boolean('auth_nxdomain')
+    + semicolon
 ).setName('auth-nxdomain <boolean>;')
 
 #  cache-file <path_name>  # [ Opt View ]
@@ -113,27 +113,27 @@ optview_stmt_cache_file = (
 ).setName('cache-file <quoted-path_name>;')
 
 optview_stmt_check_dup_records = (
-        Keyword('check-dup-records').suppress()
-        - check_options('check_dup_records')
-        + semicolon
+    Keyword('check-dup-records').suppress()
+    - check_options('check_dup_records')
+    + semicolon
 ).setName('check-dup-records <options>;')  # [ Opt View Zone ] v9.5+
 
 optview_stmt_check_integrity = (
-        Keyword('check-integrity').suppress()
-        - isc_boolean('check_integrity')
-        + semicolon
+    Keyword('check-integrity').suppress()
+    - isc_boolean('check_integrity')
+    + semicolon
 ).setName('check-integrity <boolean>;')  # [ Opt View Zone ] v9.4+
 
 optview_stmt_check_mx = (
-        Keyword('check-mx').suppress()
-        - check_options('check_mx')
-        + semicolon
+    Keyword('check-mx').suppress()
+    - check_options('check_mx')
+    + semicolon
 ).setName('check-mx <options>;')  # [ Opt View Zone ] v9.4+
 
 optview_stmt_check_mx_cname = (
-        Keyword('check-mx-cname').suppress()
-        - check_options('check_mx_cname')
-        + semicolon
+    Keyword('check-mx-cname').suppress()
+    - check_options('check_mx_cname')
+    + semicolon
 ).setName('check-mx-cname <options>;')  # [ Opt View Zone ] v9.4+
 
 #  check-names (master |slave| response) (warn|fail|ignore) ; [ Opt View (Zone) ]
@@ -150,50 +150,50 @@ optview_stmt_check_names = (
             | Literal('response')('')
         )('zone_type')
         + check_options('result_status')
-)('')
+    )('')
     + semicolon
 )('check_names')
 optview_stmt_check_names.setName('check-names [ primary | secondary | response | master | slave ] <options>;')
 
 optview_stmt_check_spf = (
-        Keyword('check-spf').suppress()
-        - check_options('check_spf')
-        - semicolon
+    Keyword('check-spf').suppress()
+    - check_options('check_spf')
+    - semicolon
 ).setName('check-spf <options>;')  # [ Opt View Zone ] v9.4+
 
 optview_stmt_check_srv_cname = (
-        Keyword('check-srv-cname').suppress()
-        - check_options('check_srv_cname')
-        + semicolon
+    Keyword('check-srv-cname').suppress()
+    - check_options('check_srv_cname')
+    + semicolon
 ).setName('check-srv-cname <options>;')  # [ Opt View Zone ] v9.4+
 
 optview_stmt_check_wildcard = (
-        Keyword('check-wildcard').suppress()
-        - isc_boolean('check_wildcard')
-        + semicolon
+    Keyword('check-wildcard').suppress()
+    - isc_boolean('check_wildcard')
+    + semicolon
 ).setName('check-wildcard <options>;')  # [ Opt View Zone ] v9.4+
 
 #  cleaning-interval minutes;
 optview_stmt_cleaning_interval = (
-        Keyword('cleaning-interval').suppress()
-        - minute_type('cleaning_interval')
-        + semicolon
+    Keyword('cleaning-interval').suppress()
+    - minute_type('cleaning_interval')
+    + semicolon
 ).setName('cleaning-interval <minutes>')
 
 #  deny-answer-addresses
 optview_stmt_deny_answer_addresses = (
-        Keyword('deny-answer-addresses').suppress()
-        - Group(
-            aml_nesting('')
-        )('deny_answer_addresses')
+    Keyword('deny-answer-addresses').suppress()
+    - Group(
+        aml_nesting('')
+    )('deny_answer_addresses')
 ).setName('deny-answer-addresses <aml>;')
 
 #  deny-answer aliases
 optview_stmt_deny_answer_aliases = (
-        Keyword('deny-answer-aliases').suppress()
-        - Group(
-            aml_nesting('')
-        )('deny_answer_aliases')
+    Keyword('deny-answer-aliases').suppress()
+    - Group(
+        aml_nesting('')
+    )('deny_answer_aliases')
 ).setName('deny-answer-aliases <aml>;')
 
 #   disable-algorithms domain { algorithm ; ... }; [ Opt/View ]
@@ -242,38 +242,39 @@ optview_stmt_disable_empty_zone.setName('disable-empty-zone <quotable-zone-name>
 
 # dns64 {} ###############################################################
 optview_dns64_group_element_break_dnssec = (
-        Keyword('break-dnssec')
-        - isc_boolean('break_dnssec')
-        + semicolon
+    Keyword('break-dnssec')
+    - isc_boolean('break_dnssec')
+    + semicolon
 ).setName('break-dnssec <boolean>;')
 
 optview_dns64_group_element_clients = (
-        Keyword('clients')
-        - aml_nesting('clients')  # already includes terminating semicolon
+    Keyword('clients')
+    - aml_nesting('clients')  # already includes terminating semicolon
 )
 optview_dns64_group_element_clients.setName('clients <aml>;')
 
 optview_dns64_group_element_exclude = (
-        Keyword('exclude')
-        - aml_nesting('exclude')  # already includes terminating semicolon
+    Keyword('exclude')
+    - aml_nesting('exclude')  # already includes terminating semicolon
 )
 optview_dns64_group_element_exclude.setName('exclude <aml>;')
 
 optview_dns64_group_element_mapped = (
-        Keyword('mapped')
-        - aml_nesting('mapped')  # already includes terminating semicolon
+    Keyword('mapped')
+    - aml_nesting('mapped')  # already includes terminating semicolon
 )
 optview_dns64_group_element_exclude.setName('mapped <aml>;')
 
 optview_dns64_group_element_recursive_only = (
-        Keyword('recursive-only')
-        - isc_boolean('recursive_only')
-        + semicolon
+    Keyword('recursive-only')
+    - isc_boolean('recursive_only')
+    + semicolon
 ).setName('recursive-only <boolean>')
+
 optview_dns64_group_element_suffix = (
-        Keyword('suffix')
-        - ip6_addr('suffix')
-        + semicolon
+    Keyword('suffix')
+    - ip6_addr('suffix')
+    + semicolon
 ).setName('suffix <ip6-addr>')
 
 optview_dns64_group_set = (
@@ -316,35 +317,35 @@ optview_stmt_dns64_contact = (
 optview_stmt_dns64_contact.setName('dns64-contact <soa_rname>;')
 
 optview_stmt_dns64_server = (
-        Keyword('dns64-server').suppress()
-        - Group(
-            soa_rname('soa_rname')
-        )('dns64_server')
-        + semicolon
+    Keyword('dns64-server').suppress()
+    - Group(
+        soa_rname('soa_rname')
+    )('dns64_server')
+    + semicolon
 )
 optview_stmt_dns64_server.setName('dns64-server <soa_rname>;')
 
 # dnsrps-enable <boolean>; [ Opt View  ]  # v9.3.0+
 optview_stmt_dnsrps_enable = (
-        Keyword('dnsrps-enable').suppress()
-        - isc_boolean('dnsrps_enable')
-        + semicolon
+    Keyword('dnsrps-enable').suppress()
+    - isc_boolean('dnsrps_enable')
+    + semicolon
 ).setName('dnsrps-enable <boolean>;')
 
 dnsrps_option_charset = charset_filename_base + ' '  # add whatever char you need here, but not '{};'
 optview_stmt_dnsrps_options = (
-        Keyword('dnsrps-options').suppress()
-        - lbrack
-        - Optional(
-            Literal('"').suppress() | Literal("'").suppress()
-        )
-        - Word(dnsrps_option_charset, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
-        - Optional(
-            Literal('"').suppress() | Literal("'").suppress()
-        )
-        - Optional(semicolon)
-        - rbrack
-        - semicolon
+    Keyword('dnsrps-options').suppress()
+    - lbrack
+    - Optional(
+        Literal('"').suppress() | Literal("'").suppress()
+    )
+    - Word(dnsrps_option_charset, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
+    - Optional(
+        Literal('"').suppress() | Literal("'").suppress()
+    )
+    - Optional(semicolon)
+    - rbrack
+    - semicolon
 )('dnsrps_options')
 
 #  dnssec-accept-expired <boolean>; [ Opt View ]  # v9.4.0+
@@ -356,9 +357,9 @@ optview_stmt_dnssec_accept_expired = (
 
 # dnssec-enable <boolean>; [ Opt View  ]  # v9.3.0+
 optview_stmt_dnssec_enable = (
-        Keyword('dnssec-enable').suppress()
-        - isc_boolean('dnssec_enable')
-        + semicolon
+    Keyword('dnssec-enable').suppress()
+    - isc_boolean('dnssec_enable')
+    + semicolon
 ).setName('dnssec-enable <boolean>;')
 
 # Obsoleted first noted at 9.15.0, must be before...
@@ -492,9 +493,9 @@ optview_stmt_empty_server = (
 optview_stmt_empty_server.setName('empty-server <soa_rname>;')
 
 optview_stmt_empty_zones_enable = (
-        Keyword('empty-zones-enable').suppress()
-        - isc_boolean('empty_zones_enable')
-        + semicolon
+    Keyword('empty-zones-enable').suppress()
+    - isc_boolean('empty_zones_enable')
+    + semicolon
 )
 optview_stmt_empty_zones_enable.setName('empty-zones-enable <boolean>;')
 
@@ -553,9 +554,9 @@ optview_stmt_files = (
 optview_stmt_files.setName('files [ unlimited | default | <integer> ];')
 
 optview_stmt_heartbeat_interval = (
-        Keyword('heartbeat-interval').suppress()
-        - minute_type('heartbeat_interval')
-        + semicolon
+    Keyword('heartbeat-interval').suppress()
+    - minute_type('heartbeat_interval')
+    + semicolon
 ).setName('heartbeat-interval <minutes>;')
 
 #  hostname ( none | quoted_fqdn );  # [ Opt View ]
@@ -580,17 +581,17 @@ optview_stmt_ipv4only_contact.setName('ipv4only-contact <soa_rname>;')
 
 # dnsrps-enable <boolean>; [ Opt View  ]  # v9.3.0+
 optview_stmt_ipv4only_enable = (
-        Keyword('ipv4only-enable').suppress()
-        - isc_boolean('ipv4only_enable')
-        + semicolon
+    Keyword('ipv4only-enable').suppress()
+    - isc_boolean('ipv4only_enable')
+    + semicolon
 ).setName('ipv4only-enable <boolean>;')
 
 optview_stmt_ipv4only_server = (
-        Keyword('ipv4only-server').suppress()
-        - Group(
-            soa_rname('soa_rname')
-        )('ipv4only_server')
-        - semicolon
+    Keyword('ipv4only-server').suppress()
+    - Group(
+        soa_rname('soa_rname')
+    )('ipv4only_server')
+    - semicolon
 )
 optview_stmt_ipv4only_server.setName('ipv4only-server <soa_rname>;')
 
@@ -675,9 +676,9 @@ optview_stmt_max_zone_ttl.setName('max-zone-ttl [ unlimited | default | <integer
 
 # message-compression no;
 optview_stmt_message_compression = (
-        Keyword('message-compression').suppress()
-        - isc_boolean('message_compression')
-        + semicolon
+    Keyword('message-compression').suppress()
+    - isc_boolean('message_compression')
+    + semicolon
 )
 optview_stmt_message_compression.setName('message-compression  <boolean>;')
 
@@ -741,6 +742,61 @@ optview_stmt_notify_rate = (
     + semicolon
 ).setName('notify-rate <seconds>;')
 
+# nsec3-test-zone no;
+optview_stmt_nsec3_test_zone = (
+    Keyword('nsec3-test-zone').suppress()
+    - isc_boolean('nsec3_test_zone')
+    + semicolon
+).setName('nsec3_test_zone <boolean>')
+
+# nta-lifetime 60m;
+optview_stmt_nta_lifetime = (
+    Keyword('nta-lifetime').suppress()
+    - iso8601_duration('nta_lifetime')
+    - semicolon
+).setName('nta-lifetime <iso8601_duration>;')
+
+# nta-recheck 24h;
+optview_stmt_nta_recheck = (
+    Keyword('nta-recheck').suppress()
+    - iso8601_duration('nta_recheck')
+    - semicolon
+).setName('nta-recheck <iso8601_duration>;')
+
+# nxdomain-redirect "redirect.example.test.";
+optview_stmt_nxdomain_redirect = (
+    Keyword('nxdomain-redirect').suppress()
+    - rr_fqdn_w_absolute('nxdomain_redirect')
+    - semicolon
+).setName('nxdomain-redirect <domain>;')
+
+#  parental-source ( <ipv4_address> | * )
+#                  [ port ( <integer> | * ) ]
+#                  [ dscp <integer> ];
+# parental-source 127.0.0.1 port 88;
+optview_stmt_parental_source = (
+    Keyword('parental-source').suppress()
+    - Group(
+        ip4_addr_or_wildcard('ip4_addr_w')
+        - Optional(inet_ip_port_keyword_and_wildcard_element)
+        - Optional(Keyword('dscp') - dscp_port)
+        - semicolon
+    )('parental_source')
+).setName('parental-source <domain>;')
+
+#  parental-source-v6 ( <ipv4_address> | * )
+#                     [ port ( <integer> | * ) ]
+#                     [ dscp <integer> ];
+optview_stmt_parental_source_v6 = (
+    Keyword('parental-source-v6').suppress()
+    - Group(
+        ip6_addr_or_wildcard('ip6_addr_w')
+        - Optional(inet_ip_port_keyword_and_wildcard_element)
+        - Optional(Keyword('dscp') - dscp_port)
+        - semicolon
+    )('parental_source_v6')
+).setName('parental-source-v6 <domain>;')
+
 optview_stmt_preferred_glue = (
     Keyword('preferred-glue').suppress()
     - (
@@ -748,8 +804,20 @@ optview_stmt_preferred_glue = (
         ^ CaselessLiteral('AAAA')
         ^ CaselessLiteral('none')  # Introduced in 9.15.0-ish
     )('preferred_glue')
-    + semicolon
+    - semicolon
 ).setName('preferred-glue [ A | AAAA | none ];')
+
+# qname-minimization ( strict | relaxed | disabled | off );
+optview_stmt_qname_minimization = (
+    Keyword('qname-minimization').suppress()
+    - (
+        Literal('strict')
+        | Literal('relaxed')
+        | Literal('disabled')
+        | Literal('off')
+    )('qname_minimization')
+    - semicolon
+).setName('qname-minimization ( strict | relaxed | disabled | off );')
 
 #   query-source [ address ( ip46_addr_or_prefix | * ) ] [ port ( ip_port | * ) ];
 optview_stmt_query_source = (
@@ -983,21 +1051,106 @@ rate-limit {
 };""")
 
 optview_stmt_recursion = (
-        Keyword('recursion').suppress()
-        - isc_boolean('recursion')
-        + semicolon
+    Keyword('recursion').suppress()
+    - isc_boolean('recursion')
+    - semicolon
 ).setName('recursion <boolean>;')
 
-# 'response-policy' (super-)statements
-# following 'response-policy' elements are in zone-specific-only
-optview_stmt_response_policy_element_log = (
-    Keyword('log').suppress()  # introduced in v9.11
-    - isc_boolean
-)('log')
+# optview_stmt_require_server_cookie
+optview_stmt_require_server_cookie = (
+    Keyword('require-server-cookie').suppress()
+    - isc_boolean('require_server_cookie')
+    - semicolon
+).setName('require-server-cookie <boolean>;')
 
-optview_stmt_response_policy_element_policy_type = (
+# optview_stmt_resolver_nonbackoff_tries
+optview_stmt_resolver_nonbackoff_tries = (
+    Keyword('resolver-nonbackoff-tries').suppress()
+    - number_type('resolver_nonbackoff_tries')
+    - semicolon
+).setName('resolver-nonbackoff-tries <boolean>;')
+
+#  response-padding { <address_match_element>; ... }
+#                   block-size <integer>;
+optview_stmt_response_padding = (
+    Keyword('response-padding').suppress()
+    - Group(
+        lbrack
+        + (
+            ZeroOrMore(
+                Group(
+                    (
+                        exclamation('not')
+                        - aml_nesting
+                    )
+                    | (
+                        exclamation('not')
+                        - aml_choices
+                        - semicolon
+                    )
+                    | (
+                        aml_nesting
+                    )
+                    | (
+                        aml_choices
+                        - semicolon
+                    )  # never set a ResultsLabel here, you get duplicate but un-nested 'ip_addr'
+                )  # never set a ResultsLabel here, you get no []
+            )
+        )('aml')
+        - rbrack
+        # NOSEMICOLON HERE!
+        - Keyword('block-size').suppress()
+        - number_type('fqdn')
+        - semicolon
+    )('response-padding')
+)
+optview_stmt_response_padding.setName('response-padding { <aml>; } block-size <integer>;')
+
+optview_stmt_resolver_retry_interval = (
+    Keyword('resolver-retry-interval').suppress()
+    - number_type('resolver_retry_interval')
+    + semicolon
+).setName('resolver-retry-interval <number>;')
+
+# 'response-policy' (super-)statements
+
+# following 'response-policy' elements are in both zone-specific and global-specific
+optview_stmt_response_policy_element_zone_add_soa = (
+    Keyword('add-soa').suppress()  # introduced in v9.14
+    - isc_boolean('add_soa')
+)
+
+# following 'response-policy' elements are in zone-specific-only
+optview_stmt_response_policy_element_zone_log = (
+    Keyword('log').suppress()  # introduced in v9.11
+    - isc_boolean('log')
+)
+
+optview_stmt_response_policy_element_zone_max_policy_ttl = (
+    Keyword('max-policy-ttl').suppress()
+    - iso8601_duration('max_policy_ttl')
+).setName('max-policy-ttl <iso8601_duration>;')
+
+optview_stmt_response_policy_element_zone_min_update_interval = (
+    Keyword('min-update-interval').suppress()  # introduced in v9.12
+    - iso8601_duration('min_update_interval')
+)
+
+optview_stmt_response_policy_element_zone_nsdname_enable = (
+    Keyword('nsdname-enable').suppress()
+    - isc_boolean('nsdname_enable')
+)
+
+optview_stmt_response_policy_element_zone_nsip_enable = (
+    Keyword('nsip-enable').suppress()
+    - isc_boolean('nsip_enable')
+)
+optview_stmt_response_policy_element_zone_nsip_enable.setName('nsip-enable <boolean>')
+
+optview_stmt_response_policy_element_zone_policy_type = (
     Keyword('policy').suppress()
-    - (
+    - Group(
         Literal('disabled')
         | Literal('drop')
         | Literal('given')
@@ -1005,105 +1158,43 @@ optview_stmt_response_policy_element_policy_type = (
         | Literal('nodata')
         | Literal('nxdomain')
         | Literal('passthru')
-        | Group(
+        | (
             Literal('tcp-only').suppress()  # introduced in v9.10
-            - rr_fqdn_w_absolute('tcp_only'))  # TODO re-verify string-format needed for 'tcp-only'
+            - rr_fqdn_w_absolute('tcp_only')
+        )  # TODO re-verify string-format needed for 'tcp-only'
         | Group(
             Literal('cname').suppress()  # - rr_fqdn_w_absolute('cname')
         )
-    )('policy_type')
+    )('policy')
 )
-optview_stmt_response_policy_element_policy_type.setName("""policy [ given | disabled | passthru | drop | nxdomain | nodata | cname <fqdn> | tcp-only <string>""")
+optview_stmt_response_policy_element_zone_policy_type.setName(
+    """policy [ given | disabled | passthru | drop | nxdomain | nodata | cname <fqdn> | tcp-only <string>""")
 
-# following 'response-policy' elements are in both zone-specific and global-specific
-optview_stmt_response_policy_element_add_soa = (
-    Keyword('add-soa').suppress()  # introduced in v9.14
-    - isc_boolean
-)('add_soa')
-
-optview_stmt_response_policy_element_max_policy_ttl = (
-    Keyword('max-policy-ttl').suppress()
-    - iso8601_duration('max_policy_ttl')
-).setName('max-policy-ttl <iso8601_duration>;')
-
-optview_stmt_response_policy_element_min_update_interval = (
-    Keyword('min-update-interval').suppress()  # introduced in v9.12
-    - iso8601_duration('min_update_interval')
-)
-
-optview_stmt_response_policy_element_recursive_only = (
+optview_stmt_response_policy_element_zone_recursive_only = (
     Keyword('recursive-only').suppress()
     - isc_boolean('recursive_only')
 )
 
-optview_stmt_response_policy_element_nsip_enable = (
-    Keyword('nsip-enable').suppress()
-    - isc_boolean('nsip_enable')
-)
-optview_stmt_response_policy_element_nsip_enable.setName('nsip-enable <boolean>')
-
-optview_stmt_response_policy_element_nsdname_enable = (
-    Keyword('nsdname-enable').suppress()
-    - isc_boolean('nsdname_enable')
-)
-
-
-# following 'response-policy' elements are in global-specific-only
-
-optview_stmt_response_policy_element_break_dnssec = (
-    Keyword('break-dnssec').suppress()  # not found in zone-specific
-    - isc_boolean('break_dnssec')
-    )
-
-optview_stmt_response_policy_element_min_ns_dots = (
-    Keyword('min-ns-dots').suppress()
-    - number_type('min_ns_dots')
-    )
-
-optview_stmt_response_policy_element_nsip_wait_recurse = (
-    Keyword('nsip-wait-recurse').suppress()
-    - isc_boolean('nsip_wait_recurse')
-    )
-
-optview_stmt_response_policy_element_nsdname_wait_recurse = (
-    Keyword('nsdname-wait-recurse').suppress()
-    - isc_boolean('nsdname_wait_recurse')
-    )
-
-optview_stmt_response_policy_element_qname_wait_recurse = (
-    Keyword('qname-wait-recurse').suppress()
-    - isc_boolean('qname_wait_recurse')
-    )
-
-optview_stmt_response_policy_element_dnsrps_enable = (
-    Keyword('dnsrps-enable').suppress()
-    - isc_boolean('dnsrps_enable')
-    )
-
-optview_stmt_response_policy_element_dnsrps_options = (
-    Keyword('dnsrps-options').suppress()
-    - Word(dnsrps_option_charset, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
-    )
-
 optview_stmt_response_policy_zone_element_set = (
     (
-        optview_stmt_response_policy_element_log  # added v9.11 (zone-specific only)
-        | optview_stmt_response_policy_element_policy_type # added v9.14 (zone-specific only)
-        | optview_stmt_response_policy_element_add_soa
-        | optview_stmt_response_policy_element_max_policy_ttl 
-        | optview_stmt_response_policy_element_min_update_interval  # added v9.12
-        | optview_stmt_response_policy_element_recursive_only
-        | optview_stmt_response_policy_element_nsip_enable  # added v9.12
-        | optview_stmt_response_policy_element_nsdname_enable  # added v9.12
-        )
+        optview_stmt_response_policy_element_zone_add_soa
+        ^ optview_stmt_response_policy_element_zone_log  # added v9.11 (zone-specific only)
+        ^ optview_stmt_response_policy_element_zone_max_policy_ttl
+        ^ optview_stmt_response_policy_element_zone_min_update_interval  # added v9.12
+        ^ optview_stmt_response_policy_element_zone_nsdname_enable  # added v9.12
+        ^ optview_stmt_response_policy_element_zone_nsip_enable  # added v9.12
+        ^ optview_stmt_response_policy_element_zone_policy_type # added v9.14 (zone-specific only)
+        ^ optview_stmt_response_policy_element_zone_recursive_only
     )
+)
 optview_stmt_response_policy_zone_element_set.setName('[ log <boolean> ] [ policy <string> ] [ add-soa <boolean> ]')
+
 
 optview_stmt_response_policy_zone_group_set = (
     (
         Keyword('zone').suppress()
         - (
-            quotable_domain_generic_fqdn('zone_name')
+            dequotable_domain_generic_fqdn('zone_name')
             - ZeroOrMore(optview_stmt_response_policy_zone_element_set)
             - semicolon
         )
@@ -1125,26 +1216,109 @@ optview_stmt_response_policy_zone_group_set.setName("""
 
 optview_stmt_response_policy_zone_group_series = (
     ZeroOrMore(
-        optview_stmt_response_policy_zone_group_set
-    )
+        Group(
+            optview_stmt_response_policy_zone_group_set
+        )
+    )('zone*')
 )
+
+
+# following 'response-policy' elements are in global-specific-only
+optview_stmt_response_policy_element_global_add_soa = (
+    Keyword('add-soa').suppress()  # introduced in v9.14
+    - isc_boolean('add_soa')
+)
+
+optview_stmt_response_policy_element_global_break_dnssec = (
+    Keyword('break-dnssec').suppress()  # not found in zone-specific
+    - isc_boolean('break_dnssec')
+    )
+
+optview_stmt_response_policy_element_global_dnsrps_enable = (
+    Keyword('dnsrps-enable').suppress()
+    - isc_boolean('dnsrps_enable')
+)
+
+optview_stmt_response_policy_element_global_dnsrps_options = (
+    Keyword('dnsrps-options').suppress()
+    - lbrack
+    - Group(
+        (
+            Literal('"')
+            - Word(dnsrps_option_charset + ' ', min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
+            - Literal('"')
+        )
+        | (
+            Literal("'")
+            - Word(dnsrps_option_charset, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
+            - Literal("'")
+        )
+    )('dnsrps_options2')
+    - Optional(semicolon)
+    - rbrack
+)
+
+optview_stmt_response_policy_element_global_max_policy_ttl = (
+    Keyword('max-policy-ttl').suppress()
+    - iso8601_duration('max_policy_ttl')
+).setName('max-policy-ttl <iso8601_duration>;')
+
+optview_stmt_response_policy_element_global_min_ns_dots = (
+    Keyword('min-ns-dots').suppress()
+    - number_type('min_ns_dots')
+    )
+
+optview_stmt_response_policy_element_global_min_update_interval = (
+    Keyword('min-update-interval').suppress()  # introduced in v9.12
+    - iso8601_duration('min_update_interval')
+)
+
+optview_stmt_response_policy_element_global_nsip_enable = (
+    Keyword('nsip-enable').suppress()
+    - isc_boolean('nsip_enable')
+)
+optview_stmt_response_policy_element_global_nsip_enable.setName('nsip-enable <boolean>')
+
+optview_stmt_response_policy_element_global_nsip_wait_recurse = (
+    Keyword('nsip-wait-recurse').suppress()
+    - isc_boolean('nsip_wait_recurse')
+)
+
+optview_stmt_response_policy_element_global_nsdname_enable = (
+    Keyword('nsdname-enable').suppress()
+    - isc_boolean('nsdname_enable')
+)
+
+optview_stmt_response_policy_element_global_nsdname_wait_recurse = (
+    Keyword('nsdname-wait-recurse').suppress()
+    - isc_boolean('nsdname_wait_recurse')
+)
+
+optview_stmt_response_policy_element_global_qname_wait_recurse = (
+    Keyword('qname-wait-recurse').suppress()
+    - isc_boolean('qname_wait_recurse')
+)
+
+optview_stmt_response_policy_element_global_recursive_only = (
+    Keyword('recursive-only').suppress()
+    - isc_boolean('recursive_only')
+)
+
 optview_stmt_response_policy_global_element_set = (
     (
-        # reusing some elements from zone-specific above
-            optview_stmt_response_policy_element_add_soa  # added v9.14
-            | optview_stmt_response_policy_element_max_policy_ttl
-            | optview_stmt_response_policy_element_min_update_interval  # added v9.12
-            | optview_stmt_response_policy_element_recursive_only
-            | optview_stmt_response_policy_element_nsip_enable  # added v9.12
-            | optview_stmt_response_policy_element_nsdname_enable  # added v9.12
-            # every elements below is global-specific only
-            | optview_stmt_response_policy_element_min_ns_dots  # global-specific only
-            | optview_stmt_response_policy_element_break_dnssec  # global-specific only
-            | optview_stmt_response_policy_element_nsip_wait_recurse  # added v9.11
-            | optview_stmt_response_policy_element_nsdname_wait_recurse  # added v9.16?
-            | optview_stmt_response_policy_element_qname_wait_recurse  # added v9.10
-            | optview_stmt_response_policy_element_dnsrps_enable  # added v9.12
-            | optview_stmt_response_policy_element_dnsrps_options  # added v9.12
+        optview_stmt_response_policy_element_global_add_soa  # added v9.14
+        ^ optview_stmt_response_policy_element_global_break_dnssec  # global-specific only
+        ^ optview_stmt_response_policy_element_global_dnsrps_enable  # added v9.12
+        ^ optview_stmt_response_policy_element_global_dnsrps_options  # added v9.12
+        ^ optview_stmt_response_policy_element_global_max_policy_ttl
+        ^ optview_stmt_response_policy_element_global_min_ns_dots  # global-specific only
+        ^ optview_stmt_response_policy_element_global_min_update_interval  # added v9.12
+        ^ optview_stmt_response_policy_element_global_nsdname_enable  # added v9.12
+        ^ optview_stmt_response_policy_element_global_nsdname_wait_recurse  # added v9.16?
+        ^ optview_stmt_response_policy_element_global_nsip_enable  # added v9.12
+        ^ optview_stmt_response_policy_element_global_nsip_wait_recurse  # added v9.11
+        ^ optview_stmt_response_policy_element_global_qname_wait_recurse  # added v9.10
+        ^ optview_stmt_response_policy_element_global_recursive_only
     )
 )
 
@@ -1159,11 +1333,12 @@ optview_stmt_response_policy = (
         Keyword('response-policy').suppress()
         - lbrack
         - optview_stmt_response_policy_zone_group_series
-        + rbrack
+        - rbrack
         - optview_stmt_response_policy_global_element_series
-        + semicolon
+        - semicolon
     )
 )('response_policy')
+
 optview_stmt_response_policy.setName("""
 response-policy { 
     zone string 
@@ -1205,55 +1380,64 @@ optview_stmt_rfc2308_type1 = (
 #  root-delegation-only [ exclude { "domain_name"; ... } ];
 #  root-delegation-only exclude { "com"; "net" };
 optview_stmt_root_delegation_only = (
-        Keyword('root-delegation-only').suppress()
-        - (
-            Optional(
-                Keyword('exclude').suppress()
-                + lbrack
-                - Group(
-                    OneOrMore(
-                        domain_generic_fqdn('')
-                        + semicolon
-                    )('domains')
-                )('root_delegation_only')
-                + rbrack
-            )('')
+    Keyword('root-delegation-only').suppress()
+    - (
+        Optional(
+            Keyword('exclude').suppress()
+            - lbrack
+            - Group(
+                OneOrMore(
+                    domain_generic_fqdn('')
+                    + semicolon
+                )('domains')
+            )('root_delegation_only')
+            - rbrack
         )('')
-        + semicolon
+    )('')
+    - semicolon
 ).setName('root-delegation-only [ exclude { <quoted-fqdn>; ...} ];')
 
+optview_stmt_root_key_sentinel = (
+    Keyword('root-key-sentinel').suppress()
+    - isc_boolean('root_key_sentinel')
+    + semicolon
+).setName('root-key-sentinel <boolean>')
+
 optview_class_type = (
-        CaselessLiteral('HS')
-        | CaselessLiteral('IN')
-        | CaselessLiteral('CH')
-        | CaselessLiteral('ANY')
+    CaselessLiteral('HS')
+    | CaselessLiteral('IN')
+    | CaselessLiteral('CH')
+    | CaselessLiteral('ANY')
 ).setName('[ IN | CH | HS | ANY')
 
 #  [ class class_name ][ type type_name ][ name "domain_name"] order ordering;
 optview_type_type = Word(alphanums + '-', max=16)
 
 optview_ordering_type = (
-        Literal('fixed')
-        | Literal('random')
-        | Literal('cyclic')
+    Keyword('fixed')
+    | Keyword('random')
+    | Keyword('cyclic')
 ).setName('[ fixed | random | cyclic ]')
 
 optview_order_spec = (
-        Optional(
-            Keyword('class').suppress()
-            + optview_class_type('class')
-        )('')
-        + Optional(
-            Keyword('type').suppress()
-            + optview_type_type('type')
-        )('')
-        + Optional(
-            Keyword('name').suppress()
-            + quoted_domain_generic_fqdn('name')
-        )('')
-        + Keyword('order').suppress()
-        + optview_ordering_type('order')
-        + semicolon
+    Optional(
+        Keyword('class').suppress()
+        - optview_class_type('class')
+    )('')
+    - Optional(
+        Keyword('type').suppress()
+        - optview_type_type('type')
+    )('')
+    - Optional(
+        Keyword('name').suppress()
+        - dequoted_domain_generic_fqdn('name')
+    )('')
+    - Optional(
+        Keyword('order').suppress()
+        - optview_ordering_type('order')
+    )
+    - Word(alphanums + ' -', max=256)
+    - semicolon
 )
 
 #  rrset-order { optview_order_spec ; [ optview_order_spec ; ... ]
@@ -1261,15 +1445,15 @@ optview_stmt_rrset_order = (
     Keyword('rrset-order').suppress()
     - (
         lbrack
-        + OneOrMore(
+        - OneOrMore(
                 Group (
                     optview_order_spec('')
-                )('')
-        )('')
-        + rbrack
+                )
+        )
+        - rbrack
     )('rrset_order')
-    + semicolon
-)('')  # only one (, the last one) 'rrset-order' allowed, so no List [] here
+    - semicolon
+)  # only one (, the last one) 'rrset-order' allowed, so no List [] here
 optview_stmt_rrset_order.setName('rrset-order ...;')  # TODO
 
 #  optview_stmt_sortlist { aml; ... };
@@ -1355,14 +1539,26 @@ optview_statements_set = (
     ^ optview_stmt_minimal_any
     ^ optview_stmt_minimal_responses
     ^ optview_stmt_notify_rate
+    ^ optview_stmt_nsec3_test_zone
+    ^ optview_stmt_nta_lifetime
+    ^ optview_stmt_nta_recheck
+    ^ optview_stmt_nxdomain_redirect
+    ^ optview_stmt_parental_source
+    ^ optview_stmt_parental_source_v6
     ^ optview_stmt_preferred_glue
     ^ optview_stmt_query_source_v6
     ^ optview_stmt_query_source
+    ^ optview_stmt_qname_minimization
     ^ optview_stmt_rate_limit
     ^ optview_stmt_recursion
+    ^ optview_stmt_require_server_cookie
+    ^ optview_stmt_resolver_nonbackoff_tries
+    ^ optview_stmt_resolver_retry_interval
+    ^ optview_stmt_response_padding
     ^ optview_stmt_response_policy
     ^ optview_stmt_rfc2308_type1
     ^ optview_stmt_root_delegation_only
+    ^ optview_stmt_root_key_sentinel
     ^ optview_stmt_rrset_order
     ^ optview_stmt_sortlist
 )

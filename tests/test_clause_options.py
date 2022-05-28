@@ -427,22 +427,70 @@ reserved-sockets 30;
 nsec3-test-zone no;
 nta-lifetime 60m;
 nta-recheck 24h;
-nxdomain-redirect "redirect.example.test.";
-parental-source 127.0.0.1 port 88;
-preferred-glue "some_glue";
+nxdomain-redirect redirect.example.test.;
+parental-source 127.0.0.1 port 12388;
+parental-source-v6 ffe2::1 port 12389;
+preferred-glue none;
 qname-minimization strict;
-query-source address 127.0.0.1 );
-request-expire no;
 require-server-cookie no;
 resolver-nonbackoff-tries 25;
 resolver-retry-interval 23;
 response-padding { 127.0.0.1; } block-size 512;
-response-policy { zone "." log on };
-root-delegation-only exclude { "127.in-addr.arpa."; };
+response-policy { zone white log yes; };
+root-delegation-only exclude { 127.in-addr.arpa.; };
 root-key-sentinel no;
-rrset-order { class IN A example.test; };
+
+query-source address 127.0.0.1;
+query-source-v6 address fec2::1;
+
+request-expire no;
 """,
-            {}
+            {'ip_port': '53',
+             'nocookie_udp_size': 512,
+             'notify': ['primary-only'],
+             'notify_delay': 60,
+             'notify_rate': 60,
+             'notify_source': {'dscp_port': 4,
+                               'ip4_addr-w': '*',
+                               'ip4_port_w': '*'},
+             'notify_source_v6': {'dscp_port': 5,
+                                  'ip6_addr': '*',
+                                  'ip_port_w': '*'},
+             'notify_to_soa': 'no',
+             'nsec3_test_zone': 'no',
+             'nta_lifetime': '60m',
+             'nta_recheck': '24h',
+             'nxdomain_redirect': 'redirect.example.test.',
+             'parental_source': {'ip4_addr_w': '127.0.0.1',
+                                 'ip_port_w': '12388'},
+             'parental_source_v6': {'ip6_addr_w': 'ffe2::1',
+                                    'ip_port_w': '12389'},
+             'preferred_glue': 'none',
+             'prefetch': {'expiry_ttl': 30, 'threshold_ttl': 60},
+             'provide_ixfr': 'no',
+             'qname_minimization': 'strict',
+             'query_source': {'ip4_addr': '127.0.0.1'},
+             'query_source_v6': {'ip6_addr': 'fec2::1'},
+             'querylog_boolean': 'no',
+             'rate_limit': [{'all_per_second': 60}],
+             'recursing_file': 'dir/file',
+             'recursion': 'no',
+             'recursive_clients': 60,
+             'request_expire': 'no',
+             'request_ixfr': 'no',
+             'request_nsid': 'no',
+             'require_server_cookie': 'no',
+             'reserved_sockets': 30,
+             'resolver_nonbackoff_tries': 25,
+             'resolver_query_timeout': 24,
+             'resolver_retry_interval': 23,
+             'response-padding': {'aml': [{'ip4_addr': '127.0.0.1'}],
+                                  'fqdn': 512},
+             'response_policy': {'zone': [[{'log': 'yes',
+                                            'zone_name': 'white'}]]},
+             'reuseport': 'no',
+             'root_delegation_only': {'domains': ['127.in-addr.arpa.']},
+             'root_key_sentinel': 'no'}
         )
         
     def test_isc_clause_options_all_statement_set_s_to_z_passing(self):
@@ -659,14 +707,15 @@ notify-to-soa no;
 nsec3-test-zone no;
 nta-lifetime 60m;
 nta-recheck 24h;
-nxdomain-redirect "redirect.example.test.";
-parental-source 127.0.0.1 port 88;
+nxdomain-redirect redirect.example.test.;
+parental-source 127.0.0.1 port 12388;
+parental-source-v6 ffe2::1 port 12389;
 pid-file none;
 port 53;
-preferred-glue "some_glue";
+preferred-glue AAAA;
 prefetch 30 60;
 provide-ixfr no;
-qname-minimization strict;
+qname-minimization relaxed;
 query-source address 127.0.0.1 );
 query-source-v6 address fec2::1;
 querylog no;
@@ -684,11 +733,11 @@ resolver-nonbackoff-tries 25;
 resolver-query-timeout 24;
 resolver-retry-interval 23;
 response-padding { 127.0.0.1; } block-size 512;
-response-policy { zone "." log on };
+response-policy { zone "." log on; };
 reuseport no;
 root-delegation-only exclude { "127.in-addr.arpa."; };
 root-key-sentinel no;
-rrset-order { class IN A example.test; };
+rrset-order { class IN A example.test some-string; };
 secroots-file "dir/file";
 send-cookie no;
 serial-query-rate 5;
@@ -790,7 +839,7 @@ disable-empty-zone "172.16.0.0/22";
             options_all_statements_series,
             'version 5; coresize unlimited; pid-file "/var/run/named.pid";',
             {'coresize': ['unlimited'],
-             'pid_file_path_name': '/var/run/named.pid',
+             'pid_file': '/var/run/named.pid',
              'version_string': '5'}
         )
 

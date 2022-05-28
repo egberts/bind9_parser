@@ -13,6 +13,7 @@ from bind9_parser.isc_optviewzoneserver import \
     optviewzoneserver_also_notify_subgroup_series, \
     optviewzoneserver_also_notify_group_element_set, \
     optviewzoneserver_stmt_also_notify, \
+    optviewzoneserver_stmt_request_expire, \
     optviewzoneserver_statements_set, \
     optviewzoneserver_statements_series
 
@@ -187,6 +188,14 @@ class TestOptionsViewZoneServer(unittest.TestCase):
                                          'key_id': 'lockbox6_key'},
                                         {'ip_addr': 'fe01::1',
                                          'key_id': 'lockbox11_key'}]}}
+        )
+
+    def test_isc_optviewzoneserver_stmt_request_expire_passing(self):
+        """ Clause options/view/zone/server; Statement request-expire; passing """
+        assertParserResultDictTrue(
+            optviewzoneserver_stmt_request_expire,
+           'request-expire yes;',
+            {'request_expire': 'yes'}
         )
 
     def test_isc_optviewzoneserver_statements_set_passing(self):

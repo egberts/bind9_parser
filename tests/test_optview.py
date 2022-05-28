@@ -29,8 +29,9 @@ from bind9_parser.isc_optview import \
     optview_stmt_check_srv_cname, \
     optview_stmt_check_wildcard, \
     optview_stmt_cleaning_interval, \
-    optview_stmt_disable_algorithms, optview_multiple_stmt_disable_algorithms, \
+    optview_stmt_disable_algorithms, \
     optview_stmt_disable_ds_digests, \
+    optview_multiple_stmt_disable_algorithms, \
     optview_multiple_stmt_disable_ds_digests, \
     optview_multiple_stmt_disable_algorithms, \
     optview_stmt_disable_ds_digests, \
@@ -73,14 +74,14 @@ from bind9_parser.isc_optview import \
     optview_stmt_message_compression, \
     optview_stmt_minimal_responses, \
     optview_stmt_notify_rate, \
+    optview_stmt_parental_source,\
+    optview_stmt_parental_source_v6,\
     optview_stmt_preferred_glue, \
+    optview_stmt_qname_minimization, \
     optview_stmt_query_source_v6, \
     optview_stmt_query_source, \
     optview_stmt_rate_limit, \
     optview_stmt_recursion, \
-    optview_stmt_response_policy_element_log, \
-    optview_stmt_response_policy_element_policy_type, \
-    optview_stmt_response_policy_zone_element_set, \
     optview_stmt_response_policy_zone_group_set, \
     optview_stmt_response_policy_global_element_set, \
     optview_stmt_response_policy, \
@@ -1107,11 +1108,56 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             {'notify_rate': 20}
         )
 
+    def test_isc_optview_stmt_parental_source_ut_passing(self):
+        """ Clause options/view; Statement 'parental-source' unittest; passing """
+        test_string = [
+            'parental-source * port *;',  # default
+            'parental-source * port * dscp 2;',
+            'parental-source * port 443;',
+            'parental-source * port 443 dscp 3;',
+            'parental-source 127.0.0.1 port *;',
+            'parental-source 127.0.0.1 port * dscp 4;',
+            'parental-source 127.0.0.1 port 444;',
+            'parental-source 127.0.0.1 port 445 dscp 5;',
+        ]
+        result = optview_stmt_parental_source.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optview_stmt_parental_source_passing(self):
+        """ Clause options/view; Statement 'parental-source'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_parental_source,
+            'parental-source  127.0.0.1 port 442;',  # default
+            {'parental_source': {'ip4_addr_w': '127.0.0.1',
+                                 'ip_port_w': '442'}}
+        )
+
+    def test_isc_optview_stmt_parental_source_v6_passing(self):
+        """ Clause options/view; Statement 'parental-source-v6'; passing """
+        test_string = [
+            'parental-source-v6 * port *;',  # default
+            'parental-source-v6 * port * dscp 2;',
+            'parental-source-v6 * port 443;',
+            'parental-source-v6 * port 443 dscp 3;',
+            'parental-source-v6 ffc2::1 port *;',
+            'parental-source-v6 FFd2::1   port * dscp 4;',
+            'parental-source-v6 Fee2::1  port 444;',
+            'parental-source-v6 fdd3::1 port 445 dscp 5;',
+        ]
+        result = optview_stmt_parental_source_v6.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_parental_source_v6,
+            'parental-source-v6  ffe2::1 port 442;',  # default
+            {'parental_source_v6': {'ip6_addr_w': 'ffe2::1',
+                                    'ip_port_w': '442'}}
+        )
+
     def test_isc_optview_stmt_preferred_glue_passing(self):
         """ Clause options/view; Statement preferred-glue; passing """
         test_string = [
-            'preferred-glue A;',
-            'preferred-glue a;',
+            'preferred-glue A;',  # default
+            'preferred-glue a;',  # default
             'preferred-glue aaaa;',
             'preferred-glue AAAA;',
             'preferred-glue none;',  # introduced in 9.15.0-ish
@@ -1121,8 +1167,24 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         self.assertTrue(result[0])
         assertParserResultDictTrue(
             optview_stmt_preferred_glue,
-            'preferred-glue none;',
-            {'preferred_glue': 'none'}
+            'preferred-glue A;',  # default
+            {'preferred_glue': 'A'}
+        )
+
+    def test_isc_optview_stmt_qname_minimization(self):
+        """ Clause options/view; Statement 'qname-minimization'; passing """
+        test_string = [
+            'qname-minimization disabled',
+            'qname-minimization relaxed',  # default
+            'qname-minimization strict',
+            'qname-minimization off'
+        ]
+        result = optview_stmt_qname_minimization.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_qname_minimization,
+            'qname-minimization relaxed',  # default
+            {'qname_minimization': 'relaxed'}
         )
 
     def test_isc_optview_stmt_query_source_v6_passing(self):
@@ -1244,7 +1306,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assertParserResultDictTrue(
             optview_stmt_response_policy_zone_group_set,
             'zone \'.\';',
-            {'zone_name': "'.'"}
+            {'zone_name': '.'}
         )
 
     def test_isc_optview_stmt_response_policy_zone_group_empty_squote_passing(self):
@@ -1252,7 +1314,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assertParserResultDictTrue(
             optview_stmt_response_policy_zone_group_set,
             'zone \'grey\';',
-            {'zone_name': "'grey'"}
+            {'zone_name': 'grey'}
         )
 
     def test_isc_optview_stmt_response_policy_zone_group_empty_dquote_passing(self):
@@ -1260,7 +1322,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assertParserResultDictTrue(
             optview_stmt_response_policy_zone_group_set,
             'zone "www.template.test.";',
-            {'zone_name': '"www.template.test."'}
+            {'zone_name': 'www.template.test.'}
         )
 
     def test_isc_optview_stmt_response_policy_zone_group_add_soa_passing(self):
@@ -1268,7 +1330,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assertParserResultDictTrue(
             optview_stmt_response_policy_zone_group_set,
             'zone red add-soa yes;',
-            {'add_soa': ['yes'], 'zone_name': 'red'}
+            {'add_soa': 'yes', 'zone_name': 'red'}
         )
 
     def test_isc_optview_stmt_response_policy_zone_group_log_passing(self):
@@ -1276,8 +1338,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assertParserResultDictTrue(
             optview_stmt_response_policy_zone_group_set,
             'zone blue log yes;',
-            {'log': ['yes'],
-             'zone_name': 'blue'}
+            {'log': 'yes', 'zone_name': 'blue'}
         )
 
     def test_isc_optview_stmt_response_policy_zone_group_max_policy_ttl_passing(self):
@@ -1303,8 +1364,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assertParserResultDictTrue(
             optview_stmt_response_policy_zone_group_set,
             'zone black policy given;',
-            {'policy_type': ['given'],
-             'zone_name': 'black'}
+            {'policy': ['given'], 'zone_name': 'black'}
         )
 
     def test_isc_optview_stmt_response_policy_zone_group_policy_1_arg_passing(self):
@@ -1312,7 +1372,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assertParserResultDictTrue(
             optview_stmt_response_policy_zone_group_set,
             'zone white policy tcp-only an_unknown_string;',
-            {'policy_type': [{'tcp_only': 'an_unknown_string'}],
+            {'policy': {'tcp_only': 'an_unknown_string'},
              'zone_name': 'white'}
         )
 
@@ -1361,7 +1421,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assertParserResultDictTrue(
             optview_stmt_response_policy_global_element_set,
             'add-soa yes',
-            {'add_soa': ['yes']}
+            {'add_soa': 'yes'}
         )
 
     def test_isc_optview_stmt_response_policy_global_element_break_dnssec_passing(self):
@@ -1418,7 +1478,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assertParserResultDictTrue(
             optview_stmt_response_policy,
             'response-policy { zone "white"; };',
-            {'response_policy': {'zone_name': '"white"'}}
+            {'response_policy': {'zone': [{'zone_name': 'white'}]}}
         )
 
     # XXXX optview_stmt_response_policy
@@ -1427,16 +1487,73 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assertParserResultDictTrue(
             optview_stmt_response_policy,
             'response-policy { zone black policy given; };',
-            {'response_policy': {'policy_type': ['given'],
-                                 'zone_name': 'black'}}
+            {'response_policy': {'zone': [{'policy': ['given'],
+                                           'zone_name': 'black'}]}}
         )
 
     def test_isc_optview_stmt_response_policy_minimal_all_passing(self):
         """ Clause options/view; Statement response-policy minimal all; passing """
         assertParserResultDictTrue(
             optview_stmt_response_policy,
-            'response-policy { zone grey; } nsip-enable yes;',
-            {'response_policy': {'nsip_enable': 'yes', 'zone_name': 'grey'}}
+            'response-policy { zone grey log yes; } nsip-enable yes;',
+            {'response_policy': {'nsip_enable': 'yes',
+                                 'zone': [{'log': 'yes',
+                                           'zone_name': 'grey'}]}}
+        )
+
+    def test_isc_optview_stmt_response_policy_maximum_all_passing(self):
+        """ Clause options/view; Statement response-policy maximum all; passing """
+        assertParserResultDictTrue(
+            optview_stmt_response_policy,
+            """response-policy {
+        zone 172.in-addr.arpa.
+        add-soa yes
+        log yes
+        max-policy-ttl 1H
+        min-update-interval 1D
+        policy tcp-only TCP-LABEL
+        recursive-only no
+        nsip-enable no
+        nsdname-enable no
+        ;
+    }
+    add-soa yes
+    break-dnssec no
+    max-policy-ttl 24H
+    min-update-interval 7D
+    min-ns-dots 3
+   nsip-wait-recurse yes
+   nsdname-wait-recurse yes
+   qname-wait-recurse yes
+   recursive-only yes
+   nsip-enable no
+   nsdname-enable no
+   dnsrps-enable yes
+   dnsrps-options { "some options" }; 
+""",
+            {'response_policy': {'add_soa': 'yes',
+                                 'break_dnssec': 'no',
+                                 'dnsrps_enable': 'yes',
+                                 'dnsrps_options2': {'dnsrps_options': 'some '
+                                                                       'options'},
+                                 'max_policy_ttl': '24H',
+                                 'min_ns_dots': 3,
+                                 'min_update_interval': '7D',
+                                 'nsdname_enable': 'no',
+                                 'nsdname_wait_recurse': 'yes',
+                                 'nsip_enable': 'no',
+                                 'nsip_wait_recurse': 'yes',
+                                 'qname_wait_recurse': 'yes',
+                                 'recursive_only': 'yes',
+                                 'zone': [[{'add_soa': 'yes',
+                                            'log': 'yes',
+                                            'max_policy_ttl': '1H',
+                                            'min_update_interval': '1D',
+                                            'nsdname_enable': 'no',
+                                            'nsip_enable': 'no',
+                                            'policy': {'tcp_only': 'TCP-LABEL'},
+                                            'recursive_only': 'no',
+                                            'zone_name': '172.in-addr.arpa.'}]]}}
         )
 
     def test_isc_optview_stmt_rfc2308_type1_passing(self):
@@ -1470,7 +1587,8 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     def test_isc_optview_stmt_rrset_order_passing(self):
         """ Clause options/view; Statement rrset-order; passing """
         test_string = [
-            'rrset-order { class IN type A name "host.example.com" order random; order cyclic; };'
+            'rrset-order { class IN type A name host.example.com order random; };',
+            'rrset-order { class CH type TXT name host.example.com order random; };'
         ]
         result = optview_stmt_rrset_order.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
@@ -1478,7 +1596,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             optview_stmt_rrset_order,
             'rrset-order { class IN type A name "host.example.com" order random; order cyclic; };',
             {'rrset_order': [{'class': 'IN',
-                              'name': '"host.example.com"',
+                              'name': 'host.example.com',
                               'order': 'random',
                               'type': 'A'},
                              {'order': 'cyclic'}]}

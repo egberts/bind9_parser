@@ -4187,7 +4187,7 @@ g_nc_keywords['nsec3-test-zone'] = \
     {
         'default': 'no',
         'validity': {'regex': r'(yes|no)'},
-        'found-in': {'view'},
+        'found-in': {'option', 'view'},  # 'option' was added when?
         'introduced': '9.6.0',
         'topic': 'DNSSEC',
         'comment': '',
@@ -4533,7 +4533,7 @@ g_nc_keywords['query-source-v6'] = \
         'default': {'address': '*', 'port': '*'},
         'validity': {'function': "ip6addr_port_dscp_list"},
         'found-in': {'options', 'server', 'view'},
-        'introduced': '9.4',  # 8.4?
+        'introduced': '9.4',
         'topic': 'query address',
         'comment': '',
     }

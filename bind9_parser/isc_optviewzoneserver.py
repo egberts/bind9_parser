@@ -10,9 +10,9 @@ Description: Provides statement support for ones found in all
              four clauses: options, view, zone, server
              PyParsing engine for ISC-configuration style
 """
-from pyparsing import Group, Keyword, OneOrMore, Optional, ungroup, Combine
+from pyparsing import Group, Keyword, OneOrMore, Optional, ungroup
 from bind9_parser.isc_utils import semicolon, lbrack, rbrack, tls_algorithm_name,\
-    primary_id
+    primary_id, isc_boolean
 
 from bind9_parser.isc_clause_key import key_id
 
@@ -116,13 +116,21 @@ optviewzoneserver_stmt_also_notify = (
     + rbrack
     + semicolon
 )
-optviewzoneserver_stmt_also_notify.setName('also-notify [ port <port> ] [ dscp <dscp> { ( <primary_name> | <ip4_addr> | <ip6_addr> ); };')
+optviewzoneserver_stmt_also_notify.setName(
+    'also-notify [ port <port> ] [ dscp <dscp> { ( <primary_name> | <ip4_addr> | <ip6_addr> ); };')
+
+optviewzoneserver_stmt_request_expire = (
+    Keyword('request-expire').suppress()
+    - isc_boolean('request_expire')
+    - semicolon
+).setName('request-expire <boolean>;')
 
 # Keywords are in dictionary-order, but with longest pattern as having been listed firstly
 optviewzoneserver_statements_set = (
     # optviewzoneserver_stmt_also_notify has been removed from 'server' clause
     # but left that statement here for backward compatibility
     optviewzoneserver_stmt_also_notify
+    ^ optviewzoneserver_stmt_request_expire
 )
 
 optviewzoneserver_statements_series = (
