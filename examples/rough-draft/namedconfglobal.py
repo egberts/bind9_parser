@@ -213,6 +213,7 @@ g_nc_keywords['lwres'] = \
         'subordering-matters': False,
         'introduced': "9.1",
         'obsoleted': '9.12.0',
+        'topic': 'ancient'
     }
 
 g_nc_keywords['managed-keys'] = \
@@ -377,7 +378,7 @@ g_nc_keywords['acache-cleaning-interval'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.4.0',
         'obsoleted': '9.12',
-        'topic': 'additional section cache, caching',
+        'topic': 'ancient, additional section cache, caching',
         'comment': """If yes, additional section caching is enabled.
 The default value is no.""",
     }
@@ -389,7 +390,7 @@ g_nc_keywords['acache-enable'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.4.0',
         'obsoleted': '9.12',
-        'topic': 'caching, additional section cache',
+        'topic': 'ancient, caching, additional section cache',
         'comment': """If yes, additional section caching is enabled.
 The default value is no.""",
     }
@@ -401,7 +402,7 @@ g_nc_keywords['additional-from-auth'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.1',
         'obsoleted': '9.12',
-        'topic': 'authoritative, non-caching, recursive-follow, caching',
+        'topic': 'ancient, authoritative, non-caching, recursive-follow, caching',
         'comment': """These options control the behavior of an authoritative
 server when answering queries which have additional
  when following CNAME and DNAME chains.
@@ -493,7 +494,7 @@ g_nc_keywords['additional-from-cache'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.1',
         'obsoleted': '9.12',
-        'topic': 'authoritative, non-caching, recursive-follow',
+        'topic': 'ancient, authoritative, non-caching, recursive-follow',
         'comment': """additional-from-auth and additional-from-cache control
 the behaviour when zones have additional (out-of-zone)
 data or when following CNAME or DNAME records. These
@@ -608,8 +609,8 @@ g_nc_keywords['allow-query'] = \
         # In 8.2, only found in ['zone']['type']['slave']
         # In 8.2, only found in ['zone']['type']['stub']
         'topic': 'active, access control, redirect',
-        'zone-type': {'active', 'public', 'master', 'slave', 'mirror',
-                      'stub', 'static-stub', 'redirect', 'primary', 'secondary'},
+        'zone-type': {'primary', 'secondary', 'mirror',
+                      'stub', 'static-stub', 'redirect', 'master', 'slave'},
         'comment': """Specifies which hosts are allowed to ask ordinary
 DNS questions. allow-query may also be specified in the
 zone statement, in which case it overrides the options
@@ -655,8 +656,8 @@ g_nc_keywords['allow-query-on'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.5.0',
         'topic': 'access control, redirect, caching',
-        'zone-type': {'master', 'slave', 'mirror', 'stub',
-                      'static-stub', 'redirect', 'primary', 'secondary'},
+        'zone-type': {'primary', 'secondary', 'mirror', 'stub',
+                      'static-stub', 'redirect', 'master', 'slave'},
         'comment': """Specifies which local addresses can accept ordinary
 DNS questions. This makes it possible, for instance, to
 allow queries on internal-facing interfaces but disallow
@@ -776,7 +777,7 @@ g_nc_keywords['allow-v6-synthesis'] = \
         'found-in': {'options', 'view', 'server'},
         'introduced': '9.2',
         'obsoleted': '9.8',
-        'topic': 'inert, ignored, obsoleted, IPv6',
+        'topic': 'ancient, inert, ignored, obsoleted, IPv6',
         'comment': """This option was introduced for the smooth transition
 from AAAA to A6 and from "nibble labels" to binary labels.
 
@@ -796,7 +797,9 @@ g_nc_keywords['also-notify'] = \
         # In 9.15, no longer found under 'server'
         'introduced': '8.2',
         'topic': 'notify, transfer, TSIG, DSCP',
-        'zone-type': {'master', 'slave', 'mirror', 'stub', 'primary', 'secondary'},
+        'zone-type': {
+            'primary', 'secondary', 
+            'mirror', 'master', 'slave'},  # removed 'stub' circa 9.10?
         'comment': """Defines a global list of IP addresses of name
 servers that are also sent NOTIFY messages whenever a
 fresh copy of the zone is loaded, in addition to the
@@ -826,9 +829,9 @@ g_nc_keywords['alt-transfer-source'] = \
         'found-in': {'options', 'view'},  # removed 'zones' in v9.10
         'introduced': '9.3.0',
         'topic': 'slave, transfer, DSCP',
-        'zone-type': {'master', 'slave', 'mirror', 'primary', 'secondary'},
+        'zone-type': {'primary', 'secondary', 'mirror', 'master', 'slave'},
         'comment':
-            """Applies to slave zones only.  Defines an alternative
+            """Applies to secondary zones only.  Defines an alternative
             local IP address to be used for inbound zone transfers
             by the server if that defined by transfer-source
             (transfer-source-v6) fails and use-alt-transfer-source
@@ -849,8 +852,10 @@ g_nc_keywords['alt-transfer-source-v6'] = \
         'validity': {'function': 'ip_address_port'},
         'found-in': {'options', 'view'},  # removed 'zones' in v9.10
         'introduced': '9.3.0',
-        'topic': 'slave, transfer',
-        'zone-type': {'master', 'slave', 'mirror', 'primary', 'secondary'},  # removed in v9.10
+        'topic': 'secondary, transfer, slave',
+        'zone-type': {
+            'primary', 'secondary', 'mirror', 
+            'master', 'slave'},  # 'stub' removed in v9.10
         'comment':
             """Applies to slave zones only.  Defines an alternative
 local IP address to be used for inbound zone transfers
@@ -974,7 +979,7 @@ g_nc_keywords['auto-dnssec'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.7.0',
         'topic': 'DNSSEC',
-        'zone-type': {'master', 'slave', 'primary', 'secondary'},
+        'zone-type': {'primary', 'secondary', 'master', 'slave'},
         'comment': """Zones configured for dynamic DNS may use this
 option to allow varying levels of automatic DNSSEC key
 management. There are three possible settings:
@@ -1114,7 +1119,7 @@ g_nc_keywords['cache-file'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.2.0',
         'obsoleted': '9.18.0',
-        'topic': 'testing, test, cache, caching',
+        'topic': 'ancient, testing, test, cache, caching',
         'comment': """This is for testing only. Do not use.""",
     }
 
@@ -1171,7 +1176,7 @@ g_nc_keywords['check-dup-records'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.7.0',
         'topic': 'validation',
-        'zone-type': {'master', 'primary'},
+        'zone-type': {'primary', 'master'},
         'comment': """Check master zones for records that are treated as different by DNSSEC but are semantically
 equal in plain DNS. The default is to warn. Other possible values are fail and
 ignore.""",
@@ -1184,7 +1189,7 @@ g_nc_keywords['check-integrity'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'validation',
-        'zone-type': {'master', 'primary'},
+        'zone-type': {'primary', 'master'},
         'comment': """Perform post load zone integrity checks on master
 zones. This checks that MX and SRV records refer to
 address (A or AAAA) records and that glue address
@@ -1212,7 +1217,7 @@ g_nc_keywords['check-mx'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'zone, integrity, SMTP, validation',
-        'zone-type': {'master', 'primary'},
+        'zone-type': {'primary', 'master'},
         'comment': """Check whether the MX record appears to refer to a IP
 address. The default is to warn.
 Other possible values are fail and ignore.""",
@@ -1225,7 +1230,7 @@ g_nc_keywords['check-mx-cname'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'zone, integrity, SMTP, validation',
-        'zone-type': {'master', 'primary'},
+        'zone-type': {'primary', 'master'},
         'comment': """If check-integrity is set then fail, warn or ignore
 MX records that refer to CNAMES.
 The default is to warn.""",
@@ -1266,7 +1271,9 @@ names in the RDATA of NS, SOA, MX, and SRV records.
 It also applies to the RDATA of PTR records where
 the owner name indicated that it is a reverse
 lookup of a hostname (the owner name ends in
-IN-ADDR.ARPA, IP6.ARPA, or IP6.INT).""",
+IN-ADDR.ARPA, IP6.ARPA, or IP6.INT).
+
+Syntax is different for zone's check-names""",
     }
 
 g_nc_keywords['check-sibling'] = \
@@ -1276,7 +1283,7 @@ g_nc_keywords['check-sibling'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'validation',
-        'zone-type': {'master', 'primary'},
+        'zone-type': {'primary', 'master'},
         'comment': """When performing integrity checks, also check that
 sibling glue exists. The default is yes.""",
     }
@@ -1288,7 +1295,7 @@ g_nc_keywords['check-spf'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.6',
         'topic': 'validation',
-        'zone-type': {'master', 'primary'},
+        'zone-type': {'primary', 'master'},
         'comment': """If check-integrity is set then check that there is a
 TXT Sender Policy Framework record present (starts
 with "v=spf1") if there is an SPF record present.
@@ -1302,7 +1309,7 @@ g_nc_keywords['check-srv-cname'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'validation',
-        'zone-type': {'master', 'primary'},
+        'zone-type': {'primary', 'master'},
         'comment': """If check-integrity is set then fail, warn or
 ignore SRV records that refer to CNAMES.
 The default is to warn.""",
@@ -1315,7 +1322,7 @@ g_nc_keywords['check-wildcard'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.4.0',
         'topic': 'validation',
-        'zone-type': {'master', 'primary'},
+        'zone-type': {'primary', 'master'},
         'comment': """This option is used to check for non-terminal
 wildcards. The use of non-terminal wildcards is
 almost always as a result of a failure to understand
@@ -1352,7 +1359,7 @@ g_nc_keywords['cleaning-interval'] = \
         'found-in': {'options', 'view'},
         'introduced': '8.2',
         'obsoleted': '9.16',
-        'topic': 'inert, server resource, periodic task, cache, caching',
+        'topic': 'ancient, inert, server resource, periodic task, cache, caching',
         'comment':
             """This interval is effectively obsolete. Previously,
             the server would remove expired resource records from
@@ -1476,7 +1483,7 @@ g_nc_keywords['deallocate-on-exit'] = \
         'introduced': '8.2',
         'deprecated': '9.0',
         'obsoleted': '9.18.0',
-        'topic': 'operating-system, ignored',
+        'topic': 'ancient, operating-system, ignored',
         'comment': """This option was used in BIND 8 to enable checking for memory leaks on exit.
 BIND 9 ignores the option and always performs the checks.""",
     }
@@ -1779,7 +1786,8 @@ g_nc_keywords['dnsrps-options'] = \
 g_nc_keywords['dnskey-ttl'] = \
     {
         'default': '1h',
-        'validity': {'function': 'iso8601_time_duration'},
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
         'unit': 'second_unless_stated',
         'introduced': '9.15.6',
         'found-in': {'dnssec-policy'},
@@ -1870,7 +1878,7 @@ g_nc_keywords['dnssec-enable'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.3.0',
         'obsoleted': '9.15.1',
-        'topic': 'DNSSEC',
+        'topic': 'ancient, DNSSEC',
         'comment': """This indicates whether DNSSEC-related resource
 records are to be returned by named.  If set to no, named
 will not return DNSSEC-related resource records unless
@@ -1932,7 +1940,7 @@ g_nc_keywords['dnssec-lookaside'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.3.0',  # 'auto' added in 9.7
         'obsoleted': '9.16.0',
-        'topic': 'DNSSEC',
+        'topic': 'ancient, DNSSEC',
         'comment':
             """Syntax: dnssec-lookaside ( auto | no | domain trust-anchor domain ) ; ]
             Disable the specified DS/DLV digest types at and below the
@@ -2115,7 +2123,7 @@ g_nc_keywords['dnstap-identity'] = \
         'validity': {'function': 'dscp_identity'},
         'found-in': {'options'},
         'introduced': '9.11.0',
-        'topic': 'capture, tap, operating-system, inert',
+        'topic': 'capture, tap, operating-system, inert, not-configured',
         'comment': '',
     }
 
@@ -2326,7 +2334,7 @@ g_nc_keywords['fake-iquery'] = \
         'found-in': {'options'},
         'introduced': '8.1',
         'obsoleted': '9.6.3',
-        'topic': 'inert',
+        'topic': 'ancient, inert',
         'comment': """In BIND 8, this option enabled simulating the obsolete DNS query type IQUERY. BIND 9
 never does IQUERY simulation.""",
     }
@@ -2338,7 +2346,7 @@ g_nc_keywords['fetch-glue'] = \
         'found-in': {'options', 'view'},
         'introduced': '8.1',
         'obsoleted': '9.7.0',
-        'topic': 'inert',
+        'topic': 'ancient, inert',
         'comment': """This option is obsolete. In BIND 8, fetch-glue yes
 caused the server to attempt to fetch glue resource
 records it didn't have when constructing the
@@ -2497,7 +2505,7 @@ g_nc_keywords['filter-aaaa'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.8.0',
         'obsoleted': '9.14.0',
-        'topic': 'filtering',
+        'topic': 'ancient, filtering',
         'comment': """Specifies a list of addresses to which
 filter-aaaa-on-v4 is applies.
 
@@ -2513,7 +2521,7 @@ g_nc_keywords['filter-aaaa-on-v4'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.8.0',
         'obsoleted': '9.14.0',
-        'topic': 'filtering',
+        'topic': 'ancient, filtering',
         'comment': """This option is only available when BIND 9 is
 compiled with the --enable-filter-aaaa option on the
 "configure" command line. It is intended to help the
@@ -2559,7 +2567,7 @@ g_nc_keywords['filter-aaaa-on-v6'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.10.0',
         'obsoleted': '9.14.0',
-        'topic': 'filtering',
+        'topic': 'ancient, filtering',
         'comment': """Identical to filter-aaaa-on-v4, except it filters
 AAAA responses to queries from IPv6 clients instead of
 IPv4 clients. To filter all responses, set both options
@@ -2669,7 +2677,7 @@ g_nc_keywords['geoip-use-ecs'] = \
         'found-in': {'options'},
         'introduced': '9.11.0',
         'obsoleted': '9.14.0',
-        'topic': 'operating-system, geoip, inert',
+        'topic': 'ancient, operating-system, geoip, inert',
         'comment': '',
     }
 
@@ -2680,7 +2688,7 @@ g_nc_keywords['glue-cache'] = \
         'found-in': {'options', 'view'},  # 'view' added in 9.12?
         'introduced': '9.12',
         'deprecated': '9.17',
-        'topic': 'glue, cache, caching',
+        'topic': 'ancient, glue, cache, caching',
         'comment': '',
     }
 
@@ -2691,7 +2699,7 @@ g_nc_keywords['has-old-clients'] = \
         'found-in': {'options'},
         'introduced': '8.2',
         'obsoleted': '9.7.0',
-        'topic': 'operating-system, geoip, inert',
+        'topic': 'ancient, operating-system, geoip, inert',
         'comment': """This option was incorrectly implemented in BIND 8,
 and is ignored by BIND 9. To achieve the intended
 effect of has-old-clients yes, specify the two
@@ -2723,7 +2731,7 @@ g_nc_keywords['host-statistics'] = \
         'found-in': {'options'},
         'introduced': '8.2',
         'obsoleted': '9.14',
-        'topic': 'operating-system, not implemented, inert',
+        'topic': 'ancient, operating-system, not implemented, inert',
         'comment': """In BIND 8, this enables keeping of statistics for
 every host that the name server interacts with.
 Not implemented in BIND 9.""",
@@ -2736,7 +2744,7 @@ g_nc_keywords['host-statistics-max'] = \
         'found-in': {'options'},
         'introduced': '8.3',
         'obsoleted': '9.14',
-        'topic': 'operating-system, server resource, not implemented',
+        'topic': 'ancient, operating-system, server resource, not implemented',
         'comment': """In BIND 8, specifies the maximum number of host
 statistics entries to be kept. Not implemented
 in BIND 9.""",
@@ -2925,45 +2933,13 @@ g_nc_keywords['ixfr-base'] = \
         'found-in': {'view', 'zone'},
         'introduced': '8.0',
         'obsoleted': '9.14.0',
-        'topic': 'transfer, IXFR',
+        'topic': 'ancient, transfer, IXFR',
         'zone-type': {'master', 'primary'},
         'comment': """Was used in Bind 8 to specify the name of the
 transaction log (journal) file for dynamic update and
 IXFR.  Bind9 ignores this option and constructs the
 name of the journal file by appending ".jnl" to the
 name of the zone file.""",
-    }
-
-g_nc_keywords['ixfr-from-differences'] = \
-    {
-        'default': 'primary',  # changed from 'yes' in v9.13
-        'validity': {'regex': r'(primary|master|yes|no|slave|secondary)'},
-        'found-in': {'options', 'view'},
-        'introduced': '9.5.0',
-        'topic': 'transfer, IXFR, journal',
-        'zone-type': {'master', 'slave', 'mirror', 'primary', 'secondary'},
-        'comment':
-            """When yes and the server loads a new version of a master
-zone from its zone file or receives a new version of a
-slave file via zone transfer, it will compare the new
-version to the previous one and calculate a set of
-differences. The differences are then logged in the zone's
-journal file such that the changes can be transmitted to
-downstream slaves as an incremental zone transfer.
-By allowing incremental zone transfers to be used for
-non-dynamic zones, this option saves bandwidth at the
-expense of increased CPU and memory consumption at
-the master.
-In particular, if the new version of a zone is
-completely different from the previous one, the set of
-differences will be of a size comparable to the combined
-size of the old and new zone version, and the server will
-need to temporarily allocate memory to hold this complete
-difference set.
-ixfr-from-differences also accepts master and slave at
-the view and options levels which causes
-ixfr-from-differences to be enabled for all master or
-slave zones respectively. It is off by default.""",
     }
 
 g_nc_keywords['ixfr-from-differences'] = \
@@ -2984,7 +2960,7 @@ g_nc_keywords['ixfr-tmp-file'] = \
         'found-in': {'view'},
         'introduced': '9.0',
         'obsoleted': '9.14',
-        'topic': 'inert, IXFR, transfer',
+        'topic': 'ancient, inert, IXFR, transfer',
         'comment': '',
     }
 
@@ -3211,7 +3187,7 @@ g_nc_keywords['maintain-ixfr-base'] = \
         'found-in': {'options', 'view', 'zone'},
         'introduced': '8.2',
         'obsoleted': '9.7.0',  # ignored since 9.0
-        'topic': 'inert, transfer, IXFR',
+        'topic': 'ancient, inert, transfer, IXFR',
         'zone-type': {'primary', 'master'},
         'comment': """maintain-ixfr-base
 This option is obsolete. It was used in BIND 8 to
@@ -3360,7 +3336,7 @@ g_nc_keywords['max-acache-size'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.4.0',
         'obsoleted': '9.12',
-        'topic': 'additional section cache, caching',
+        'topic': 'ancient, additional section cache, caching',
         'comment': """The maximum amount of memory in bytes to use for the
 server's acache. When the amount of data in the acache
 reaches this limit, the server will clean more aggressively
@@ -3451,7 +3427,7 @@ g_nc_keywords['max-ixfr-log-size'] = \
         'deprecated': '9.1.0',
         'obsoleted': '9.1.0',
         'ancient': '9.14.0',
-        'topic': 'transfer, IXFR, server resource',
+        'topic': 'ancient, transfer, IXFR, server resource',
         'zone-type': {'master'},
         'comment':
             """This option is obsolete; it is accepted and ignored
@@ -3898,7 +3874,7 @@ g_nc_keywords['min-roots'] = \
         'found-in': {'options', 'view'},
         'introduced': '8.3',  # 'min-roots' has not been introduced yet
         'obsoleted': '9.14',
-        'topic': 'tuning, inert, not implemented',
+        'topic': 'ancient, tuning, inert, not implemented',
         'comment': """The minimum number of root servers that is required
 for a request for the root servers to be accepted.
 The default is 2.""",
@@ -3934,7 +3910,7 @@ g_nc_keywords['multiple-cnames'] = \
         'found-in': {'options'},
         'introduced': '8.1',  # inert since 9.2, still inert at 9.6.3
         'obsoleted': '9.14',
-        'topic': 'inert',
+        'topic': 'ancient, inert',
         'comment': """This option was used in BIND 8 to allow a domain name to have multiple CNAME records
 in violation of the DNS standards. BIND 9.2 onwards always strictly enforces the CNAME
 rules both in master files and dynamic updates.""",
@@ -3962,7 +3938,7 @@ g_nc_keywords['named-xfer'] = \
         'found-in': {'options'},
         'introduced': '8.1',
         'obsoleted': '9.14',
-        'topic': 'obsoleted, inert',
+        'topic': 'ancient, obsoleted, inert',
         'comment': """This option is obsolete. It was used in BIND 8 to
 specify the pathname to the named-xfer program.
 In BIND 9, no separate named-xfer program is needed;
@@ -4048,7 +4024,7 @@ g_nc_keywords['nosit-udp-size'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.10.0',
         'obsoleted': '9.11.0',  # Truly removed at 9.17.0
-        'topic': 'UDP ',
+        'topic': 'ancient, UDP',
         'comment': """Sets the maximum size of UDP responses that will be sent to queries without a valid
 source identity token. A value below 128 will be silently raised to 128. The default value
 is 4096, but the max-udp-size option may further limit the response size.""",
@@ -4260,7 +4236,7 @@ g_nc_keywords['parent-ds-ttl'] = \
     {
         'default': "",
         'validity': {'range': {0, 3660}},
-        'unit': 'ttl',
+        'unit': 'ttl_second',
         'found-in': {'dnssec-policy'},  # removed from 'options' 9.12
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
@@ -4270,9 +4246,10 @@ g_nc_keywords['parent-ds-ttl'] = \
 g_nc_keywords['parent-propagation-delay'] = \
     {
         'default': "",
-        'validity': {'range': {0, 3660}},
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
         'unit': 'second',
-        'found-in': {'dnssec-policy'},  # removed from 'options' 9.12
+        'found-in': {'dnssec-policy'},  # removed from 'options' 9.12?
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
         'comment': "",
@@ -4281,12 +4258,14 @@ g_nc_keywords['parent-propagation-delay'] = \
 g_nc_keywords['parent-registration-delay'] = \
     {
         'default': "",
-        'validity': {'range': {0, 3660}},
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
         'unit': 'second',
-        'found-in': {'dnssec-policy'},  # removed from 'options' 9.12
+        'found-in': {'dnssec-policy'},
         'introduced': '9.15.6',
-        'topic': 'DNSSEC',
-        'comment': "",
+        'obsoleted': '9.16.0',
+        'topic': 'obsoleted, DNSSEC',
+        'comment': 'arguably, the shortest lived setting',
     }
 
 g_nc_keywords['parental-source'] = \
@@ -4439,7 +4418,7 @@ g_nc_keywords['pubkey'] = \
         # In 8.2, only in ['zone']['type']['stub']
         'introduced': '8.2',
         'obsoleted': '9.0',  # Still taking syntax in @ v9.15.0
-        'topic': '',
+        'topic': 'ancient, DNSSEC',
         'zone-type': {'master', 'slave', 'stub'},
         'comment': """A pubkey represents a private key for this zone. It
 is needed when this is the top level authoritative
@@ -4454,7 +4433,9 @@ representing the key. """
 g_nc_keywords['publish-safety'] = \
     {
         'default': "",
-        'validity': {'range': {0, 3660}},
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
+        'unit': 'second',
         'found-in': {'dnssec-policy'},  # removed from 'options' in 9.12
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
@@ -4464,8 +4445,9 @@ g_nc_keywords['publish-safety'] = \
 g_nc_keywords['purge-keys'] = \
     {
         'default': 'P90D',  # 90-day
-        'validity': {'iso8601_time'},
-        'unit': 'iso8601_time_duration',
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
+        'unit': 'second',
         'found-in': {'options', 'dnssec-policy'},
         'introduced': '9.16.0',  # code appeared in 9.15.7
         'topic': 'DNSSEC',
@@ -4488,7 +4470,7 @@ g_nc_keywords['queryport-pool-ports'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.4',
         'obsoleted': '9.10.5',
-        'topic': 'query address, inert, obsoleted, ancient',
+        'topic': 'ancient, query address, inert, obsoleted, ancient',
         'comment': '',
     }
 
@@ -4499,7 +4481,7 @@ g_nc_keywords['queryport-pool-updateinterval'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.4',
         'obsoleted': '9.10.5',
-        'topic': 'query address, inert, obsolete, ancient',
+        'topic': 'ancient, query address, inert, obsolete, ancient',
         'comment': '',
     }
 
@@ -4507,7 +4489,7 @@ g_nc_keywords['query-source'] = \
     {
         'default': {'address': '*', 'port': '*'},
         'validity': {'function': "ip4addr_port_dscp_list"},
-        'found-in': {'options', 'server', 'view'},
+        'found-in': {'options', 'server', 'view'},  # no zone here.
         'introduced': '8.1',
         'topic': 'query address',
         'comment':
@@ -4698,6 +4680,32 @@ its response, then its contents are logged in the
 resolver category at level info. The default is no.""",
     }
 
+g_nc_keywords['request-sit'] = \
+    {
+        'default': None,  # also a compile-time option,
+        'validity': {'regex': r"(yes|no)"},
+        'found-in': {'options', 'view', 'server'},
+        'introduced': '9.10.0',
+        'obsoleted': '9.11.0',
+        'topic': 'ancient, EDNS',
+        'comment': """If yes, then a SIT (Source Identity Token) EDNS
+option is sent along with the query.
+
+If the resolver has previously talked to the server,
+the SIT returned in the previous transaction is sent.
+
+This is used by the server to determine whether the
+resolver has talked to it before.  A resolver sending
+the correct SIT is assumed not to be an off-path
+attacker sending a spoofed-source query; the query is
+therefore unlikely to be part of a
+reflection/amplification attack, so resolvers sending
+a correct SIT option are not subject to response rate
+limiting (RRL). Resolvers which do not send a correct
+SIT option may be limited to receiving smaller
+responses via the nosit-udp-size option.""",
+    }
+
 g_nc_keywords['require-server-cookie'] = \
     {
         'default': 'no',
@@ -4724,32 +4732,6 @@ g_nc_keywords['require-server-cookie'] = \
             new, valid, cookie.""",
     }
 
-g_nc_keywords['request-sit'] = \
-    {
-        'default': None,  # also a compile-time option,
-        'validity': {'regex': r"(yes|no)"},
-        'found-in': {'options', 'view', 'server'},
-        'introduced': '9.10.0',
-        'obsoleted': '9.11.0',
-        'topic': 'EDNS',
-        'comment': """If yes, then a SIT (Source Identity Token) EDNS
-option is sent along with the query.
-
-If the resolver has previously talked to the server,
-the SIT returned in the previous transaction is sent.
-
-This is used by the server to determine whether the
-resolver has talked to it before.  A resolver sending
-the correct SIT is assumed not to be an off-path
-attacker sending a spoofed-source query; the query is
-therefore unlikely to be part of a
-reflection/amplification attack, so resolvers sending
-a correct SIT option are not subject to response rate
-limiting (RRL). Resolvers which do not send a correct
-SIT option may be limited to receiving smaller
-responses via the nosit-udp-size option.""",
-    }
-
 g_nc_keywords['require-server-cookie'] = \
     {
         'default': 'no',
@@ -4767,7 +4749,8 @@ g_nc_keywords['reserved-sockets'] = \
         'unit': 'file descriptors',
         'found-in': {'options'},
         'introduced': '9.5.0',
-        'topic': 'server resource',
+        'deprecated': '9.18.0',
+        'topic': 'deprecated, server resource',
         'comment':
             """The number of file descriptors reserved for TCP,
             stdio, etc.
@@ -4855,7 +4838,9 @@ Option 'passthru' and 'disable' added in v9.9.0.
 g_nc_keywords['retire-safety'] = \
     {
         'default': "",
-        'validity': {'range': {0, 3660}},
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
+        'unit': 'second',
         'found-in': {'dnssec-policy'},  # move from 'options' in 9.15
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
@@ -4878,7 +4863,7 @@ g_nc_keywords['rfc2308-type1'] = \
         'found-in': {'options', 'view'},
         'introduced': '8.2',
         'obsoleted': '9.14',
-        'topic': 'inert, not implemented',
+        'topic': 'ancient, inert, not implemented',
         'comment': '',
     }
 
@@ -5014,7 +4999,7 @@ g_nc_keywords['serial-queries'] = \
 g_nc_keywords['serial-query-rate'] = \
     {
         'default': "20",
-        'validity': {'function': "time_duration"},
+        'validity': {'function': "iso8601_time_duration"},
         'unit': 'query_per_second',
         'found-in': {'options'},
         'introduced': '9.2',
@@ -5312,9 +5297,9 @@ expiry dates.""",
 g_nc_keywords['signatures-refresh'] = \
     {
         'default': "P5D",  # 5 days
-        'unit': 'iso8601_time_duration',
         'validity': {'range': {0, 3660},
                      'function': 'iso8601_time_duration'},
+        'unit': 'second',
         'found-in': {'dnssec-policy'},  # moved from 'options' in 9.16?
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
@@ -5334,6 +5319,7 @@ g_nc_keywords['signatures-validity'] = \
         'default': 'P2W',
         'validity': {'range': {0, 3660},
                      'function': 'iso8601_time_duration'},
+        'unit': 'second',
         'found-in': {'dnssec-policy'},  # move from 'options' 9.16?
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
@@ -5350,6 +5336,7 @@ g_nc_keywords['signatures-validity-dnskey'] = \
         'default': 'P2W',
         'validity': {'range': {0, 3660},
                      'function': 'iso8601_time_duration'},
+        'unit': 'second',
         'found-in': {'dnssec-policy'},
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
@@ -5491,7 +5478,7 @@ g_nc_keywords['statistics-interval'] = \
         'found-in': {'options'},
         'introduced': '8.2',
         'obsoleted': '9.14.0',
-        'topic': 'operating-system, server resource, periodic interval, inert, not implemented',
+        'topic': 'ancient, operating-system, server resource, periodic interval, inert, not implemented',
         'comment': """Name server statistics will be logged every
 statistics-interval minutes.
 
@@ -5522,7 +5509,7 @@ g_nc_keywords['support-ixfr'] = \
         # In 8.2, not in ['options'], nor ['view']
         'introduced': '8.2',
         'obsoleted': '9.11',
-        'topic': 'transfer, IXFR',
+        'topic': 'ancient, transfer, IXFR',
         'comment': '',
     }
 
@@ -5531,8 +5518,8 @@ g_nc_keywords['suppress-initial-notify'] = \
         'default': 'no',
         'validity': {'boolean'},
         'found-in': {'options', 'view'},
-        'introduced': '8.3',
-        'obsoleted': '8.18',  # TBD when was it gone?
+        'introduced': '9.3',
+        'obsoleted': '9.18',  # not implemented since 9.3
         'topic': 'notify',
         'comment': '',
     }
@@ -6081,7 +6068,7 @@ g_nc_keywords['treat-cr-as-space'] = \
         'found-in': {'options'},
         'introduced': '8.3',
         'obsoleted': '9.14.0',  # still inert at 9.6.3
-        'topic': 'operating-system, inert',
+        'topic': 'ancient, operating-system, inert',
         'comment': """This option was used in BIND 8 to make the server
 treat carriage return (\"\\r\") characters the same way
 as a space or tab character, to facilitate loading of
@@ -6097,7 +6084,7 @@ g_nc_keywords['trust-anchor-telemetry'] = \
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options', 'view'},
         'introduced': "9.10.5",
-        'topic': 'DNSSEC',
+        'topic': 'experimental, DNSSEC',
         'comment': """Causes named to send specially-formed queries once per
 day to domains for which trust anchors have been
 configured via trusted-keys, managed-keys,
@@ -6375,7 +6362,7 @@ g_nc_keywords['use-id-pool'] = \
         'found-in': {'options', 'zone'},
         'introduced': '8.2',
         'obsoleted': '9.0.0',
-        'topic': 'inert',
+        'topic': 'ancient, inert',
         'zone-type': {'master'},
         'comment': """This option is obsolete.
 BIND 9 always allocates query IDs from a pool.""",
@@ -6388,7 +6375,7 @@ g_nc_keywords['use-ixfr'] = \
         'found-in': {'options'},
         'introduced': '8.2',
         'obsoleted': '9.8.0',
-        'topic': 'inert',
+        'topic': 'ancient, inert',
         'comment': """This option is obsolete. If you need to disable IXFR 
 to a particular server or servers, use 'server' clause.""",
     }
@@ -6400,7 +6387,7 @@ g_nc_keywords['use-queryport-pool'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.5',
         'obsoleted': '9.5.0',  # removed in 9.10.7
-        'topic': 'inert, query port, pool, query, port',
+        'topic': 'ancient, inert, query port, pool, query, port',
         'comment': '',
     }
 
@@ -6571,7 +6558,9 @@ TTL to zero. The default is no.""",
 g_nc_keywords['zone-propagation-delay'] = \
     {
         'default': "",
-        'validity': {'range': {0, 3660}},
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
+        'unit': 'second',
         'found-in': {'dnssec-policy'},  # was in 'options' clause
         'introduced': '9.15.6',
         'topic': 'DNSSEC',

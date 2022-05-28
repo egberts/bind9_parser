@@ -349,9 +349,11 @@ ip6_optional_prefix = (
 ip6s_prefix.setName('<ip6_with_subnet_only>')
 
 ip6_addr_or_wildcard = (
-        ungroup(wildcard_name
-        | ip6_addr)
-)('ip6_addr_w')
+        ungroup(
+            wildcard_name.setName('*')
+            | ip6_addr.setName('<ip6_addr>')
+        ).setName('<ip6_addr> | *')
+)('ip6_addr_w').setName('( <ip6_addr> | * )')
 
 # There is no ip46_addr_or_index ... yet
 

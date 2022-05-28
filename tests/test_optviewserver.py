@@ -12,6 +12,8 @@ from bind9_parser.isc_optviewserver import \
     optviewserver_stmt_provide_ixfr,\
     optviewserver_stmt_request_ixfr,\
     optviewserver_stmt_transfer_format,\
+    optviewserver_stmt_query_source,\
+    optviewserver_stmt_query_source_v6,\
     optviewserver_statements_set,\
     optviewserver_statements_series
 
@@ -98,13 +100,79 @@ class TestOptionsViewServer(unittest.TestCase):
         result = optviewserver_stmt_request_ixfr.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
+    def test_isc_optviewserver_stmt_query_source_ut_passing(self):
+        """ Clause Options/View/Server; Statement 'query-source' unittest; passing mode """
+        test_string = [
+            'query-source port *;',
+            'query-source port * dscp 1;',
+            'query-source * port *;',
+            'query-source * dscp 1;',
+            'query-source * port * dscp 1;',
+            'query-source 127.0.0.1 port *;',
+            'query-source 127.0.0.1 dscp 1;',
+            'query-source 127.0.0.1 port * dscp 1;',
+            'query-source address 127.0.0.1;',
+            'query-source address 127.0.0.1 port *;',
+            'query-source address 127.0.0.1 dscp 1;',
+            'query-source address 127.0.0.1 port * dscp 1;',
+            'query-source address *;',
+            'query-source address * port *;',
+            'query-source address * dscp 1;',
+            'query-source address * port * dscp 1;',
+        ]
+        result = optviewserver_stmt_query_source.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optviewserver_stmt_query_source_passing(self):
+        """ Clause Options/View/Server; Statement 'query-source' unittest; passing mode """
+        assertParserResultDictTrue(
+            optviewserver_stmt_query_source,
+            'query-source address 172.16.0.0 port 443 dscp 15;',
+            {'query_source': {'dscp_port': 15,
+                              'ip4_addr_w': '172.16.0.0',
+                              'ip_port_w': '443'}}
+        )
+
+    def test_isc_optviewserver_stmt_query_source_v6_ut_passing(self):
+        """ Clause Options/View/Server; Statement 'query-source-v6' unittest; passing mode """
+        test_string = [
+            'query-source-v6 port *;',
+            'query-source-v6 port * dscp 1;',
+            'query-source-v6 * port *;',
+            'query-source-v6 * dscp 1;',
+            'query-source-v6 * port * dscp 1;',
+            'query-source-v6 fec2::1 port *;',
+            'query-source-v6 fec2::1 dscp 1;',
+            'query-source-v6 fec2::1 port * dscp 1;',
+            'query-source-v6 address fec2::1;',
+            'query-source-v6 address fec2::1 port *;',
+            'query-source-v6 address fec2::1 dscp 1;',
+            'query-source-v6 address fec2::1 port * dscp 1;',
+            'query-source-v6 address *;',
+            'query-source-v6 address * port *;',
+            'query-source-v6 address * dscp 1;',
+            'query-source-v6 address * port * dscp 1;',
+        ]
+        result = optviewserver_stmt_query_source_v6.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_optviewserver_stmt_query_source_v6_passing(self):
+        """ Clause Options/View/Server; Statement 'query-source-v6' unittest; passing mode """
+        assertParserResultDictTrue(
+            optviewserver_stmt_query_source_v6,
+            'query-source-v6 address fec2::1 port 443 dscp 15;',
+            {'query_source_v6': {'dscp_port': 15,
+                                 'ip6_addr_w': 'fec2::1',
+                                 'ip_port_w': '443'}}
+        )
+
     def test_isc_optviewserver_stmt_transfer_format_passing(self):
         """ Clause Options/View/Server; Statement transfer-format; passing mode """
         test_string = [
             'transfer-format one-answer;',
             'transfer-format many-answers;',
         ]
-        result = optviewserver_stmt_transfer_format.runTests(test_string, failureTests=False)
+        result = optviewserver_stmt_.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
         assertParserResultDictTrue(
             optviewserver_stmt_transfer_format,

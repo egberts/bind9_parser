@@ -499,63 +499,65 @@ request-expire no;
             options_all_statements_series,
             """
 secroots-file "dir/file";
-send-cookie no;
 serial-query-rate 5;
-serial-update-method unixtime;
 server-id hostname;
-servfail-ttl 30m;
 session-keyalg AES512;
 session-keyfile "dir/file";
 session-keyname "session_keyname";
-sig-signing-nodes 5;
-sig-signing-signatures 5;
-sig-signing-type 6;
 sig-validity-interval 5;
 sortlist { 127.0.0.1; };
 stacksize default;
+statistics-file "dir/file";
+tcp-clients 60;
+tcp-listen-queue 60;
+tkey-dhkey "dhkey_string_content" 60;
+tkey-domain "172.in-addr.arpa.";
+tkey-gssapi-keytab "keytab_string_content";
+transfer-format many-answers;
+transfer-source 127.0.0.1 port 60 dscp 12;
+transfer-source-v6 ffec::1 port 60 dscp 11;
+transfers-in 60;
+transfers-out 60;
+transfers-per-ns 60;
+use-alt-transfer-source no;
+version "funky dns server, uh?";
+
+send-cookie no;
+serial-update-method unixtime;
+servfail-ttl 30m;
+sig-signing-nodes 5;
+sig-signing-signatures 5;
+sig-signing-type 6;
 stale-answer-client-timeout disabled;
 stale-answer-enable no;
 stale-answer-ttl 60s;
 stale-cache-enable no;
 stale-refresh-time 8h;
 startup-notify-rate 5;
-statistics-file "dir/file";
 suppress-initial-notify no;  // obsolete
 synth-from-dnssec no;
 tcp-advertised-timeout 60;
-tcp-clients 60;
 tcp-idle-timeout 60;
 tcp-initial-timeout 60;
 tcp-keepalive-timeout 60;
-tcp-listen-queue 60;
 tcp-receive-buffer 60;
 tcp-send-buffer 60;
-tkey-dhkey "dhkey_string_content" 60;
-tkey-domain "172.in-addr.arpa.";
 tkey-gssapi-credential "krb5_credential";
-tkey-gssapi-keytab "keytab_string_content";
 tls-port 60;
-transfer-format many-answers;
 transfer-message-size 60;
-transfer-source 127.0.0.1 port 60 dscp 12;
-transfer-source-v6 ffec::1 port 60 dscp 11;
-transfers-in 60;
-transfers-out 60;
-transfers-per-ns 60;
 trust-anchor-telemetry no; // experimental
 try-tcp-refresh no;
 udp-receive-buffer 60;
 udp-send-buffer 60;
 update-check-ksk no;
-use-alt-transfer-source no;
 use-v4-udp-ports { 1;2;3;4;5;6;7; };
 use-v6-udp-ports { 8;9;10;11;12;13;14;15; };
 v6-bias 60;
 validate-except { "168.192.in-addr.arpa."; };
-version "funky dns server, uh?";
 zero-no-soa-ttl no;
 zero-no-soa-ttl-cache no;
-zone-statistics terse;""",
+zone-statistics terse;
+""",
             {}
         )
 
