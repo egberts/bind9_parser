@@ -33,7 +33,7 @@ from bind9_parser.isc_options import \
     options_stmt_interface_interval, options_stmt_keep_response_order,\
     options_stmt_listen_on, options_multiple_stmt_listen_on, \
     options_stmt_listen_on_v6, options_stmt_match_mapped_addresses,\
-    options_stmt_max_cache_ttl,\
+    options_stmt_max_cache_ttl, options_stmt_max_clients_per_query,\
     options_stmt_max_rsa_exponent_size, options_stmt_memstatistics,\
     options_stmt_memstatistics_file, options_stmt_multiple_cnames,\
     options_stmt_named_xfer, options_stmt_pid_file,\
@@ -462,6 +462,13 @@ deny-answer-addresses {
             options_stmt_max_cache_ttl,
             'max-cache-ttl 1W1D7H;',
             {'max_cache_ttl': '1W1D7H'}
+            )
+
+    def test_isc_options_stmt_max_clients_per_query_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_max_clients_per_query,
+            'max-clients-per-query 300;',
+            {'max_clients_per_query': 300}
             )
 
     def test_isc_options_stmt_max_rsa_exponent_size_passing(self):

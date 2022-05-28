@@ -13,7 +13,8 @@ from pyparsing import Group, Keyword, Optional,\
     Literal, ZeroOrMore, CaselessLiteral, ungroup
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, isc_boolean, \
     seconds_type, days_type, minute_type, dequoted_path_name,\
-    size_spec, name_base, fqdn_name, check_options
+    size_spec, name_base, fqdn_name, check_options, number_type, iso8601_duration,\
+    percentage_type
 from bind9_parser.isc_inet import ip4_addr, ip_port, \
     inet_ip_port_keyword_and_wildcard_element, ip6_addr,\
     inet_ip_port_keyword_and_number_element, ip46_addr_or_prefix,\
@@ -289,10 +290,26 @@ optviewzone_stmt_masterfile_style = (
     + semicolon
 ).setName('masterfile-style ( full | relative );')
 
+optviewzone_stmt_max_ixfr_ratio = (
+    Keyword('max-ixfr-ratio').suppress()
+    + (
+            ungroup(percentage_type)('max-ixfr-ratio')
+            | Literal('unlimited')('max-ixfr-ratio')
+    )
+    + semicolon
+)
+
 #   max-journal-size size_in_bytes; [ Opt, View, Zone ]
 optviewzone_stmt_max_journal_size = (
     Keyword('max-journal-size').suppress()
     - size_spec('max_journal_size')
+    + semicolon
+)
+
+#   max-records <integer>; [ Opt, View, Zone ]
+optviewzone_stmt_max_records = (
+    Keyword('max-records').suppress()
+    - number_type('max_records')
     + semicolon
 )
 
@@ -341,7 +358,7 @@ optviewzone_stmt_max_transfer_time_out = (
 #   min-refresh-time seconds ; [ Opt, View, Zone ]
 optviewzone_stmt_min_refresh_time = (
     Keyword('min-refresh-time').suppress()
-    - seconds_type('min_refresh_time')
+    - iso8601_duration('min_refresh_time')
     + semicolon
 )
 
@@ -349,7 +366,7 @@ optviewzone_stmt_min_refresh_time = (
 optviewzone_stmt_min_retry_time = (
     Keyword('min-retry-time').suppress()
     - seconds_type('min_retry_time')
-    + semicolon
+    - semicolon
 )
 
 #   multi-master ( yes | no ) ; [ Opt, View, Zone ]
@@ -498,7 +515,9 @@ optviewzone_statements_set = (
         ^ optviewzone_stmt_maintain_ixfr_base
         ^ optviewzone_stmt_masterfile_format
         ^ optviewzone_stmt_masterfile_style
+        ^ optviewzone_stmt_max_ixfr_ratio
         ^ optviewzone_stmt_max_journal_size
+        ^ optviewzone_stmt_max_records
         ^ optviewzone_stmt_max_refresh_time
         ^ optviewzone_stmt_max_retry_time
         ^ optviewzone_stmt_max_transfer_idle_in

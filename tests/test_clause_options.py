@@ -322,33 +322,77 @@ match-mapped-addresses no;
 max-cache-size unlimited;
 max-cache-ttl 1H;
 max-clients-per-query 60;
-max-ixfr-ratio unlimited;
 max-journal-size 11M;
 max-ncache-ttl 1H;
 max-records 5;
-max-recursion-depth 3;
-max-recursion-queries 4;
-max-refresh-time 60;
 max-retry-time 60;
 max-rsa-exponent-size 512;
-max-stale-ttl 16;
 max-transfer-idle-in 5;
 max-transfer-idle-out 5;
 max-transfer-time-in 5;
 max-transfer-time-out 5;
-max-udp-size 5;
-max-zone-ttl unlimited;
 memstatistics no;
 memstatistics-file "dir/file";
+multi-master no;
+max-recursion-depth 3;
+max-recursion-queries 4;
+max-stale-ttl 16;
+max-udp-size 5;
+max-zone-ttl unlimited;
 message-compression no;
 min-cache-ttl 1D;
 min-ncache-ttl 2d;
+max-refresh-time 60;
 min-refresh-time 1W;
-min-retry-time 1w;
+min-retry-time 1;
 minimal-any no;
 minimal-responses no-auth-recursive;
-multi-master no;""",
-            {}
+max-ixfr-ratio unlimited;""",
+            {'keep-response-order': {'aml': [{'ip4_addr': '127.0.0.1'}]},
+             'key_directory': 'dir/file',
+             'lame_ttl': 60,
+             'listen_on': [{'aml': [{'ip4_addr': '127.0.0.1'}],
+                            'http_port': 'HTTP_NAME',
+                            'ip_port': '53',
+                            'tls_port': 'TLS_NAME'}],
+             'listen_on_v6': [{'aml': [{'ip6_addr': '::1'}],
+                               'http_port': 'HTTP_NAME',
+                               'ip_port': '53',
+                               'tls_port': 'TLS_NAME'}],
+             'lmdb_mapsize': {'amount': 1, 'unit': 'M'},
+             'lock_file': 'dir/file',
+             'managed_keys_directory': 'dir/file',
+             'masterfile_format': 'text',
+             'masterfile_style': 'relative',
+             'match_mapped_addresses': 'no',
+             'max-ixfr-ratio': 'unlimited',
+             'max-zone-ttl': {'files_count': 'unlimited'},
+             'max_cache_size': ['unlimited'],
+             'max_cache_ttl': '1H',
+             'max_clients_per_query': 60,
+             'max_journal_size': [11, 'M'],
+             'max_ncache_ttl': '1H',
+             'max_records': 5,
+             'max_recursion_depth': 3,
+             'max_recursion_queries': 4,
+             'max_refresh_time': 60,
+             'max_retry_time': 60,
+             'max_rsa_exponent_size': 512,
+             'max_stale_ttl': '16',
+             'max_transfer_idle_in': 5,
+             'max_transfer_idle_out': 5,
+             'max_transfer_time_in': 5,
+             'max_transfer_time_out': 5,
+             'max_udp_size': 5,
+             'memstatistics': 'no',
+             'memstatistics_file': 'dir/file',
+             'message_compression': 'no',
+             'min_cache_ttl': '1D',
+             'min_ncache_ttl': '2d',
+             'min_refresh_time': '1W',
+             'min_retry_time': 1,
+             'minimal_any': 'no',
+             'multi_master': 'no'}
         )
 
     def test_isc_clause_options_all_statement_set_n_to_r_passing(self):
@@ -356,46 +400,48 @@ multi-master no;""",
         assertParserResultDictTrue(
             options_all_statements_series,
             """
+notify-source * port * dscp 4;
+notify-source-v6 * port * dscp 5;
+notify-to-soa no;
+port 53;
+prefetch 30 60;
+provide-ixfr no;
+query-source-v6 address fec2::1;
+querylog no;
+rate-limit { all-per-second 60; };
+recursing-file "dir/file";
+recursion no;
+recursive-clients 60;
+request-ixfr no;
+request-nsid no;
+resolver-query-timeout 24;
+
 nocookie-udp-size 512;
 notify primary-only;
 notify-delay 60;
 notify-rate 60;
-notify-source * port * dscp 4;
-notify-source-v6 * port * dscp 5;
-notify-to-soa no;
-nsec3-test-zone no; // test only
+nsec3-test-zone no;
 nta-lifetime 60m;
 nta-recheck 24h;
 nxdomain-redirect "redirect.example.test.";
 parental-source 127.0.0.1 port 88;
 pid-file none;
-port 53;
 preferred-glue "some_glue";
-prefetch 30 60;
-provide-ixfr no;
 qname-minimization strict;
 query-source address 127.0.0.1 );
-query-source-v6 address fec2::1;
-querylog no;
 random-device none;
-rate-limit { all-per-second 60; };
-recursing-file "dir/file";
-recursion no;
-recursive-clients 60;
 request-expire no;
-request-ixfr no;
-request-nsid no;
 require-server-cookie no;
-reserved-sockets 30;  // deprecated
+reserved-sockets 30;
 resolver-nonbackoff-tries 25;
-resolver-query-timeout 24;
 resolver-retry-interval 23;
 response-padding { 127.0.0.1; } block-size 512;
 response-policy { zone "." log on };
 reuseport no;
 root-delegation-only exclude { "127.in-addr.arpa."; };
 root-key-sentinel no;
-rrset-order { class IN A example.test; };""",
+rrset-order { class IN A example.test; };
+""",
             {}
         )
         

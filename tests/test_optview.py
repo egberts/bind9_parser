@@ -29,7 +29,6 @@ from bind9_parser.isc_optview import \
     optview_stmt_check_srv_cname, \
     optview_stmt_check_wildcard, \
     optview_stmt_cleaning_interval, \
-    optview_stmt_disable_algorithms, \
     optview_stmt_disable_algorithms, optview_multiple_stmt_disable_algorithms, \
     optview_stmt_disable_ds_digests, \
     optview_multiple_stmt_disable_ds_digests, \
@@ -66,6 +65,12 @@ from bind9_parser.isc_optview import \
     optview_stmt_max_cache_size, \
     optview_stmt_max_cache_ttl, \
     optview_stmt_max_ncache_ttl, \
+    optview_stmt_max_recursion_depth, \
+    optview_stmt_max_recursion_queries, \
+    optview_stmt_max_stale_ttl, \
+    optview_stmt_max_udp_size, \
+    optview_stmt_max_zone_ttl, \
+    optview_stmt_message_compression, \
     optview_stmt_minimal_responses, \
     optview_stmt_preferred_glue, \
     optview_stmt_query_source_v6, \
@@ -962,9 +967,114 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             {'max_ncache_ttl': 10800}
         )
 
+    #    optview_stmt_max_recursion_depth
+    def test_isc_optview_stmt_max_recursion_depth_passing(self):
+        """ Clause options/view; Statement 'max-recursion-depth'; passing """
+        test_string = [
+            'max-recursion-depth 0;',
+            'max-recursion-depth 10800;',
+            'max-recursion-depth 604800;',
+        ]
+        result = optview_stmt_max_recursion_depth.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_max_recursion_depth,
+            'max-recursion-depth 10800;',
+            {'max_recursion_depth': 10800}
+        )
+
+#    optview_stmt_max_recursion_queries
+    def test_isc_optview_stmt_max_recursion_queries_passing(self):
+        """ Clause options/view; Statement 'max-recursion-queries'; passing """
+        test_string = [
+            'max-recursion-queries 0;',
+            'max-recursion-queries 10800;',
+            'max-recursion-queries 604800;',
+        ]
+        result = optview_stmt_max_recursion_queries.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_max_recursion_queries,
+            'max-recursion-queries 10800;',
+            {'max_recursion_queries': 10800}
+        )
+
+#    optview_stmt_max_stale_ttl
+    def test_isc_optview_stmt_max_stale_ttl_passing(self):
+        """ Clause options/view; Statement 'max-stale-ttl'; passing """
+        test_string = [
+            'max-stale-ttl 0;',
+            'max-stale-ttl 60;',
+            'max-stale-ttl 3600;',
+            'max-stale-ttl 60M;',
+            'max-stale-ttl 24H;',
+            'max-stale-ttl 5D;',
+            'max-stale-ttl 1W;',
+        ]
+        result = optview_stmt_max_stale_ttl.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_max_stale_ttl,
+            'max-stale-ttl 24H;',
+            {'max_stale_ttl': '24H'}
+        )
+
+#    optview_stmt_max_udp_size
+    def test_isc_optview_stmt_max_udp_size_passing(self):
+        """ Clause options/view; Statement 'max-udp-size'; passing """
+        test_string = [
+            'max-udp-size 128;',
+            'max-udp-size 512;',
+            'max-udp-size 1024;',
+            'max-udp-size 1121;',
+            'max-udp-size 2048;',
+            'max-udp-size 4096;',
+        ]
+        result = optview_stmt_max_udp_size.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_max_udp_size,
+            'max-udp-size 1121;',
+            {'max_udp_size': 1121}
+        )
+
+#    optview_stmt_max_zone_ttl
+    def test_isc_optview_stmt_max_zone_ttl_passing(self):
+        """ Clause options/view; Statement 'max-zone-ttl'; passing """
+        test_string = [
+            'max-zone-ttl 0;',
+            'max-zone-ttl 2048000;',
+            'max-zone-ttl 14M;',
+            'max-cache-size 24H;',
+            'max-cache-size unlimited;',
+        ]
+        result = optview_stmt_max_zone_ttl.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optview_stmt_max_zone_ttl,
+            'max-zone-ttl 24H;',
+            {'max_zone_ttl': [24, 'H']}
+        )
+        assertParserResultDictTrue(
+            optview_stmt_max_zone_ttl,
+            'max-zone-ttl unlimited;',
+            {'max_zone-ttl': ['unlimited']}
+        )
+
+    #  optview_stmt_message_compression
+    def test_isc_optview_stmt_message_compression_passing(self):
+        """ Clause options/view; Statement 'message-compression'; passing """
+        assertParserResultDictTrue(
+            optview_stmt_message_compression,
+            'message-compression yes;',
+            {'message_compression': 'yes'}
+        )
+
     def test_isc_optview_stmt_minimal_responses_passing(self):
         """ Clause options/view; Statement minimal-responses; passing """
         test_string = [
+            'minimal-responses no-auth-recursive;',
+            'minimal-responses no-auth;',
             'minimal-responses yes;',
             'minimal-responses no;',
             'minimal-responses True;',

@@ -469,7 +469,6 @@ options_stmt_match_mapped_addresses = (
 )
 options_stmt_match_mapped_addresses.setName('match-mapped-addresses <boolean>;')
 
-
 # max-cache-ttl <duration>; [ Opt ]
 options_stmt_max_cache_ttl = (
     Keyword('max-cache-ttl').suppress()
@@ -477,6 +476,14 @@ options_stmt_max_cache_ttl = (
     + semicolon
 )
 options_stmt_max_cache_ttl.setName('max-cache-ttl <duration>;')
+
+# max-clients-per-query <number>; [ Opt ]
+options_stmt_max_clients_per_query = (
+    Keyword('max-clients-per-query').suppress()
+    - number_type('max_clients_per_query')
+    + semicolon
+)
+options_stmt_max_cache_ttl.setName('max-clients-per-query <number>;')
 
 # max-rsa-exponent-size bits; [ Opt ]
 options_stmt_max_rsa_exponent_size = (
@@ -799,6 +806,7 @@ options_statements_set = (
     ^ options_stmt_listen_on
     ^ options_stmt_match_mapped_addresses
     ^ options_stmt_max_cache_ttl
+    ^ options_stmt_max_clients_per_query
     ^ options_stmt_max_rsa_exponent_size
     ^ options_stmt_memstatistics_file
     ^ options_stmt_memstatistics

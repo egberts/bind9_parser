@@ -470,6 +470,13 @@ number_type = Word(nums).setParseAction(
 )('number')
 number_type.setName('<number>')
 
+percentage_type = (
+    Word(nums).setParseAction(
+        lambda toks: int(toks[0]), max=15
+    )
+    + Literal('%').suppress()
+).setName('<percentage>')
+
 # max-cache-size
 byte_type = Word(nums, max=3)('byte').setParseAction(
     lambda toks: int(toks[0]),
@@ -528,7 +535,7 @@ master_name.setName('<master_name>')
 
 # iso8601 is not a naive nor aware ISO time-interval
 # iso8601 is a delta time (or duration)
-iso8601_duration = Word(alphanums + '-.+:', min=1, max=63)('iso8601_duration')
+iso8601_duration = Word(alphanums + '-.+:', min=1, max=63)('iso8601_duration').setName('<iso8601_duration_new>')
 
 config_base_charset = alphanums + ' \t_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon allowed
 config_base = Word(config_base_charset, min=1, max=4086)

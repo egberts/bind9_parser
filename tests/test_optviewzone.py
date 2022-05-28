@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_optviewzone.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
 from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_allow_notify, \
     optviewzone_stmt_allow_query_on, \
@@ -40,7 +40,9 @@ from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_maintain_ixfr_base, \
     optviewzone_stmt_masterfile_format, \
     optviewzone_stmt_masterfile_style, \
+    optviewzone_stmt_max_ixfr_ratio, \
     optviewzone_stmt_max_journal_size, \
+    optviewzone_stmt_max_records, \
     optviewzone_stmt_max_refresh_time, \
     optviewzone_stmt_max_retry_time, \
     optviewzone_stmt_max_transfer_time_in, \
@@ -607,6 +609,22 @@ class TestOptionsViewZone(unittest.TestCase):
             {'masterfile_style': 'full'}
         )
 
+    def test_isc_optviewzone_stmt_max_ixfr_ratio_passing(self):
+        """ Clause options/view/zone; Statement 'max-ixfr-ratio'; passing """
+        test_string = [
+            'max-ixfr-ratio 0%;',
+            'max-ixfr-ratio 80%;',
+            'max-ixfr-ratio 1000%;',
+            'max-ixfr-ratio unlimited;'
+        ]
+        result = optviewzone_stmt_max_ixfr_ratio.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optviewzone_stmt_max_ixfr_ratio,
+            'max-ixfr-ratio 1000%;',
+            {'max_ixfr_ratio': [3, 'M']}
+        )
+
     def test_isc_optviewzone_stmt_max_journal_size_passing(self):
         """ Clause options/view/zone; Statement max-journal-size; passing """
         test_string = [
@@ -618,6 +636,19 @@ class TestOptionsViewZone(unittest.TestCase):
             optviewzone_stmt_max_journal_size,
             'max-journal-size 3M;',
             {'max_journal_size': [3, 'M']}
+        )
+
+    def test_isc_optviewzone_stmt_max_records_passing(self):
+        """ Clause options/view/zone; Statement max-records; passing """
+        test_string = [
+            'max-records 3600;'
+        ]
+        result = optviewzone_stmt_max_records.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optviewzone_stmt_max_records,
+            'max-records 3600;',
+            {'max_records': 3600}
         )
 
     def test_isc_optviewzone_stmt_max_refresh_time_passing(self):
@@ -718,9 +749,12 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_min_retry_time.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+
+    def test_isc_optviewzone_stmt_min_retry_time_failing(self):
+        """ Clause options/view/zone; Statement min-retry-time; failing """
+        assertParserResultDictFalse(
             optviewzone_stmt_min_retry_time,
-            'min-retry-time 3600;',
+            'min-retry-time 3H;',
             {'min_retry_time': 3600}
         )
 

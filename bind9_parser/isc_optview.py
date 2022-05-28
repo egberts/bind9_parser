@@ -617,25 +617,122 @@ optview_stmt_max_cache_size = (
     Keyword('max-cache-size').suppress()
     - size_spec('max_cache_size')
     + semicolon
-    ).setName('max-cache-size <size-spec>')
+).setName('max-cache-size <size-spec>')
 
 optview_stmt_max_cache_ttl = (
     Keyword('max-cache-ttl').suppress()
-    - seconds_type('max_cache_ttl')
+    - iso8601_duration('max_cache_ttl')
     + semicolon
 ).setName('max-cache-ttl <seconds>;')
 
 optview_stmt_max_ncache_ttl = (
     Keyword('max-ncache-ttl').suppress()
-    - seconds_type('max_ncache_ttl')
+    - iso8601_duration('max_ncache_ttl')
     + semicolon
 ).setName('max-ncache-ttl <seconds>;')
 
+# max-recursion-depth 3;
+optview_stmt_max_recursion_depth = (
+    Keyword('max-recursion-depth').suppress()
+    - number_type('max_recursion_depth')
+    - semicolon
+).setName('max-recursion-depth <integer>;')
+
+# max-recursion-queries 4;
+optview_stmt_max_recursion_queries = (
+    Keyword('max-recursion-queries').suppress()
+    - number_type('max_recursion_queries')
+    - semicolon
+).setName('max-recursion-queries <integer>;')
+
+# max-stale-ttl 16;
+optview_stmt_max_stale_ttl = (
+    Keyword('max-stale-ttl').suppress()
+    - iso8601_duration('max_stale_ttl')
+    - semicolon
+).setName('max-stale-ttl <iso8601_duration>;')
+
+# max-udp-size 5;
+optview_stmt_max_udp_size = (
+    Keyword('max-udp-size').suppress()
+    - number_type('max_udp_size')
+    - semicolon
+).setName('max-udp-size <integer>;')
+
+# max-zone-ttl unlimited;
+optview_stmt_max_zone_ttl = (
+    Keyword('max-zone-ttl').suppress()
+    - Group(
+        (
+            ungroup(number_type(''))
+            | Literal('unlimited')('')
+            | Keyword('default')
+        )('files_count')
+    )('max-zone-ttl')
+    + semicolon
+)('')
+optview_stmt_max_zone_ttl.setName('max-zone-ttl [ unlimited | default | <integer> ];')
+
+# message-compression no;
+optview_stmt_message_compression = (
+        Keyword('message-compression').suppress()
+        - isc_boolean('message_compression')
+        + semicolon
+)
+optview_stmt_message_compression.setName('message-compression  <boolean>;')
+
+# min-cache-ttl 1D;
+optview_stmt_min_cache_ttl = (
+    Keyword('min-cache-ttl').suppress()
+    - iso8601_duration('min_cache_ttl')
+    + semicolon
+).setName('min-cache-ttl <iso8601_duration>;')
+
+# min-ncache-ttl 2d;
+optview_stmt_min_ncache_ttl = (
+    Keyword('min-ncache-ttl').suppress()
+    - iso8601_duration('min_ncache_ttl')
+    + semicolon
+).setName('min-ncache-ttl <iso8601_duration>;')
+
+# max-refresh-time 60;
+optview_stmt_max_refresh_time = (
+    Keyword('max-refresh-time').suppress()
+    - number_type('max_refresh_time')
+    + semicolon
+).setName('max-refresh-time <seconds>;')
+
+# min-refresh-time 1W;
+optview_stmt_min_refresh_time = (
+    Keyword('min-refresh-time').suppress()
+    - number_type('min_refresh_time')
+    + semicolon
+).setName('min-refresh-time <seconds>;')
+
+# min-retry-time 1;
+optview_stmt_min_retry_time = (
+    Keyword('min-retry-time').suppress()
+    - number_type('min_retry_time')
+    + semicolon
+).setName('min-retry-time <seconds>;')
+
+# minimal-any no;
+optview_stmt_minimal_any = (
+    Keyword('minimal-any').suppress()
+    - isc_boolean('minimal_any')
+    + semicolon
+).setName('minimal-any <boolean>;')
+
+# minimal-responses no-auth-recursive;
 optview_stmt_minimal_responses = (
     Keyword('minimal-responses').suppress()
-    - isc_boolean('minimal_responses')
-    + semicolon
-).setName('minimal-responses <boolean>;')
+    - (
+        Literal('no-auth-recursive')  # ordering matters
+        | Literal('no-auth')
+        | isc_boolean('minimal_responses')
+    )
+    - semicolon
+).setName('minimal-responses ( <boolean> | no-auth | no-auth-recursive );')
 
 optview_stmt_preferred_glue = (
     Keyword('preferred-glue').suppress()
@@ -920,28 +1017,28 @@ optview_stmt_response_policy_element_add_soa = (
 optview_stmt_response_policy_element_max_policy_ttl = (
     Keyword('max-policy-ttl').suppress()
     - iso8601_duration('max_policy_ttl')
-    )
+).setName('max-policy-ttl <iso8601_duration>;')
 
 optview_stmt_response_policy_element_min_update_interval = (
     Keyword('min-update-interval').suppress()  # introduced in v9.12
     - iso8601_duration('min_update_interval')
-    )
+)
 
 optview_stmt_response_policy_element_recursive_only = (
     Keyword('recursive-only').suppress()
     - isc_boolean('recursive_only')
-    )
+)
 
 optview_stmt_response_policy_element_nsip_enable = (
     Keyword('nsip-enable').suppress()
     - isc_boolean('nsip_enable')
-    )
+)
 optview_stmt_response_policy_element_nsip_enable.setName('nsip-enable <boolean>')
 
 optview_stmt_response_policy_element_nsdname_enable = (
     Keyword('nsdname-enable').suppress()
     - isc_boolean('nsdname_enable')
-    )
+)
 
 
 # following 'response-policy' elements are in global-specific-only
@@ -1237,6 +1334,18 @@ optview_statements_set = (
     ^ optview_stmt_max_cache_size
     ^ optview_stmt_max_cache_ttl
     ^ optview_stmt_max_ncache_ttl
+    ^ optview_stmt_max_recursion_depth
+    ^ optview_stmt_max_recursion_queries
+    ^ optview_stmt_max_refresh_time
+    ^ optview_stmt_max_stale_ttl
+    ^ optview_stmt_max_udp_size
+    ^ optview_stmt_max_zone_ttl
+    ^ optview_stmt_message_compression
+    ^ optview_stmt_min_cache_ttl
+    ^ optview_stmt_min_ncache_ttl
+    ^ optview_stmt_min_refresh_time
+    ^ optview_stmt_min_retry_time
+    ^ optview_stmt_minimal_any
     ^ optview_stmt_minimal_responses
     ^ optview_stmt_preferred_glue
     ^ optview_stmt_query_source_v6
