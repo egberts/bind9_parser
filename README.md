@@ -4,7 +4,7 @@ You got `named.conf`?  Itching to read it and work with it ... in Python?
 
 Now we can parse `named.conf` with relative ease using Python.  Could even output this as JSON so ANY language can read `named.conf`.
 
-PyParsing is my friend, and there are some 2,400 BNF syntax elements for `named.conf` ... in Python3!
+[PyParsing](https://github.com/pyparsing/pyparsing) is our friend, and there are some 2,400 BNF syntax elements for `named.conf` ... in Python3!
 
 # Features
 
