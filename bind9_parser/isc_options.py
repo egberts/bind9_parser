@@ -10,14 +10,14 @@ Description: Various 'options' statement that is used
              only by 'options' clause.
 """
 from pyparsing import Group, Keyword, Optional, \
-    ZeroOrMore, OneOrMore, Combine, Literal, ungroup
+    ZeroOrMore, OneOrMore, Combine, Literal, ungroup, CaselessLiteral
 from pyparsing import pyparsing_common
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
     name_type, dequotable_path_name, number_type, seconds_type, \
     isc_boolean, fqdn_name, key_id, krb5_principal_name,\
     exclamation, dequoted_path_name, squote, dquote, algorithm_name_list_series,\
     fqdn_name_dequoted, fqdn_name_dequotable, quotable_name, \
-    algorithm_name, size_spec_nodefault, iso8601_duration
+    algorithm_name, size_spec_nodefault, iso8601_duration, tsig_session_key_name
 from bind9_parser.isc_inet import ip_port,\
     inet_dscp_port_keyword_and_number_element, \
     inet_http_port_keyword_and_number_element, \
@@ -520,7 +520,7 @@ options_stmt_multiple_cnames.setName('multiple-cnames <boolean>;')
 #  named-xfer <path_name>; [ Opt ]   Introduced in 8.1, still inert @ v9.10.3
 options_stmt_named_xfer = (
     Keyword('named-xfer').suppress()
-    - dequoted_path_name('named_xfer_path_name')
+    - dequoted_path_name('named_xfer')
     + semicolon
 )
 options_stmt_named_xfer.setName('named-xfer <quoted-filespec>;')
@@ -625,7 +625,7 @@ options_stmt_resolver_query_timeout.setName('resolver-query-timeout <seconds>;')
 #  secroots-file <path_name>; [ Opt ]    # v9.5.0+
 options_stmt_secroots_file = (
     Keyword('secroots-file').suppress()
-    - dequoted_path_name('secroots_file_path_name')
+    - dequoted_path_name('secroots_file')
     + semicolon
 )
 options_stmt_secroots_file.setName('secroots-file <quoted-filespec>;')
@@ -639,7 +639,7 @@ options_stmt_serial_query_rate = (
 options_stmt_serial_query_rate.setName('serial-query-rate <integer>;')
 
 #   server-id "server_id"; [ Opt ]
-options_stmt_server_id_name = fqdn_name('server_id_fqdn_name')
+options_stmt_server_id_name = fqdn_name_dequotable('server_id_fqdn_name')
 options_stmt_server_id_name.setName('<server_id_string>')
 
 # Server-Id MUST be quoted
@@ -656,21 +656,29 @@ options_stmt_server_id.setName('server-id <quoted_fqdn_name>;')
 
 options_stmt_session_keyalg = (
     Keyword('session-keyalg').suppress()
-    - name_type('session_keyalg_name')
+    - (
+        CaselessLiteral('hmac-md5')
+        | CaselessLiteral('hmac-sha1')
+        | CaselessLiteral('hmac-sha128')
+        | CaselessLiteral('hmac-sha224')
+        | CaselessLiteral('hmac-sha256')
+        | CaselessLiteral('hmac-sha384')
+        | CaselessLiteral('hmac-sha512')
+    )('session_keyalg')
     + semicolon
 )
 options_stmt_session_keyalg.setName('session-keyalg <key_algorithm_id>;')
 
 options_stmt_session_keyname = (
     Keyword('session-keyname').suppress()
-    - key_id('session_keyname_name')
+    - tsig_session_key_name('session_keyname')
     + semicolon
 )
 options_stmt_session_keyname.setName('session-keyname <key_id>;')
 
 options_stmt_session_keyfile = (
     Keyword('session-keyfile').suppress()
-    - dequoted_path_name('session_keyfile_path_name')
+    - dequoted_path_name('session_keyfile')
     + semicolon
 )
 options_stmt_session_keyfile.setName('session-keyfile <quotable_filespec>;')
@@ -683,13 +691,29 @@ options_stmt_stacksize = (
 )
 options_stmt_stacksize.setName('stacksize <size>;')
 
+#   startup-notify-rate <boolean>;  [ Opt ]
+options_stmt_startup_notify_rate = (
+    Keyword('startup-notify-rate').suppress()
+    - number_type('startup_notify_rate')
+    + semicolon
+)
+options_stmt_startup_notify_rate.setName('start-notify-rate <boolean>;')
+
 #   statistics-file path_name; [ Opt ]  # v8.0+, inert at v9.0.0
 options_stmt_statistics_file = (
     Keyword('statistics-file').suppress()
-    - dequoted_path_name('statistics_file_path_name')
+    - dequoted_path_name('statistics_file')
     + semicolon
 )
 options_stmt_statistics_file.setName('statistics-file <quotable_filespec>;')
+
+# options_stmt_tcp_advertised_timeout
+options_stmt_tcp_advertised_timeout = (
+    Keyword('tcp-advertised-timeout').suppress()
+    - number_type('tcp_advertised_timeout')
+    + semicolon
+)
+options_stmt_tcp_advertised_timeout.setName('tcp-advertised-timeout <milliseconds>;')
 
 #   tcp-clients number; [ Opt ]
 options_stmt_tcp_clients = (
@@ -699,6 +723,22 @@ options_stmt_tcp_clients = (
 )
 options_stmt_tcp_clients.setName('tcp-clients <integer>;')
 
+#   tcp-idle-timeout <number_centiseconds>; [ Opt ]
+options_stmt_tcp_idle_timeout = (
+    Keyword('tcp-idle-timeout').suppress()
+    - number_type('tcp_idle_timeout')
+    + semicolon
+)
+options_stmt_tcp_idle_timeout.setName('tcp-idle-timeout <integer>;')
+
+#   tcp-initial-timeout <number_centiseconds>; [ Opt ]
+options_stmt_tcp_initial_timeout = (
+    Keyword('tcp-initial-timeout').suppress()
+    - number_type('tcp_initial_timeout')
+    + semicolon
+)
+options_stmt_tcp_initial_timeout.setName('tcp-initial-timeout <integer>;')
+
 #   tcp-listen-queue number; [ Opt ]
 options_stmt_tcp_listen_queue = (
     Keyword('tcp-listen-queue').suppress()
@@ -706,6 +746,30 @@ options_stmt_tcp_listen_queue = (
     + semicolon
 )
 options_stmt_tcp_listen_queue.setName('tcp-listen-queue <integer>;')
+
+#   tcp-keepalive-timeout <number_centiseconds>; [ Opt ]
+options_stmt_tcp_keepalive_timeout = (
+    Keyword('tcp-keepalive-timeout').suppress()
+    - number_type('tcp_keepalive_timeout')
+    + semicolon
+)
+options_stmt_tcp_keepalive_timeout.setName('tcp-keepalive-timeout <integer>;')
+
+#   tcp-receive-buffer <number>; [ Opt ]
+options_stmt_tcp_receive_buffer = (
+    Keyword('tcp-receive-buffer').suppress()
+    - number_type('tcp_receive_buffer')
+    + semicolon
+)
+options_stmt_tcp_receive_buffer.setName('tcp-receive-buffer <integer>;')
+
+#   tcp-send-buffer <number>; [ Opt ]
+options_stmt_tcp_send_buffer = (
+    Keyword('tcp-send-buffer').suppress()
+    - number_type('tcp_send_buffer')
+    + semicolon
+)
+options_stmt_tcp_send_buffer.setName('tcp-send-buffer <integer>;')
 
 #   tkey-dhkey keyname_base key_tag; [ Opt ]
 options_tkey_dhkey_tag = number_type
@@ -733,21 +797,47 @@ options_stmt_tkey_domain.setName('tkey-domain <fqdn>;')
 #   tkey-gssapi-credential domainname; [ Opt ]
 options_stmt_tkey_gssapi_credential = (
     Keyword('tkey-gssapi-credential').suppress()
-    + Group(
-        Combine(squote + krb5_principal_name + squote)('')
-        | Combine(dquote + krb5_principal_name + dquote)('')
+    - Group(
+        (
+            (
+                squote.suppress()
+                - krb5_principal_name
+                - squote.suppress()
+            )
+            | (
+                dquote.suppress()
+                - krb5_principal_name
+                - dquote.suppress()
+            )
+        )
     )('tkey_gssapi_credential')
-    + semicolon
-)('')
-options_stmt_tkey_gssapi_credential.setName('tkey-gssapi-credential "<principal-name>";')
+    - semicolon
+)
+options_stmt_tkey_gssapi_credential.setName('tkey-gssapi-credential "<principal-name/host.domain@KRB5_LABEL>";')
 
 #  tkey-gssapi-keytab; [ Opt ]
 options_stmt_tkey_gssapi_keytab = (
     Keyword('tkey-gssapi-keytab').suppress()
-    - dequoted_path_name('tkey_gssapi_keytab_path_name')
+    - dequoted_path_name('tkey_gssapi_keytab')
     + semicolon
 )
 options_stmt_tkey_gssapi_keytab.setName('tkey-gssapi-keytab "<quoted-filespec>";')
+
+#   tls-port <number>; [ Opt ]
+options_stmt_tls_port = (
+    Keyword('tls-port').suppress()
+    - number_type('tls_port')
+    + semicolon
+)
+options_stmt_tls_port.setName('tls-port <integer>;')
+
+#   transfer-message-size <number>; [ Opt ]
+options_stmt_transfer_message_size = (
+    Keyword('transfer-message-size').suppress()
+    - number_type('transfer_message_size')
+    + semicolon
+)
+options_stmt_transfer_message_size.setName('transfer-message-size <integer>;')
 
 #   transfers-in  number; [ Opt ]
 options_stmt_transfers_in = (
@@ -771,6 +861,53 @@ options_stmt_transfers_per_ns = (
     + semicolon
 )
 options_stmt_transfers_per_ns.setName('transfers-per_ns "<nanoseconds>";')
+
+#   udp-receive-buffer <number>; [ Opt ]
+options_stmt_udp_receive_buffer = (
+    Keyword('udp-receive-buffer').suppress()
+    - number_type('udp_receive_buffer')
+    + semicolon
+)
+options_stmt_udp_receive_buffer.setName('udp-receive-buffer <integer>;')
+
+#   udp-send-buffer <number>; [ Opt ]
+options_stmt_udp_send_buffer = (
+    Keyword('udp-send-buffer').suppress()
+    - number_type('udp_send_buffer')
+    + semicolon
+)
+options_stmt_udp_send_buffer.setName('udp-send-buffer <integer>;')
+
+# options_stmt_use_v4_udp_ports
+# use-v4-udp-ports { range 1024 65535; };
+options_stmt_use_v4_udp_ports = (
+    Keyword('use-v4-udp-ports')
+    - lbrack
+    - Group(
+        Keyword('range')
+        - number_type('port_start')
+        - number_type('port_end')
+        - semicolon
+    )('use_v4_udp_ports')
+    - rbrack
+    - semicolon
+)
+options_stmt_use_v4_udp_ports.setName('use-v4-udp-ports { range <start_port> <end_port>; };')
+
+# options_stmt_use_v6_udp_ports
+# use-v6-udp-ports { range 1024 65535; };
+options_stmt_use_v6_udp_ports = (
+    Keyword('use-v6-udp-ports')
+    - lbrack
+    - Group(
+        Keyword('range')
+        - number_type('port_start')
+        - number_type('port_end')
+        - semicolon
+    )('use_v6_udp_ports')
+    - rbrack
+    - semicolon
+).setName('use-v6-udp-ports { range <start_port> <end_port>; };')
 
 # version_string is latest as quoted_path_name, but it's path_name for backward compatibility
 options_version_string = dequotable_path_name
@@ -864,15 +1001,28 @@ options_statements_set = (
     ^ options_stmt_session_keyfile
     ^ options_stmt_session_keyname
     ^ options_stmt_stacksize
+    ^ options_stmt_startup_notify_rate
     ^ options_stmt_statistics_file
+    ^ options_stmt_tcp_advertised_timeout
     ^ options_stmt_tcp_clients
+    ^ options_stmt_tcp_idle_timeout
+    ^ options_stmt_tcp_initial_timeout
     ^ options_stmt_tcp_listen_queue
+    ^ options_stmt_tcp_keepalive_timeout
+    ^ options_stmt_tcp_receive_buffer
+    ^ options_stmt_tcp_send_buffer
     ^ options_stmt_tkey_domain
     ^ options_stmt_tkey_gssapi_credential
     ^ options_stmt_tkey_gssapi_keytab
+    ^ options_stmt_tls_port
+    ^ options_stmt_transfer_message_size
     ^ options_stmt_transfers_in
     ^ options_stmt_transfers_out
     ^ options_stmt_transfers_per_ns
+    ^ options_stmt_udp_receive_buffer
+    ^ options_stmt_udp_send_buffer
+    ^ options_stmt_use_v4_udp_ports
+    ^ options_stmt_use_v6_udp_ports
     ^ options_stmt_version
     ^ options_stmt_tkey_dhkey
 )

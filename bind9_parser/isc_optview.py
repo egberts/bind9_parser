@@ -18,7 +18,8 @@ from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     byte_type, run_me, dequoted_path_name, check_options, \
     size_spec, exclamation, iso8601_duration, view_name, \
     algorithm_name, fqdn_name_dequoted, fqdn_name_dequotable,\
-    algorithm_name_list_series, charset_filename_base, size_spec_nodefault, size_spec_plain
+    algorithm_name_list_series, charset_filename_base, size_spec_nodefault, size_spec_plain,\
+    fixedpoint_type
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip6s_prefix, \
     ip6_optional_prefix, ip4_addr_or_wildcard, ip6_addr_or_wildcard, \
@@ -476,7 +477,7 @@ soa_name_type = rr_fqdn_w_absolute  # might be name_type
 optview_stmt_empty_contact = (
     Keyword('empty-contact').suppress()
     - Group(
-        soa_name_type('soa_contact_name')
+        dequotable_domain_generic_fqdn('soa_contact_name')
         - semicolon
     )('empty_contact')  # Dict (not a multiple-statement)
 )('')
@@ -486,7 +487,7 @@ optview_stmt_empty_contact.setName('empty-contact <soa_rname>;')
 optview_stmt_empty_server = (
     Keyword('empty-server').suppress()
     - Group(
-        soa_name_type('soa_contact_name')
+        dequotable_domain_generic_fqdn('soa_contact_name')
         - semicolon
     )('empty_server')  # Dict (not a multiple-statement)
 )('')
@@ -510,9 +511,9 @@ optview_stmt_fetch_quota_params = (
     Group(
         Keyword('fetch-quota-params').suppress()
         - number_type('moving_avg_recalculate_interval')
-        - number_type('low_threshold')
-        - number_type('high_threshold')
-        - number_type('moving_average_discount_rate')
+        - fixedpoint_type('low_threshold')
+        - fixedpoint_type('high_threshold')
+        - fixedpoint_type('moving_average_discount_rate')
         + semicolon
     )('fetch_quota_params')
 )
@@ -573,7 +574,7 @@ optview_stmt_hostname = (
 optview_stmt_ipv4only_contact = (
     Keyword('ipv4only-contact').suppress()
     - Group(
-        soa_rname('soa_rname')
+        dequotable_domain_generic_fqdn('soa_rname')
     )('ipv4only_contact')
     + semicolon
 )
@@ -589,7 +590,7 @@ optview_stmt_ipv4only_enable = (
 optview_stmt_ipv4only_server = (
     Keyword('ipv4only-server').suppress()
     - Group(
-        soa_rname('soa_rname')
+        dequotable_domain_generic_fqdn('soa_rname')
     )('ipv4only_server')
     - semicolon
 )
@@ -663,12 +664,12 @@ optview_stmt_max_udp_size = (
 # max-zone-ttl unlimited;
 optview_stmt_max_zone_ttl = (
     Keyword('max-zone-ttl').suppress()
-    - Group(
+    - (
         (
-            ungroup(number_type(''))
+            ungroup(iso8601_duration(''))
             | Literal('unlimited')('')
             | Keyword('default')
-        )('files_count')
+        )
     )('max-zone-ttl')
     + semicolon
 )('')
@@ -734,6 +735,42 @@ optview_stmt_minimal_responses = (
     )
     - semicolon
 ).setName('minimal-responses ( <boolean> | no-auth | no-auth-recursive );')
+
+optview_stmt_new_zones_directory = (
+    Keyword('new-zones-directory').suppress()
+    - dequoted_path_name('new_zones_directory')
+    + semicolon
+).setName('new-zones-directory <quoted-filespec>;')
+
+optview_stmt_no_case_compress = (
+    Keyword('no-case-compress').suppress()
+    + lbrack
+    + (
+        OneOrMore(
+            Group(
+                (
+                    exclamation('not')
+                    + aml_nesting
+                )
+                | (
+                    exclamation('not')
+                    + aml_choices
+                    + semicolon
+                )
+                | (
+                    aml_nesting
+                )
+                | (
+                    aml_choices
+                    + semicolon
+                )
+                # never set a ResultsLabel here, you get duplicate but un-nested 'ip_addr'
+            )  # never set a ResultsLabel here, you get no []
+        )(None)
+    )('no_case_compress')
+    + rbrack
+    + semicolon
+).setName('no-case-compress { <aml>; };')
 
 # notify-rate 60;
 optview_stmt_notify_rate = (
@@ -1216,10 +1253,10 @@ optview_stmt_response_policy_zone_group_set.setName("""
 
 optview_stmt_response_policy_zone_group_series = (
     ZeroOrMore(
-        Group(
+        Group(  # must have group here for multiple zones within 'response-policy'
             optview_stmt_response_policy_zone_group_set
-        )
-    )('zone*')
+        )('zone*')
+    )
 )
 
 
@@ -1253,8 +1290,8 @@ optview_stmt_response_policy_element_global_dnsrps_options = (
             - Word(dnsrps_option_charset, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
             - Literal("'")
         )
+        | Word(dnsrps_option_charset, min=1, max=4096)('dnsrps_options')  # TODO Flesh this type of string out
     )('dnsrps_options2')
-    - Optional(semicolon)
     - rbrack
 )
 
@@ -1415,29 +1452,51 @@ optview_type_type = Word(alphanums + '-', max=16)
 
 optview_ordering_type = (
     Keyword('fixed')
-    | Keyword('random')
-    | Keyword('cyclic')
-).setName('[ fixed | random | cyclic ]')
+    ^ Keyword('random')
+    ^ Keyword('cyclic')
+    ^ Keyword('none')
+)('order').setName('[ fixed | random | cyclic ]')
 
-optview_order_spec = (
-    Optional(
+optview_order_element_set = (
+    (
+        Keyword('zone').suppress()
+            - dequotable_zone_name('name')
+        )
+    | (
         Keyword('class').suppress()
         - optview_class_type('class')
-    )('')
-    - Optional(
+    )
+    | (
         Keyword('type').suppress()
         - optview_type_type('type')
-    )('')
-    - Optional(
+    )
+    | (
         Keyword('name').suppress()
-        - dequoted_domain_generic_fqdn('name')
-    )('')
-    - Optional(
+        - dequotable_domain_generic_fqdn('name')
+    )
+    | (
         Keyword('order').suppress()
         - optview_ordering_type('order')
     )
-    - Word(alphanums + ' -', max=256)
-    - semicolon
+)
+optview_order_element_set.setName('[ class <class> ] [ type <RR_type> ] [ name <domain> ] [ order ( cyclic | random ) ];')
+
+optview_order_element_series = (
+    Group(
+        OneOrMore(
+            optview_order_element_set
+        )
+    )
+)
+optview_order_element_series.setName('[ class <class> ] [ type <RR_type> ] [ name <domain> ] [ order ( cyclic | random ) ];')
+
+optview_rrset_order_group_series = (
+    Group(
+        ZeroOrMore(
+            optview_order_element_series
+            - semicolon
+        )
+    )('rrset_order')
 )
 
 #  rrset-order { optview_order_spec ; [ optview_order_spec ; ... ]
@@ -1445,16 +1504,14 @@ optview_stmt_rrset_order = (
     Keyword('rrset-order').suppress()
     - (
         lbrack
-        - OneOrMore(
-                Group (
-                    optview_order_spec('')
-                )
-        )
+        - optview_rrset_order_group_series
         - rbrack
-    )('rrset_order')
+    )
     - semicolon
 )  # only one (, the last one) 'rrset-order' allowed, so no List [] here
-optview_stmt_rrset_order.setName('rrset-order ...;')  # TODO
+optview_stmt_rrset_order.setName("""rrset-order { [ zone <string> ] [ class <class> ] 
+    [ type <rr_type> ] [ name <domain> ] 
+    [ order ( cyclic | random); ... };""")
 
 #  optview_stmt_sortlist { aml; ... };
 #  optview_stmt_sortlist { {10.2/16; };};
@@ -1465,6 +1522,111 @@ optview_stmt_sortlist = (
     )('sortlist')
 )('')
 optview_stmt_sortlist.setName('sortlist <aml>;')
+
+# optview_stmt_servfail_ttl
+optview_stmt_servfail_ttl = (
+        Keyword('servfail-ttl').suppress()
+        - number_type('servfail_ttl')
+        - semicolon
+).setName('servfail-ttl <seconds>')
+# optview_stmt_stale_answer_client_timeout
+optview_stmt_stale_answer_client_timeout = (
+    Keyword('stale-answer-client-timeout').suppress()
+    - (
+        Literal('disabled')
+        | Literal('off')
+        | number_type
+    )('stale_answer_client_timeout')
+    - semicolon
+).setName('stale-answer-client-timeout ( <second> | disabled | off )')
+
+# optview_stmt_stale_answer_enable
+optview_stmt_stale_answer_enable = (
+        Keyword('stale-answer-enable').suppress()
+        - isc_boolean('stale_answer_enable')
+        - semicolon
+).setName('stale-answer-enable <boolean>')
+
+# optview_stmt_stale_answer_ttl
+optview_stmt_stale_answer_ttl = (
+    Keyword('stale-answer-ttl').suppress()
+    - number_type('stale_answer_ttl')
+    - semicolon
+).setName('stale-answer-ttl <seconds>')
+
+# optview_stmt_stale_cache_enable
+optview_stmt_stale_cache_enable = (
+    Keyword('stale-cache-enable').suppress()
+    - isc_boolean('stale_cache_enable')
+    - semicolon
+).setName('stale-cache-enable <boolean>')
+
+# optview_stmt_stale_refresh_time
+optview_stmt_stale_refresh_time = (
+    Keyword('stale-refresh-time').suppress()
+    - number_type('stale_refresh_time')
+    - semicolon
+).setName('stale-refresh-time <boolean>')
+
+# optview_stmt_suppress_initial_notify
+optview_stmt_suppress_initial_notify = (
+    Keyword('suppress-initial-notify').suppress()
+    - isc_boolean('suppress_initial_notify')
+    - semicolon
+).setName('suppress-initial-notify <boolean>')
+
+# optview_stmt_synth_from_dnssec
+optview_stmt_synth_from_dnssec = (
+   Keyword('synth-from-dnssec').suppress()
+   - isc_boolean('synth_from_dnssec')
+   - semicolon
+).setName('synth-from-dnssec <boolean>')
+
+# optview_stmt_trust_anchor_telemetry
+optview_stmt_trust_anchor_telemetry = (
+   Keyword('trust-anchor-telemetry').suppress()
+   - isc_boolean('trust_anchor_telemetry')
+   - semicolon
+).setName('trust-anchor-telemetry <boolean>')
+
+# optview_stmt_v6_bias
+optview_stmt_v6_bias = (
+   Keyword('v6-bias').suppress()
+   - number_type('v6_bias')
+   - semicolon
+).setName('v6-bias <boolean>')
+
+# validate-except { "168.192.in-addr.arpa."; };
+optview_validate_except_element_set = (
+    dequotable_domain_generic_fqdn
+    - semicolon
+)
+
+optview_validate_except_element_series = (
+    (
+        OneOrMore(
+            optview_validate_except_element_set
+        )
+    )('zone')
+)
+
+optview_stmt_validate_except = (
+    Keyword('validate-except')
+    - lbrack
+    - optview_validate_except_element_series('validate_except')
+    - rbrack
+    - semicolon
+)
+
+# optview_stmt_zero_no_soa_ttl_cache
+optview_stmt_zero_no_soa_ttl_cache = (
+    Keyword('zero-no-soa-ttl-cache').suppress()
+    - isc_boolean('zero_no_soa_ttl_cache')
+    - semicolon
+).setName('zero-no-soa-ttl-cache <boolean>')
+
+
+#
 
 # Keywords are in dictionary-order, but with longest pattern as having been listed firstly
 optview_statements_set = (
@@ -1538,6 +1700,7 @@ optview_statements_set = (
     ^ optview_stmt_min_retry_time
     ^ optview_stmt_minimal_any
     ^ optview_stmt_minimal_responses
+    ^ optview_stmt_new_zones_directory
     ^ optview_stmt_notify_rate
     ^ optview_stmt_nsec3_test_zone
     ^ optview_stmt_nta_lifetime
@@ -1561,6 +1724,18 @@ optview_statements_set = (
     ^ optview_stmt_root_key_sentinel
     ^ optview_stmt_rrset_order
     ^ optview_stmt_sortlist
+    ^ optview_stmt_servfail_ttl
+    ^ optview_stmt_stale_answer_client_timeout
+    ^ optview_stmt_stale_answer_enable
+    ^ optview_stmt_stale_answer_ttl
+    ^ optview_stmt_stale_cache_enable
+    ^ optview_stmt_stale_refresh_time
+    ^ optview_stmt_suppress_initial_notify
+    ^ optview_stmt_synth_from_dnssec
+    ^ optview_stmt_trust_anchor_telemetry
+    ^ optview_stmt_v6_bias
+    ^ optview_stmt_validate_except
+    ^ optview_stmt_zero_no_soa_ttl_cache
 )
 
 optview_statements_series = (

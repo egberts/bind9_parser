@@ -10,11 +10,11 @@ from bind9_parser.isc_utils import assertParserResultDictTrue
 from bind9_parser.isc_optviewserver import \
     optviewserver_stmt_edns_udp_size,\
     optviewserver_stmt_provide_ixfr,\
-    optviewserver_stmt_request_ixfr,\
-    optviewserver_stmt_transfer_format,\
     optviewserver_stmt_query_source,\
-    optviewserver_stmt_query_source_v6,\
-    optviewserver_statements_set,\
+    optviewserver_stmt_query_source_v6, \
+    optviewserver_stmt_request_ixfr,\
+    optviewserver_stmt_send_cookie,\
+    optviewserver_stmt_transfer_format,\
     optviewserver_statements_series
 
 
@@ -70,34 +70,6 @@ class TestOptionsViewServer(unittest.TestCase):
             'provide-ixfr Y'
         ]
         result = optviewserver_stmt_provide_ixfr.runTests(test_string, failureTests=True)
-        self.assertTrue(result[0])
-
-    def test_isc_server_stmt_request_ixfr_passing(self):
-        """ Clause server; Statement request-ixfr; passing mode """
-        test_string = [
-            'request-ixfr yes;',
-            'request-ixfr 1;',
-            'request-ixfr 0;',
-            'request-ixfr no;',
-            'request-ixfr True;',
-            'request-ixfr False;',
-        ]
-        result = optviewserver_stmt_request_ixfr.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-
-    def test_isc_server_stmt_request_ixfr_dict_passing(self):
-        assertParserResultDictTrue(
-            optviewserver_stmt_request_ixfr,
-            'request-ixfr True;',
-            {'request_ixfr': 'True'}
-        )
-
-    def test_isc_server_stmt_request_ixfr_failing(self):
-        """ Clause server; Statement request-ixfr; failing mode """
-        test_string = [
-            'request-ixfr Y;'
-        ]
-        result = optviewserver_stmt_request_ixfr.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
     def test_isc_optviewserver_stmt_query_source_ut_passing(self):
@@ -166,13 +138,48 @@ class TestOptionsViewServer(unittest.TestCase):
                                  'ip_port_w': '443'}}
         )
 
+    def test_isc_server_stmt_request_ixfr_passing(self):
+        """ Clause server; Statement request-ixfr; passing mode """
+        test_string = [
+            'request-ixfr yes;',
+            'request-ixfr 1;',
+            'request-ixfr 0;',
+            'request-ixfr no;',
+            'request-ixfr True;',
+            'request-ixfr False;',
+        ]
+        result = optviewserver_stmt_request_ixfr.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_server_stmt_request_ixfr_dict_passing(self):
+        assertParserResultDictTrue(
+            optviewserver_stmt_request_ixfr,
+            'request-ixfr True;',
+            {'request_ixfr': 'True'}
+        )
+
+    def test_isc_server_stmt_send_cookie_passing(self):
+        assertParserResultDictTrue(
+            optviewserver_stmt_send_cookie,
+            'send-cookie yes;',
+            {'send_cookie': 'yes'}
+        )
+
+    def test_isc_server_stmt_request_ixfr_failing(self):
+        """ Clause server; Statement request-ixfr; failing mode """
+        test_string = [
+            'request-ixfr Y;'
+        ]
+        result = optviewserver_stmt_request_ixfr.runTests(test_string, failureTests=True)
+        self.assertTrue(result[0])
+
     def test_isc_optviewserver_stmt_transfer_format_passing(self):
         """ Clause Options/View/Server; Statement transfer-format; passing mode """
         test_string = [
             'transfer-format one-answer;',
             'transfer-format many-answers;',
         ]
-        result = optviewserver_stmt_.runTests(test_string, failureTests=False)
+        result = optviewserver_stmt_transfer_format.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
         assertParserResultDictTrue(
             optviewserver_stmt_transfer_format,

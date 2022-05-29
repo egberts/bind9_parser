@@ -297,104 +297,105 @@ optviewzone_stmt_max_ixfr_ratio = (
             | Literal('unlimited')('max-ixfr-ratio')
     )
     + semicolon
-)
+).setName('max-ixfr-ratio ( unlimited | <percentage>% );')
 
 #   max-journal-size size_in_bytes; [ Opt, View, Zone ]
 optviewzone_stmt_max_journal_size = (
     Keyword('max-journal-size').suppress()
     - size_spec('max_journal_size')
     + semicolon
-)
+).setName('max-journal-size <size_spec>;')
 
 #   max-records <integer>; [ Opt, View, Zone ]
 optviewzone_stmt_max_records = (
     Keyword('max-records').suppress()
     - number_type('max_records')
     + semicolon
-)
+).setName('max-records <integer>;')
 
 #   max-refresh-time seconds ; [ Opt, View, Zone ]
 optviewzone_stmt_max_refresh_time = (
     Keyword('max-refresh-time').suppress()
     - seconds_type('max_refresh_time')
     + semicolon
-)
+).setName('max-refresh-time <seconds>;')
 
 #   max-retry-time seconds ; [ Opt, View, Zone ]
 optviewzone_stmt_max_retry_time = (
     Keyword('max-retry-time').suppress()
     - seconds_type('max_retry_time')
     + semicolon
-)
+).setName('max-retry-time <seconds>;')
 
 #   max-transfer-idle-in minutes; [ Opt, View, Zone ]
 optviewzone_stmt_max_transfer_idle_in = (
     Keyword('max-transfer-idle-in').suppress()
     - seconds_type('max_transfer_idle_in')
     + semicolon
-)
+).setName('max-transfer-idle-in <seconds>;')
 
 #   max-transfer-idle-out minutes; [ Opt, View, Zone ]
 optviewzone_stmt_max_transfer_idle_out = (
     Keyword('max-transfer-idle-out').suppress()
     - seconds_type('max_transfer_idle_out')
     + semicolon
-)
+).setName('max-transfer-idle-out <seconds>;')
 
 #   max-transfer-time-in minutes; [ Opt, View, Zone ]
 optviewzone_stmt_max_transfer_time_in = (
     Keyword('max-transfer-time-in').suppress()
     - seconds_type('max_transfer_time_in')
     + semicolon
-)
+).setName('max-transfer-time-in <seconds>;')
 
 #   max-transfer-time-out minutes; [ Opt, View, Zone ]
 optviewzone_stmt_max_transfer_time_out = (
     Keyword('max-transfer-time-out').suppress()
     - seconds_type('max_transfer_time_out')
     + semicolon
-)
+).setName('max-transfer-time-out <seconds>;')
 
 #   min-refresh-time seconds ; [ Opt, View, Zone ]
 optviewzone_stmt_min_refresh_time = (
     Keyword('min-refresh-time').suppress()
     - iso8601_duration('min_refresh_time')
     + semicolon
-)
+).setName('min-refresh-time <iso8601_duration>;')
 
 #   min-retry-time seconds ; [ Opt, View, Zone ]
 optviewzone_stmt_min_retry_time = (
     Keyword('min-retry-time').suppress()
     - seconds_type('min_retry_time')
     - semicolon
-)
+).setName('min-retry-time <seconds>;')
 
 #   multi-master ( yes | no ) ; [ Opt, View, Zone ]
 optviewzone_stmt_multi_master = (
     Keyword('multi-master').suppress()
     - isc_boolean('multi_master')
     + semicolon
-)
+).setName('multi-master <boolean>;')
 
 # notify ( explicit | master-only | primary-only | <boolean> );
 optviewzone_stmt_notify = (
     Keyword('notify').suppress()
-    - Group(
-        isc_boolean('notify')
-        | Keyword('explicit')
-        | Keyword('primary-only')
-        | Keyword('master-only')
+    - ungroup(
+        Group(
+            isc_boolean('notify')
+            | Keyword('explicit')
+            | Keyword('primary-only')
+            | Keyword('master-only')
+        )
     )('notify')
     + semicolon
-)
-optviewzone_stmt_notify.setName('notify ( <boolean> | explicit | primary-only );')
+).setName('notify ( <boolean> | explicit | primary-only );')
 
 #   notify-delay 0; [ Opt, View, Zone ]
 optviewzone_stmt_notify_delay = (
     Keyword('notify-delay').suppress()
     - seconds_type('notify_delay')
     + semicolon
-)
+).setName('notify-delay <seconds>;')
 
 #  notify-source (ip4_addr | *) [port ip_port] ;
 optviewzone_stmt_notify_source = (
@@ -405,7 +406,7 @@ optviewzone_stmt_notify_source = (
         + Optional(ungroup(inet_dscp_port_keyword_and_number_element))('dscp_port')
     )('notify_source')
     + semicolon
-)
+).setName('notify-source ( <ip4_addr> | * ) [ port ( <port_no> | * ) ] [ dscp <dscp_port> ];')
 
 #  notify-source-v6 (ip4_addr | *) [port ip_port] ;
 optviewzone_stmt_notify_source_v6 = (
@@ -416,35 +417,67 @@ optviewzone_stmt_notify_source_v6 = (
         + Optional(inet_dscp_port_keyword_and_number_element)
     )('notify_source_v6')
     + semicolon
-)
+).setName('notify-source-v6 ( <ip6_addr> | * ) [ port ( <port_no> | * ) ] [ dscp <dscp_port> ];')
 
 #   provide-ixfr ( yes | no) ; [ Opt, View, server ]
 optviewzone_stmt_provide_ixfr = (
     Keyword('provide-ixfr').suppress()
     - isc_boolean('provide_ixfr')
     + semicolon
-)
+).setName('provide-ixfr <boolean>;')
 
 #   request-ixfr ( yes | no ); [ Opt, View, server ]
 optviewzone_stmt_request_ixfr = (
     Keyword('request-ixfr').suppress()
     - isc_boolean('request_ixfr')
     + semicolon
-)
+).setName('request-ixfr <boolean>;')
 
 #  request-nsid <boolean>; [ Opt, View, server ]
 optviewzone_stmt_request_nsid = (
-   Keyword('request-nsid').suppress()
-   + isc_boolean('request_nsid')
-   + semicolon
-)
+    Keyword('request-nsid').suppress()
+    + isc_boolean('request_nsid')
+    + semicolon
+).setName('request-nsid <boolean>;')
+
+# optviewzone_stmt_serial_update_method
+optviewzone_stmt_serial_update_method = (
+    Keyword('serial-update-method')
+    - (
+        Keyword('unixtime')
+        | Keyword('date')
+        | Keyword('increment')
+    )('serial_update_method')
+    - semicolon
+).setName('serial-update-method ( increment | unixtime | date )')
+
+# optviewzone_stmt_sig_signing_nodes
+optviewzone_stmt_sig_signing_nodes = (
+    Keyword('sig-signing-nodes').suppress()
+    - seconds_type('sig_signing_nodes')
+    + semicolon
+).setName('sig-signing-node <seconds>;')
+
+# optviewzone_stmt_sig_signing_signatures
+optviewzone_stmt_sig_signing_signatures = (
+    Keyword('sig-signing-signatures').suppress()
+    - seconds_type('sig_signing_signatures')
+    + semicolon
+).setName('sig-signing-signatures <seconds>;')
+
+# optviewzone_stmt_sig_signing_type
+optviewzone_stmt_sig_signing_type = (
+    Keyword('sig-signing-type').suppress()
+    - seconds_type('sig_signing_type')
+    + semicolon
+).setName('sig-signing-type <seconds>;')
 
 #   sig-validity-interval number ; [ Opt, View, Zone ]
 optviewzone_stmt_sig_validity_interval = (
     Keyword('sig-validity-interval').suppress()
     - days_type('sig_validity_interval')
     + semicolon
-)
+).setName('sig-validity-interval <days>;')
 
 #   transfer-format ( one-answer | many-answers ); [ Opt, View, server ]
 optviewzone_stmt_transfer_format = (
@@ -454,7 +487,7 @@ optviewzone_stmt_transfer_format = (
         | Literal('many-answers')
     )('transfer_format')
     + semicolon
-)
+).setName('transfer-format ( many-answers | one-answer )')
 
 #  transfer-source (ip4_addr | *) [port ip_port] ; ]
 optviewzone_stmt_transfer_source = (
@@ -465,7 +498,7 @@ optviewzone_stmt_transfer_source = (
         + Optional(inet_dscp_port_keyword_and_number_element)
     )('transfer_source')
     + semicolon
-)
+).setName('transfer-source ( <ip4_addr> | * ) [ port ( <port_no> | * ) ] [ dscp <dscp_port> ];')
 
 #  transfer-source (ip6_addr | *) [port ip_port] ; ]
 optviewzone_stmt_transfer_source_v6 = (
@@ -476,20 +509,46 @@ optviewzone_stmt_transfer_source_v6 = (
         - Optional(inet_dscp_port_keyword_and_number_element)
     )('transfer_source_v6')
     + semicolon
-)
+).setName('transfer-source-v6 ( <ip6_addr> | * ) [ port ( <port_no> | * ) ] [ dscp <dscp_port> ];')
+
+# optviewzone_stmt_try_tcp_refresh
+optviewzone_stmt_try_tcp_refresh = (
+        Keyword('try-tcp-refresh').suppress()
+        + isc_boolean('try_tcp_refresh')
+        + semicolon
+).setName('try-tcp-refresh <boolean>;')
+
+# optviewzone_stmt_update_check_ksk
+optviewzone_stmt_update_check_ksk = (
+        Keyword('update-check-ksk').suppress()
+        + isc_boolean('update_check_ksk')
+        + semicolon
+).setName('update-check-ksk <boolean>;')
 
 #  use-alt-transfer-source yes | no;
 optviewzone_stmt_use_alt_transfer_source = (
     Keyword('use-alt-transfer-source').suppress()
     + isc_boolean('use_alt_transfer_source')
     + semicolon
-)
+).setName('use-alt-transfer-source <boolean>;')
+
+# optviewzone_stmt_zero_no_soa_ttl
+optviewzone_stmt_zero_no_soa_ttl = (
+        Keyword('zero-no-soa-ttl').suppress()
+        + isc_boolean('zero_no_soa_ttl')
+        + semicolon
+).setName('zero-no-soa-ttl <boolean>;')
 
 optviewzone_stmt_zone_statistics = (
     Keyword('zone-statistics').suppress()
-    + isc_boolean('zone_statistics')
+    - (
+        CaselessLiteral('terse')
+        | CaselessLiteral('full')
+        | CaselessLiteral('none')
+        | isc_boolean
+    )('zone_statistics')
     + semicolon
-)
+).setName('zone-statistics <boolean>;')
 
 #  Ordering matters, I tried to keep them in dictionary order, but
 #  with longest pattern firstly.
@@ -542,11 +601,18 @@ optviewzone_statements_set = (
         ^ optviewzone_stmt_provide_ixfr
         ^ optviewzone_stmt_request_ixfr
         ^ optviewzone_stmt_request_nsid
-        ^ optviewzone_stmt_sig_validity_interval  # BUG works here?
+        ^ optviewzone_stmt_serial_update_method
+        ^ optviewzone_stmt_sig_signing_nodes
+        ^ optviewzone_stmt_sig_signing_signatures
+        ^ optviewzone_stmt_sig_signing_type
+        ^ optviewzone_stmt_sig_validity_interval
         ^ optviewzone_stmt_transfer_format
         ^ optviewzone_stmt_transfer_source_v6
         ^ optviewzone_stmt_transfer_source
         ^ optviewzone_stmt_use_alt_transfer_source
+        ^ optviewzone_stmt_try_tcp_refresh
+        ^ optviewzone_stmt_update_check_ksk
+        ^ optviewzone_stmt_zero_no_soa_ttl
         ^ optviewzone_stmt_zone_statistics
 )
 

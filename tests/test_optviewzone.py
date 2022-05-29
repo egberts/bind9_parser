@@ -61,6 +61,13 @@ from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_transfer_format, \
     optviewzone_stmt_transfer_source, \
     optviewzone_stmt_use_alt_transfer_source, \
+    optviewzone_stmt_serial_update_method, \
+    optviewzone_stmt_sig_signing_nodes, \
+    optviewzone_stmt_sig_signing_signatures, \
+    optviewzone_stmt_sig_signing_type, \
+    optviewzone_stmt_try_tcp_refresh, \
+    optviewzone_stmt_update_check_ksk, \
+    optviewzone_stmt_zero_no_soa_ttl, \
     optviewzone_stmt_zone_statistics, \
     optviewzone_statements_set, \
     optviewzone_statements_series
@@ -133,7 +140,7 @@ class TestOptionsViewZone(unittest.TestCase):
             optviewzone_stmt_allow_transfer,
             'allow-transfer { localhost; localnets; };',
             {'allow_transfer': {'aml': [{'keyword': 'localhost'},
-                                           {'keyword': 'localnets'}]}}
+                                        {'keyword': 'localnets'}]}}
         )
 
     def test_isc_optviewzone_stmt_allow_transfer_port_passing(self):
@@ -662,17 +669,21 @@ class TestOptionsViewZone(unittest.TestCase):
             {'max_transfer_idle_out': 3600}
         )
 
-    def test_isc_optviewzone_stmt_min_refresh_time_passing(self):
+    def test_isc_optviewzone_stmt_min_refresh_time_ut_passing(self):
         """ Clause options/view/zone; Statement min-refresh-time; passing """
         test_string = [
-            'min-refresh-time 3600;'
+            'min-refresh-time 3600;',
+            'min-refresh-time 4D;'
         ]
         result = optviewzone_stmt_min_refresh_time.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_optviewzone_stmt_min_refresh_time_passing(self):
+        """ Clause options/view/zone; Statement min-refresh-time; passing """
         assertParserResultDictTrue(
             optviewzone_stmt_min_refresh_time,
-            'min-refresh-time 3600;',
-            {'min_refresh_time': 3600}
+            'min-refresh-time 7D;',
+            {'min_refresh_time': '7D'}
         )
 
     def test_isc_optviewzone_stmt_min_retry_time_passing(self):
@@ -841,6 +852,45 @@ class TestOptionsViewZone(unittest.TestCase):
             {'request_nsid': 'no'}
         )
 
+    def test_isc_optviewzone_stmt_serial_update_method_passing(self):
+        """ Clause options/view/zone; Statement 'serial-update-method'; passing """
+        test_string = [
+            'serial-update-method unixtime;',
+            'serial-update-method increment;',
+            'serial-update-method date;',  # default
+        ]
+        result = optviewzone_stmt_serial_update_method.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            optviewzone_stmt_serial_update_method,
+            'serial-update-method date;',  # default
+            {'serial_update_method': 'date'}
+        )
+
+    def test_isc_optviewzone_stmt_sig_signing_nodes_passing(self):
+        """ Clause options/view/zone; Statement sig-signing-nodes; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_sig_signing_nodes,
+            'sig-signing-nodes 100;',  # default
+            {'sig_signing_nodes': 100}
+        )
+
+    def test_isc_optviewzone_stmt_sig_signing_signatures_passing(self):
+        """ Clause options/view/zone; Statement sig-signing-signatures; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_sig_signing_signatures,
+            'sig-signing-signatures 10;',  # default
+            {'sig_signing_signatures': 10}
+        )
+
+    def test_isc_optviewzone_stmt_sig_signing_type_passing(self):
+        """ Clause options/view/zone; Statement sig-signing-type; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_sig_signing_type,
+            'sig-signing-type 65534;',  # default
+            {'sig_signing_type': 65534}
+        )
+
     def test_isc_optviewzone_stmt_sig_validity_interval_passing(self):
         """ Clause options/view/zone; Statement sig-validity-interval; passing """
         test_string = [
@@ -920,6 +970,22 @@ class TestOptionsViewZone(unittest.TestCase):
                                  'ip_port_w': '53'}}
         )
 
+    def test_isc_optviewzone_stmt_try_tcp_refresh_passing(self):
+        """ Clause options/view/zone; Statement try-tcp-refresh; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_try_tcp_refresh,
+            'try-tcp-refresh  yes;',  # default
+            {'try_tcp_refresh': 'yes'}
+        )
+
+    def test_isc_optviewzone_stmt_update_check_ksk_passing(self):
+        """ Clause options/view/zone; Statement update-check-ksk; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_update_check_ksk,
+            'update-check-ksk yes;',  # default
+            {'update_check_ksk': 'yes'}
+        )
+
     def test_isc_optviewzone_stmt_use_alt_transfer_source_passing(self):
         """ Clause options/view/zone; Statement use-alt-transfer-source; passing """
         test_string = [
@@ -933,10 +999,24 @@ class TestOptionsViewZone(unittest.TestCase):
             {'use_alt_transfer_source': 'no'}
         )
 
+    def test_isc_optviewzone_stmt_zero_no_soa_ttl_passing(self):
+        """ Clause options/view/zone; Statement zero-no-soa-ttl; passing """
+        assertParserResultDictTrue(
+            optviewzone_stmt_zero_no_soa_ttl,
+            'zero-no-soa-ttl yes;',  # default
+            {'zero_no_soa_ttl': 'yes'}
+        )
+
     def test_isc_optviewzone_stmt_zone_statistics_passing(self):
         """ Clause options/view/zone; Statement zone-statistics; passing """
         test_string = [
-            'zone-statistics yes;'
+            'zone-statistics full;',
+            'zone-statistics terse;',
+            'zone-statistics none;',
+            'zone-statistics true;',
+            'zone-statistics false;',
+            'zone-statistics no;',
+            'zone-statistics yes;',
         ]
         result = optviewzone_stmt_zone_statistics.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
@@ -1102,7 +1182,7 @@ class TestOptionsViewZone(unittest.TestCase):
              'max_transfer_idle_out': 3600,
              'max_transfer_time_in': 3600,
              'max_transfer_time_out': 3600,
-             'min_refresh_time': 3600,
+             'min_refresh_time': '3600',
              'min_retry_time': 3600,
              'multi_master': 'yes',
              'notify': 'master-only',

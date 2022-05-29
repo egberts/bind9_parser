@@ -30,13 +30,6 @@ optviewserver_stmt_provide_ixfr = (
     + semicolon
 )
 
-#  request-ixfr <boolean>;  # [ server ]  # v9.1.0+
-optviewserver_stmt_request_ixfr = (
-    Keyword('request-ixfr')
-    + isc_boolean('request_ixfr')
-    + semicolon
-)
-
 #  query-source address 10.53.0.2;  [ Opt, View, Server ]
 #
 #  query-source (
@@ -103,6 +96,20 @@ optviewserver_stmt_query_source_v6 = (
 """
 )
 
+#  request-ixfr <boolean>;  # [ server ]  # v9.1.0+
+optviewserver_stmt_request_ixfr = (
+    Keyword('request-ixfr')
+    + isc_boolean('request_ixfr')
+    + semicolon
+)
+
+#  send-cookie  <boolean>;  # [ server ]  # v9.1.0+
+optviewserver_stmt_send_cookie = (
+    Keyword('send-cookie')
+    + isc_boolean('send_cookie')
+    + semicolon
+)
+
 #  transfer-format ( 'one-answer' | 'many-answers' )  # [ server ]
 optviewserver_stmt_transfer_format = (
     Keyword('transfer-format')
@@ -121,6 +128,7 @@ optviewserver_statements_set = (
     ^ optviewserver_stmt_query_source
     ^ optviewserver_stmt_query_source_v6
     ^ optviewserver_stmt_request_ixfr
+    ^ optviewserver_stmt_send_cookie
     ^ optviewserver_stmt_transfer_format
 )
 

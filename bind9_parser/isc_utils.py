@@ -243,7 +243,12 @@ keysecret_desquoted = Combine(Char("'").suppress() + Word(charset_keysecret_squo
 key_secret_dequoted = (
         keysecret_desquoted
         ^ keysecret_dedquoted
-)('key_secret')
+)('key_secret').setName('<quoted-key-secret>')
+key_secret_dequotable = (
+        keysecret_desquoted
+        ^ keysecret_dedquoted
+        ^ keysecret_base
+)('key_secret').setName('<quotable-key-secret>')
 
 g_expose_secrets = False
 
@@ -260,7 +265,6 @@ key_id = (
         ^ key_id_base
 )('key_id')
 key_id.setName('<key_id>')
-
 # key <key-name>
 key_id_keyword_and_name_pair = (
         Literal('key').suppress()
@@ -276,6 +280,15 @@ key_id_keyword_and_name_element = (
         + semicolon
 )  # propagate 'key_id' ResultsName up from 'key_id' parser element.
 key_id_keyword_and_name_element.setName('"key" <key_id>;')
+
+# TSIG session key name
+tsig_session_key_name = (
+        key_id_dquotable
+        ^ key_id_squotable
+        ^ key_id_base
+)('tsig_session_keyname')
+tsig_session_key_name.setName('<TSIG-session-keyname>')
+
 
 # <base-64-char> 	:: <alpha> | <decimal-digit> | "+" | "/" | "=" ;
 charset_base64 = alphanums + '+/'  # we do not allow '=' terminator(s)
@@ -411,27 +424,27 @@ charset_krb5_username = alphanums + '-+_.'
 charset_krb5_realm = fqdn_name
 
 krb5_realm_name = fqdn_name_dequotable('<realm>')('realm')
-krb5_primary_name = Word(charset_krb5_username, min=3, max=32)('primary')
-krb5_instance_name = Word(charset_krb5_username, min=3, max=256)('instance')  # limited to length of FQDN
+krb5_primary_name = Word(charset_krb5_username, min=1, max=32)('primary')
+krb5_instance_name = Word(charset_krb5_username, min=1, max=256)('instance')  # limited to length of FQDN
 #  krb5_principal_name max=(254+1+16))  # limited to length of FQDN + '/' + URI
 krb5_principal_name_base = (
         Combine(
             krb5_primary_name
-            + '/'
-            + krb5_instance_name
-            + '@'
-            + krb5_realm_name
+            - '/'
+            - krb5_instance_name
+            - '@'
+            - krb5_realm_name
         )
         | Combine(
             krb5_primary_name
-            + '@'
-            + krb5_realm_name
+            - '@'
+            - krb5_realm_name
         )
 )('principal')
 krb5_principal_name_base.setName('<krb5_principal_name_base>')
 
-krb5_principal_name_squoted = (squote + krb5_principal_name_base + squote)
-krb5_principal_name_dquoted = (dquote + krb5_principal_name_base + dquote)
+krb5_principal_name_squoted = (squote - krb5_principal_name_base - squote)
+krb5_principal_name_dquoted = (dquote - krb5_principal_name_base - dquote)
 
 krb5_principal_name = (
         krb5_principal_name_squoted
@@ -469,6 +482,16 @@ number_type = Word(nums).setParseAction(
     lambda toks: int(toks[0]), max=15
 )('number')
 number_type.setName('<number>')
+
+fixedpoint_type = (
+    Word(nums)
+    - Optional(
+        Literal('.')
+        - Optional(Word(nums, min=1, max=1))
+    )
+).setParseAction(
+    lambda toks: float(toks[0]), max=15
+)('fixedpoint').setName('<fixedpoint>')
 
 percentage_type = (
     Word(nums).setParseAction(

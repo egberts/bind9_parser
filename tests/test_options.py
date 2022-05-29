@@ -7,7 +7,7 @@ Description:  Performs unit test on the isc_options.py source file.
 
 import unittest
 from bind9_parser.isc_utils import unit_test_booleans, assertParserResultDict,\
-    assertParserResultDictTrue, assertParserResultDictFalse, algorithm_name_list_series
+    assertParserResultDictTrue, assertParserResultDictFalse
 from bind9_parser.isc_options import \
     options_stmt_acache_cleaning_interval,options_stmt_acache_enable,\
     options_stmt_answer_cookie, options_stmt_automatic_interface_scan,\
@@ -41,17 +41,33 @@ from bind9_parser.isc_options import \
     options_stmt_querylog, options_stmt_random_device,\
     options_stmt_recursing_file, options_stmt_recursive_clients,\
     options_stmt_resolver_query_timeout, options_stmt_reuseport, options_stmt_secroots_file,\
-    options_stmt_serial_query_rate, options_stmt_server_id_name,\
+    options_stmt_serial_query_rate, \
     options_stmt_server_id, options_stmt_session_keyalg,\
     options_stmt_session_keyname, options_stmt_session_keyfile,\
-    options_stmt_stacksize, options_stmt_statistics_file,\
+    options_stmt_stacksize, \
+    options_stmt_statistics_file, \
+    options_stmt_startup_notify_rate, \
+    options_stmt_tcp_advertised_timeout, \
+    options_stmt_tcp_idle_timeout, \
+    options_stmt_tcp_initial_timeout, \
+    options_stmt_tcp_keepalive_timeout, \
+    options_stmt_tcp_receive_buffer, \
+    options_stmt_tcp_send_buffer, \
+    options_stmt_tkey_gssapi_credential, \
+    options_stmt_tls_port, \
+    options_stmt_transfer_message_size, \
+    options_stmt_udp_receive_buffer, \
+    options_stmt_udp_send_buffer, \
+    options_stmt_use_v4_udp_ports, \
+    options_stmt_use_v6_udp_ports, \
+    options_stmt_statistics_file,\
     options_stmt_tcp_clients, options_stmt_tcp_listen_queue,\
-    options_tkey_dhkey_tag, options_stmt_tkey_dhkey,\
+    options_stmt_tkey_dhkey,\
     options_multiple_stmt_tkey_dhkey,\
-    options_stmt_tkey_domain, options_stmt_tkey_gssapi_credential,\
+    options_stmt_tkey_domain, \
     options_stmt_tkey_gssapi_keytab, options_stmt_transfers_in,\
     options_stmt_transfers_out, options_stmt_transfers_per_ns,\
-    options_version_string, options_stmt_version,\
+    options_stmt_version,\
     options_statements_set, options_statements_series
 
 
@@ -280,8 +296,8 @@ deny-answer-addresses {
     def test_isc_options_stmt_dnstap_identity(self):
         assertParserResultDictTrue(
             options_stmt_dnstap_identity,
-            'dnstap-identity "example.com.";',
-            {'dnstap_identity': 'example.com.'}
+            'dnstap-identity "example.test.";',
+            {'dnstap_identity': 'example.test.'}
         )
 
     def test_isc_options_stmt_dnstap_output(self):
@@ -484,6 +500,15 @@ deny-answer-addresses {
             'memstatistics-file "/tmp/junk-stat.dat";',
             {'memstatistics_file': '/tmp/junk-stat.dat'})
 
+    def test_isc_options_stmt_named_xfer_passing(self):
+        assertParserResultDictTrue(options_stmt_named_xfer,
+                                   'named-xfer "/etc/bind/";',
+                                   {'named_xfer': '/etc/bind/'})
+
+        assertParserResultDictTrue(options_stmt_named_xfer,
+                                   'named-xfer \'/etc/bind/\';',
+                                   {'named_xfer': '/etc/bind/'})
+
     def test_isc_options_stmt_nocookie_udp_size_passing(self):
         assertParserResultDictTrue(
             options_stmt_nocookie_udp_size,
@@ -537,8 +562,14 @@ deny-answer-addresses {
     def test_isc_options_stmt_reuseport_passing(self):
         assertParserResultDictTrue(
             options_stmt_reuseport,
-            'reuseport 60;',
-            {'reuseport': 60})
+            'reuseport yes;',
+            {'reuseport': 'yes'})
+
+    def test_isc_options_stmt_secroots_file_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_secroots_file,
+            'secroots-file "/etc/bind/";',
+            {'secroots_file': '/etc/bind/'})
 
     def test_isc_options_stmt_serial_query_rate_passing(self):
         assertParserResultDictTrue(
@@ -549,8 +580,8 @@ deny-answer-addresses {
     def test_isc_options_stmt_server_id_passing(self):
         assertParserResultDictTrue(
             options_stmt_server_id,
-            'server-id "example.com";',
-            {'server_id_name': 'example.com'})
+            'server-id "example.test";',
+            {'server_id_name': 'example.test'})
         assertParserResultDictTrue(
             options_stmt_server_id,
             'server-id \'example.net\';',
@@ -568,17 +599,63 @@ deny-answer-addresses {
             "\tserver-id\t \'example.biz\'\t;\t",
             {'server_id_name': 'example.biz'})
 
+    def test_isc_options_stmt_session_keyalg_ut_passing(self):
+        test_data = [
+            'session-keyalg HMAC-MD5;',
+            'session-keyalg hmac-sha1;',
+            'session-keyalg hmac-sha224;',
+            'session-keyalg hmac-sha256;',  # default
+            'session-keyalg HmAc-ShA384;',
+            'session-keyalg hmac-sha512;',
+        ]
+        result = options_stmt_session_keyalg.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_options_stmt_session_keyalg_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_session_keyalg,
+            'session-keyalg hmac-sha512;',
+            {'session_keyalg': 'hmac-sha512'})
+
+    def test_isc_options_stmt_session_keyname_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_session_keyname,
+            'session-keyname local-ddns;',  # default
+            {'session_keyname': 'local-ddns'})
+
+    def test_isc_options_stmt_session_keyfile_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_session_keyfile,
+            'session-keyfile "dir/file";',  # default
+            {'session_keyfile': 'dir/file'})
+
     def test_isc_options_stmt_stacksize_passing(self):
         assertParserResultDictTrue(
             options_stmt_stacksize,
             'stacksize 3608K;',
             {'stacksize': [3608, 'K']})
 
+    # options_stmt_startup_notify_rate, \
+    def test_isc_options_stmt_startup_notify_rate_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_startup_notify_rate,
+            'startup-notify-rate 20;',  # default
+            {'startup_notify_rate': 20}
+        )
+
     def test_isc_options_stmt_statistics_file_passing(self):
         assertParserResultDictTrue(
             options_stmt_statistics_file,
             'statistics-file "/tmp/stat.dat";',
-            {'statistics_file_path_name': '/tmp/stat.dat'})
+            {'statistics_file': '/tmp/stat.dat'})
+
+    # options_stmt_tcp_advertised_timeout
+    def test_isc_options_stmt_tcp_advertised_timeout_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_tcp_advertised_timeout,
+            'tcp-advertised-timeout 300;',  # default
+            {'tcp_advertised_timeout': 300}
+        )
 
     def test_isc_options_stmt_tcp_clients_passing(self):
         assertParserResultDictTrue(
@@ -586,65 +663,215 @@ deny-answer-addresses {
             'tcp-clients 3609;',
             {'tcp_clients': 3609})
 
+    # options_stmt_tcp_idle_timeout
+    def test_isc_options_stmt_tcp_idle_timeout_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_tcp_idle_timeout,
+            'tcp-idle-timeout 300;',  # default
+            {'tcp_idle_timeout': 300}
+        )
+
+    # options_stmt_tcp_initial_timeout
+    def test_isc_options_stmt_tcp_initial_timeout_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_tcp_initial_timeout,
+            'tcp-initial-timeout 300;',  # default
+            {'tcp_initial_timeout': 300}
+        )
+
     def test_isc_options_stmt_tcp_listen_queue_passing(self):
         assertParserResultDictTrue(
             options_stmt_tcp_listen_queue,
             'tcp-listen-queue 3623;',
             {'tcp_listen_queue': 3623})
 
-    def test_isc_clause_options_tkkey_dhkey_passing(self):
+    # options_stmt_tcp_keepalive_timeout
+    def test_isc_options_stmt_tcp_keepalive_timeout_passing(self):
         assertParserResultDictTrue(
-            options_stmt_tkey_dhkey,
-            'tkey-dhkey "www-site-1.example.com" 17;',
-            {'tkey_dhkey': [{'host_name': 'www-site-1.example.com', 'key_tag': 17}]}
+            options_stmt_tcp_keepalive_timeout,
+            'tcp-keepalive-timeout 300;',  # default
+            {'tcp_keepalive_timeout': 300}
         )
 
-    def test_isc_clause_options_tkey_dhkey_pasing(self):
+    # options_stmt_tcp_receive_buffer
+    def test_isc_options_stmt_tcp_receive_buffer_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_tcp_receive_buffer,
+            'tcp-receive-buffer 300;',  # default
+            {'tcp_receive_buffer': 300}
+        )
+
+    # options_stmt_tcp_send_buffer
+    def test_isc_options_stmt_tcp_send_buffer_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_tcp_send_buffer,
+            'tcp-send-buffer 300;',  # default
+            {'tcp_send_buffer': 300}
+        )
+
+    def test_isc_options_tkey_dhkey_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_tkey_dhkey,
+            'tkey-dhkey "www-site-1.example.test" 17;',
+            {'tkey_dhkey': [{'host_name': 'www-site-1.example.test', 'key_tag': 17}]}
+        )
+
+    def test_isc_options_tkey_dhkey_2_passing(self):
         assertParserResultDictTrue(
             options_multiple_stmt_tkey_dhkey,
-            'tkey-dhkey "www-site-1.example.com" 17; tkey-dhkey "www-site-2.example.com" 44317;',
-            {'tkey_dhkey': [{'host_name': 'www-site-1.example.com',
+            'tkey-dhkey "www-site-1.example.test" 17; tkey-dhkey "www-site-2.example.test" 44317;',
+            {'tkey_dhkey': [{'host_name': 'www-site-1.example.test',
                              'key_tag': 17},
-                            {'host_name': 'www-site-2.example.com',
+                            {'host_name': 'www-site-2.example.test',
                              'key_tag': 44317}]}
         )
 
-    def test_isc_clause_options_tkey_domain_passing(self):
+    def test_isc_options_tkey_domain_passing(self):
         assertParserResultDictTrue(
             options_stmt_tkey_domain,
-            'tkey-domain "example.com";',
-            {'tkey_domain': 'example.com'}
-            )
-
-    def test_isc_clause_options_tkey_gssapi_credential_passing(self):
-        assertParserResultDictTrue(
-            options_stmt_tkey_gssapi_credential,
-            'tkey-gssapi-credential "ADMIN@EXAMPLE.COM";',
-
-            {'tkey_gssapi_credential': {'primary': 'ADMIN',
-                                        'principal': 'ADMIN@EXAMPLE.COM',
-                                        'realm': 'EXAMPLE.COM'}}
+            'tkey-domain "example.test";',
+            {'tkey_domain': 'example.test'}
         )
 
-    def test_isc_clause_options_transfers_in_passing(self):
+    def test_isc_options_tkey_gsspai_keytab_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_tkey_gssapi_keytab,
+            'tkey-gssapi-keytab "dir/file";',
+            {'tkey_gssapi_keytab': 'dir/file'}
+        )
+
+    # options_stmt_tkey_gssapi_credential
+    def test_isc_options_stmt_tkey_gssapi_credential_ut_passing(self):
+        test_data = [
+            'tkey-gssapi-credential "changepw/kdc1.example.test@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "clntconfig/admin@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "ftp/boston.example.test@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "host/boston.example.test@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "K/M@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "kadmin/history@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "kadmin/kdc1.example.test@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "kadmin/kdc1.example.test@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "krbtgt/EXAMPLE.TEST@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "krbtgt/EAST.EXAMPLE.TEST@WEST.EXAMPLE.TEST";',
+            'tkey-gssapi-credential "nfs/boston.example.test@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "root/boston.example.test@EXAMPLE.TEST";',
+            'tkey-gssapi-credential "OPERATOR/ns8.example.test@TEST.EXAMPLE";',
+            'tkey-gssapi-credential "ADMIN/ns9.example.test@TEST.EXAMPLE";',
+            'tkey-gssapi-credential "DNS/ns10.example.test@EXAMPLE.TEST";',
+        ]
+        result = options_stmt_tkey_gssapi_credential.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    # options_stmt_tkey_gssapi_credential
+    def test_isc_options_tkey_gssapi_credential_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_tkey_gssapi_credential,
+            'tkey-gssapi-credential "DNS/ns10.example.test@EXAMPLE.TEST";',
+            {'tkey_gssapi_credential': {'instance': 'ns10.example.test',
+                                        'primary': 'DNS',
+                                        'principal': 'DNS/ns10.example.test@EXAMPLE.TEST',
+                                        'realm': 'EXAMPLE.TEST'}}
+        )
+
+    def test_isc_options_tkey_gssapi_credential_2_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_tkey_gssapi_credential,
+            'tkey-gssapi-credential "ADMIN/master.example.test@EXAMPLE.TEST";',
+            {'tkey_gssapi_credential': {'instance': 'master.example.test',
+                                        'primary': 'ADMIN',
+                                        'principal': 'ADMIN/master.example.test@EXAMPLE.TEST',
+                                        'realm': 'EXAMPLE.TEST'}}
+        )
+
+    # options_stmt_tkey_gssapi_credential
+    def test_isc_options_stmt_tkey_gssapi_credential_ut_failing(self):
+        test_data = [
+            'tkey-gssapi-credential "ABC/admin@master.example.test@EXAMPLE.TEST;',  # two '@'s
+            'tkey-gssapi-credential "krb5_credential@example.test";',
+            'tkey-gssapi-credential "krb5_credential/example.test";',
+        ]
+        result = options_stmt_tkey_gssapi_credential.runTests(test_data, failureTests=True)
+        self.assertTrue(result[0])
+
+    # options_stmt_tls_port
+    def test_isc_options_stmt_tls_port_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_tls_port,
+            'tls-port 853;',  # default
+            {'tls_port': 853}
+        )
+
+    def test_isc_options_transfers_in_passing(self):
         assertParserResultDictTrue(
             options_stmt_transfers_in,
             'transfers-in 3611;',
             {'transfers_in': 3611})
 
-    def test_isc_clause_options_transfers_out_passing(self):
+    # options_stmt_transfer_message_size
+    def test_isc_options_stmt_transfer_message_size_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_transfer_message_size,
+            'transfer-message-size 20480;',  # default
+            {'transfer_message_size': 20480}
+        )
+
+    def test_isc_options_transfers_out_passing(self):
         assertParserResultDictTrue(
             options_stmt_transfers_out,
             'transfers-out 4773;',
             {'transfers_out': 4773})
 
-    def test_isc_clause_options_transfer_per_ns_passing(self):
+    def test_isc_options_transfer_per_ns_passing(self):
         assertParserResultDictTrue(
             options_stmt_transfers_per_ns,
             'transfers-per-ns 5935;',
             {'transfers_per_ns': 5935})
 
-    def test_isc_clause_options_version_passing(self):
+    # options_stmt_udp_receive_buffer
+    def test_isc_options_stmt_udp_receive_buffer_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_udp_receive_buffer,
+            'udp-receive-buffer 300;',  # default
+            {'udp_receive_buffer': 300}
+        )
+
+    # options_stmt_udp_send_buffer
+    def test_isc_options_stmt_udp_send_buffer_passing(self):
+        assertParserResultDictTrue(
+            options_stmt_udp_send_buffer,
+            'udp-send-buffer 300;',  # default
+            {'udp_send_buffer': 300}
+        )
+
+    # options_stmt_use_v4_udp_ports
+    def test_isc_options_stmt_use_v4_udp_ports_passing(self):
+        test_data = [
+            'use-v4-udp-ports { range 443 1023; };',
+            'use-v4-udp-ports { range 1024 45535; };',
+        ]
+        result = options_stmt_use_v4_udp_ports.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            options_stmt_use_v4_udp_ports,
+            'use-v4-udp-ports { range 1024 45535; };',
+            {'use_v4_udp_ports': {'port_end': 45535, 'port_start': 1024}}
+        )
+
+    # options_stmt_use_v6_udp_ports
+    def test_isc_options_stmt_use_v6_udp_ports_passing(self):
+        test_data = [
+            'use-v6-udp-ports { range 443 1023; };',
+            'use-v6-udp-ports { range 1024 45535; };',
+        ]
+        result = options_stmt_use_v6_udp_ports.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+        assertParserResultDictTrue(
+            options_stmt_use_v6_udp_ports,
+            'use-v6-udp-ports { range 1024 45535; };',
+            {'use_v6_udp_ports': {'port_end': 45535, 'port_start': 1024}}
+        )
+
+    def test_isc_options_version_passing(self):
         # assertParserResultDictTrue(options_stmt_version, 'version 1.0.15;', {'version_string': '1.0.15'})
         assertParserResultDictTrue(options_stmt_version, 'version "1.0.15";', {'version_string': '1.0.15'})
         assertParserResultDictTrue(options_stmt_version, "version '1.0.15';", {'version_string': '1.0.15'})

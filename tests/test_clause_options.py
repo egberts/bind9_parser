@@ -366,7 +366,7 @@ max-ixfr-ratio unlimited;""",
              'masterfile_style': 'relative',
              'match_mapped_addresses': 'no',
              'max-ixfr-ratio': 'unlimited',
-             'max-zone-ttl': {'files_count': 'unlimited'},
+             'max-zone-ttl': 'unlimited',
              'max_cache_size': ['unlimited'],
              'max_cache_ttl': '1H',
              'max_clients_per_query': 60,
@@ -447,7 +447,7 @@ request-expire no;
 """,
             {'ip_port': '53',
              'nocookie_udp_size': 512,
-             'notify': ['primary-only'],
+             'notify': 'primary-only',
              'notify_delay': 60,
              'notify_rate': 60,
              'notify_source': {'dscp_port': 4,
@@ -486,8 +486,8 @@ request-expire no;
              'resolver_retry_interval': 23,
              'response-padding': {'aml': [{'ip4_addr': '127.0.0.1'}],
                                   'fqdn': 512},
-             'response_policy': {'zone': [[{'log': 'yes',
-                                            'zone_name': 'white'}]]},
+             'response_policy': {'zone': [{'log': 'yes',
+                                           'zone_name': 'white'}]},
              'reuseport': 'no',
              'root_delegation_only': {'domains': ['127.in-addr.arpa.']},
              'root_key_sentinel': 'no'}
@@ -501,7 +501,7 @@ request-expire no;
 secroots-file "dir/file";
 serial-query-rate 5;
 server-id hostname;
-session-keyalg AES512;
+session-keyalg HMAC-SHA1;
 session-keyfile "dir/file";
 session-keyname "session_keyname";
 sig-validity-interval 5;
@@ -524,17 +524,17 @@ version "funky dns server, uh?";
 
 send-cookie no;
 serial-update-method unixtime;
-servfail-ttl 30m;
+servfail-ttl 30;
 sig-signing-nodes 5;
 sig-signing-signatures 5;
 sig-signing-type 6;
 stale-answer-client-timeout disabled;
 stale-answer-enable no;
-stale-answer-ttl 60s;
+stale-answer-ttl 60;
 stale-cache-enable no;
-stale-refresh-time 8h;
+stale-refresh-time 8;
 startup-notify-rate 5;
-suppress-initial-notify no;  // obsolete
+suppress-initial-notify no;
 synth-from-dnssec no;
 tcp-advertised-timeout 60;
 tcp-idle-timeout 60;
@@ -542,23 +542,88 @@ tcp-initial-timeout 60;
 tcp-keepalive-timeout 60;
 tcp-receive-buffer 60;
 tcp-send-buffer 60;
-tkey-gssapi-credential "krb5_credential";
+tkey-gssapi-credential "krb5_credential/ns7.example.test@EXAMPLE.TEST";
 tls-port 60;
 transfer-message-size 60;
-trust-anchor-telemetry no; // experimental
+trust-anchor-telemetry no;
 try-tcp-refresh no;
 udp-receive-buffer 60;
 udp-send-buffer 60;
 update-check-ksk no;
-use-v4-udp-ports { 1;2;3;4;5;6;7; };
-use-v6-udp-ports { 8;9;10;11;12;13;14;15; };
+use-v4-udp-ports { range 1 1023; };
+use-v6-udp-ports { range 1024 44371; };
 v6-bias 60;
 validate-except { "168.192.in-addr.arpa."; };
 zero-no-soa-ttl no;
 zero-no-soa-ttl-cache no;
 zone-statistics terse;
 """,
-            {}
+            {'secroots_file': 'dir/file',
+             'send_cookie': 'no',
+             'serial_query_rate': 5,
+             'serial_update_method': 'unixtime',
+             'server_id_name': 'hostname',
+             'servfail_ttl': 30,
+             'session_keyalg': 'hmac-sha1',
+             'session_keyfile': 'dir/file',
+             'session_keyname': '"session_keyname"',
+             'sig_signing_nodes': 5,
+             'sig_signing_signatures': 5,
+             'sig_signing_type': 6,
+             'sig_validity_interval': 5,
+             'sortlist': {'aml': [{'ip4_addr': '127.0.0.1'}]},
+             'stacksize': ['default'],
+             'stale_answer_client_timeout': 'disabled',
+             'stale_answer_enable': 'no',
+             'stale_answer_ttl': 60,
+             'stale_cache_enable': 'no',
+             'stale_refresh_time': 8,
+             'startup_notify_rate': 5,
+             'statistics_file': 'dir/file',
+             'suppress_initial_notify': 'no',
+             'synth_from_dnssec': 'no',
+             'tcp_advertised_timeout': 60,
+             'tcp_clients': 60,
+             'tcp_idle_timeout': 60,
+             'tcp_initial_timeout': 60,
+             'tcp_keepalive_timeout': 60,
+             'tcp_listen_queue': 60,
+             'tcp_receive_buffer': 60,
+             'tcp_send_buffer': 60,
+             'tkey_dhkey': [{'host_name': 'dhkey_string_content',
+                             'key_tag': 60}],
+             'tkey_domain': '172.in-addr.arpa.',
+             'tkey_gssapi_credential': {'instance': 'ns7.example.test',
+                                        'primary': 'krb5_credential',
+                                        'principal': 'krb5_credential/ns7.example.test@EXAMPLE.TEST',
+                                        'realm': 'EXAMPLE.TEST'},
+             'tkey_gssapi_keytab': 'keytab_string_content',
+             'tls_port': 60,
+             'transfer_format': 'many-answers',
+             'transfer_message_size': 60,
+             'transfer_source': {'dscp_port': 12,
+                                 'ip4_addr': '127.0.0.1',
+                                 'ip_port_w': '60'},
+             'transfer_source_v6': {'dscp_port': 11,
+                                    'ip6_addr': 'ffec::1',
+                                    'ip_port_w': '60'},
+             'transfers_in': 60,
+             'transfers_out': 60,
+             'transfers_per_ns': 60,
+             'trust_anchor_telemetry': 'no',
+             'try_tcp_refresh': 'no',
+             'udp_receive_buffer': 60,
+             'udp_send_buffer': 60,
+             'update_check_ksk': 'no',
+             'use_alt_transfer_source': 'no',
+             'use_v4_udp_ports': {'port_end': 1023, 'port_start': 1},
+             'use_v6_udp_ports': {'port_end': 44371, 'port_start': 1024},
+             'v6_bias': 60,
+             'validate_except': ['168.192.in-addr.arpa.'],
+             'version_string': 'funky dns server, uh?',
+             'zero_no_soa_ttl': 'no',
+             'zero_no_soa_ttl_cache': 'no',
+             'zone_statistics': 'terse'}
         )
 
     def test_isc_clause_options_all_statement_set_all_passing(self):
@@ -618,7 +683,6 @@ dnskey-sig-validity 3;
 dnsrps-enable no;
 dnskey-sig-validity 3;
 dnsrps-enable no;
-dnsrps-options { "<unspecified-text>"; };
 dnssec-accept-expired no;
 dnssec-dnskey-kskonly no;
 dnssec-loadkeys-interval 1;
@@ -693,12 +757,12 @@ message-compression no;
 min-cache-ttl 1D;
 min-ncache-ttl 2d;
 min-refresh-time 1W;
-min-retry-time 1w;
+min-retry-time 1;
 minimal-any no;
 minimal-responses no-auth-recursive;
 multi-master no;
 new-zones-directory "dir/file";
-no-case-compress { 127.0.0.1; };
+no-case-compress { example.test; };
 nocookie-udp-size 512;
 notify primary-only;
 notify-delay 60;

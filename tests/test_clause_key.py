@@ -7,9 +7,9 @@ Description:  Performs unit test on the isc_clause_key.py source file.
 
 import unittest
 from bind9_parser.isc_utils import key_id_keyword_and_name_pair, key_id_keyword_and_name_element,\
-    assertParserResultDictTrue
-from bind9_parser.isc_clause_key import key_secret, key_algorithm_name,\
-    key_id, key_algorithm_element, clause_stmt_key_series
+    assertParserResultDictTrue, key_secret_dequotable, key_secret
+from bind9_parser.isc_clause_key import key_algorithm_name,\
+    key_secret_element, key_id, key_algorithm_element, clause_stmt_key_series
 
 
 class TestClauseKey(unittest.TestCase):
@@ -86,7 +86,7 @@ class TestClauseKey(unittest.TestCase):
             'secret a',
             'ABCDEFA&CDEFABCDEFABCDEFABCDEF',  # ampersand symbol is not allowed
         ]
-        result = key_secret.runTests(test_data, failureTests=True)
+        result = key_secret_element.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
 
     def test_isc_key_algorithm_name_passing(self):
@@ -190,7 +190,7 @@ class TestClauseKey(unittest.TestCase):
         test_data = 'key DDNS_UPDATER { algorithm hmac-md5; secret "oopsiedaisy"; };'
         expected_result = { 'key': [ { 'algorithm': 'hmac-md5',
              'key_id': 'DDNS_UPDATER',
-             'secret': '"oopsiedaisy"'}]}
+             'secret': 'oopsiedaisy'}]}
         assertParserResultDictTrue(clause_stmt_key_series, test_data, expected_result)
 
     def test_isc_clause_stmt_multiple_key_dict_passing(self):
@@ -208,7 +208,7 @@ class TestClauseKey(unittest.TestCase):
                       'secret': 'ABCDEFG'},
                      {'algorithm': 'hmac-md5',
                       'key_id': 'DDNS_UPDATER',
-                      'secret': '"+TlDtzhAe/akZ/tF507/zQ"'}]}
+                      'secret': '+TlDtzhAe/akZ/tF507/zQ'}]}
         )
 
     def test_isc_key_clause_stmt_failing(self):

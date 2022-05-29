@@ -3937,6 +3937,7 @@ g_nc_keywords['named-xfer'] = \
         'validity': {'function': 'path_name'},
         'found-in': {'options'},
         'introduced': '8.1',
+        'deprecated': '9.2',
         'obsoleted': '9.14',
         'topic': 'ancient, obsoleted, inert',
         'comment': """This option is obsolete. It was used in BIND 8 to
@@ -3962,8 +3963,7 @@ g_nc_keywords['no-case-compress'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.10',
         'topic': 'filtering, access control',
-        'comment':
-            """Specifies a list of addresses which require responses
+        'comment': """Specifies a list of addresses which require responses
 to use case-insensitive compression.
 This ACL can be used when named needs to work with
 clients that do not comply with the requirement in
@@ -4033,7 +4033,7 @@ is 4096, but the max-udp-size option may further limit the response size.""",
 g_nc_keywords['notify'] = \
     {
         'default': 'yes',
-        'validity': {'regex': r'(yes|no|master\-only|explicit)'},
+        'validity': {'regex': r'(yes|no|primary\-only|master\-only|explicit)'},
         # In 8.2 to 9.6.3?, yes/no   TODO: when did 'master-only' and 'explicit' got introduced to 'notify'?
         'found-in': {'options', 'view'},  # 'zone' gone in v9.18
         # In 8.2, only found in ['zone']['type']['master']
@@ -5396,7 +5396,23 @@ g_nc_keywords['stale-answer-client-timeout'] = \
         'found-in': {'options', 'view'},  # added to 'options' in v9.19?
         'introduced': '9.18',
         'topic': '',
-        'comment': '',
+        'comment': """
+This option defines the amount of time (in milliseconds) that :iscman:`named`
+waits before attempting to answer the query with a stale RRset from cache.
+If a stale answer is found, :iscman:`named` continues the ongoing fetches,
+attempting to refresh the RRset in cache until the
+``resolver-query-timeout`` interval is reached.
+
+This option is off by default, which is equivalent to setting it to
+``off`` or ``disabled``. It also has no effect if ``stale-answer-enable``
+is disabled.
+
+The maximum value for this option is ``resolver-query-timeout`` minus
+one second. The minimum value, ``0``, causes a cached (stale) RRset to be
+immediately returned if it is available while still attempting to
+refresh the data in cache. :rfc:`8767` recommends a value of ``1800``
+(milliseconds).
+        """,
     }
 
 g_nc_keywords['stale-answer-enable'] = \
@@ -5417,17 +5433,41 @@ g_nc_keywords['stale-answer-ttl'] = \
         'found-in': {'options', 'view'},  # 'options' added 9.13?
         'introduced': '9.12',
         'topic': 'answer, response',
-        'comment': '',
+        'comment': """
+This specifies the TTL to be returned on stale answers. The default is 30
+seconds. The minimum allowed is 1 second; a value of 0 is updated silently
+to 1 second.
+
+For stale answers to be returned, they must be enabled, either in the
+configuration file using ``stale-answer-enable`` or via
+:option:`rndc serve-stale on <rndc serve-stale>`.
+""",
     }
 
 g_nc_keywords['stale-cache-enable'] = \
     {
-        'default': 'false',
+        'default': 'no',
         'validity': {'regex': '(true|false|yes|no)'},
         'found-in': {'options', 'view'},
         'introduced': '9.16',
-        'topic': 'caching, cache',
-        'comment': '',
+        'topic': 'caching, cache, answer',
+        'comment': """
+If ``yes``, enable the returning of "stale" cached answers when the name
+servers for a zone are not answering and the ``stale-cache-enable`` option is
+also enabled. The default is not to return stale answers.
+
+Stale answers can also be enabled or disabled at runtime via
+:option:`rndc serve-stale on <rndc serve-stale>` or :option:`rndc serve-stale off <rndc serve-stale>`; these override 
+the configured setting. :option:`rndc serve-stale reset <rndc serve-stale>` restores the
+setting to the one specified in :iscman:`named.conf`. Note that if stale
+answers have been disabled by :iscman:`rndc`, they cannot be
+re-enabled by reloading or reconfiguring :iscman:`named`; they must be
+re-enabled with :option:`rndc serve-stale on <rndc serve-stale>`, or the server must be
+restarted.
+
+Information about stale answers is logged under the ``serve-stale``
+log category.
+""",
     }
 
 g_nc_keywords['stale-refresh-time'] = \
@@ -5437,8 +5477,20 @@ g_nc_keywords['stale-refresh-time'] = \
         'unit': 'delta_second',
         'found-in': {'options', 'view'},
         'introduced': '9.18',
-        'topic': '',
-        'comment': """The default ``stale-refresh-time`` is 30 seconds, as :rfc:`8767` recommends""",
+        'topic': 'refresh, answer, window',
+        'comment': """
+If the name servers for a given zone are not answering, this sets the time
+window for which :iscman:`named` will promptly return "stale" cached answers for
+that RRSet being requested before a new attempt in contacting the servers
+is made. For convenience, TTL-style time-unit suffixes may be used to
+specify the value. It also accepts ISO 8601 duration formats.
+
+The default ``stale-refresh-time`` is 30 seconds, as :rfc:`8767` recommends
+that attempts to refresh to be done no more frequently than every 30
+seconds. A value of zero disables the feature, meaning that normal
+resolution will take place first, if that fails only then :iscman:`named` will
+return "stale" cached answers.
+""",
     }
 
 g_nc_keywords['startup-notify-rate'] = \
@@ -5449,12 +5501,11 @@ g_nc_keywords['startup-notify-rate'] = \
         'found-in': {'options'},
         'introduced': '9.11.0',
         'topic': 'tuning, transfer',
-        'comment':
-            """The rate at which NOTIFY requests will be sent when the
-            name server is first starting up, or when zones have been
-            newly added to the nameserver.  The default is 20 per
-            second. The lowest possible rate is one per second; when
-            set to zero, it will be silently raised to one.""",
+        'comment': """The rate at which NOTIFY requests will be sent when the
+name server is first starting up, or when zones have been
+newly added to the nameserver.  The default is 20 per
+second. The lowest possible rate is one per second; when
+set to zero, it will be silently raised to one.""",
     }
 
 g_nc_keywords['statistics-file'] = \
@@ -5530,9 +5581,8 @@ g_nc_keywords['synth-from-dnssec'] = \
         'validity': {'regex': '(yes|no)'},
         'found-in': {'options', 'view'},  # when did 'options' get added?
         'introduced': '9.12',
-        'topic': 'DNSSEC, cache, caching',
-        'comment':
-            """This option enables support for RFC 8198, Aggressive
+        'topic': 'DNSSEC, cache, caching, RFC8198',
+        'comment': """This option enables support for RFC 8198, Aggressive
 Use of DNSSEC-Validated Cache.
 
 It allows the resolver to send a smaller number of
@@ -5559,27 +5609,26 @@ g_nc_keywords['tcp-advertised-timeout'] = \
         'found-in': {'options'},
         'introduced': '9.12',
         'topic': 'server resource',
-        'comment':
-            """The amount of time (in millisecond) the server will
-            send in respones containing the EDNS TCP keepalive
-            option.
-            
-            This informs a client of the amount of time it may
-            keep the session open.
-            
-            The default is 300 (30 seconds), the minimum is 0, and
-            the maximum is 65535 (about 1.8 hours).
-            
-            Values above the maximum or below the minimum will be
-            adjusted with a logged warning.
-            
-            Note: This value must be greater than expected round
-                  trip delay time; otherwise no client will ever
-                  have enough time to submit a message.)
-            
-            This value can be updated at runtime by using
-            
-                'rndc tcp-timeouts'""",
+        'comment': """The amount of time (in millisecond) the server will
+send in respones containing the EDNS TCP keepalive
+option.
+
+This informs a client of the amount of time it may
+keep the session open.
+
+The default is 300 (30 seconds), the minimum is 0, and
+the maximum is 65535 (about 1.8 hours).
+
+Values above the maximum or below the minimum will be
+adjusted with a logged warning.
+
+Note: This value must be greater than expected round
+      trip delay time; otherwise no client will ever
+      have enough time to submit a message.)
+
+This value can be updated at runtime by using
+
+'rndc tcp-timeouts'""",
     }
 
 g_nc_keywords['tcp-clients'] = \
@@ -5593,7 +5642,7 @@ g_nc_keywords['tcp-clients'] = \
         'comment':
             """The maximum number of simultaneous client TCP
 connections that the server will accept.
-            
+
 The default is 150.""",
     }
 
@@ -5607,23 +5656,23 @@ g_nc_keywords['tcp-idle-timeout'] = \
         'topic': 'server resource',
         'comment':
             """The amount of time (in centisecond) the server waits
-            on an idle TCP connection before closing it when the
-            client is not using the EDNS TCP keepalive option.
-            
-            The default is 300 (30 seconds), the maximum is 1200
-            (two minutes), and the minimum is 1 (one tenth of
-            a second).
-            
-            Values above the maximum or below the minimum will be
-            adjusted with a logged warning.
-            
-            Note: This value must be greater than expected round
-                  trip delay time; otherwise no client will ever
-                  have enough time to submit a message.)
-            
-            This value can be updated at runtime by using
-            
-               'rndc tcp-timeouts'""",
+on an idle TCP connection before closing it when the
+client is not using the EDNS TCP keepalive option.
+
+The default is 300 (30 seconds), the maximum is 1200
+(two minutes), and the minimum is 1 (one tenth of
+a second).
+
+Values above the maximum or below the minimum will be
+adjusted with a logged warning.
+
+Note: This value must be greater than expected round
+      trip delay time; otherwise no client will ever
+      have enough time to submit a message.)
+
+This value can be updated at runtime by using
+
+'rndc tcp-timeouts'""",
     }
 
 g_nc_keywords['tcp-initial-timeout'] = \
@@ -5636,23 +5685,23 @@ g_nc_keywords['tcp-initial-timeout'] = \
         'topic': 'server resource',
         'comment':
             """The amount of time (in centisecond) the server waits
-            on a new TCP connection for the first message from the
-            client.
-            
-            The default is 300 (30 seconds), the minimum is
-            25 (2.5 seconds), and the maximum is
-            1200 (two minutes).
-            
-            Values above the maximum or below the minimum will be
-            adjusted with a logged warning.
-            
-            Note: This value must be greater than expected round
-                  trip delay time; otherwise no client will ever
-                  have enough time to submit a message.)
-            
-            This value can be updated at runtime by using
-            
-                'rndc tcp-timeouts'""",
+on a new TCP connection for the first message from the
+client.
+
+The default is 300 (30 seconds), the minimum is
+25 (2.5 seconds), and the maximum is
+1200 (two minutes).
+
+Values above the maximum or below the minimum will be
+adjusted with a logged warning.
+
+Note: This value must be greater than expected round
+      trip delay time; otherwise no client will ever
+      have enough time to submit a message.)
+
+This value can be updated at runtime by using
+
+'rndc tcp-timeouts'""",
     }
 
 g_nc_keywords['tcp-keepalive'] = \
@@ -5675,19 +5724,19 @@ g_nc_keywords['tcp-keepalive-timeout'] = \
         'topic': 'server resource',
         'comment':
             """The amount of time (in centisecond) the server waits
-            on an idle TCP connection before closing it when the
-            client is using the EDNS TCP keepalive option.
-            
-            The default is 300 (30 seconds), the maximum is 65535
-            (1.8 hours), and the minimum is 1 (one tenth of
-            a second).
-            
-            Values above the maximum or below the minimum will be
-            adjusted with a logged warning.  (Note: This value must
-            be greater than expected round trip delay time;
-            otherwise no client will ever have enough time to submit
-            a message.)  This value can be updated at runtime by
-            using rndc tcp-timeouts.""",
+on an idle TCP connection before closing it when the
+client is using the EDNS TCP keepalive option.
+
+The default is 300 (30 seconds), the maximum is 65535
+(1.8 hours), and the minimum is 1 (one tenth of
+a second).
+
+Values above the maximum or below the minimum will be
+adjusted with a logged warning.  (Note: This value must
+be greater than expected round trip delay time;
+otherwise no client will ever have enough time to submit
+a message.)  This value can be updated at runtime by
+using rndc tcp-timeouts.""",
     }
 
 g_nc_keywords['tcp-listen-queue'] = \
@@ -5698,8 +5747,7 @@ g_nc_keywords['tcp-listen-queue'] = \
         'found-in': {'options'},
         'introduced': '9.3.0',
         'topic': 'network layer, server resource',
-        'comment':
-            """The listen queue depth.
+        'comment': """The listen queue depth.
 
 The default and minimum is 10.
 
@@ -5756,16 +5804,15 @@ g_nc_keywords['tkey-dhkey'] = \
         'occurs-multiple-times': False,  # was True in 9.15? TBD
         'introduced': '9.0.0',
         'topic': 'operating-system, authentication, GSS, KRB5',
-        'comment':
-            """The Diffie-Hellman key used by the server to generate
-            shared keys with clients using the Diffie-Hellman mode
-            of TKEY.
-            
-            The server must be able to load the public and
-            private keys from files in the working directory.
-            
-            In most cases, the keyname_base should be the server's
-            host name.""",
+        'comment': """The Diffie-Hellman key used by the server to generate
+shared keys with clients using the Diffie-Hellman mode
+of TKEY.
+
+The server must be able to load the public and
+private keys from files in the working directory.
+
+In most cases, the keyname_base should be the server's
+host name.""",
     }
 
 g_nc_keywords['tkey-domain'] = \
@@ -5874,24 +5921,24 @@ g_nc_keywords['transfer-format'] = \
         'topic': 'transfer, server',
         'comment':
             """Zone transfers can be sent using two different formats,
-            one-answer and many-answers.
-            
-            The transfer-format option is used on the master server
-            to determine which format it sends. one-answer uses one
-            DNS message per resource record transferred.
-            
-            many-answers packs as many resource records as possible
-            into a message. many-answers is more efficient, but is
-            only supported by relatively new slave servers, such as
-            BIND 9, BIND 8.x and BIND 4.9.5 onwards.
-            
-            The many-answers format is also supported by recent
-            Microsoft Windows nameservers.
-            
-            The default is many-answers.
-            
-            transfer-format may be overridden on a per-server basis
-            by using the server statement.""",
+one-answer and many-answers.
+
+The transfer-format option is used on the master server
+to determine which format it sends. one-answer uses one
+DNS message per resource record transferred.
+
+many-answers packs as many resource records as possible
+into a message. many-answers is more efficient, but is
+only supported by relatively new slave servers, such as
+BIND 9, BIND 8.x and BIND 4.9.5 onwards.
+
+The many-answers format is also supported by recent
+Microsoft Windows nameservers.
+
+The default is many-answers.
+
+transfer-format may be overridden on a per-server basis
+by using the server statement.""",
     }
 
 g_nc_keywords['transfer-message-size'] = \
@@ -5904,13 +5951,13 @@ g_nc_keywords['transfer-message-size'] = \
         'topic': 'transfer',
         'comment':
             """This is the upper bound on the uncompressed size of DNS
-            messages used in zone transfers over TCP.  If the message
-            grows larger than this size, additional messages will be
-            used to complete the zone transfer.  (Note, however, that
-            this is a hint, not a hard limit, if a message contain a
-            single resource record whose RDATA does not fit within
-            the size limit, a larger message will be permitted so the
-            record can be transferred.)""",
+messages used in zone transfers over TCP.  If the message
+grows larger than this size, additional messages will be
+used to complete the zone transfer.  (Note, however, that
+this is a hint, not a hard limit, if a message contain a
+single resource record whose RDATA does not fit within
+the size limit, a larger message will be permitted so the
+record can be transferred.)""",
     }
 
 g_nc_keywords['transfer-per-ns'] = \
@@ -5923,10 +5970,10 @@ g_nc_keywords['transfer-per-ns'] = \
         'topic': 'zone transfer',
         'comment':
             """The maximum number of inbound zone transfers that can
-            be running concurrently.  The default value is 10.
-            Increasing transfer-in may speed up the convergence of
-            slave zones, but it also increases the load of a local
-            system.""",
+be running concurrently.  The default value is 10.
+Increasing transfer-in may speed up the convergence of
+slave zones, but it also increases the load of a local
+system.""",
     }
 
 g_nc_keywords['transfer-source'] = \
@@ -5941,24 +5988,24 @@ g_nc_keywords['transfer-source'] = \
         'zone-type': {'slave', 'mirror', 'stub', 'secondary'},
         'comment':
             """transfer-source determines which local address will be
-            bound to IPv4 TCP connections used to fetch zones
-            transferred inbound by the server. It also determines
-            the source IPv4 address, and optionally the UDP port,
-            used for the refresh queries and forwarded dynamic
-            updates.
-            
-            If not set, it defaults to a system controlled value
-            which will usually be the address of the interface
-            "closest to" the remote end. This address must appear
-            in the remote end's allow-transfer option for the
-            zone being transferred, if one is specified.
-            
-            This statement sets the transfer-source for all zones,
-            but can be overridden on a per-view or per-zone basis
-            by including a transfer-source statement within the
-            view or zone block in the configuration file.
-            NOTE: Solaris 2.5.1 and earlier does not support
-            setting the source address for TCP sockets.""",
+bound to IPv4 TCP connections used to fetch zones
+transferred inbound by the server. It also determines
+the source IPv4 address, and optionally the UDP port,
+used for the refresh queries and forwarded dynamic
+updates.
+
+If not set, it defaults to a system controlled value
+which will usually be the address of the interface
+"closest to" the remote end. This address must appear
+in the remote end's allow-transfer option for the
+zone being transferred, if one is specified.
+
+This statement sets the transfer-source for all zones,
+but can be overridden on a per-view or per-zone basis
+by including a transfer-source statement within the
+view or zone block in the configuration file.
+NOTE: Solaris 2.5.1 and earlier does not support
+setting the source address for TCP sockets.""",
     }
 
 g_nc_keywords['transfer-source-v6'] = \
@@ -6015,10 +6062,10 @@ g_nc_keywords['transfers-in'] = \
         'topic': 'transfer',
         'comment':
             """The maximum number of inbound zone transfers that can
-            be running concurrently.  The default value is 10.
-            Increasing transfer-in may speed up the convergence of
-            slave zones, but it also increases the load of a local
-            system.""",
+be running concurrently.  The default value is 10.
+Increasing transfer-in may speed up the convergence of
+slave zones, but it also increases the load of a local
+system.""",
     }
 
 g_nc_keywords['transfers-out'] = \
@@ -6397,7 +6444,7 @@ g_nc_keywords['use-v4-udp-ports'] = \
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options'},
         'introduced': '9.5.0',
-        'topic': 'query address, UDP',
+        'topic': 'port, query address, UDP',
         'comment': """If the server doesn't know the answer to a question,
 it will query other name servers. querysource specifies
 the address and port used for such queries. For queries
@@ -6449,7 +6496,7 @@ g_nc_keywords['use-v6-udp-ports'] = \
         'validity': {'regex': r"(yes|no)"},
         'found-in': {'options'},
         'introduced': '9.5.0',
-        'topic': 'query address, UDP',
+        'topic': 'port, query address, UDP',
         'comment': """If the server doesn't know the answer to a question,
 it will query other name servers. querysource specifies
 the address and port used for such queries. For queries
@@ -6790,10 +6837,13 @@ class NamedConfGlobal(object):
                 if this_keyvalue != '':
                     matches = re.match(search_value, this_keyvalue)
                     if matches:
-                        print("====\n%s" % (global_keyword))
-                        comment = self.versioned_keywords_dictionary[global_keyword]['comment']
-                        print("      comment:\n %s\n" % (comment))
-                        # print((matches.group()))
+                        print("----------------\n%s" % (global_keyword))
+                        if 'comment' in self.versioned_keywords_dictionary[global_keyword]:
+                            comment = self.versioned_keywords_dictionary[global_keyword]['comment']
+                            print("      comment:\n %s\n" % (comment))
+                            # print((matches.group()))
+                        else:
+                            print("       no comment given")
         return
 
 
