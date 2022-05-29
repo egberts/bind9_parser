@@ -12,7 +12,7 @@ Description: Provides inet-related grammar in PyParsing engine
 """
 from pyparsing import Word, nums, Combine, Group, \
     pyparsing_common, ZeroOrMore, Literal, Keyword,\
-    ungroup, OneOrMore, Optional, Regex, Char, alphanums, hexnums
+    ungroup, OneOrMore, Optional, Regex, alphanums
 from bind9_parser.isc_utils import semicolon, squote, dquote, view_name
 
 
@@ -46,26 +46,26 @@ dscp_port = Word(nums).setParseAction(lambda toks: int(toks[0]), max=3)
 dscp_port.setName('<dscp_port>')
 
 inet_dscp_port_keyword_and_number_element = (
-        Keyword('dscp').suppress()
-        + (
-            dscp_port('dscp_port')
-        )
+    Keyword('dscp').suppress()
+    + (
+        dscp_port('dscp_port')
+    )
     # No semicolon here
 )  # ('dscp_port')
 
 inet_http_port_keyword_and_number_element = (
-        Keyword('http').suppress()
-        + (
-            view_name('http_port')
-        )
+    Keyword('http').suppress()
+    + (
+        view_name('http_port')
+    )
     # No semicolon here
 )  # ('http_port')
 
 inet_tls_port_keyword_and_number_element = (
-        Keyword('tls').suppress()
-        + (
-            view_name('tls_port')
-        )
+    Keyword('tls').suppress()
+    + (
+        view_name('tls_port')
+    )
     # No semicolon here
 )  # ('tls_port')
 
@@ -83,18 +83,18 @@ ip_port = _ip_port('ip_port')
 ip_port.setName('<ip_port>')
 
 inet_ip_port_keyword_and_number_element = (
-        Keyword('port').suppress()
-        - ip_port('ip_port')
+    Keyword('port').suppress()
+    - ip_port('ip_port')
     # No semicolon here
 )
 
 inet_ip_port_keyword_and_wildcard_element = (
-        Keyword('port').suppress()
-        - (
-                ip_port('ip_port_w')
-                | Literal('*')('ip_port_w')  # TODO: Use 'wildcard_name' to handle quotes/no-quotes '*'
-        )
-) # ('')  # ('ip_port_w')
+    Keyword('port').suppress()
+    - (
+            ip_port('ip_port_w')
+            | Literal('*')('ip_port_w')  # TODO: Use 'wildcard_name' to handle quotes/no-quotes '*'
+    )
+)  # ('')  # ('ip_port_w')
 
 # ip4s_subnet = Word(nums, min=1, max=2)
 _ip4s_subnet = Regex(r'(3[0-2]|'
@@ -108,14 +108,13 @@ ip4_addr('ip4_addr')
 ip4_addr.setName('<ip4_addr>')
 
 ip4_addr_or_wildcard = (
-        wildcard_name
-        | ip4_addr
+    wildcard_name
+    | ip4_addr
 )
 ip4_addr_or_wildcard.setName('<ip4_addr_or_wildcard>')
 
 ip4s_prefix = Combine(ip4_addr + '/' - ip4s_subnet)
 ip4s_prefix.setName('<ip4subnet>')
-
 
 
 # Apparently, pyparsing_common.ipv6_address cannot the following:
@@ -131,7 +130,7 @@ _ip6_device_index = r'%' + \
                         | Word(alphanums, min=1, max=63)  # Most *nixes
                     )
 
-########ip6_addr = pyparsing_common.ipv6_address
+# ip6_addr = pyparsing_common.ipv6_address
 # " ip6_addr  should match:
 # "  IPv6 addresses
 # "    zero compressed IPv6 addresses (section 2.2 of rfc5952)
@@ -342,7 +341,7 @@ ip6_optional_prefix = (
         ip6_addr('ip6_addr')
         - Optional(
             '/'
-            - ip6s_subnet('prefix')
+            + ip6s_subnet('prefix')
         )
     )('ip6_addr')
 )
@@ -388,7 +387,7 @@ ip46_addr_prefix_or_wildcard = (
 ip46_addr_prefix_or_wildcard.setName('<ip46_addr_prefix_or_wildcard>')
 
 
-### LIST ####
+# LIST #
 #  Semicolon-terminated section
 # Example: 123.123.123.123 ;
 ip4_addr_list = Group(
@@ -412,12 +411,12 @@ ip46_addr_list = Group(
 )
 
 ip46_addr_and_port_list_set = (
-        ungroup(ip46_addr)('ip_addr')
-        - Optional(
-            ungroup(
-                inet_ip_port_keyword_and_number_element
-            )('ip_port')
-        )
+    ungroup(ip46_addr)('ip_addr')
+    - Optional(
+        ungroup(
+            inet_ip_port_keyword_and_number_element
+        )('ip_port')
+    )
 )
 
 ip46_addr_and_port_list = (

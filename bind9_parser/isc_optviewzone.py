@@ -555,7 +555,7 @@ optviewzone_stmt_zone_statistics = (
 #  Keywords are in dictionary-order, but with longest pattern as
 #  having been listed firstly
 optviewzone_statements_set = (
-         optviewzone_stmt_allow_notify
+        optviewzone_stmt_allow_notify
         ^ optviewzone_stmt_allow_query_on
         ^ optviewzone_stmt_allow_query
         ^ optviewzone_stmt_allow_transfer

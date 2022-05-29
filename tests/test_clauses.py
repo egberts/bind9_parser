@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_clauses.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_clauses import \
     optional_clause_stmt_set,\
     optional_clause_stmt_series,\
@@ -29,7 +29,7 @@ class TestClauseALL(unittest.TestCase):
     def test_isc_clause_clause_stmt_optional_set_dict_passing1(self):
         """ Clause, All; Statements group; optional clause dict 1; passing """
         test_string = 'acl MY_BASTION_HOSTS { 4.4.4.4; 3.3.3.3; 2.2.2.2; 1.1.1.1; };'
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optional_clause_stmt_set,
             test_string,
             {'acl': [{'acl_name': 'MY_BASTION_HOSTS',
@@ -47,7 +47,7 @@ class TestClauseALL(unittest.TestCase):
                                         {'ip4_addr': '3.3.3.3'},
                                         {'ip4_addr': '2.2.2.2'},
                                         {'ip4_addr': '1.1.1.1'}]}]}]}
-        assertParserResultDictTrue(optional_clause_stmt_set, test_string, expected_result)
+        assert_parser_result_dict_true(optional_clause_stmt_set, test_string, expected_result)
 
     def test_isc_clause_stmt_multiplezone_passing(self):
         """ Clause, All; Zone Statements group; passing """
@@ -75,7 +75,7 @@ class TestClauseALL(unittest.TestCase):
       type master;
       file "192.168.0.rev";
     };"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optional_clause_stmt_series,
             test_string,
             {'zones': [{'file': 'root.servers',
@@ -105,7 +105,7 @@ class TestClauseALL(unittest.TestCase):
 
     def test_isc_clause_optional_clause_stmt_series_passing(self):
         """ Clause, All; All Statements group; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optional_clause_stmt_series,
             'acl MY_BASTION_HOSTS { 4.4.4.4; 3.3.3.3; 2.2.2.2; 1.1.1.1; };' +
             'controls { inet 128.0.0.9 port 8006 allow { 128.0.0.10; 128.0.0.11;} read-only yes; };' +

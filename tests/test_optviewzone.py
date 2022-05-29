@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_optviewzone.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_optviewzone import \
     optviewzone_stmt_allow_notify, \
     optviewzone_stmt_allow_query_on, \
@@ -86,7 +86,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_allow_notify_2_passing(self):
         """ Clause options/view/zone; Statement allow-notify 2; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_notify,
             'allow-notify { localhost; localnets; };',
             {'allow_notify': {'aml': [{'keyword': 'localhost'},
@@ -104,7 +104,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_allow_query_on_2_passing(self):
         """ Clause options/view/zone; Statement allow-query-on 2; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_query_on,
             'allow-query-on { any; };',
             {'allow_query_on': {'aml': [{'keyword': 'any'}]}}
@@ -120,7 +120,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_allow_query_2_passing(self):
         """ Clause options/view/zone; Statement allow-query 2; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_query,
             'allow-query { any; };',
             {'allow_query': {'aml': [{'keyword': 'any'}]}}
@@ -136,7 +136,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_allow_transfer_2_passing(self):
         """ Clause options/view/zone; Statement allow-transfer 2; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_transfer,
             'allow-transfer { localhost; localnets; };',
             {'allow_transfer': {'aml': [{'keyword': 'localhost'},
@@ -145,7 +145,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_allow_transfer_port_passing(self):
         """ Clause options/view/zone; Statement allow-transfer port; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_transfer,
             'allow-transfer port 53 { localhost; localnets; };',
             {'allow_transfer': {'aml': [{'keyword': 'localhost'},
@@ -155,7 +155,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_allow_transfer_transport_passing(self):
         """ Clause options/view/zone; Statement allow-transfer transport; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_transfer,
             'allow-transfer transport mystring { localhost; localnets; };',
             {'allow_transfer': {'aml': [{'keyword': 'localhost'},
@@ -165,7 +165,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_allow_transfer_port_transport_passing(self):
         """ Clause options/view/zone; Statement allow-transfer port/transport; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_transfer,
             'allow-transfer port 53 transport mystring { localhost; localnets; };',
             {'allow_transfer': {'aml': [{'keyword': 'localhost'},
@@ -184,7 +184,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_allow_transfer_localnet2_passing(self):
         """ Clause options/view/zone; Statement allow-transfer; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_transfer,
             'allow-transfer { localhost; localnets; };',
             {'allow_transfer': {'aml': [{'keyword': 'localhost'},
@@ -201,7 +201,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_allow_update_on_2_passing(self):
         """ Clause options/view/zone; Statement allow-update; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_update_on,
             'allow-update-on { localhost; localnets; };',
             {'allow_update_on': {'aml': [{'keyword': 'localhost'},
@@ -215,7 +215,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_allow_update_forwarding.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_update_forwarding,
             'allow-update-forwarding { localhost; localnets; };',
             {'allow_update_forwarding': {'aml': [{'keyword': 'localhost'},
@@ -229,7 +229,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_allow_update.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_update,
             'allow-update { localhost; localnets; };',
             {'allow_update': {'aml': [{'keyword': 'localhost'},
@@ -243,7 +243,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_allow_v6_synthesis.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_allow_v6_synthesis,
             'allow-v6-synthesis { localhost; localnets; };',
             {'allow_v6_synthesis': {'aml': [{'keyword': 'localhost'},
@@ -268,7 +268,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_alt_transfer_source_v6.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_alt_transfer_source_v6,
             'alt-transfer-source-v6 fe0f::6 port 56;',
             {'alt_transfer_source_v6': {'ip6_addr': 'fe0f::6',
@@ -293,7 +293,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_alt_transfer_source.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_alt_transfer_source,
             'alt-transfer-source 2.3.4.5 port * dscp 7;',
             {'alt_transfer_source': {'dscp_port': 7,
@@ -310,7 +310,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_auto_dnssec.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_auto_dnssec,
             'auto-dnssec maintain;',
             {'auto_dnssec': 'maintain'}
@@ -325,7 +325,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_check_sibling.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_check_sibling,
             'check-sibling fail;',
             {'check_sibling': 'fail'}
@@ -333,7 +333,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_dialup_passing(self):
         """ Clause options/view/zone; Statement dialup; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_dialup,
             'dialup no;',
             {'dialup': 'no'}
@@ -341,7 +341,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_dnskey_sig_validity(self):
         """ Clause options/view/zone; Statement 'dnskey-sig-validity'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_dnskey_sig_validity,
             'dnskey-sig-validity 3660;',
             {'dnskey_sig_validity': 3660}
@@ -349,7 +349,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_dnssec_dnskey_kskonly(self):
         """ Clause options/view/zone; Statement 'dnssec-dnskey-kskonly'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_dnssec_dnskey_kskonly,
             'dnssec-dnskey-kskonly yes;',
             {'dnssec_dnskey_kskonly': 'yes'}
@@ -362,7 +362,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_dnssec_loadkeys_interval.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_dnssec_loadkeys_interval,
             'dnssec-loadkeys-interval 3600;',
             {'dnssec_loadkeys_interval': 3600}
@@ -370,7 +370,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_dnssec_policy(self):
         """ Clause options/view/zone; Statement 'dnssec-policy'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_dnssec_policy,
             'dnssec-policy my-policy;',
             {'dnssec_policy': 'my-policy'}
@@ -378,7 +378,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_dnssec_secure_to_insecure(self):
         """ Clause options/view/zone; Statement 'dnssec-secure-to-insecure'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_dnssec_secure_to_insecure,
             'dnssec-secure-to-insecure yes;',
             {'dnssec_secure_to_insecure': 'yes'}
@@ -386,7 +386,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_dnssec_update_mode(self):
         """ Clause options/view/zone; Statement 'dnssec-update-mode'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_dnssec_update_mode,
             'dnssec-update-mode no-resign;',
             {'dnssec_update_mode': 'no-resign'}
@@ -394,7 +394,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_forwarders_group_element(self):
         """ Clause options/view/zone; Statement 'forwarders' group; passing"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             forwarders_ip46_addr_prefix_port_element,
             '1.1.1.1 port 53;',
             {'ip_addr': '1.1.1.1', 'ip_port': '53'}
@@ -402,7 +402,7 @@ class TestOptionsViewZone(unittest.TestCase):
         
     def test_isc_optviewzone_forwarders_group_series(self):
         """ Clause options/view/zone; Statement 'forwarders' group series 2-element; passing"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             forwarders_ip46_addr_prefix_port_series,
             '1.1.1.1 port 53; ffa1::1 port 123 dscp 2;',
             {'forwarder': [{'ip_addr': '1.1.1.1', 'ip_port': '53'},
@@ -435,7 +435,7 @@ class TestOptionsViewZone(unittest.TestCase):
     def test_isc_optviewzone_stmt_forwarders_passing_exact(self):
         """ Clause options/view/zone; Statement forwarders; exact passing """
 
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_forwarders,
             'forwarders port 44  dscp 4 { 2.2.2.2 port 53; fe08::8 dscp 3; };',
             {'forwarders': {'dscp_port': 4,
@@ -454,7 +454,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_forward.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_forward,
             'forward only;',
             {'forward': 'only'}
@@ -470,7 +470,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_ixfr_from_differences.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_ixfr_from_differences,
             'ixfr-from-differences master;',
             {'ixfr_from_differences': 'master'}
@@ -483,7 +483,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_ixfr_tmp_file.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_ixfr_tmp_file,
             'ixfr-tmp-file "/tmp/junk.dat";',
             {'ixfr_tmp_file': '/tmp/junk.dat'}
@@ -498,7 +498,7 @@ class TestOptionsViewZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_optviewzone_stmt_key_directory_dict_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_key_directory,
             'key-directory "/tmp/keydir/";',
             {'key_directory': '/tmp/keydir/'}
@@ -511,7 +511,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_maintain_ixfr_base.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_maintain_ixfr_base,
             'maintain-ixfr-base no;',
             {'maintain_ixfr_base': 'no'}
@@ -526,7 +526,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_masterfile_format.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_masterfile_format,
             'masterfile-format text;',
             {'masterfile_format': 'text'}
@@ -540,7 +540,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_masterfile_style.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_masterfile_style,
             'masterfile-style full;',
             {'masterfile_style': 'full'}
@@ -559,7 +559,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_max_ixfr_ratio_passing(self):
         """ Clause options/view/zone; Statement 'max-ixfr-ratio'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_max_ixfr_ratio,
             'max-ixfr-ratio 1000%;',
             {'max-ixfr-ratio': 1000}
@@ -572,7 +572,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_max_journal_size.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_max_journal_size,
             'max-journal-size 3M;',
             {'max_journal_size': [3, 'M']}
@@ -585,7 +585,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_max_records.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_max_records,
             'max-records 3600;',
             {'max_records': 3600}
@@ -598,7 +598,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_max_refresh_time.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_max_refresh_time,
             'max-refresh-time 3600;',
             {'max_refresh_time': 3600}
@@ -611,7 +611,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_max_retry_time.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_max_retry_time,
             'max-retry-time 3600;',
             {'max_retry_time': 3600}
@@ -624,7 +624,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_max_transfer_time_in.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_max_transfer_time_in,
             'max-transfer-time-in 3600;',
             {'max_transfer_time_in': 3600}
@@ -637,7 +637,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_max_transfer_time_out.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_max_transfer_time_out,
             'max-transfer-time-out 3600;',
             {'max_transfer_time_out': 3600}
@@ -650,7 +650,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_max_transfer_idle_in.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_max_transfer_idle_in,
             'max-transfer-idle-in 3600;',
             {'max_transfer_idle_in': 3600}
@@ -663,7 +663,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_max_transfer_idle_out.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_max_transfer_idle_out,
             'max-transfer-idle-out 3600;',
             {'max_transfer_idle_out': 3600}
@@ -680,7 +680,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_min_refresh_time_passing(self):
         """ Clause options/view/zone; Statement min-refresh-time; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_min_refresh_time,
             'min-refresh-time 7D;',
             {'min_refresh_time': '7D'}
@@ -696,7 +696,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_min_retry_time_failing(self):
         """ Clause options/view/zone; Statement min-retry-time; failing """
-        assertParserResultDictFalse(
+        assert_parser_result_dict_false(
             optviewzone_stmt_min_retry_time,
             'min-retry-time 3H;',
             {'min_retry_time': 3600}
@@ -709,7 +709,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_multi_master.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_multi_master,
             'multi-master no;',
             {'multi_master': 'no'}
@@ -744,7 +744,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_notify_source_v6.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_notify_source_v6,
             'notify-source-v6 fe11::123 port * dscp 5;',
             {'notify_source_v6': {'ip6_addr': 'fe11::123',
@@ -773,7 +773,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_notify_source_2_passing(self):
         """ Clause options/view/zone; Statement notify-source 2; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_notify_source,
             'notify-source * port 153 dscp 1;',
             {'notify_source': {'dscp_port': 1,
@@ -791,7 +791,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_notify.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_notify,
             'notify master-only;',
             {'notify': 'master-only'}
@@ -806,7 +806,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_notify_delay.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_notify_delay,
             'notify-delay 60;',  # default
             {'notify_delay': 60}
@@ -820,7 +820,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_provide_ixfr.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_provide_ixfr,
             'provide-ixfr no;',
             {'provide_ixfr': 'no'}
@@ -833,7 +833,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_request_ixfr.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_request_ixfr,
             'request-ixfr no;',
             {'request_ixfr': 'no'}
@@ -846,7 +846,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_request_nsid.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_request_nsid,
             'request-nsid no;',
             {'request_nsid': 'no'}
@@ -861,7 +861,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_serial_update_method.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_serial_update_method,
             'serial-update-method date;',  # default
             {'serial_update_method': 'date'}
@@ -869,7 +869,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_sig_signing_nodes_passing(self):
         """ Clause options/view/zone; Statement sig-signing-nodes; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_sig_signing_nodes,
             'sig-signing-nodes 100;',  # default
             {'sig_signing_nodes': 100}
@@ -877,7 +877,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_sig_signing_signatures_passing(self):
         """ Clause options/view/zone; Statement sig-signing-signatures; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_sig_signing_signatures,
             'sig-signing-signatures 10;',  # default
             {'sig_signing_signatures': 10}
@@ -885,7 +885,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_sig_signing_type_passing(self):
         """ Clause options/view/zone; Statement sig-signing-type; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_sig_signing_type,
             'sig-signing-type 65534;',  # default
             {'sig_signing_type': 65534}
@@ -898,7 +898,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_sig_validity_interval.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_sig_validity_interval,
             'sig-validity-interval 30;',
             {'sig_validity_interval': 30}
@@ -922,7 +922,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_transfer_source_v6.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_transfer_source_v6,
             'transfer-source-v6 fe12::5 port * dscp 1;',
             {'transfer_source_v6': {'ip6_addr': 'fe12::5',
@@ -938,7 +938,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_transfer_format.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_transfer_format,
             'transfer-format one-answer;',
             {'transfer_format': 'one-answer'}
@@ -962,7 +962,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_transfer_source.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_transfer_source,
             'transfer-source 4.4.4.4 port 53 dscp 1;',
             {'transfer_source': {'ip4_addr': '4.4.4.4',
@@ -972,7 +972,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_try_tcp_refresh_passing(self):
         """ Clause options/view/zone; Statement try-tcp-refresh; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_try_tcp_refresh,
             'try-tcp-refresh  yes;',  # default
             {'try_tcp_refresh': 'yes'}
@@ -980,7 +980,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_update_check_ksk_passing(self):
         """ Clause options/view/zone; Statement update-check-ksk; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_update_check_ksk,
             'update-check-ksk yes;',  # default
             {'update_check_ksk': 'yes'}
@@ -993,7 +993,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_use_alt_transfer_source.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_use_alt_transfer_source,
             'use-alt-transfer-source no;',
             {'use_alt_transfer_source': 'no'}
@@ -1001,7 +1001,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_stmt_zero_no_soa_ttl_passing(self):
         """ Clause options/view/zone; Statement zero-no-soa-ttl; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_zero_no_soa_ttl,
             'zero-no-soa-ttl yes;',  # default
             {'zero_no_soa_ttl': 'yes'}
@@ -1020,7 +1020,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_stmt_zone_statistics.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_stmt_zone_statistics,
             'zone-statistics no;',
             {'zone_statistics': 'no'}
@@ -1082,7 +1082,7 @@ class TestOptionsViewZone(unittest.TestCase):
         ]
         result = optviewzone_statements_set.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_statements_set,
             'allow-update { localhost; localnets; };',
             {'allow_update': {'aml': [{'keyword': 'localhost'},
@@ -1099,7 +1099,7 @@ class TestOptionsViewZone(unittest.TestCase):
 
     def test_isc_optviewzone_statements_series_passing2(self):
         """ Clause optviewzone; Statement optviewzone_statements_series 2; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzone_statements_series,
             'use-alt-transfer-source yes;' +
             'transfer-format many-answers;' +

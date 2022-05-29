@@ -14,7 +14,7 @@ Description:  Performs unit test on the isc_managed_keys.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_managed_keys import managed_keyname_type,\
     managed_keyname_dquoted, managed_keyname_squoted,\
     managed_key_domain_name, managed_key_type,\

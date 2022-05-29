@@ -21,7 +21,6 @@ from bind9_parser.isc_utils import fqdn_name, semicolon
 
 
 # All GeoIP fields are quotable, using either single-quote or double-quote
-# TODO Add single/double quote support for GeoIP
 acl_geoip_ISO_3166_1_alpha_2 = Word(alphas, exact=2)  # US
 acl_geoip_ISO_3166_alpha_3 = Word(alphas, exact=3)  # USA
 acl_geoip_ISO_3166_numeric = Word(nums, exact=3)  # US=840

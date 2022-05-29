@@ -8,7 +8,7 @@ Title: Test Address Match List
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDict, acl_name, \
+from bind9_parser.isc_utils import assert_parser_result_dict, acl_name, \
     key_id, key_id_list, key_id_list_series, \
     key_id_keyword_and_name_pair, \
     parse_me
@@ -20,61 +20,61 @@ class TestAML(unittest.TestCase):
 
     def test_acl_names_passing(self):
         """ Type ACL Name; passing """
-        assertParserResultDict(acl_name, 'example', {'acl_name': 'example'}, True)
-        assertParserResultDict(acl_name, '1.1.1.1', {'acl_name': '1.1.1.1'},
-                               True)  # Not valid, but an internal correct logic
-        assertParserResultDict(acl_name, 'example.com', {'acl_name': 'example.com'}, True)
-        assertParserResultDict(acl_name, 'example[com]', {'acl_name': 'example[com]'}, True)
-        assertParserResultDict(acl_name, 'example<com>', {'acl_name': 'example<com>'}, True)
-        assertParserResultDict(acl_name, 'example&com', {'acl_name': 'example&com'}, True)
+        assert_parser_result_dict(acl_name, 'example', {'acl_name': 'example'}, True)
+        assert_parser_result_dict(acl_name, '1.1.1.1', {'acl_name': '1.1.1.1'},
+                                  True)  # Not valid, but an internal correct logic
+        assert_parser_result_dict(acl_name, 'example.com', {'acl_name': 'example.com'}, True)
+        assert_parser_result_dict(acl_name, 'example[com]', {'acl_name': 'example[com]'}, True)
+        assert_parser_result_dict(acl_name, 'example<com>', {'acl_name': 'example<com>'}, True)
+        assert_parser_result_dict(acl_name, 'example&com', {'acl_name': 'example&com'}, True)
 
     def test_acl_names_failing(self):
         """ Type ACL Name; failing """
-        assertParserResultDict(acl_name, 'example.com!', {}, False)
-        assertParserResultDict(acl_name, 'ex;mple', {},
-                               False)  # obviously cannot use semicolon in acl_name/master_id/aml
-        assertParserResultDict(acl_name, 'subdir/example', {}, False)
-        assertParserResultDict(acl_name, 'ex#mple', {}, False)  # obviously cannot use hash in acl_name/master_id/aml
+        assert_parser_result_dict(acl_name, 'example.com!', {}, False)
+        assert_parser_result_dict(acl_name, 'ex;mple', {},
+                                  False)  # obviously cannot use semicolon in acl_name/master_id/aml
+        assert_parser_result_dict(acl_name, 'subdir/example', {}, False)
+        assert_parser_result_dict(acl_name, 'ex#mple', {}, False)  # obviously cannot use hash in acl_name/master_id/aml
 
     def test_isc_aml_key_id_passing(self):
         """ Element AML; Type key_id; passing """
-        assertParserResultDict(key_id, 'myKeyID', {'key_id': 'myKeyID'}, True)
-        assertParserResultDict(key_id, 'my_key_id', {'key_id': 'my_key_id'}, True)
+        assert_parser_result_dict(key_id, 'myKeyID', {'key_id': 'myKeyID'}, True)
+        assert_parser_result_dict(key_id, 'my_key_id', {'key_id': 'my_key_id'}, True)
 
     def test_isc_aml_key_id_failing(self):
         """ Element AML; Type key_id; failing """
-        assertParserResultDict(key_id, 'myKey#ID', {}, False)
-        assertParserResultDict(key_id, 'my/key_id', {}, False)
+        assert_parser_result_dict(key_id, 'myKey#ID', {}, False)
+        assert_parser_result_dict(key_id, 'my/key_id', {}, False)
 
     def test_isc_aml_key_id_list_passing(self):
         """ Element AML; Type key_id_list; passing """
-        assertParserResultDict(key_id_list('key_id'), 'myKey;', {'key_id': ['myKey']}, True)
+        assert_parser_result_dict(key_id_list('key_id'), 'myKey;', {'key_id': ['myKey']}, True)
 
     def test_isc_aml_key_id_list_series_passing(self):
         """ Element AML; Type key_id_list_series; passing """
-        assertParserResultDict(key_id_list_series('key_ids'), 'myKey; yourKey; ourKey;',
-                               {'key_ids': ['myKey', 'yourKey', 'ourKey']}, True)
+        assert_parser_result_dict(key_id_list_series('key_ids'), 'myKey; yourKey; ourKey;',
+                                  {'key_ids': ['myKey', 'yourKey', 'ourKey']}, True)
 
     def test_isc_aml_key_id_keyword_and_name_element_passing(self):
         """ Element AML; Type key_id; passing"""
-        assertParserResultDict(key_id_keyword_and_name_pair, 'key myKey2', {'key_id': 'myKey2'}, True)
+        assert_parser_result_dict(key_id_keyword_and_name_pair, 'key myKey2', {'key_id': 'myKey2'}, True)
 
     def test_isc_aml_key_id_keyword_and_name_element_failing(self):
         """ Element AML; Type key_id; passing"""
-        assertParserResultDict(key_id_keyword_and_name_pair, 'key myKey3', {'key_id_WRONG': 'myKey3'}, False)
+        assert_parser_result_dict(key_id_keyword_and_name_pair, 'key myKey3', {'key_id_WRONG': 'myKey3'}, False)
 
     def test_aml_choices_passing(self):
-        assertParserResultDict(aml_choices, 'any', {'keyword': 'any'}, True)
-        assertParserResultDict(aml_choices, 'none', {'keyword': 'none'}, True)
-        assertParserResultDict(aml_choices, 'localhost', {'keyword': 'localhost'}, True)
-        assertParserResultDict(aml_choices, 'localnets', {'keyword': 'localnets'}, True)
-        assertParserResultDict(aml_choices, '1.1.1.1', {'ip4_addr': '1.1.1.1'}, True)
-        assertParserResultDict(aml_choices, '2.2.2.2/2', {'ip4_addr': '2.2.2.2', 'prefix': '2'}, True)
-        assertParserResultDict(aml_choices, 'fe03::3', {'ip6_addr': 'fe03::3'}, True)
-        assertParserResultDict(aml_choices, 'master_nameservers_acl',
-                               {'acl_name': 'master_nameservers_acl'}, True)
-        assertParserResultDict(aml_choices, 'example', {'acl_name': 'example'}, True)
-        assertParserResultDict(aml_choices, 'key MyKeyId', {'key_id': ['MyKeyId']}, True)
+        assert_parser_result_dict(aml_choices, 'any', {'keyword': 'any'}, True)
+        assert_parser_result_dict(aml_choices, 'none', {'keyword': 'none'}, True)
+        assert_parser_result_dict(aml_choices, 'localhost', {'keyword': 'localhost'}, True)
+        assert_parser_result_dict(aml_choices, 'localnets', {'keyword': 'localnets'}, True)
+        assert_parser_result_dict(aml_choices, '1.1.1.1', {'ip4_addr': '1.1.1.1'}, True)
+        assert_parser_result_dict(aml_choices, '2.2.2.2/2', {'ip4_addr': '2.2.2.2', 'prefix': '2'}, True)
+        assert_parser_result_dict(aml_choices, 'fe03::3', {'ip6_addr': 'fe03::3'}, True)
+        assert_parser_result_dict(aml_choices, 'master_nameservers_acl',
+                                  {'acl_name': 'master_nameservers_acl'}, True)
+        assert_parser_result_dict(aml_choices, 'example', {'acl_name': 'example'}, True)
+        assert_parser_result_dict(aml_choices, 'key MyKeyId', {'key_id': ['MyKeyId']}, True)
         test_datas = [
             ['key myKeyId', {'key_id': ['myKeyId']}],
             ['127.0.0.1', {'ip4_addr': '127.0.0.1'}],
@@ -87,24 +87,24 @@ class TestAML(unittest.TestCase):
             # FQDN-style are valid master name, but treated lik a hostname
         ]
         for this_test_data, this_expected_result in test_datas:
-            assertParserResultDict(aml_choices, this_test_data, this_expected_result, True)
+            assert_parser_result_dict(aml_choices, this_test_data, this_expected_result, True)
 
     def test_aml_choices_failing(self):
         """ Element AML; Choices AML; failing """
-        assertParserResultDict(aml_choices, 'master/nameservers_acl', {}, False)
-        assertParserResultDict(aml_choices, 'master_nameservers#acl', {}, False)
-        assertParserResultDict(aml_choices, 'master;nameservers_acl', {}, False)
+        assert_parser_result_dict(aml_choices, 'master/nameservers_acl', {}, False)
+        assert_parser_result_dict(aml_choices, 'master_nameservers#acl', {}, False)
+        assert_parser_result_dict(aml_choices, 'master;nameservers_acl', {}, False)
 
     def test_isc_aml_ip4s_prefix_passing(self):
         """ Element AML; Type ip4s_prefix; passing"""
-        assertParserResultDict(aml_choices,
+        assert_parser_result_dict(aml_choices,
                                 '10.10.10.10/10',
-                               {'ip4_addr': '10.10.10.10', 'prefix': '10'}
-                               , True)
+                                  {'ip4_addr': '10.10.10.10', 'prefix': '10'}
+                                  , True)
 
     def test_isc_aml_ip4s_prefix_failing(self):
         """ Element AML; Type ip4s_prefix; failing"""
-        assertParserResultDict(aml_choices, '10.10.10.10/1000', {'ip_addr': ['10.10.10.10/1000']}, False)
+        assert_parser_result_dict(aml_choices, '10.10.10.10/1000', {'ip_addr': ['10.10.10.10/1000']}, False)
 
     def test_isc_aml_aml_nesting_failing(self):
         """Purposely failing Address Match List (AML) name"""
@@ -114,12 +114,12 @@ class TestAML(unittest.TestCase):
             acl_nameX&&&
             { &^%$#; }; }; """
         expected_result = {}
-        assertParserResultDict(aml_nesting, test_data, expected_result, False)
+        assert_parser_result_dict(aml_nesting, test_data, expected_result, False)
 
-        assertParserResultDict(aml_nesting, '{ 5.5.5.5/55; }', {'aml': [{'5.5.5.5/55'}]}, False)
-        assertParserResultDict(aml_nesting, '{ 6.6.6.6/0;}', {'6.6.6.6/0'}, False)  # w/o 'aml':
-        assertParserResultDict(aml_nesting, '7.7.7', {}, False)
-        assertParserResultDict(aml_nesting, '{ 8.8.8.8 };', {}, False)
+        assert_parser_result_dict(aml_nesting, '{ 5.5.5.5/55; }', {'aml': [{'5.5.5.5/55'}]}, False)
+        assert_parser_result_dict(aml_nesting, '{ 6.6.6.6/0;}', {'6.6.6.6/0'}, False)  # w/o 'aml':
+        assert_parser_result_dict(aml_nesting, '7.7.7', {}, False)
+        assert_parser_result_dict(aml_nesting, '{ 8.8.8.8 };', {}, False)
 
     def test_isc_aml_aml_nesting_passing(self):
         """ Clause ACL; Element AML spacing; passing """
@@ -185,19 +185,19 @@ class TestAML(unittest.TestCase):
                     {'keyword': 'localnets'}
                 ]}
             ]}
-        assertParserResultDict(aml_nesting, test_data, expected_result, False)
+        assert_parser_result_dict(aml_nesting, test_data, expected_result, False)
 
     def test_aml_choices_nested_passing(self):
         """ Clause ACL; List AML Choices; passing """
-        assertParserResultDict(aml_choices, 'any', {'keyword': 'any'}, True)
-        assertParserResultDict(aml_choices, 'none', {'keyword': 'none'}, True)
-        assertParserResultDict(aml_choices, 'localhost', {'keyword': 'localhost'}, True)
-        assertParserResultDict(aml_choices, 'localnets', {'keyword': 'localnets'}, True)
-        assertParserResultDict(aml_choices, '1.1.1.1', {'ip4_addr': '1.1.1.1'}, True)
-        assertParserResultDict(aml_choices, '2.2.2.2/2', {'ip4_addr': '2.2.2.2', 'prefix': '2'}, True)
-        assertParserResultDict(aml_choices, 'fe03::3', {'ip6_addr': 'fe03::3'}, True)
-        assertParserResultDict(aml_choices, 'key my_own_key_id', {'key_id': ['my_own_key_id']}, True)
-        assertParserResultDict(aml_choices, 'master_nameservers_acl', {'acl_name': 'master_nameservers_acl'}, True)
+        assert_parser_result_dict(aml_choices, 'any', {'keyword': 'any'}, True)
+        assert_parser_result_dict(aml_choices, 'none', {'keyword': 'none'}, True)
+        assert_parser_result_dict(aml_choices, 'localhost', {'keyword': 'localhost'}, True)
+        assert_parser_result_dict(aml_choices, 'localnets', {'keyword': 'localnets'}, True)
+        assert_parser_result_dict(aml_choices, '1.1.1.1', {'ip4_addr': '1.1.1.1'}, True)
+        assert_parser_result_dict(aml_choices, '2.2.2.2/2', {'ip4_addr': '2.2.2.2', 'prefix': '2'}, True)
+        assert_parser_result_dict(aml_choices, 'fe03::3', {'ip6_addr': 'fe03::3'}, True)
+        assert_parser_result_dict(aml_choices, 'key my_own_key_id', {'key_id': ['my_own_key_id']}, True)
+        assert_parser_result_dict(aml_choices, 'master_nameservers_acl', {'acl_name': 'master_nameservers_acl'}, True)
 
     def test_isc_aml_aml_choices_finer(self):
         parse_me(aml_choices, 'key\nA8', True)
@@ -211,28 +211,28 @@ class TestAML(unittest.TestCase):
         # aml_choices('!localhost;' == [['!', 'localhost']] because no exclamation '"' mark
 
     def test_aml_choices2_failing(self):
-        assertParserResultDict(aml_choices, 'master/nameservers_acl;', {}, False)
-        assertParserResultDict(aml_choices, 'master_nameservers#acl;', {}, False)
-        assertParserResultDict(aml_choices, 'master;nameservers_acl;', {}, False)
+        assert_parser_result_dict(aml_choices, 'master/nameservers_acl;', {}, False)
+        assert_parser_result_dict(aml_choices, 'master_nameservers#acl;', {}, False)
+        assert_parser_result_dict(aml_choices, 'master;nameservers_acl;', {}, False)
 
     def test_aml_nesting_forward_passing(self):
-        assertParserResultDict(aml_nesting,
+        assert_parser_result_dict(aml_nesting,
                                 '{ 1.1.1.1; { 127.0.0.1;}; };',
-                               {'aml': [{'ip4_addr': '1.1.1.1'}, {'aml': [{'ip4_addr': '127.0.0.1'}]}]},
-                               True)
-        assertParserResultDict(aml_nesting,
+                                  {'aml': [{'ip4_addr': '1.1.1.1'}, {'aml': [{'ip4_addr': '127.0.0.1'}]}]},
+                                  True)
+        assert_parser_result_dict(aml_nesting,
                                 '{ { 8.8.8.8; }; };',
-                               {'aml': [{'aml': [{'ip4_addr': '8.8.8.8'}]}]},
-                               True)
-        assertParserResultDict(aml_nesting,
+                                  {'aml': [{'aml': [{'ip4_addr': '8.8.8.8'}]}]},
+                                  True)
+        assert_parser_result_dict(aml_nesting,
                                 '{ { { 9.9.9.9; }; }; };',
-                               {'aml': [{'aml': [{'aml': [{'ip4_addr': '9.9.9.9'}]}]}]},
-                               True)
+                                  {'aml': [{'aml': [{'aml': [{'ip4_addr': '9.9.9.9'}]}]}]},
+                                  True)
 
     def test_aml_nesting_forward_exclamation_passing(self):
-        assertParserResultDict(aml_nesting,
+        assert_parser_result_dict(aml_nesting,
                                 '{ ! { 1.1.1.1; { 127.0.0.1;}; }; };',
-                               {
+                                  {
                                     'aml': [
                                         {
                                             'aml': [
@@ -246,27 +246,27 @@ class TestAML(unittest.TestCase):
                                         }
                                     ]
                                 },
-                               True)
-        assertParserResultDict(aml_nesting,
+                                  True)
+        assert_parser_result_dict(aml_nesting,
                                 '{ ! 11.11.11.11; { 192.168.1.1;}; };',
-                               {
+                                  {
                                     'aml': [
                                         {'ip4_addr': '11.11.11.11', 'not': '!'},
                                         {'aml': [{'ip4_addr': '192.168.1.1'}]}
                                     ]
                                 },
-                               True)
-        assertParserResultDict(aml_nesting,
+                                  True)
+        assert_parser_result_dict(aml_nesting,
                                 '{ 3.3.3.3; ! { 127.0.0.1;}; };',
-                               {
+                                  {
                                     'aml': [
                                         {'ip4_addr': '3.3.3.3'},
                                         {'aml': [{'ip4_addr': '127.0.0.1'}], 'not': '!'}
                                     ]},
-                               True)
-        assertParserResultDict(aml_nesting,
+                                  True)
+        assert_parser_result_dict(aml_nesting,
                                 '{ 4.4.4.4; { ! 127.0.0.1;}; };',
-                               {
+                                  {
                                     'aml': [
                                         {'ip4_addr': '4.4.4.4'},
                                         {'aml': [
@@ -276,67 +276,67 @@ class TestAML(unittest.TestCase):
                                             }
                                         ]}
                                     ]},
-                               True)
-        assertParserResultDict(aml_nesting,
+                                  True)
+        assert_parser_result_dict(aml_nesting,
                                 '{ 5.5.5.5; { 127.0.0.1;}; };',
-                               {'aml': [
+                                  {'aml': [
                                     {'ip4_addr': '5.5.5.5'},
                                     {'aml': [
                                         {'ip4_addr': '127.0.0.1'}]}]},
-                               True)
-        assertParserResultDict(aml_nesting,
+                                  True)
+        assert_parser_result_dict(aml_nesting,
                                 '{ { 6.6.6.6; }; };',
-                               {'aml': [
+                                  {'aml': [
                                     {'aml': [
                                         {'ip4_addr': '6.6.6.6'}]}]},
-                               True)
-        assertParserResultDict(aml_nesting,
+                                  True)
+        assert_parser_result_dict(aml_nesting,
                                 '{ { { 7.7.7.7; }; }; };',
-                               {'aml': [
+                                  {'aml': [
                                     {'aml': [
                                         {'aml': [
                                             {'ip4_addr': '7.7.7.7'}]}]}]},
-                               True)
+                                  True)
 
     def test_aml_nesting_first_addr(self):
-        assertParserResultDict(aml_nesting.setDebug(True), '{ key mykey; };', {'aml': [{'key_id': ['mykey']}]}, True)
+        assert_parser_result_dict(aml_nesting.setDebug(True), '{ key mykey; };', {'aml': [{'key_id': ['mykey']}]}, True)
 
     def test_aml_nesting_first_exclamation(self):
-        assertParserResultDict(aml_nesting.setDebug(True), '{ ! key mykey; };',
-                               {'aml': [{'key_id': ['mykey'], 'not': '!'}]}, True)
+        assert_parser_result_dict(aml_nesting.setDebug(True), '{ ! key mykey; };',
+                                  {'aml': [{'key_id': ['mykey'], 'not': '!'}]}, True)
 
     def test_aml_nesting_first_addr_series(self):
         test_data = """{ localhost; any; none; };"""
         expected_result = {'aml': [{'keyword': 'localhost'}, {'keyword': 'any'}, {'keyword': 'none'}]}
-        assertParserResultDict(aml_nesting, test_data, expected_result, True)
+        assert_parser_result_dict(aml_nesting, test_data, expected_result, True)
 
     def test_aml_nesting_first_nest(self):
         test_data = """{ localhost; }; """
         expected_result = {'aml': [{'keyword': 'localhost'}]}
-        assertParserResultDict(aml_nesting, test_data, expected_result, True)
+        assert_parser_result_dict(aml_nesting, test_data, expected_result, True)
 
     def test_aml_nesting_first_two_nests(self):
         test_data = """{ { localhost; }; }; """
         expected_result = {'aml': [{'aml': [{'keyword': 'localhost'}]}]}
-        assertParserResultDict(aml_nesting, test_data, expected_result, True)
+        assert_parser_result_dict(aml_nesting, test_data, expected_result, True)
 
     def test_aml_nesting_first_combo(self):
         test_data = """ { localhost; { none; }; };"""
         expected_result = {'aml': [{'keyword': 'localhost'}, {'aml': [{'keyword': 'none'}]}]}
-        assertParserResultDict(aml_nesting, test_data, expected_result, True)
+        assert_parser_result_dict(aml_nesting, test_data, expected_result, True)
 
     def test_aml_nesting_first_deep_combo(self):
         test_data = """{ { none; }; localhost; { none; { any; }; }; };"""
         expected_result = {'aml': [{'aml': [{'keyword': 'none'}]},
                                    {'keyword': 'localhost'},
                                    {'aml': [{'keyword': 'none'}, {'aml': [{'keyword': 'any'}]}]}]}
-        assertParserResultDict(aml_nesting, test_data, expected_result, True)
+        assert_parser_result_dict(aml_nesting, test_data, expected_result, True)
 
     # test_aml_nesting_flat is not a valid ISC syntax but an interim syntax checker
     def test_aml_nesting_flat(self):
         test_data = """{ localhost; };"""
         expected_result = {'aml': [{'keyword': 'localhost'}]}
-        assertParserResultDict(aml_nesting, test_data, expected_result, True)
+        assert_parser_result_dict(aml_nesting, test_data, expected_result, True)
 
     def test_isc_aml_aml_nesting_passing(self):
         """Address Match List (AML) name"""
@@ -361,8 +361,8 @@ class TestAML(unittest.TestCase):
         aml_nesting.runTests(test_data, failureTests=True)
 
     def test_aml_aml_nesting_failing(self):
-        assertParserResultDict(aml_nesting, '{ 23.23.23.23};', {}, False)  # missing inside semicolon
-        assertParserResultDict(aml_nesting, '{ 23.23.23.23;}', {}, False)  # missing outside semicolon
+        assert_parser_result_dict(aml_nesting, '{ 23.23.23.23};', {}, False)  # missing inside semicolon
+        assert_parser_result_dict(aml_nesting, '{ 23.23.23.23;}', {}, False)  # missing outside semicolon
 
 
 if __name__ == '__main__':

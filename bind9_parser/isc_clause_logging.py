@@ -12,7 +12,7 @@ Description: Provides logging channels-related grammar in
 """
 
 from pyparsing import Word, Group, Optional, Keyword, Literal, \
-    srange, OneOrMore, ZeroOrMore, ungroup
+    srange, OneOrMore, ZeroOrMore
 from bind9_parser.isc_utils import semicolon, number_type, \
     isc_boolean, lbrack, rbrack, \
     name_type, dequoted_path_name, size_spec
@@ -62,71 +62,71 @@ logging_chan_file_path_element = (
 )
 
 logging_chan_syslog_facility_name = (
-        Literal('kern')
-        | Literal('user')
-        | Literal('mail')
-        | Literal('daemon')
-        | Literal('auth')
-        | Literal('syslog')
-        | Literal('lpr')
-        | Literal('news')
-        | Literal('uucp')
-        | Literal('cron')
-        | Literal('authpriv')
-        | Literal('ftp')
-        | Literal('local0')
-        | Literal('local1')
-        | Literal('local2')
-        | Literal('local3')
-        | Literal('local4')
-        | Literal('local5')
-        | Literal('local6')
-        | Literal('local7')
+    Literal('kern')
+    | Literal('user')
+    | Literal('mail')
+    | Literal('daemon')
+    | Literal('auth')
+    | Literal('syslog')
+    | Literal('lpr')
+    | Literal('news')
+    | Literal('uucp')
+    | Literal('cron')
+    | Literal('authpriv')
+    | Literal('ftp')
+    | Literal('local0')
+    | Literal('local1')
+    | Literal('local2')
+    | Literal('local3')
+    | Literal('local4')
+    | Literal('local5')
+    | Literal('local6')
+    | Literal('local7')
 )('facility')
 logging_chan_syslog_facility_name.setName('<syslog_facility>')
 
 logging_chan_syslog_element = (
-        Keyword('syslog').suppress()
-        - logging_chan_syslog_facility_name
+    Keyword('syslog').suppress()
+    - logging_chan_syslog_facility_name
 )
 
 logging_chan_stderr_keyword = (
     Keyword('stderr')
 )('io')
 logging_chan_null_keyword = (
-                                Keyword('null')
+    Keyword('null')
 )('io')
 
 logging_chan_file_method = (
-        (
-                logging_chan_file_path_element
-                ^ logging_chan_syslog_element
-                ^ logging_chan_stderr_keyword
-                ^ logging_chan_null_keyword
-        )
-        + semicolon
+    (
+        logging_chan_file_path_element
+        ^ logging_chan_syslog_element
+        ^ logging_chan_stderr_keyword
+        ^ logging_chan_null_keyword
+    )
+    - semicolon
 )
 
 logging_chan_syslog_severity_select = (
-        Literal('critical')
-        | Literal('error')
-        | Literal('warning')
-        | Literal('notice')
-        | Literal('info')
-        | Literal('dynamic')
-        | (
-                Literal('debug').suppress()
-                - Optional(number_type(''))('')
-        )('debug')
+    Literal('critical')
+    | Literal('error')
+    | Literal('warning')
+    | Literal('notice')
+    | Literal('info')
+    | Literal('dynamic')
+    | (
+            Literal('debug').suppress()
+            - Optional(number_type(''))('')
+    )('debug')
 )('')
 logging_chan_syslog_severity_select.setName('critical|error|warning|notice|info|debug <level>|dynamic')
 
 logging_chan_syslog_severity_element = (
-        Group(
-            Keyword('severity').suppress()
-            - logging_chan_syslog_severity_select
-        )('severity')
-        + semicolon
+    Group(
+        Keyword('severity').suppress()
+        - logging_chan_syslog_severity_select
+    )('severity')
+    + semicolon
 )('')
 
 logging_chan_print_category_element = (
@@ -138,21 +138,21 @@ logging_chan_print_category_element = (
 )
 
 logging_chan_print_severity_element = (
-        Keyword('print-severity').suppress()
-        - isc_boolean('print_severity')
-        + semicolon
+    Keyword('print-severity').suppress()
+    - isc_boolean('print_severity')
+    - semicolon
 )
 
 #  [ print-time ( iso8601 | iso8601-utc | local | <boolean>) ;  ]
 logging_chan_print_time_element = (
-        Keyword('print-time').suppress()
-        - (
-                Keyword('iso8601-utc')
-                | Keyword('iso8601')
-                | Keyword('local')
-                | isc_boolean
-        )('print_time')
-        + semicolon
+    Keyword('print-time').suppress()
+    - (
+            Keyword('iso8601-utc')
+            | Keyword('iso8601')
+            | Keyword('local')
+            | isc_boolean
+    )('print_time')
+    + semicolon
 )
 
 #  [ buffered <boolean>; ]
@@ -163,11 +163,11 @@ logging_chan_buffered_element = (
 )
 
 logging_chan_method_option_set = (
-        logging_chan_syslog_severity_element
-        | logging_chan_print_time_element
-        | logging_chan_print_category_element
-        | logging_chan_print_severity_element
-        | logging_chan_buffered_element
+    logging_chan_syslog_severity_element
+    | logging_chan_print_time_element
+    | logging_chan_print_category_element
+    | logging_chan_print_severity_element
+    | logging_chan_buffered_element
 )
 
 logging_chan_method_option_series = (
@@ -175,8 +175,8 @@ logging_chan_method_option_series = (
 )
 
 logging_chan_method_element = (
-        logging_chan_file_method
-        - logging_chan_method_option_series
+    logging_chan_file_method
+    - logging_chan_method_option_series
 )
 
 logging_stmt_channel_set = (

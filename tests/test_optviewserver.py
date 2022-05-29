@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_optviewserver.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_optviewserver import \
     optviewserver_stmt_edns_udp_size,\
     optviewserver_stmt_provide_ixfr,\
@@ -33,7 +33,7 @@ class TestOptionsViewServer(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_server_stmt_edns_udp_size_dict_passing(self):
-        assertParserResultDictTrue(optviewserver_stmt_edns_udp_size, 'edns-udp-size 255;', {'edns_udp_size': 255})
+        assert_parser_result_dict_true(optviewserver_stmt_edns_udp_size, 'edns-udp-size 255;', {'edns_udp_size': 255})
 
     def test_isc_server_stmt_edns_udp_size_failing(self):
         """ Clause server; Statement edns_udp_size; failing mode """
@@ -58,7 +58,7 @@ class TestOptionsViewServer(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_optviewserver_stmt_provide_ixfr_dict_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewserver_stmt_provide_ixfr,
             'provide-ixfr yes;',
             {'provide_ixfr': 'yes'}
@@ -97,7 +97,7 @@ class TestOptionsViewServer(unittest.TestCase):
 
     def test_isc_optviewserver_stmt_query_source_passing(self):
         """ Clause Options/View/Server; Statement 'query-source' unittest; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewserver_stmt_query_source,
             'query-source address 172.16.0.0 port 443 dscp 15;',
             {'query_source': {'dscp_port': 15,
@@ -130,7 +130,7 @@ class TestOptionsViewServer(unittest.TestCase):
 
     def test_isc_optviewserver_stmt_query_source_v6_passing(self):
         """ Clause Options/View/Server; Statement 'query-source-v6' unittest; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewserver_stmt_query_source_v6,
             'query-source-v6 address fec2::1 port 443 dscp 15;',
             {'query_source_v6': {'dscp_port': 15,
@@ -152,14 +152,14 @@ class TestOptionsViewServer(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_server_stmt_request_ixfr_dict_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewserver_stmt_request_ixfr,
             'request-ixfr True;',
             {'request_ixfr': 'True'}
         )
 
     def test_isc_server_stmt_send_cookie_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewserver_stmt_send_cookie,
             'send-cookie yes;',
             {'send_cookie': 'yes'}
@@ -181,7 +181,7 @@ class TestOptionsViewServer(unittest.TestCase):
         ]
         result = optviewserver_stmt_transfer_format.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewserver_stmt_transfer_format,
             'transfer-format one-answer;',
             {'transfer_format': 'one-answer'}
@@ -199,7 +199,7 @@ class TestOptionsViewServer(unittest.TestCase):
 
     def test_isc_optviewserver_statements_series_passing(self):
         """ Clause optviewserver; Statement optviewserver_statements_series; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewserver_statements_series,
             'provide-ixfr yes;' +
             'request-ixfr yes;' +

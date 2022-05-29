@@ -13,7 +13,7 @@ Description: Provides RR-related grammar in PyParsing engine
 """
 
 from pyparsing import Optional, Combine, CaselessLiteral, \
-    Literal, Char, OneOrMore, Group, ungroup
+    Literal, Char, OneOrMore, ungroup
 from bind9_parser.isc_utils import semicolon
 from bind9_parser.isc_domain import domain_generic_fqdn, domain_charset_wildcard
 
@@ -125,7 +125,7 @@ rr_domain_name_or_wildcard.setName('<target_rr_name>')
 
 #  ( <fqdn> | '.' )
 rr_domain_name_or_root = (
-rr_domain_name
+    rr_domain_name
     | Literal('.')
 )
 rr_domain_name_or_root.setName('<rr_domain_or_root>')

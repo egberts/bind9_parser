@@ -18,10 +18,9 @@ Description:
            [ allow { address_match_element; ...  } ];
     };
 """
-from pyparsing import Word, alphanums, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
-        iso8601_duration, quotable_name,\
-        lbrack, rbrack, quoted_name
+from pyparsing import Group, Keyword, ZeroOrMore, OneOrMore, Optional
+from bind9_parser.isc_utils import semicolon, \
+        lbrack, rbrack
 from bind9_parser.isc_inet import ip46_addr_or_wildcard, inet_ip_port_keyword_and_wildcard_element
 
 # NOTE: If any declaration here is to be used OUTSIDE of 
@@ -41,12 +40,12 @@ clause_stmt_statistics_channels_standalone = (
         + rbrack
         + semicolon
 )
-clause_stmt_statistics_channels_standalone.setName('statistics_channels <name> { endpoints { <quoted_string>; ... }; listener-clients <integer>; streams-per-connections <integer>; };')
+clause_stmt_statistics_channels_standalone.setName(
+    'statistics_channels <name> { endpoints { <quoted_string>; ... };'
+    + 'listener-clients <integer>; streams-per-connections <integer>; };')
 
-clause_stmt_statistics_channels_set = clause_stmt_statistics_channels_standalone\
-# clause_stmt_statistics_channels_standalone.setName('statistics_channels <name> { endpoints { <quoted_string>; ... }; listener-clients <integer>; streams-per-connections <integer>; };')
+clause_stmt_statistics_channels_set = clause_stmt_statistics_channels_standalone
 
 # {0-*} statement
-clause_stmt_statistics_channels_series = ZeroOrMore( clause_stmt_statistics_channels_set )
+clause_stmt_statistics_channels_series = ZeroOrMore(clause_stmt_statistics_channels_set)
 clause_stmt_statistics_channels_series.setName('statistics_channels <string> { ... }; ...')
-

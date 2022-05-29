@@ -58,7 +58,7 @@ Note: We cannot enforce TLD syntax because many option settings allows for
 """
 from pyparsing import Optional, Word, Combine, \
     srange, alphanums, ZeroOrMore, \
-    Literal, alphas, Char, Regex, OneOrMore
+    Literal, alphas, Char, Regex
 from bind9_parser.isc_utils import squote, dquote
 
 g_test_over_63_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abc"
@@ -116,16 +116,13 @@ tld_label.setName('<tdl-label>')
 domain_label_regex = r'[a-zA-Z0-9]{1,1}([a-zA-Z0-9\-]{0,61}){0,1}[a-zA-Z0-9]{1,1}'
 domain_label = Regex(domain_label_regex)
 # RFC1123 permitted labels starting with a digit
-    # Word(domain_charset_alphanums, exact=1)
-    # + Word(domain_charset_alphanums_dash, min=1, max=61)
-    # + Word(domain_charset_alphanums, exact=1)
 domain_label.setName('<level2-domain-label>')
 
 # NOGO: Do not consider merging subdomain_* with domain_generic_*
 # For subdomains, we can use underscore, practically anywhere within its domain label
 # Domain Registars mostly do not allow name registration having any underscore
 # End-user may however deploy underscore anywhere outside of 2nd and top level domain name
-subdomain_label_regex = '[A-Za-z0-9_]{1,1}(([A-Za-z0-9_\-]{0,61}){0,1}[A-Za-z0-9_]{1,1}){0,1}'
+subdomain_label_regex = '[A-Za-z0-9_]{1,1}(([-_A-Za-z0-9]{0,61}){0,1}[A-Za-z0-9_]{1,1}){0,1}'
 # We do not do IDN/PunyCode syntax enforcement here, that is outside the scope of this parser
 subdomain_label = Regex(subdomain_label_regex)
 subdomain_label.setName('<subdomain_label>')
@@ -152,10 +149,10 @@ domain_generic_label.setResultsName('domain_name')
 #  we use the much-vaunted Regex() for domain_fqdn
 domain_fqdn_regex = '('\
                         + '(' \
-                            + subdomain_label_regex \
-                            + '\.' \
+                        + subdomain_label_regex \
+                        + '.' \
                         + '){0,16}' + \
-                        domain_label_regex + '\.' \
+                        domain_label_regex + '.' \
                     + '){0,1}'\
                     + tld_label_regex
 domain_fqdn = Regex(domain_fqdn_regex)
@@ -251,7 +248,7 @@ host_name_two_chars = Combine(Char(srange('[a-zA-Z0-9]')) + Char(srange('[a-zA-Z
 host_name_two_chars.setName('<two_char_hostname>')
 
 charset_host_name_middle_chars = srange('[a-zA-Z0-9]') + '-'
-host_name_long_type = Regex('[a-zA-Z0-9]{1}[a-zA-Z0-9\-]{0,62}[a-zA-Z0-9]{1}')('hostname_long')
+host_name_long_type = Regex('[a-zA-Z0-9]{1}[-_a-zA-Z0-9]{0,62}[a-zA-Z0-9]{1}')('hostname_long')
 host_name_long_type.setName('<hostname_regex>')
 
 # TODO block examples like 'example-.-nono'
@@ -269,4 +266,3 @@ host_name.setDebug()
 # NOGO: Add antipattern of dotted quad notation toward 'hostname' (no need to, hostname does not allow period symbols
 # host_name.setName('<hostname>')
 # host_name.setResultsName('host_name')
-

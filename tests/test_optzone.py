@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_optzone.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_optzone import \
     optzone_stmt_notify_to_soa,\
     optzone_statements_set,\
@@ -27,7 +27,7 @@ class TestOptionsZone(unittest.TestCase):
         ]
         result = optzone_stmt_notify_to_soa.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optzone_stmt_notify_to_soa,
             'notify-to-soa yes;',
             {'notify_to_soa': 'yes'}
@@ -48,7 +48,7 @@ class TestOptionsZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_optzone_stmt_statements_set_failing(self):
-        assertParserResultDictFalse(
+        assert_parser_result_dict_false(
             optzone_statements_set,
             'notify-to-soa wrong;',
             {'notify_to_soa': 'wrong'}
@@ -57,7 +57,7 @@ class TestOptionsZone(unittest.TestCase):
     def test_isc_optzone_statements_series_passing(self):
         """ Clause optzone; Statement optzone_statements_series; passing """
         # Only one 'notify-to-soa' statement allowed in each options or zone clause
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optzone_statements_series,
             'notify-to-soa yes;' +
             'notify-to-soa no;',

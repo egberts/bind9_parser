@@ -58,4 +58,3 @@ clause_stmt_key_series = (
     )
 )('key')
 clause_stmt_key_series.setName('key <key-name> { algorithm <string>; secret <key-secret>; };')
-

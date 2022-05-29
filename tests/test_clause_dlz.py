@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_clause_dlz.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_dlz import dlz_database_element, dlz_search_element, \
     dlz_element_group, clause_stmt_dlz_standalone, clause_stmt_dlz_series
 
@@ -18,10 +18,10 @@ class TestClauseDLZ(unittest.TestCase):
         """ Clause dlz; Element database; passing mode """
         test_data = 'database "a";'
         expected_result = {'db_args': 'a'}
-        assertParserResultDictTrue(dlz_database_element, test_data, expected_result)
+        assert_parser_result_dict_true(dlz_database_element, test_data, expected_result)
 
     def test_isc_dlz_database_element2_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dlz_database_element,
             'database "dlopen ../dlz_perl_driver.so dlz_perl_example.pm dlz_perl_example";',
             {'db_args': 'dlopen ../dlz_perl_driver.so dlz_perl_example.pm '
@@ -47,7 +47,7 @@ class TestClauseDLZ(unittest.TestCase):
         ]
         result = dlz_search_element.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dlz_search_element,
             'search TRUE;',
             {'search': 'True'}
@@ -75,7 +75,7 @@ class TestClauseDLZ(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_dlz_element_group_dict_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dlz_element_group,
             'database "ghi"; search yes;',
             {'db_args': 'ghi', 'search': 'yes'}
@@ -102,7 +102,7 @@ class TestClauseDLZ(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_dlz_dlz_stmt_dict_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_dlz_standalone,
             'dlz your_IBM_2 { database "RSDMS"; search no; };',
             {'dlz': [{'db_args': 'RSDMS',
@@ -127,11 +127,11 @@ class TestClauseDLZ(unittest.TestCase):
                 {'db_args': 'def', 'dlz_name': 'my_dlz_1', 'search': 'yes'}
             ]
         }
-        assertParserResultDictTrue(clause_stmt_dlz_series, test_data, expected_result)
+        assert_parser_result_dict_true(clause_stmt_dlz_series, test_data, expected_result)
 
     def test_isc_clause_stmt_dlz_multiple_passing(self):
         """ Clause dlz; Multiple Statments group; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_dlz_series,
             """dlz my_dlz_1 { database "def"; search yes; };
                dlz example { database "dlopen driver.so args"; search yes; };

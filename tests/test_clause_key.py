@@ -7,7 +7,7 @@ Description:  Performs unit test on the isc_clause_key.py source file.
 
 import unittest
 from bind9_parser.isc_utils import key_id_keyword_and_name_pair, key_id_keyword_and_name_element,\
-    assertParserResultDictTrue, key_secret_dequotable, key_secret
+    assert_parser_result_dict_true, key_secret_dequotable, key_secret
 from bind9_parser.isc_clause_key import key_algorithm_name,\
     key_secret_element, key_id, key_algorithm_element, clause_stmt_key_series
 
@@ -19,7 +19,7 @@ class TestClauseKey(unittest.TestCase):
         """ Clause Keys; Element KeyId; List/Dict; passing """
         test_data = 'my_key_id'
         expected_result = {'key_id': 'my_key_id'}
-        assertParserResultDictTrue(key_id, test_data, expected_result)
+        assert_parser_result_dict_true(key_id, test_data, expected_result)
 
     def test_isc_key_id_keyword_and_name_element_passing(self):
         """ Clause Keys; Element KeyId and Name; passing """
@@ -35,24 +35,24 @@ class TestClauseKey(unittest.TestCase):
         """ Clause Keys; Element KeyId and Name; Dict/List; passing """
         test_data = 'key your_key_id'
         expected_result = {'key_id': 'your_key_id'}
-        assertParserResultDictTrue(key_id_keyword_and_name_pair,
-                                   test_data,
-                                   expected_result)
+        assert_parser_result_dict_true(key_id_keyword_and_name_pair,
+                                       test_data,
+                                       expected_result)
         test_data = 'key your_key_id'
         expected_result = {'key_id': 'your_key_id'}
-        assertParserResultDictTrue(key_id_keyword_and_name_pair,
-                                   test_data,
-                                   expected_result)
+        assert_parser_result_dict_true(key_id_keyword_and_name_pair,
+                                       test_data,
+                                       expected_result)
         test_data = 'key "my_dquoted_key_id"'
         expected_result = {'key_id': '"my_dquoted_key_id"'}
-        assertParserResultDictTrue(key_id_keyword_and_name_pair,
-                                   test_data,
-                                   expected_result)
+        assert_parser_result_dict_true(key_id_keyword_and_name_pair,
+                                       test_data,
+                                       expected_result)
         test_data = 'key \'my_squoted_key_id\''
         expected_result = {'key_id': '\'my_squoted_key_id\''}
-        assertParserResultDictTrue(key_id_keyword_and_name_pair,
-                                   test_data,
-                                   expected_result)
+        assert_parser_result_dict_true(key_id_keyword_and_name_pair,
+                                       test_data,
+                                       expected_result)
 
     def test_isc_key_id_keyword_and_name_element_failing(self):
         """ Clause Keys; Element KeyId and Name; failing """
@@ -78,7 +78,7 @@ class TestClauseKey(unittest.TestCase):
         """ Clause key; Type key_secret; List/Dict; passing """
         test_data = 'ASDASDASDASDASSD123123123123123'
         expected_result = {'key_secret': 'ASDASDASDASDASSD123123123123123'}
-        assertParserResultDictTrue(key_secret, test_data, expected_result)
+        assert_parser_result_dict_true(key_secret, test_data, expected_result)
 
     def test_isc_key_secret_failing(self):
         """ Clause key; Type Secret; failing mode """
@@ -102,7 +102,7 @@ class TestClauseKey(unittest.TestCase):
         """ Clause key; Type key_algorithm_name; List/Dict; passing """
         test_data = 'hmac-sha2048-cdc'
         expected_result = {'algorithm': 'hmac-sha2048-cdc'}
-        assertParserResultDictTrue(key_algorithm_name, test_data, expected_result)
+        assert_parser_result_dict_true(key_algorithm_name, test_data, expected_result)
 
     def test_isc_key_algorithm_name_failing(self):
         """ Clause key; Type Algorithm Name; failing mode """
@@ -161,7 +161,7 @@ class TestClauseKey(unittest.TestCase):
         """ Clause key; Type key_id_keyword_and_name_element; List/Dict; passing """
         test_data = 'key first_key;'
         expected_result = {'key_id': 'first_key'}
-        assertParserResultDictTrue(key_id_keyword_and_name_element, test_data, expected_result)
+        assert_parser_result_dict_true(key_id_keyword_and_name_element, test_data, expected_result)
 
     def test_isc_key_reference_list_failing(self):
         """ Clause key; List key reference; failing mode """
@@ -191,11 +191,11 @@ class TestClauseKey(unittest.TestCase):
         expected_result = { 'key': [ { 'algorithm': 'hmac-md5',
              'key_id': 'DDNS_UPDATER',
              'secret': 'oopsiedaisy'}]}
-        assertParserResultDictTrue(clause_stmt_key_series, test_data, expected_result)
+        assert_parser_result_dict_true(clause_stmt_key_series, test_data, expected_result)
 
     def test_isc_clause_stmt_multiple_key_dict_passing(self):
         """ Clause key; Statement clause_stmt_key_series; multiple List/Dict; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_key_series,
             'key my_key_1 { algorithm hmac-sha512; secret ABCDEFABCDEFABCDEFABCDEF; };' +
             'key dyndns { algorithm hmac-sha512; secret ABCDEFG; };' +

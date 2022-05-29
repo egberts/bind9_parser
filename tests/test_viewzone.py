@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_viewzone.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, dlz_name_type
+from bind9_parser.isc_utils import assert_parser_result_dict_true, dlz_name_type
 from bind9_parser.isc_viewzone import \
     viewzone_stmt_database,\
     viewzone_stmt_dlz,\
@@ -36,7 +36,7 @@ class TestViewZone(unittest.TestCase):
 
 
     def test_isc_zone_stmt_database_dict_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             viewzone_stmt_database,
             'database specialized_highspeed_intensity_tracing_database;',
             {'database': 'specialized_highspeed_intensity_tracing_database'}
@@ -49,7 +49,7 @@ class TestViewZone(unittest.TestCase):
         ]
         result = viewzone_stmt_dlz.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             viewzone_stmt_dlz,
             'dlz my_custom_database;',
             {'dlz': 'my_custom_database'}
@@ -66,7 +66,7 @@ class TestViewZone(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_viewzone_statements_set_dict_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             viewzone_statements_set,
             'dlz custom_MySQL;',
             {'dlz': 'custom_MySQL'}
@@ -83,7 +83,7 @@ class TestViewZone(unittest.TestCase):
 
     def test_isc_viewzone_statements_series_passing(self):
         """ Clause viewzone; Statement viewzone_statements_series; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             viewzone_statements_series,
             'dlz my_custom_database; dlz custom_MySQL;',
             {'dlz': 'custom_MySQL'}  # only the last one is saved  (1-per-view or 1-per-zone)

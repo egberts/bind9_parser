@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_optview.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_optview import \
     optview_stmt_acache_cleaning_interval, \
     optview_stmt_acache_enable, \
@@ -117,7 +117,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_acache_cleaning_interval.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_acache_cleaning_interval,
             'acache-cleaning-interval no;',
             {'acache_cleaning_interval': 'no'}
@@ -130,7 +130,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_acache_enable.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_acache_enable,
             'acache-enable no;',
             {'acache_enable': 'no'}
@@ -143,7 +143,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_additional_from_auth.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_additional_from_auth,
             'additional-from-auth True;',
             {'additional_from_auth': 'True'}
@@ -156,7 +156,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_additional_from_cache.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_additional_from_cache,
             'additional-from-cache False;',
             {'additional_from_cache': 'False'}
@@ -169,7 +169,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_allow_new_zones.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_allow_new_zones,
             'allow-new-zones 1;',
             {'allow_new_zones': '1'}
@@ -182,7 +182,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_allow_query_cache_on.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_allow_query_cache_on,
             'allow-query-cache-on { localnets; localhost; };',
             {'allow_query_cache_on': {'aml': [{'keyword': 'localnets'},
@@ -196,7 +196,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_allow_query_cache.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_allow_query_cache,
             'allow-query-cache { localnets; localhost; };',
             {'allow_query_cache': {'aml': [{'keyword': 'localnets'},
@@ -210,7 +210,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_allow_recursion_on.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_allow_recursion_on,
             'allow-recursion-on { any; };',
             {'allow-recursion-on': {'aml': [{'keyword': 'any'}]}}
@@ -223,7 +223,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_allow_recursion.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_allow_recursion,
             'allow-recursion { localnets; localhost; };',
             {'allow-recursion': {'aml': [{'keyword': 'localnets'},
@@ -240,7 +240,7 @@ class TestOptionsView(unittest.TestCase):
 
     def test_isc_optview_stmt_attach_cache_2_passing(self):
         """ Clause options/view; Statement attach-cache 2; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_attach_cache,
             'attach-cache dmz_view;',
             {'attach_cache': 'dmz_view'}
@@ -248,7 +248,7 @@ class TestOptionsView(unittest.TestCase):
 
     def test_isc_optview_stmt_attach_cache_2_failing(self):
         """ Clause options/view; Statement attach-cache 2; failing """
-        assertParserResultDictFalse(
+        assert_parser_result_dict_false(
             optview_stmt_attach_cache,
             'attach-cache ***not_a_view_name***;',
             {'attach_cache': 'dmz_view'}
@@ -261,7 +261,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_auth_nxdomain.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_auth_nxdomain,
             'auth-nxdomain no;',
             {'auth_nxdomain': 'no'}
@@ -274,7 +274,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_cache_file.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_cache_file,
             'cache-file "/dev/null";',
             {'cache_file': '/dev/null'}
@@ -289,7 +289,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_check_dup_records.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_check_dup_records,
             'check-dup-records ignore;',
             {'check_dup_records': 'ignore'}
@@ -304,7 +304,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_check_integrity.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_check_integrity,
             'check-integrity no;',
             {'check_integrity': 'no'}
@@ -319,7 +319,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_check_mx_cname.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_check_mx_cname,
             'check-mx-cname fail;',
             {'check_mx_cname': 'fail'}
@@ -334,7 +334,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_check_mx.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_check_mx,
             'check-mx warn;',
             {'check_mx': 'warn'}
@@ -349,7 +349,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_check_names.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_check_names,
             'check-names slave ignore;',
             {'check_names': [{'result_status': 'ignore',
@@ -363,7 +363,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_check_spf.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_check_spf,
             'check-spf fail;',
             {'check_spf': 'fail'}
@@ -376,7 +376,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_check_srv_cname.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_check_srv_cname,
             'check-srv-cname warn;',
             {'check_srv_cname': 'warn'}
@@ -389,7 +389,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_check_wildcard.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_check_wildcard,
             'check-wildcard no;',
             {'check_wildcard': 'no'}
@@ -402,7 +402,7 @@ class TestOptionsView(unittest.TestCase):
         ]
         result = optview_stmt_cleaning_interval.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_cleaning_interval,
             'cleaning-interval 480;',
             {'cleaning_interval': 480}
@@ -410,7 +410,7 @@ class TestOptionsView(unittest.TestCase):
 
     def test_isc_optview_stmt_optview_stmt_disable_empty_zone(self):
         """ Clause options/view; Statement 'optview_stmt_disable_empty_zone'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_disable_empty_zone,
             'disable-empty-zone "127.in-addr.arpa";',
             {'disable_empty_zone': [{'zone_name': '127.in-addr.arpa'}]}
@@ -418,7 +418,7 @@ class TestOptionsView(unittest.TestCase):
 
     def test_isc_optview_stmt_optview_stmt_dns64_passing(self):
         """ Clause options/view; Statement 'optview_stmt_dns64'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dns64,
             """
 dns64 64:ff9b::/96 { 
@@ -450,7 +450,7 @@ dns64 64:ff9b::/96 {
 
     def test_isc_optview_stmt_disable_algorithms_series_passing(self):
         """ Clause options/view; Statement disable-algorithms series; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_multiple_stmt_disable_algorithms,
             """disable-algorithms "example." { RSASHA512; };
 disable-algorithms "example.test." { RSASHA512; AES512; };
@@ -466,7 +466,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         )
 
     def test_isc_optview_stmt_disable_algorithms_2_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_disable_algorithms,
             'disable-algorithms . { sha512; cbc32; };',
             {'disable_algorithms': {'algorithms': ['sha512', 'cbc32'],
@@ -474,7 +474,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         )
 
     def test_isc_optview_stmt_disable_algorithms_2a_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_disable_algorithms,
             'disable-algorithms "example.com." { sha512; };',
             {'disable_algorithms': {'algorithms': ['sha512'],
@@ -482,7 +482,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         )
 
     def test_isc_optview_stmt_disable_algorithms_3_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_disable_algorithms,
             'disable-algorithms \'172.in-addr.arpa.\' { aes256; sha-1; rsa; };',
             {'disable_algorithms': {'algorithms': ['aes256',
@@ -492,7 +492,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         )
 
     def test_isc_optview_stmt_disable_algorithms_4_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_multiple_stmt_disable_algorithms,
             'disable-algorithms example.com { sha512; cbc32; }; disable-algorithms yahoo.com { cbc128; };',
             {'disable_algorithms': [{'algorithms': ['sha512', 'cbc32'],
@@ -502,7 +502,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         )
 
     def test_isc_optview_stmt_part_disable_ds_digests_1_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_disable_ds_digests,
             'disable-ds-digests example.com { hmac; cbc32; };',
             {'disable_ds_digests': [{'algorithm_name': ['hmac', 'cbc32'],
@@ -510,7 +510,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             )
 
     def test_isc_optview_stmt_part_disable_ds_digests_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_multiple_stmt_disable_ds_digests,
             'disable-ds-digests example.com { hmac; cbc32; };'
             'disable-ds-digests bing.com { crc32; };',
@@ -533,12 +533,12 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_disable_empty_zone.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_disable_empty_zone,
             'disable-empty-zone ".";',
             {'disable_empty_zone': [{'zone_name': '.'}]}
         )
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_disable_empty_zone,
             'disable-empty-zone example.com.;',
             {'disable_empty_zone': [{'zone_name': 'example.com.'}]}
@@ -546,7 +546,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_dns64_contact_passing(self):
         """ Clause options/view; Statement 'dns64-contact'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dns64_contact,
             'dns64-contact johndoe.example.test;',
             {'dns64_contact': {'soa_rname': 'johndoe.example.test'}}
@@ -554,7 +554,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_dns64_server_passing(self):
         """ Clause options/view; Statement 'dns64-server'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dns64_server,
             'dns64-server johndoe.example.test;',
             {'dns64_server': {'soa_rname': 'johndoe.example.test'}}
@@ -562,7 +562,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_dnsrps_enable_passing(self):
         """ Clause options/view; Statement 'dnsrps-enable'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dnsrps_enable,
             'dnsrps-enable yes;',
             {'dnsrps_enable': 'yes'}
@@ -570,7 +570,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_dnsrps_options_passing(self):
         """ Clause options/view; Statement 'dnsrps-options'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dnsrps_options,
             'dnsrps-options { "gee whiz, fancy stuff goes here"; };',
             {'dnsrps_options': ['gee whiz, fancy stuff goes here']}
@@ -578,7 +578,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_dnssec_accept_expired_passing(self):
         """ Clause options/view; Statement dnssec-accept-expired; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dnssec_accept_expired,
             'dnssec-accept-expired False;',
             {'dnssec_accept_expired': 'False'}
@@ -591,7 +591,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_dnssec_enable.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dnssec_enable,
             'dnssec-enable yes;',
             {'dnssec_enable': 'yes'}
@@ -606,7 +606,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_dnssec_lookaside.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dnssec_lookaside,
             'dnssec-lookaside example-dlv.com trust-anchor prepend_key_name;',
             {
@@ -615,7 +615,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
                         'prepend_key_name': 'prepend_key_name',
                         'rr_set': 'example-dlv.com'}}}
         )
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dnssec_lookaside,
             'dnssec-lookaside auto;',
             {'dnssec_lookaside': ['auto']}
@@ -628,7 +628,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_dnssec_must_be_secure.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dnssec_must_be_secure,
             'dnssec-must-be-secure www.example.com. no;',
             {'dnssec_must_be_secure': [{'dnssec_secured': 'no',
@@ -644,7 +644,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_dnssec_validation.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dnssec_validation,
             'dnssec-validation auto;',
             {'dnssec_validation': 'auto'}
@@ -660,7 +660,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         result = optview_stmt_dnstap.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
 
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dnstap,
             'dnstap { all; forwarder; resolver; update; client; };',
             {'dnstap': ['all', 'forwarder', 'resolver', 'update', 'client']}
@@ -680,7 +680,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_dual_stack_servers.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_dual_stack_servers,
             'dual-stack-servers port 593 { "dmz.example.com" port 893; "hidden-dns.example.com" port 993; };',
             {
@@ -708,7 +708,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_empty_contact.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_empty_contact,
             'empty-contact admin.example.com;',
             {'empty_contact': {'soa_contact_name': 'admin.example.com'}}
@@ -721,7 +721,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_empty_zones_enable.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_empty_zones_enable,
             'empty-zones-enable yes;',
             {'empty_zones_enable': 'yes'}
@@ -734,7 +734,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_fetch_glue.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_fetch_glue,
             'fetch-glue yes;',
             {'fetch_glue': 'yes'}
@@ -752,7 +752,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_fetch_quota_params_max_passing(self):
         """ Clause options/view; Statement 'fetch-quota-params'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_fetch_quota_params,
             'fetch-quota-params 1 2 3 4;',
             {'fetch_quota_params': {'high_threshold': 3,
@@ -774,7 +774,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_fetches_per_server_passing(self):
         """ Clause options/view; Statement 'fetches-per-server'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_fetches_per_server,
             'fetches-per-server 0 fail;',
             {'action': 'fail', 'fetches_per_server': 0}
@@ -793,7 +793,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_fetches_per_zone_passing(self):
         """ Clause options/view; Statement 'fetches-per-zone'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_fetches_per_zone,
             'fetches-per-zone 0 drop;',
             {'action': 'drop', 'fetches_per_zone': 0}
@@ -809,17 +809,17 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_files.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_files,
             'files unlimited;',
             {'files': {'files_count': 'unlimited'}}
         )
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_files,
             'files default;',
             {'files': {'files_count': 'default'}}
         )
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_files,
             'files 1025;',
             {'files': {'files_count': 1025}}
@@ -832,7 +832,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_heartbeat_interval.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_heartbeat_interval,
             'heartbeat-interval 3600;',
             {'heartbeat_interval': 3600}
@@ -847,12 +847,12 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_hostname.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_hostname,
             'hostname none;',
             {'hostname': {'none': 'none'}}
         )
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_hostname,
             'hostname example.com;',
             {'hostname': {'name': 'example.com'}}
@@ -860,7 +860,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_ipv4only_contact_passing(self):
         """ Clause options/view; Statement 'ipv4only-contact'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_ipv4only_contact,
             'ipv4only-contact johndoe.example.test;',
             {'ipv4only_contact': {'soa_rname': 'johndoe.example.test'}}
@@ -868,7 +868,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_ipv4only_enable_passing(self):
         """ Clause options/view; Statement 'ipv4only-enable'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_ipv4only_enable,
             'ipv4only-enable yes;',
             {'ipv4only_enable': 'yes'}
@@ -876,7 +876,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_ipv4only_server_passing(self):
         """ Clause options/view; Statement 'ipv4only-server'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_ipv4only_server,
             'ipv4only-server johndoe.example.test;',
             {'ipv4only_server': {'soa_rname': 'johndoe.example.test'}}
@@ -892,7 +892,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_lame_ttl.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_lame_ttl,
             'lame-ttl 32;',
             {'lame_ttl': 32}
@@ -911,7 +911,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_lmdb_mapsize_passing(self):
         """ Clause options/view; Statement 'lmdb-mapzie; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_lmdb_mapsize,
             'lmdb-mapsize 32K;',
             {'lmdb_mapsize': {'amount': 32, 'unit': 'K'}}
@@ -924,7 +924,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_managed_keys_directory.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_managed_keys_directory,
             'managed-keys-directory "/var/lib/bind9/managed-keys/public/";',
             {'managed_keys_directory': '/var/lib/bind9/managed-keys/public/'}
@@ -941,12 +941,12 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_max_cache_size.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_max_cache_size,
             'max-cache-size 14m;',
             {'max_cache_size': [14, 'm']}
         )
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_max_cache_size,
             'max-cache-size unlimited;',
             {'max_cache_size': ['unlimited']}
@@ -965,7 +965,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_max_cache_ttl_passing(self):
         """ Clause options/view; Statement max-cache-ttl; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_max_cache_ttl,
             'max-cache-ttl 3600;',
             {'max_cache_ttl': '3600'}  # it's in a string format because '7D', '1W', '24H' are all valid here
@@ -983,7 +983,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_max_ncache_ttl_passing(self):
         """ Clause options/view; Statement max-ncache-ttl; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_max_ncache_ttl,
             'max-ncache-ttl 10800;',
             {'max_ncache_ttl': '10800'}  # it's in a string format because '7D', '1W', '24H' are all valid here
@@ -999,7 +999,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_max_recursion_depth.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_max_recursion_depth,
             'max-recursion-depth 10800;',
             {'max_recursion_depth': 10800}
@@ -1015,7 +1015,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_max_recursion_queries.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_max_recursion_queries,
             'max-recursion-queries 10800;',
             {'max_recursion_queries': 10800}
@@ -1035,7 +1035,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_max_stale_ttl.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_max_stale_ttl,
             'max-stale-ttl 24H;',
             {'max_stale_ttl': '24H'}
@@ -1054,7 +1054,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_max_udp_size.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_max_udp_size,
             'max-udp-size 1121;',
             {'max_udp_size': 1121}
@@ -1075,7 +1075,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_max_zone_ttl_passing(self):
         """ Clause options/view; Statement 'max-zone-ttl' unittest; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_max_zone_ttl,
             'max-zone-ttl 24H;',
             {'max-zone-ttl': '24H'}
@@ -1083,7 +1083,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_max_zone_ttl_2_passing(self):
         """ Clause options/view; Statement 'max-zone-ttl'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_max_zone_ttl,
             'max-zone-ttl unlimited;',
             {'max-zone-ttl': 'unlimited'}
@@ -1092,7 +1092,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     #  optview_stmt_message_compression
     def test_isc_optview_stmt_message_compression_passing(self):
         """ Clause options/view; Statement 'message-compression'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_message_compression,
             'message-compression yes;',
             {'message_compression': 'yes'}
@@ -1112,7 +1112,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_minimal_responses.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_minimal_responses,
             'minimal-responses no;',
             {'minimal_responses': 'no'}
@@ -1129,7 +1129,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_no_case_compress_passing(self):
         """ Clause options/view; Statement 'no-case-compress'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_no_case_compress,
             'no-case-compress { "corp"; "museum"; net; };',
             {'no_case_compress': [{'acl_name': '"corp"'},
@@ -1147,7 +1147,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             ]
         result = optview_stmt_notify_rate.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_notify_rate,
             'notify-rate 20;',  # default
             {'notify_rate': 20}
@@ -1170,7 +1170,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_parental_source_passing(self):
         """ Clause options/view; Statement 'parental-source'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_parental_source,
             'parental-source  127.0.0.1 port 442;',  # default
             {'parental_source': {'ip4_addr_w': '127.0.0.1',
@@ -1191,7 +1191,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_parental_source_v6.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_parental_source_v6,
             'parental-source-v6  ffe2::1 port 442;',  # default
             {'parental_source_v6': {'ip6_addr_w': 'ffe2::1',
@@ -1210,7 +1210,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_preferred_glue.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_preferred_glue,
             'preferred-glue A;',  # default
             {'preferred_glue': 'A'}
@@ -1229,7 +1229,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_qname_minimization(self):
         """ Clause options/view; Statement 'qname-minimization'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_qname_minimization,
             'qname-minimization relaxed;',  # default
             {'qname_minimization': 'relaxed'}
@@ -1250,12 +1250,12 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_query_source_v6.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_query_source_v6,
             'query-source-v6 address * port 353;',
             {'query_source_v6': {'ip6_addr': '*', 'ip_port_w': '353'}}
         )
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_query_source_v6,
             'query-source-v6 address fe08::08 port *;',
             {'query_source_v6': {'ip6_addr': 'fe08::08', 'ip_port_w': '*'}}
@@ -1276,12 +1276,12 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_query_source.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_query_source,
             'query-source address * port 353;',
             {'query_source': {'ip4_addr': '*', 'ip_port_w': '353'}}
         )
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_query_source,
             'query-source address 7.7.7.7 port *;',
             {'query_source': {'ip4_addr': '7.7.7.7', 'ip_port_w': '*'}}
@@ -1309,7 +1309,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_rate_limit.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_rate_limit,
             'rate-limit { exempt-clients { 5.5.5.5; }; slip 5; window 6; responses-per-second 60; };',
             {'rate_limit': [{'ip4_addr': '5.5.5.5'},
@@ -1331,7 +1331,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_recursion.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_recursion,
             'recursion yes;',
             {'recursion': 'yes'}
@@ -1343,7 +1343,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # these zone-specific elements do not have semicolon separator, except at the end
     def test_isc_optview_stmt_response_policy_zone_group_empty_passing(self):
         """ Clause options/view; Statement response-policy zone group empty; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone grey;',
             {'zone_name': 'grey'}
@@ -1351,7 +1351,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_empty_dot_passing(self):
         """ Clause options/view; Statement response-policy zone group dot; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone \'.\';',
             {'zone_name': '.'}
@@ -1359,7 +1359,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_empty_squote_passing(self):
         """ Clause options/view; Statement response-policy zone group empty; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone \'grey\';',
             {'zone_name': 'grey'}
@@ -1367,7 +1367,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_empty_dquote_passing(self):
         """ Clause options/view; Statement response-policy zone group empty; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone "www.template.test.";',
             {'zone_name': 'www.template.test.'}
@@ -1375,7 +1375,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_add_soa_passing(self):
         """ Clause options/view; Statement response-policy zone group 'add-soa'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone red add-soa yes;',
             {'add_soa': 'yes', 'zone_name': 'red'}
@@ -1383,7 +1383,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_log_passing(self):
         """ Clause options/view; Statement response-policy zone group 'log'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone blue log yes;',
             {'log': 'yes', 'zone_name': 'blue'}
@@ -1391,7 +1391,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_max_policy_ttl_passing(self):
         """ Clause options/view; Statement response-policy zone group 'max-policy-ttl'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone green max-policy-ttl 1W3D;',
             {'max_policy_ttl': '1W3D',
@@ -1400,7 +1400,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_min_update_interval_passing(self):
         """ Clause options/view; Statement response-policy zone group 'min-update-interval'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone yellow min-update-interval 3H;',
             {'min_update_interval': '3H',
@@ -1409,7 +1409,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_policy_0_arg_passing(self):
         """ Clause options/view; Statement response-policy zone group 'policy' 0-arg; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone black policy given;',
             {'policy': ['given'], 'zone_name': 'black'}
@@ -1417,7 +1417,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_policy_1_arg_passing(self):
         """ Clause options/view; Statement response-policy zone group 'policy' 1-arg; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone white policy tcp-only an_unknown_string;',
             {'policy': {'tcp_only': 'an_unknown_string'},
@@ -1426,7 +1426,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_recursive_only_passing(self):
         """ Clause options/view; Statement response-policy zone group 'recursive-only'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone pink recursive-only yes;',
             {'recursive_only': 'yes',
@@ -1435,7 +1435,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_nsip_enable_passing(self):
         """ Clause options/view; Statement response-policy zone group 'nsip-enable'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone green nsip-enable yes;',
             {'nsip_enable': 'yes',
@@ -1444,7 +1444,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_nsdname_enable_passing(self):
         """ Clause options/view; Statement response-policy zone group 'nsdname-enable'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone purple nsdname-enable yes;',
             {'nsdname_enable': 'yes',
@@ -1453,7 +1453,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_zone_group_complex_passing(self):
         """ Clause options/view; Statement response-policy zone group complex; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_zone_group_set,
             'zone purple nsip-enable yes policy tcp-only some_string nsdname-enable yes;',
             {'nsdname_enable': 'yes',
@@ -1466,7 +1466,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # these global elements do not have semicolon separators, until at the end of 'response-policy' statement.
     def test_isc_optview_stmt_response_policy_global_element_add_soa_passing(self):
         """ Clause options/view; Statement response-policy global element 'add-soa'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_global_element_set,
             'add-soa yes',
             {'add_soa': 'yes'}
@@ -1474,7 +1474,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_global_element_break_dnssec_passing(self):
         """ Clause options/view; Statement response-policy global element 'break-dnssec'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy_global_element_set,
             'break-dnssec yes',
             {'break_dnssec': 'yes'}
@@ -1523,7 +1523,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # optview_stmt_response_policy
     def test_isc_optview_stmt_response_policy_minimal_passing(self):
         """ Clause options/view; Statement response-policy minimal; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy,
             'response-policy { zone "white"; };',
             {'response_policy': {'zone': [{'zone_name': 'white'}]}}
@@ -1532,7 +1532,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # XXXX optview_stmt_response_policy
     def test_isc_optview_stmt_response_policy_minimal_zone_passing(self):
         """ Clause options/view; Statement response-policy minimal zone; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy,
             'response-policy { zone black policy given; };',
             {'response_policy': {'zone': [{'policy': ['given'],
@@ -1541,7 +1541,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_minimal_all_passing(self):
         """ Clause options/view; Statement response-policy minimal all; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy,
             'response-policy { zone grey log yes; } nsip-enable yes;',
             {'response_policy': {'nsip_enable': 'yes',
@@ -1551,7 +1551,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_response_policy_maximum_all_passing(self):
         """ Clause options/view; Statement response-policy maximum all; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_response_policy,
             """response-policy {
         zone 172.in-addr.arpa. add-soa yes log yes max-policy-ttl 1H min-update-interval 1D
@@ -1625,7 +1625,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_rfc2308_type1.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_rfc2308_type1,
             'rfc2308-type1 yes;',
             {'rfc2308_type1': 'yes'}
@@ -1640,7 +1640,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_root_delegation_only.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_root_delegation_only,
             'root-delegation-only exclude { name1; name2; name3; };',
             {'root_delegation_only': {'domains': ['name1', 'name2', 'name3']}}
@@ -1681,7 +1681,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_rrset_order_series_passing(self):
         """ Clause options/view; Statement rrset-order; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_rrset_order_group_series,
             'class IN name host.example.com type A;',
             {'rrset_order': [{'class': 'IN',
@@ -1691,7 +1691,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         
     def test_isc_optview_stmt_rrset_order_2_passing(self):
         """ Clause options/view; Statement rrset-order; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_rrset_order,
             """rrset-order {
     name "fixed.example" order fixed;
@@ -1712,7 +1712,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # optview_stmt_servfail_ttl, \
     def test_isc_optview_stmt_servfail_ttl_passing(self):
         """ Clause options/view; Statement 'servfail-ttl'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_servfail_ttl,
             'servfail-ttl 1;',  # default
             {'servfail_ttl': 1}
@@ -1736,7 +1736,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # optview_stmt_sortlist
     def test_isc_optview_stmt_sortlist_2_passing(self):
         """ Clause options/view; Statement sortlist; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_sortlist,
             'sortlist { localhost; localnets; };',
             {'sortlist': {'aml': [{'keyword': 'localhost'},
@@ -1745,7 +1745,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_sortlist_3_passing(self):
         """ Clause options/view; Statement sortlist 2; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_sortlist,
             """sortlist { 
     { localhost; 
@@ -1781,7 +1781,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_stale_answer_client_timeout.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_stale_answer_client_timeout,
             'stale-answer-client-timeout off;',
             {'stale_answer_client_timeout': 'off'}
@@ -1790,7 +1790,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # optview_stmt_stale_answer_enable
     def test_isc_optview_stmt_stale_answer_enable_passing(self):
         """ Clause options/view; Statement 'stale-answer-enable'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_stale_answer_enable,
             'stale-answer-enable false;',
             {'stale_answer_enable': 'False'}
@@ -1806,7 +1806,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_stale_answer_ttl.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_stale_answer_ttl,
             'stale-answer-ttl 30;',
             {'stale_answer_ttl': 30}
@@ -1815,7 +1815,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # optview_stmt_stale_cache_enable
     def test_isc_optview_stmt_stale_cache_enable_passing(self):
         """ Clause options/view; Statement 'stale-cache-enable'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_stale_cache_enable,
             'stale-cache-enable false;',
             {'stale_cache_enable': 'False'}
@@ -1831,7 +1831,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_stale_refresh_time.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_stale_refresh_time,
             'stale-refresh-time 30;',
             {'stale_refresh_time': 30}
@@ -1840,7 +1840,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # optview_stmt_suppress_initial_notify
     def test_isc_optview_stmt_suppress_initial_notify_passing(self):
         """ Clause options/view; Statement 'suppress-initial-notify'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_suppress_initial_notify,
             'suppress-initial-notify false;',
             {'suppress_initial_notify': 'False'}
@@ -1849,7 +1849,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # optview_stmt_synth_from_dnssec
     def test_isc_optview_stmt_synth_from_dnssec_passing(self):
         """ Clause options/view; Statement 'synth-from-dnssec'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_synth_from_dnssec,
             'synth-from-dnssec false;',
             {'synth_from_dnssec': 'False'}
@@ -1858,7 +1858,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # optview_stmt_trust_anchor_telemetry
     def test_isc_optview_stmt_trust_anchor_telemetry_passing(self):
         """ Clause options/view; Statement 'trust-anchor-telemetry'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_trust_anchor_telemetry,
             'trust-anchor-telemetry true;',
             {'trust_anchor_telemetry': 'True'}
@@ -1874,7 +1874,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_stmt_v6_bias.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_v6_bias,
             'v6-bias 50;',
             {'v6_bias': 50}
@@ -1892,7 +1892,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_stmt_validate_except_passing(self):
         """ Clause options/view; Statement 'validate-except'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_validate_except,
             'validate-except { dot; zany; weird-tls;} ;',
             {'validate_except': ['dot', 'zany', 'weird-tls']}
@@ -1901,7 +1901,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
     # optview_stmt_zero_no_soa_ttl_cache
     def test_isc_optview_stmt_zero_no_soa_ttl_cache_passing(self):
         """ Clause options/view; Statement 'zero-no-soa-ttl-cache'; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_stmt_zero_no_soa_ttl_cache,
             'zero-no-soa-ttl-cache true;',
             {'zero_no_soa_ttl_cache': 'True'}
@@ -1972,7 +1972,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         ]
         result = optview_statements_set.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_statements_set,
             'sortlist { localhost; localnets; };',
             {'sortlist': {'aml': [{'keyword': 'localhost'},
@@ -1989,7 +1989,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_statements_series_experimental_passing(self):
         """ Clause optview; Statement optview_statements_series; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_statements_series,
             'acache-enable no; dns64-contact a.b.c; acache-cleaning-interval no;',
             {'acache_cleaning_interval': 'no',
@@ -1999,7 +1999,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
 
     def test_isc_optview_statements_series_passing(self):
         """ Clause optview; Statement optview_statements_series; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optview_statements_series,
             'acache-enable no;' +
             'acache-cleaning-interval no;' +

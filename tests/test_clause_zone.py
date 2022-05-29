@@ -11,7 +11,7 @@ Description: Provides zone-related grammar in PyParsing engine
 """
 import unittest
 from pyparsing import cppStyleComment, pythonStyleComment
-from bind9_parser.isc_utils import assertParserResultDictFalse, assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_false, assert_parser_result_dict_true
 from bind9_parser.isc_clause_zone import \
     zone_all_stmts_set,\
     zone_all_stmts_series,\
@@ -34,7 +34,7 @@ class TestClauseZone(unittest.TestCase):
         """ Clause zone; All Zone statement file from isc_zone.py via zone_statements_set; passing mode """
         test_string = 'file "a.b.type";'
         expected_result = {'file': 'a.b.type'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             zone_all_stmts_set,
             test_string,
             expected_result
@@ -44,7 +44,7 @@ class TestClauseZone(unittest.TestCase):
         """ Clause zone; All Zone statement 'notify-to-soa' (from isc_optzone.py via 'optzone_statements_set'dd); passing mode """
         test_string = """notify-to-soa yes;"""
         expected_result = {'notify_to_soa': 'yes'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             zone_all_stmts_set,
             test_string,
             expected_result
@@ -53,7 +53,7 @@ class TestClauseZone(unittest.TestCase):
     def test_isc_clause_zone__all_stmts_set_also_notify(self):
         """ Clause zone; All Zone statement 'also-notify' (from isc_optzoneserver.py via 'optzoneserver_statements_set'dd); passing mode """
         test_string = """also-notify {mymaster; 1.2.3.4;};"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             zone_all_stmts_set,
             test_string,
             {'also-notify': {'remote': [{'primary_name': 'mymaster'},
@@ -64,7 +64,7 @@ class TestClauseZone(unittest.TestCase):
         """ Clause zone; All Zone statement 'database' (from isc_viewzone.py via 'viewzone_statements_set'dd); passing mode """
         test_string = """database abcd;"""
         expected_result = {'database': 'abcd'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             zone_all_stmts_set,
             test_string,
             expected_result
@@ -77,7 +77,7 @@ class TestClauseZone(unittest.TestCase):
         test_string = """zone public { forwarders { 5.6.7.8; 1.2.3.4; }; 
 database abcd; also-notify {mymaster; 1.2.3.4;}; 
 notify-to-soa yes; };"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_zone_standalone,
             test_string,
             {'zones': [{'also-notify': {'remote': [{'primary_name': 'mymaster'},
@@ -96,7 +96,7 @@ notify-to-soa yes; };"""
         self.assertTrue(result[0])
 
     def test_isc_clause_zone__clause_stmt_single2a(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_zone_standalone,
             """zone black {type forward; forwarders {1.2.3.4;};};""",
             {'zones': [{'forwarders': {'forwarder': [{'ip_addr': '1.2.3.4'}]},
@@ -109,7 +109,7 @@ notify-to-soa yes; };"""
         test_data = 'zone black { type forward; forwarders { 1.2.3.4;}; };' + \
             'zone red {type master; file "x"; allow-update {any;};};' + \
             'zone white.com {type master; file "y"; allow-query {1.2.3.4;};};'
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_zone_series,
             test_data,
             {'zones': [{'forwarders': {'forwarder': [{'ip_addr': '1.2.3.4'}]},
@@ -128,7 +128,7 @@ notify-to-soa yes; };"""
 
     def test_isc_clause_zone__clause_stmt_zone_standalone_dict_passing(self):
         """ Clause zone; Statement zone standalone dict; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_zone_series,
             'zone red { auto-dnssec maintain; };',
             {
@@ -153,7 +153,7 @@ notify-to-soa yes; };"""
 
     def test_isc_clause_zone__clause_zone_standalone_passing_dict_5(self):
         """ Clause zone; Statement zone standalone dict 5; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_zone_standalone,
             'zone "home" IN { type master; file "/var/lib/bind/internal/master/db.home"; allow-update { none; }; };',
             {
@@ -209,7 +209,7 @@ notify-to-soa yes; };"""
         file "/var/lib/bind/internal/master/db.cache.home";
         };
     """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_zone_series,
             test_data,
             {'zones': [{'allow_update': {'aml': [{'keyword': 'none'}]},
@@ -271,7 +271,7 @@ zone "fifth_zone" in{
   type master;
   file "192.168.0.rev";
 };"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_zone_series,
             test_string,
             {'zones': [{'file': 'root.servers',

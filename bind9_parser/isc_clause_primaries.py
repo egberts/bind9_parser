@@ -9,15 +9,13 @@ Title: Clause Statement for Primary Servers
 Description: Provides primary-related grammar in PyParsing engine
              for ISC-configuration style
 """
-from pyparsing import OneOrMore, Group, Keyword, Optional, Word,\
-    srange, Combine, ZeroOrMore, ungroup
+from pyparsing import OneOrMore, Group, Keyword, Optional
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, \
-    dquote, squote, key_id_keyword_and_name_pair, \
+    key_id_keyword_and_name_pair, \
     primary_id
-from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip46_addr,\
+from bind9_parser.isc_inet import ip4_addr, ip6_addr,\
     inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element
-from bind9_parser.isc_rr import rr_domain_name_or_root
 
 
 # { ( primaries
@@ -97,4 +95,3 @@ clause_stmt_primaries_series = (
     )
 )('primaries')
 clause_stmt_primaries_series.setName('primaries <name> key <key_id>')
-

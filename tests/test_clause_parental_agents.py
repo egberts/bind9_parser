@@ -17,7 +17,7 @@ Description:
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_parental_agents import \
     parental_agents_server_address_element, parental_agents_key_element, \
     parental_agents_tls_element, clause_stmt_parental_agents_standalone, \
@@ -31,7 +31,7 @@ class TestClauseParentalAgents(unittest.TestCase):
         """ Test Clause 'parental-agents'; server address element IPv4; passing """
         test_string = '1.2.3.4'
         expected_result = {'ip_addr': '1.2.3.4'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             parental_agents_server_address_element,
             test_string,
             expected_result)
@@ -40,7 +40,7 @@ class TestClauseParentalAgents(unittest.TestCase):
         """ Test Clause 'parental-agents'; server address element IPv6; passing """
         test_string = 'fe00::1'
         expected_result = {'ip_addr': 'fe00::1'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             parental_agents_server_address_element,
             test_string,
             expected_result)
@@ -49,7 +49,7 @@ class TestClauseParentalAgents(unittest.TestCase):
         """ Test Clause 'parental-agents'; server address element FQDN; passing """
         test_string = 'example.com'
         expected_result = {'fqdn': 'example.com'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             parental_agents_server_address_element,
             test_string,
             expected_result)
@@ -58,7 +58,7 @@ class TestClauseParentalAgents(unittest.TestCase):
         """ Test Clause 'parental-agents'; key element; passing """
         test_string = 'key my_key_name'
         expected_result = {'key_id': 'my_key_name'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             parental_agents_key_element,
             test_string,
             expected_result)
@@ -68,7 +68,7 @@ class TestClauseParentalAgents(unittest.TestCase):
         """ Test Clause 'parental-agents'; tls element; passing """
         test_string = 'tls my_tls_name'
         expected_result = {'tls_name': 'my_tls_name'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             parental_agents_tls_element,
             test_string,
             expected_result)
@@ -76,7 +76,7 @@ class TestClauseParentalAgents(unittest.TestCase):
     def test_clause_stmt_parental_agents_standalone(self):
         """ Test Clause 'parental-agents'; standalone; passing """
         test_string = """parental-agents tunneled_office port 853 dscp 5 { 127.0.0.1 port 853 key "asdfasdfasdf" tls "asdfasdfasdf"; };"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_parental_agents_standalone,
             test_string,
             {'parental_agents': [{'dscp_port': 5,
@@ -95,7 +95,7 @@ class TestClauseParentalAgents(unittest.TestCase):
         parental-agents tunneled_office port 853 dscp 5 {
             127.0.0.1 port 853 key "asdfasdfasdf" tls "asdfasdfasdf";
         };"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_parental_agents_set,
             test_string,
             {'parental_agents': [{'dscp_port': 5,
@@ -115,7 +115,7 @@ parental-agents tunneled_office port 853 dscp 5 {
     192.168.1.1;
     172.16.1.1;
 };"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_parental_agents_set,
             test_string,
             {'parental_agents': [{'dscp_port': 5,
@@ -138,7 +138,7 @@ parental-agents tunneled_office port 853 dscp 5 {
     172.16.1.4 port 853 tls "fourth_tls";
     172.16.1.4 port 853 key "fourth_key";
     };"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_parental_agents_set,
             test_string,
             {'parental_agents': [{'dscp_port': 5,
@@ -173,7 +173,7 @@ parental-agents tunneled_office port 853 dscp 5 {
     127.0.0.1 port 853 key "asdfasdfasdf" tls "asdfasdfasdf";
     };
 """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_parental_agents_series,
             test_string,
             {'parental_agents': [{'dscp_port': 5,

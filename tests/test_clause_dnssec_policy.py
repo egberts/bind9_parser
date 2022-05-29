@@ -23,7 +23,7 @@ Description:  Performs unit test on the 'dnssec-policy' clause in isc_clause_dns
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_dnssec_policy import \
     dnssecpolicy_dnskey_ttl_element, dnssecpolicy_keys_element, \
     dnssecpolicy_max_zone_ttl_element, dnssecpolicy_parent_ds_ttl_element, \
@@ -43,7 +43,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'dnskey-ttl 1h;'
         expected_result = {'dnskey_ttl': '1h'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_dnskey_ttl_element,
             test_string,
             expected_result)
@@ -55,7 +55,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
                              'algorithm_size': '256'},
               'lifetime': {'iso8601_duration': '1d'},
               'type': 'csk'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_keys_element,
             test_string,
             expected_result)
@@ -64,7 +64,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'max-zone-ttl 1w;'
         expected_result = {'max_zone_ttl': '1w'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_max_zone_ttl_element,
             test_string,
             expected_result)
@@ -73,7 +73,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'parent-ds-ttl 1w3d;'
         expected_result = {'parent_ds_ttl': '1w3d'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_parent_ds_ttl_element,
             test_string,
             expected_result)
@@ -82,7 +82,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'parent-propagation-delay 1h5m35s;'
         expected_result = {'parent_propagation_delay': '1h5m35s'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_parent_propagation_delay_element,
             test_string,
             expected_result)
@@ -91,7 +91,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'publish-safety 5d16h;'
         expected_result = {'publish_safety': '5d16h'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_publish_safety_element,
             test_string,
             expected_result)
@@ -100,7 +100,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'retire-safety 3h30m;'
         expected_result = {'retire_safety': '3h30m'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_retire_safety_element,
             test_string,
             expected_result)
@@ -109,7 +109,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'signatures-refresh 4d;'
         expected_result = {'signatures_refresh': '4d'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_signatures_refresh_element,
             test_string,
             expected_result)
@@ -118,7 +118,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'signatures-validity 1D8H;'
         expected_result = {'signatures_validity': '1D8H'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_signatures_validity_element,
             test_string,
             expected_result)
@@ -127,7 +127,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'signatures-validity-dnskey 2D16H31M;'
         expected_result = {'signatures_validity_dnskey': '2D16H31M'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_signatures_validity_dnskey_element,
             test_string,
             expected_result)
@@ -136,7 +136,7 @@ class TestClauseDnssecPolicy(unittest.TestCase):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'zone-propagation-delay 30S;'
         expected_result = {'zone_propagation_delay': '30S'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dnssecpolicy_zone_propagation_delay_element,
             test_string,
             expected_result)
@@ -148,7 +148,7 @@ dnssec-policy strict {
     keys { csk lifetime 1d algorithm SHA256 256; };
     keys { ksk "/var/lib/named/primary/dnssec.key" lifetime 365D algorithm SHA386 386; };
     };"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_dnssecpolicy_set,
             test_string,
             { 'dnssec_policy': [ { 'dnssec_policy_name': 'strict',
@@ -201,7 +201,7 @@ dnssec-policy enterprise {
                                  { 'algorithm': { 'algorithm_name': 'SHA386'},
                                    'lifetime': { 'iso8601_duration': '4y'},
                                    'type': 'csk'}]}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_dnssecpolicy_series,
             test_string,
             expected_result)

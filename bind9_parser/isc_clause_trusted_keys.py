@@ -45,6 +45,6 @@ clause_stmt_trusted_keys_set.setName(
 
 # {0-*} statement
 clause_stmt_trusted_keys_series = trusted_keys_stmt_series
-clause_stmt_trusted_keys_series.setName(\
+clause_stmt_trusted_keys_series.setName(
     """trusted-keys { ... }; [ trusted-keys { ... }; ... ]"""
     )

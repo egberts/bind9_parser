@@ -8,7 +8,7 @@ Title: Clause Statement for View Group
 
 Description:
 """
-from pyparsing import Keyword, Optional, ZeroOrMore, Group, OneOrMore
+from pyparsing import Keyword, Optional, ZeroOrMore, Group
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, view_name
 from bind9_parser.isc_rr import rr_class_set
 from bind9_parser.isc_view import view_statements_set

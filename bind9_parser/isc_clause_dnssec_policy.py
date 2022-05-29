@@ -52,22 +52,22 @@ dnssecpolicy_keys_type = (
 dnssecpolicy_keys_element = (
         Keyword('keys').suppress()
         + lbrack
-        + Group (
+        + Group(
             dnssecpolicy_keys_type('type')
             - Optional(
                 dequoted_path_name('key_directory')
             )
-            + Group (
+            + Group(
                 Keyword('lifetime').suppress()
                 + (
                     iso8601_duration
                     | Keyword('unlimited')
                 )
             )('lifetime')
-            + Group (
+            + Group(
                 Keyword('algorithm').suppress()
                 - name_base('algorithm_name')
-                - Optional( Word(nums, min=1, max=9)('algorithm_size') )
+                - Optional(Word(nums, min=1, max=9)('algorithm_size'))
             )('algorithm')
             + semicolon
         )('keys*')
@@ -85,16 +85,16 @@ dnssecpolicy_salt_len = Word(nums, min=128, max=8192)
 
 dnssecpolicy_nsec3param_element = (
     Keyword('nsec3param').suppress()
-    - OneOrMore (
-        Group (
+    - OneOrMore(
+        Group(
             Keyword('iterations').suppress()
             + iso8601_duration('nsec3param_iterations')
         )
-        | Group (
+        | Group(
             Keyword('iterations').suppress()
             + iso8601_duration('nsec3param_iterations')
          )
-        | Group (
+        | Group(
             Keyword('salt-length').suppress()
             + dnssecpolicy_salt_len('salt_length')
         )
@@ -198,4 +198,3 @@ clause_stmt_dnssecpolicy_series = (
     )
 )
 clause_stmt_dnssecpolicy_series.setName('dnssec-policy <name> { ... };')
-

@@ -9,7 +9,7 @@ Title: Clause Statement for all clauses
 Description: Provides ALL clauses at the top-level of ISC
              configuration file (isc_clause_*.py)
 """
-from pyparsing import ZeroOrMore, OneOrMore, Group, ungroup
+from pyparsing import ZeroOrMore, OneOrMore
 from bind9_parser.isc_clause_acl import clause_stmt_acl_standalone
 from bind9_parser.isc_clause_controls import clause_stmt_control_standalone
 from bind9_parser.isc_clause_dlz import clause_stmt_dlz_standalone
@@ -29,7 +29,7 @@ from bind9_parser.isc_clause_tls import clause_stmt_tls_standalone
 from bind9_parser.isc_clause_trust_anchors import clause_stmt_trust_anchors_standalone
 from bind9_parser.isc_clause_trusted_keys import clause_stmt_trusted_keys_standalone
 from bind9_parser.isc_clause_view import clause_stmt_view_standalone
-from bind9_parser.isc_clause_zone import clause_stmt_zone_standalone, clause_stmt_zone_series
+from bind9_parser.isc_clause_zone import clause_stmt_zone_standalone
 
 #####################################################
 #  Group of clauses (super-statements)
@@ -42,6 +42,7 @@ optional_clause_stmt_set = (
         | clause_stmt_dlz_standalone
         | clause_stmt_dyndb_standalone
         | clause_stmt_key_standalone
+        | clause_stmt_http_standalone
         | clause_stmt_logging_standalone
         #    | (clause_lwres + semicolon)
         | clause_stmt_managed_keys_standalone

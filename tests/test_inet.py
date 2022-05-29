@@ -7,7 +7,7 @@ Description:  Performs unit test on the isc_inet.py source file.
 
 import unittest
 from bind9_parser.isc_utils import OneOrMore, \
-    assertParserResultDictFalse, assertParserResultDictTrue
+    assert_parser_result_dict_false, assert_parser_result_dict_true
 from bind9_parser.isc_inet import \
     dscp_port, \
     ip_port, \
@@ -78,7 +78,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_low_passing(self):
         """INET clause; ip_port element; lowest value; passing mode"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             ip_port,
             '1',
             {'ip_port': '1'}
@@ -86,7 +86,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_low_failing(self):
         """INET clause; ip_port element; lowest value; failing mode"""
-        assertParserResultDictFalse(
+        assert_parser_result_dict_false(
             ip_port,
             '0',
             {'ip_port': '0'}
@@ -94,7 +94,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_high_passing(self):
         """INET clause; ip_port element; highest value; passing mode"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             ip_port,
             ' 65535',
             {'ip_port': '65535'}
@@ -102,7 +102,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_high_failing(self):
         """INET clause; ip_port element; highest value; failing mode"""
-        assertParserResultDictFalse(
+        assert_parser_result_dict_false(
             ip_port,
             '65536',
             {'ip_port': '65536'}
@@ -110,7 +110,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_element_low_passing(self):
         """INET clause; port element; low; passing"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             inet_ip_port_keyword_and_number_element,
             'port 1',
             {'ip_port': '1'}
@@ -118,7 +118,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_element_high_passing(self):
         """INET clause; port element; high passing"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             inet_ip_port_keyword_and_number_element,
             'port 65535',
             {'ip_port': '65535'}
@@ -126,7 +126,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_element_low_failing(self):
         """INET clause; port element; low; failing"""
-        assertParserResultDictFalse(
+        assert_parser_result_dict_false(
             inet_ip_port_keyword_and_number_element,
             'port 0',
             {'ip_port': '0'}
@@ -134,7 +134,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_element_high_failing(self):
         """INET clause; port element; high failing"""
-        assertParserResultDictFalse(
+        assert_parser_result_dict_false(
             inet_ip_port_keyword_and_number_element,
             'port 65536',
             {'ip_port': '65536'}
@@ -142,7 +142,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_element_wildcard_passing(self):
         """INET clause; port element; wildcard; passing"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             inet_ip_port_keyword_and_wildcard_element,
             'port *',
             {'ip_port_w': '*'}
@@ -150,7 +150,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_element_port_wildcard_passing(self):
         """INET clause; port element; wildcard; passing"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             inet_ip_port_keyword_and_wildcard_element,
             'port 123',
             {'ip_port_w': '123'}
@@ -158,7 +158,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_element_wildcard_high_failing(self):
         """INET clause; port element; wildcard; failing"""
-        assertParserResultDictFalse(
+        assert_parser_result_dict_false(
             inet_ip_port_keyword_and_wildcard_element,
             'port "*"',
             {'ip_port_w': '*'}
@@ -166,7 +166,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_port_element_wildcard_high_failing(self):
         """INET clause; port element; wildcard; failing"""
-        assertParserResultDictFalse(
+        assert_parser_result_dict_false(
             inet_ip_port_keyword_and_wildcard_element,
             'port x',
             {'ip_port_w': '*'}
@@ -321,7 +321,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_ip6_addr_suffix(self):
         """INET clause, ip6_addr suffix; passing"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             ip6_addr,
             "::127.0.0.1",
             {'ip6_addr': '::127.0.0.1'}
@@ -481,7 +481,7 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_ip6s_prefix_passing(self):
         """INET clause; ip6s_prefix element; passing mode"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             ip6s_prefix,
             """::127.0.0.1/16"""
 # ::192.168.1.1/24
@@ -649,14 +649,14 @@ class TestINET(unittest.TestCase):
 
     def test_isc_inet_ip46_addr_and_port_list_passing(self):
         """INET clause, IPv4 and port; one IPv4; passing"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             ip46_addr_and_port_list,
             '1.1.1.1;',
             {'ip_addr': '1.1.1.1'}
         )
     def test_isc_inet_ip46_addr_and_port_list_1_ip4_port_passing(self):
         """INET clause, IPv4 and port; one IPv4 with port; passing"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             ip46_addr_and_port_list,
             '2.2.2.2 port 2222;',
             {'ip_addr': '2.2.2.2', 'ip_port': '2222'}

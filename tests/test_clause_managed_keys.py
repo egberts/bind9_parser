@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_managed_keys.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_clause_managed_keys import clause_stmt_managed_keys_series
 
 
@@ -21,45 +21,45 @@ class TestClauseManagedKeys(unittest.TestCase):
                       'key_secret': '"ASBASDASD"',
                       'protocol_id': 2,
                       'rr_domain': 'abc'}]}
-        assertParserResultDictTrue(clause_stmt_managed_keys_series,
-                                   test_string,
-                                   expected_result)
+        assert_parser_result_dict_true(clause_stmt_managed_keys_series,
+                                       test_string,
+                                       expected_result)
         test_string = 'managed-keys { example.com initial-key 4 5 6 "ASBASDASD";};'
         expected_result = { 'managed_keys': [ { 'algorithm_id': 6,
                       'flags': 4,
                       'key_secret': '"ASBASDASD"',
                       'protocol_id': 5,
                       'rr_domain': 'example.com'}]}
-        assertParserResultDictTrue(clause_stmt_managed_keys_series,
-                                   test_string,
-                                   expected_result)
+        assert_parser_result_dict_true(clause_stmt_managed_keys_series,
+                                       test_string,
+                                       expected_result)
         test_string = 'managed-keys { www.example.com initial-key 7 8 9 "ZZZZZZASD";};'
         expected_result = { 'managed_keys': [ { 'algorithm_id': 9,
                       'flags': 7,
                       'key_secret': '"ZZZZZZASD"',
                       'protocol_id': 8,
                       'rr_domain': 'www.example.com'}]}
-        assertParserResultDictTrue(clause_stmt_managed_keys_series,
-                                   test_string,
-                                   expected_result)
+        assert_parser_result_dict_true(clause_stmt_managed_keys_series,
+                                       test_string,
+                                       expected_result)
         test_string = 'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD";};'
         expected_result = { 'managed_keys': [ { 'algorithm_id': 1,
                       'flags': 1,
                       'key_secret': '"ASBASDASD"',
                       'protocol_id': 1,
                       'rr_domain': 'www1.www.example.com'}]}
-        assertParserResultDictTrue(clause_stmt_managed_keys_series,
-                                   test_string,
-                                   expected_result)
+        assert_parser_result_dict_true(clause_stmt_managed_keys_series,
+                                       test_string,
+                                       expected_result)
         test_string = 'managed-keys { www1.www.example.com initial-key 1 1 1 "ASBASDASD";};'
         expected_result = { 'managed_keys': [ { 'algorithm_id': 1,
                       'flags': 1,
                       'key_secret': '"ASBASDASD"',
                       'protocol_id': 1,
                       'rr_domain': 'www1.www.example.com'}]}
-        assertParserResultDictTrue(clause_stmt_managed_keys_series,
-                                   test_string,
-                                   expected_result)
+        assert_parser_result_dict_true(clause_stmt_managed_keys_series,
+                                       test_string,
+                                       expected_result)
         # Example extracted from https://docs.menandmice.com/display/MM/How+to+enable+DNSSEC+validation+in+a+resolving+BIND+DNS+Server
         test_string = """managed-keys {
    "." initial-key 257 3 8
@@ -87,17 +87,17 @@ class TestClauseManagedKeys(unittest.TestCase):
                                     '     QxA+Uk1ihz0="',
                       'protocol_id': 3,
                       'rr_domain': '"."'}]}
-        assertParserResultDictTrue(clause_stmt_managed_keys_series,
-                                   test_string,
-                                   expected_result)
+        assert_parser_result_dict_true(clause_stmt_managed_keys_series,
+                                       test_string,
+                                       expected_result)
 
     def test_isc_clause_stmt_managed_keys_failing(self):
         """ Clause managed-keys; purposely failing mode"""
         test_string = 'managed-keys { . initial-key 257 3 3 "AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC";};'
         expected_result = {}
-        assertParserResultDictFalse(clause_stmt_managed_keys_series,
-                                    test_string,
-                                    expected_result)
+        assert_parser_result_dict_false(clause_stmt_managed_keys_series,
+                                        test_string,
+                                        expected_result)
 
 
 if __name__ == '__main__':

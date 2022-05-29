@@ -5,7 +5,7 @@ File: test_utils
 
 import unittest
 from pyparsing import pythonStyleComment, cppStyleComment
-from bind9_parser.isc_utils import assertParserResultDictTrue,\
+from bind9_parser.isc_utils import assert_parser_result_dict_true,\
     isc_boolean, isc_file_name, \
     dequotable_path_name, \
     acl_name, acl_name_dquotable, acl_name_squotable, \
@@ -90,7 +90,7 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type isc_file_name; failing """
         test_data = 'filenamewithoutatype'
         expected_result = {'filename': 'filenamewithoutatype'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             isc_file_name,
             test_data,
             expected_result
@@ -120,7 +120,7 @@ class TestConfigUtils(unittest.TestCase):
 
     def test_isc_utils_isc_dequotable_path_name_assert_passing(self):
         """ ISC Utilities; Type dequotable_path_name assert; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             dequotable_path_name,
             '"fil/enamewithoutatype"',
             {'path_name': 'fil/enamewithoutatype'}
@@ -145,7 +145,7 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type path_name; List/Dict; passing """
         test_data = 'directory/subdir/g_file.type9'
         expected_result = {'path_name': 'directory/subdir/g_file.type9'}
-        assertParserResultDictTrue(path_name, test_data, expected_result)
+        assert_parser_result_dict_true(path_name, test_data, expected_result)
 
     def test_isc_utils_path_name_failing(self):
         """Path name convention (UNIX-only)"""
@@ -174,9 +174,9 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type acl_name; List/Dict; passing"""
         test_data = 'my-dashed-acl-name'
         expected_result = {'acl_name': 'my-dashed-acl-name'}
-        assertParserResultDictTrue(acl_name,
-                                        test_data,
-                                        expected_result)
+        assert_parser_result_dict_true(acl_name,
+                                       test_data,
+                                       expected_result)
 
     def test_isc_acl_name_failing(self):
         """ ISC Utilities; Type acl_name; failing """
@@ -222,9 +222,9 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type key_secret; List/Dict; passing """
         test_data = 'ABCDEF0123456'
         expected_result = {'key_secret': 'ABCDEF0123456'}
-        assertParserResultDictTrue(key_secret,
-                                        test_data,
-                                        expected_result)
+        assert_parser_result_dict_true(key_secret,
+                                       test_data,
+                                       expected_result)
 
     def test_isc_key_secret_failing(self):
         """ ISC Utilities; Type Key Secret; failing """
@@ -251,9 +251,9 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type key_id_keyword_and_name_pair; List/Dict; passing """
         test_data = 'key ZYX_KEY'
         expected_result = {'key_id': 'ZYX_KEY'}
-        assertParserResultDictTrue(key_id_keyword_and_name_pair,
-                                        test_data,
-                                        expected_result)
+        assert_parser_result_dict_true(key_id_keyword_and_name_pair,
+                                       test_data,
+                                       expected_result)
 
     def test_isc_key_id_failing(self):
         """ ISC Utilities; Type key_id; failing """
@@ -282,9 +282,9 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type view_name; List/Dict; passing """
         test_data = 'red_zone'
         expected_result = {'view_name': 'red_zone'}
-        assertParserResultDictTrue(view_name,
-                                        test_data,
-                                        expected_result)
+        assert_parser_result_dict_true(view_name,
+                                       test_data,
+                                       expected_result)
 
     def test_isc_view_name_failing(self):
         """ ISC Utilities; Type view_name; Quotes; failing """
@@ -323,7 +323,7 @@ class TestConfigUtils(unittest.TestCase):
         ]
         result = zone_name_dquotable.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             zone_name_dquotable,
             '"example.com."',
             {'zone_name': '"example.com."'}
@@ -351,7 +351,7 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type zone_name; List/Dict; passing """
         test_data = 'white-lab.example.net'
         expected_result = {'zone_name': 'white-lab.example.net'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             zone_name,
             test_data,
             expected_result)
@@ -393,9 +393,9 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type fqdn_name; List/Dict; passing """
         test_data = 'finance-dept.example.com'
         expected_result = {'fqdn_name': 'finance-dept.example.com'}
-        assertParserResultDictTrue(fqdn_name,
-                                        test_data,
-                                        expected_result)
+        assert_parser_result_dict_true(fqdn_name,
+                                       test_data,
+                                       expected_result)
 
     def test_isc_fqdn_name_failing(self):
         """ ISC Utilities; Type FQDN name; failing """
@@ -435,18 +435,18 @@ class TestConfigUtils(unittest.TestCase):
             'primary': 'ADMIN',
             'principal': 'ADMIN@ATHENA.MIT.EDU',
             'realm': 'ATHENA.MIT.EDU'}
-        assertParserResultDictTrue(krb5_principal_name,
-                                        test_data,
-                                        expected_result)
+        assert_parser_result_dict_true(krb5_principal_name,
+                                       test_data,
+                                       expected_result)
         test_data = 'ADMIN/FINANCE_DEPT@ATHENA.MIT.EDU'
         expected_result = {
             'instance': 'FINANCE_DEPT',
             'primary': 'ADMIN',
             'principal': 'ADMIN/FINANCE_DEPT@ATHENA.MIT.EDU',
             'realm': 'ATHENA.MIT.EDU'}
-        assertParserResultDictTrue(krb5_principal_name,
-                                        test_data,
-                                        expected_result)
+        assert_parser_result_dict_true(krb5_principal_name,
+                                       test_data,
+                                       expected_result)
 
     def test_isc_krb5_principal_name_failing(self):
         """ ISC Utilities; Type KRB5 Principal Name; failing """
@@ -476,7 +476,7 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type size_spec; List/Dict; passing """
         test_data = "14M"
         expected_data = {'size': [14, 'M']}
-        assertParserResultDictTrue(size_spec, test_data, expected_data)
+        assert_parser_result_dict_true(size_spec, test_data, expected_data)
 
     def test_isc_utils_size_spec_failing(self):
         """ ISC Utilities; Type SizeSpec; failing """
@@ -505,16 +505,16 @@ class TestConfigUtils(unittest.TestCase):
         new_key_id_series.ignore(cppStyleComment)
         new_key_id_series.ignore(pythonStyleComment)
         new_key_id_series.setWhitespaceChars(' \t')
-        assertParserResultDictTrue(new_key_id_series,
-                                        test_string,
-                                        expected_result,
+        assert_parser_result_dict_true(new_key_id_series,
+                                       test_string,
+                                       expected_result,
                                         'Unable to handle inline comments.')
 
     def test_isc_utils_algorithm_name_passing(self):
         """ ISC Utilities; Type algorithm_name; passing """
         test_string = 'SHA512'
         expected_result = {'algorithm_name': 'SHA512'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             algorithm_name,
             test_string,
             expected_result)
@@ -523,7 +523,7 @@ class TestConfigUtils(unittest.TestCase):
         """ ISC Utilities; Type algorithm_name_list_set; passing """
         test_string = 'SHA512;'
         expected_result = {'algorithm_name': 'SHA512'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             algorithm_name_list_set,
             test_string,
             expected_result)
@@ -537,14 +537,14 @@ class TestConfigUtils(unittest.TestCase):
                                                 'rsa',
                                                 'ED448',
                                                 'ED25519']}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             algorithm_name_list_series,
             test_string,
             expected_result)
 
     def test_isc_utils_primary_name_passing(self):
         """ ISC Utilities; Type primary_id; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             primary_id,
             'myprimary_name',
             {'primary_id': 'myprimary_name'}

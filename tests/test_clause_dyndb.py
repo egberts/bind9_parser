@@ -5,7 +5,7 @@ File: test_clause_dyndb.py
 Title: Unit Test Dynamic Database
 """
 import unittest
-from bind9_parser.isc_utils import assertParserResultDict, assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict, assert_parser_result_dict_true
 from bind9_parser.isc_clause_dyndb import dyndb_database_name, dyndb_dynamic_module_name, \
     dyndb_custom_driver_configuration, clause_stmt_dyndb_series
 
@@ -15,7 +15,7 @@ class TestClauseDynDB(unittest.TestCase):
 
     def test_isc_dyndb_database_name_passing(self):
         """ Clause dyndb: Element Database Name; passing """
-        assertParserResultDict(dyndb_database_name, 'custom_driver_data', {'db_name': 'custom_driver_data'}, True)
+        assert_parser_result_dict(dyndb_database_name, 'custom_driver_data', {'db_name': 'custom_driver_data'}, True)
 
     def test_isc_dyndb_dynamic_module_passing(self):
         """ Clause dyndb; Element Dynamic Module; passing """
@@ -23,12 +23,12 @@ class TestClauseDynDB(unittest.TestCase):
         expected_result = {
             'module_filename': 'my_driver.so'
         }
-        assertParserResultDict(dyndb_dynamic_module_name, test_data, expected_result, True)
+        assert_parser_result_dict(dyndb_dynamic_module_name, test_data, expected_result, True)
         test_data = "'dir/my_driver.so'"
         expected_result = {
             'module_filename': 'dir/my_driver.so'
         }
-        assertParserResultDict(dyndb_dynamic_module_name, test_data, expected_result, True)
+        assert_parser_result_dict(dyndb_dynamic_module_name, test_data, expected_result, True)
 
     def test_isc_dyndb_driver_config_passing(self):
         """ Clause dyndb; Element Driver Configuration; passing """
@@ -44,13 +44,13 @@ class TestClauseDynDB(unittest.TestCase):
                 '    base "cn=dns, dc=example,dc=com";\n'
                 '    auth_method "none";\n'
                 '    '}
-        assertParserResultDict(dyndb_custom_driver_configuration, test_data, expected_result, True)
+        assert_parser_result_dict(dyndb_custom_driver_configuration, test_data, expected_result, True)
 
     def test_isc_clause_stmt_dyndb_failing(self):
         """ Clause dyndb; Element Dynamic Database; failing """
         test_data = 'dyndb database_name module_name { }'
         expected_result = {}
-        assertParserResultDict(clause_stmt_dyndb_series, test_data, expected_result, False)
+        assert_parser_result_dict(clause_stmt_dyndb_series, test_data, expected_result, False)
 
     def test_isc_clause_stmt_dyndb_passing(self):
         """ Clause dyndb; Element Dynamic Database; passing """
@@ -65,7 +65,7 @@ class TestClauseDynDB(unittest.TestCase):
                 }
             ]
         }
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_dyndb_series,
             test_data,
             {'dyndb': [{'db_name': 'My_Custom_database_name',
@@ -87,7 +87,7 @@ dyndb "example-ldap" "/usr/lib64/bind/ldap.so" {
     auth_method "none";
 };
 """
-        assertParserResultDict(
+        assert_parser_result_dict(
             clause_stmt_dyndb_series, 
             test_data, 
             { 'dyndb': [ { 'db_name': 'sample',

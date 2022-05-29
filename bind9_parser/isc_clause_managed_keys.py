@@ -10,7 +10,7 @@ Description: Provides managed-key-related grammar in
              PyParsing engine for ISC-configuration style
 """
 
-from pyparsing import Optional, OneOrMore, ZeroOrMore
+from pyparsing import ZeroOrMore
 from bind9_parser.isc_managed_keys import managed_keys_statement_standalone
 
 
@@ -27,4 +27,3 @@ clause_stmt_managed_keys_series = (
         managed_keys_statement_standalone
     )
 )('managed_keys')
-

@@ -34,9 +34,9 @@ class InvalidFunctionException(ParseFatalException):
 
 
 def error(exceptionClass):
-    def raise_exception(s,l,t):
-        raise exceptionClass(s,l,t[0])
-    return Word(alphas,alphanums).setParseAction(raise_exception)
+    def raise_exception(s, l, t):
+        raise exceptionClass(s, l, t[0])
+    return Word(alphas, alphanums).setParseAction(raise_exception)
 
 
 options_stmt_counter = 0

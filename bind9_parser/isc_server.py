@@ -9,7 +9,7 @@ Title: Statements Used Only By server Clause.
 Description: Provides server-related grammar in PyParsing engine
              for ISC-configuration style
 """
-from pyparsing import Group, Keyword, Word, nums, Optional, Literal, ZeroOrMore, ungroup
+from pyparsing import Group, Keyword, Optional, ZeroOrMore, ungroup
 from bind9_parser.isc_utils import isc_boolean, semicolon, number_type, \
     key_id, byte_type
 from bind9_parser.isc_inet import ip4_addr_or_wildcard, ip6_addr_or_wildcard,\

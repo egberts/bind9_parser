@@ -58,8 +58,7 @@ optviewserver_stmt_query_source = (
         )
     )('query_source')
     - semicolon
-).setName(
-"""query-source (
+).setName("""query-source (
     ( [ address ] ( <ipv4_address> | * ) [ port ( <integer> | * ) ] )
     | ( [ [ address ] ( <ipv4_address> | * ) ] port ( <integer> | * ) ) ) [ dscp <integer> ];
 """)
@@ -89,12 +88,11 @@ optviewserver_stmt_query_source_v6 = (
         )
     )('query_source_v6')
     - semicolon
-).setName(
-"""query-source-v6 (
+).setName("""query-source-v6 (
     ( [ address ] ( <ipv6_address> | * ) [ port ( <integer> | * ) ] )
     | ( [ [ address ] ( <ipv6_address> | * ) ] port ( <integer> | * ) ) ) [ dscp <integer> ];
 """
-)
+          )
 
 #  request-ixfr <boolean>;  # [ server ]  # v9.1.0+
 optviewserver_stmt_request_ixfr = (

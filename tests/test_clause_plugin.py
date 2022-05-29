@@ -15,7 +15,7 @@ Description:
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_plugin import \
     plugin_config_element, \
     clause_stmt_plugin_standalone, \
@@ -29,7 +29,7 @@ class TestClauseHttp(unittest.TestCase):
         """ Test Clause 'plugin'; 'config' element; passing """
         test_string = '{ a; }'  # do not include semicolon, that is done elsewhere
         expected_result = {'config': [['a']]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             plugin_config_element,
             test_string,
             expected_result)
@@ -38,7 +38,7 @@ class TestClauseHttp(unittest.TestCase):
         """ Test Clause 'plugin'; 'config' x2 element'; passing """
         test_string = '{ a; d e f; }'  # do not include semicolon, that is done elsewhere
         expected_result = {'config': [['a', 'd e f']]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             plugin_config_element,
             test_string,
             expected_result)
@@ -47,7 +47,7 @@ class TestClauseHttp(unittest.TestCase):
         """ Test Clause 'plugin'; 'config' multiple elements'; passing """
         test_string = '{ b c; d e f; b c; a;}'  # do not include semicolon
         expected_result = {'config': [['b c', 'd e f', 'b c', 'a']]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             plugin_config_element,
             test_string,
             expected_result)
@@ -63,7 +63,7 @@ class TestClauseHttp(unittest.TestCase):
                 'l',
                 'm',
                 'n']]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             plugin_config_element,
             test_string,
             expected_result)
@@ -74,7 +74,7 @@ class TestClauseHttp(unittest.TestCase):
         expected_result = { 'config': [['filter-a-on-v4 yes']],
   'flag': 'query',
   'quoted_path_name': '../../../plugins/.libs/filter-aaaa.so'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_plugin_standalone,
             test_string,
             expected_result)
@@ -84,7 +84,7 @@ class TestClauseHttp(unittest.TestCase):
         test_string = 'plugin "../../../filter-aaaa.so" { filter-aaaa yes; };'
         expected_result = { 'config': [['filter-aaaa yes']],
   'quoted_path_name': '../../../filter-aaaa.so'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_plugin_set,
             test_string,
             expected_result)
@@ -95,7 +95,7 @@ class TestClauseHttp(unittest.TestCase):
         expected_result = { 'config': [['filter-aaaa yes']],
   'flag': 'query',
   'quoted_path_name': '../../../filter-a.so'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_plugin_set,
             test_string,
             expected_result)
@@ -108,7 +108,7 @@ plugin query "../../../filter-aaaa.so" { filter-aaaa yes; };"""
         expected_result = { 'config': [['filter-a yes'], ['filter-aaaa yes']],
   'flag': 'query',
   'quoted_path_name': '../../../filter-aaaa.so'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_plugin_series,
             test_string,
             expected_result)

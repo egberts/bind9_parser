@@ -12,7 +12,7 @@ Description: Provides clause-specific aspect of ACL-related grammar
              Reason for separate file from isc_acl is to avoid the Python
              'import' circular dependency of 'isc_aml'.
 """
-from pyparsing import Group, ZeroOrMore, Literal, Word, alphanums, Keyword
+from pyparsing import Group, ZeroOrMore, Keyword
 from bind9_parser.isc_utils import acl_name
 from bind9_parser.isc_aml import aml_nesting
 
@@ -45,7 +45,7 @@ from bind9_parser.isc_aml import aml_nesting
 clause_stmt_acl_standalone = (
         Keyword('acl').suppress()
         - Group(   # Best thing I've ever done.
-            acl_name  #(Word(alphanums + '_-'))('acl_name')
+            acl_name  # (Word(alphanums + '_-'))('acl_name')
             - (
                 ZeroOrMore(
                     Group(

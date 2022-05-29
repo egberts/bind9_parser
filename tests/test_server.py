@@ -10,7 +10,7 @@ Description: Provides server-related grammar in PyParsing engine
              for ISC-configuration style
 """
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 
 from bind9_parser.isc_server import server_stmt_bogus, server_stmt_edns,\
     server_stmt_edns_version,\
@@ -42,7 +42,7 @@ class TestServer(unittest.TestCase):
         result = server_stmt_bogus.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
 
-        assertParserResultDictTrue(server_stmt_bogus, 'bogus yes;', {'bogus': 'yes'})
+        assert_parser_result_dict_true(server_stmt_bogus, 'bogus yes;', {'bogus': 'yes'})
 
     def test_isc_server_stmt_bogus_failing(self):
         """ Clause server; Statement bogus; failing mode """
@@ -65,7 +65,7 @@ class TestServer(unittest.TestCase):
         result = server_stmt_edns.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
 
-        assertParserResultDictTrue(server_stmt_edns, 'edns yes;', {'edns': 'yes'})
+        assert_parser_result_dict_true(server_stmt_edns, 'edns yes;', {'edns': 'yes'})
 
     def test_isc_server_stmt_edns_failing(self):
         """ Clause server; Statement edns; failing mode """
@@ -85,7 +85,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_edns_version.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(server_stmt_edns_version, 'edns-version 0;', {'edns_version': 0})
+        assert_parser_result_dict_true(server_stmt_edns_version, 'edns-version 0;', {'edns_version': 0})
 
     def test_isc_server_stmt_edns_version_failing(self):
         """ Clause server; Statement edns_version; failing mode """
@@ -110,7 +110,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_keys.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(server_stmt_keys, 'keys True;', {'keys': 'True'})
+        assert_parser_result_dict_true(server_stmt_keys, 'keys True;', {'keys': 'True'})
 
     def test_isc_server_stmt_keys_failing(self):
         """ Clause server; Statement keys; failing mode """
@@ -128,7 +128,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_max_udp_size.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(server_stmt_max_udp_size, 'max-udp-size 2048;', {'max_udp_size': 2048})
+        assert_parser_result_dict_true(server_stmt_max_udp_size, 'max-udp-size 2048;', {'max_udp_size': 2048})
 
     def test_isc_server_stmt_max_udp_size_failing(self):
         """ Clause server; Statement max-udp-size; failing mode """
@@ -153,7 +153,7 @@ class TestServer(unittest.TestCase):
 
     def test_isc_server_stmt_notify_source_2_passing(self):
         """ Clause server; Statement notify-source; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_notify_source,
             'notify-source 127.0.0.1 port 15 dscp 1;',  # Missing 'ip_addr'
             {
@@ -186,7 +186,7 @@ class TestServer(unittest.TestCase):
 
     def test_isc_server_stmt_notify_source_v6_2_passing(self):
         """ Clause server; Statement notify-source-v6; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_notify_source_v6,
             'notify-source-v6 fe09::1 port 19 dscp 2;',  # Missing 'ip_addr'
             {'notify_source_v6': {'dscp_port': 2,
@@ -210,7 +210,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_padding.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_padding,
             'padding 387;',
             {'padding': 387}
@@ -236,7 +236,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_query_source.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_query_source,
             'query-source address * port *;',
             {'query_source': {'ip4_addr_w': '*', 'ip_port_w': '*'}}
@@ -260,7 +260,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_query_source_v6.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_query_source_v6,
             'query-source-v6 address * port *;',
             {'query_source_v6': {'ip6_addr_w': '*', 'ip_port_w': '*'}}
@@ -286,7 +286,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_request_expire.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_request_expire,
             'request-expire True;',
             {'request_expire': 'True'}
@@ -312,7 +312,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_request_nsid.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_request_nsid,
             'request-nsid True;',
             {'request_nsid': 'True'}
@@ -338,7 +338,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_send_cookie.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_send_cookie,
             'send-cookie yes;',
             {'send_cookie': 'yes'}
@@ -364,7 +364,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_tcp_keepalive.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_tcp_keepalive,
             'tcp-keepalive yes;',
             {'tcp_keepalive': 'yes'}
@@ -390,7 +390,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_tcp_only.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_tcp_only,
             'tcp-only yes;',
             {'tcp_only': 'yes'}
@@ -412,7 +412,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_transfers.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_transfers,
             'transfers 1;',
             {'transfers': 1}
@@ -441,7 +441,7 @@ class TestServer(unittest.TestCase):
         ]
         result = server_stmt_transfer_source.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_transfer_source,
             'transfer-source 123.123.123.123 port * dscp 7;',
             {'transfer_source': {'dscp_port': 7,
@@ -472,7 +472,7 @@ class TestServer(unittest.TestCase):
 
     def test_isc_server_stmt_transfer_source_v6_passing(self):
         """ Clause server; Statement transfer-source-v6; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_stmt_transfer_source_v6,
             'transfer-source-v6 ff01::1 port * dscp 7;',
             {'transfer_source_v6': {'dscp_port': 7,
@@ -499,7 +499,7 @@ class TestServer(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_server_statement_set_dict_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_statement_set,
             'transfers 15;',
             {'transfers': 15}
@@ -529,7 +529,7 @@ class TestServer(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_server_statement_series_dict_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             server_statement_series,
             'edns yes; bogus yes; ',
             {'bogus': 'yes', 'edns': 'yes'}

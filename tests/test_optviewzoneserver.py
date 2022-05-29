@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_optviewzoneserver.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_optviewzoneserver import \
     optviewzoneserver_also_notify_subgroup_element2, \
     optviewzoneserver_also_notify_subgroup_subelement1, \
@@ -23,7 +23,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_subgroup_element_passing(self):
         """ Clause options/view/zone/server; Statement also-notify subgroup element ; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_also_notify_subgroup_subelement1,
             'key my_keyname',
             {'key_id': 'my_keyname'}
@@ -31,7 +31,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_subgroup_element2_passing(self):
         """ Clause options/view/zone/server; Statement also-notify subgroup 2-element ; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_also_notify_subgroup_subelement1,
             'key my_keyname tls TLSv1.2',
             {'key_id': 'my_keyname', 'tls_algorithm_name': 'TLSv1.2'}
@@ -39,7 +39,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_subgroup_element2r_passing(self):
         """ Clause options/view/zone/server; Statement also-notify subgroup 2-element-reverse ; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_also_notify_subgroup_subelement1,
             'tls TLSv1.0 key my_other_keyname',
             {'key_id': 'my_other_keyname', 'tls_algorithm_name': 'TLSv1.0'}
@@ -47,7 +47,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_subgroup_element1o_passing(self):
         """ Clause options/view/zone/server; Statement also-notify subgroup 1-element-other; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_also_notify_subgroup_subelement1,
             'tls TLSv1.0',
             {'tls_algorithm_name': 'TLSv1.0'}
@@ -55,7 +55,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_elems_ip4_passing(self):
         """ Clause options/view/zone/server; Statement also-notify element ipv4; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_also_notify_subgroup_element2,
             '127.0.0.1',
             {'ip_addr': '127.0.0.1'}
@@ -63,7 +63,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_elems_ip6_passing(self):
         """ Clause options/view/zone/server; Statement also-notify element ipv6; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_also_notify_subgroup_element2,
             'fec2::1 port 333',
             {'ip_addr': 'fec2::1', 'ip_port': '333'}
@@ -71,7 +71,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_group_element_passing(self):
         """ Clause options/view/zone/server; Statement also-notify group element; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_also_notify_group_element_set,
             'port 444 dscp 7',
             {'dscp': 7, 'port': '444'}
@@ -110,7 +110,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_simple_passing(self):
         """ Clause options/view/zone/server; Statement also-notify simple; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_stmt_also_notify,
             'also-notify { 127.0.0.1; };',
             {'also-notify': {'remote': [{'ip_addr': '127.0.0.1'}]}}
@@ -118,7 +118,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_2list_passing(self):
         """ Clause options/view/zone/server; Statement also-notify 2-list; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_stmt_also_notify,
             'also-notify { 127.0.0.1; 172.16.1.1; };',
             {'also-notify': {'remote': [{'ip_addr': '127.0.0.1'},
@@ -127,7 +127,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_full_passing(self):
         """ Clause options/view/zone/server; Statement also-notify full; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_stmt_also_notify,
             """also-notify port 567 dscp 5 {
     fe01::1 port 59 key lockbox9_key tls TLSv1.3;
@@ -174,7 +174,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_also_notify_2_passing(self):
         """ Clause options/view/zone/server; Statement also-notify 2; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_stmt_also_notify,
             """also-notify port 58 dscp 2
 { 
@@ -192,7 +192,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_stmt_request_expire_passing(self):
         """ Clause options/view/zone/server; Statement request-expire; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_stmt_request_expire,
            'request-expire yes;',
             {'request_expire': 'yes'}
@@ -230,7 +230,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
 
     def test_isc_optviewzoneserver_statements_set_2_passing(self):
         """ Clause optviewzoneserver; Statement statements_set 2; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_statements_set,
             'also-notify { 1.1.1.1 port 58 key lockbox6_key; };',
             {'also-notify': {'remote': [{'ip_addr': '1.1.1.1',
@@ -249,7 +249,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
     def test_isc_optviewzoneserver_statements_series_passing(self):
         """ Clause optviewzoneserver; Statement optviewzoneserver_statements_series; passing """
         # Only one also-notify allowed per clause section (be that it may, options, view, zone, or server).
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             optviewzoneserver_statements_series,
             'also-notify { 1.1.1.1 port 58 key lockbox6_key; };' +
             'also-notify { 2.2.2.2 port 52 key lockbox16_key; };',

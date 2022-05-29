@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_clause_controls.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDict
+from bind9_parser.isc_utils import assert_parser_result_dict
 from bind9_parser.isc_clause_controls import controls_inet_addr_and_port, controls_inet_allow_element,\
     controls_inet_read_only_element,\
     controls_keys_element, controls_inet_set, clause_stmt_control_series,\
@@ -20,8 +20,8 @@ class TestClauseControls(unittest.TestCase):
         """ Clause controls; inet address; passing mode """
         test_data = '127.0.0.1'
         expected_result = {'control_server_addr': '127.0.0.1'}
-        assertParserResultDict(controls_inet_addr_and_port, test_data, expected_result, True)
-        # assertParserResultDict(acl_name, test_data, expected_result, True)
+        assert_parser_result_dict(controls_inet_addr_and_port, test_data, expected_result, True)
+        # assert_parser_result_dict(acl_name, test_data, expected_result, True)
 
     def test_isc_controls_addr_passing(self):
         """ Clause controls; Element IP address; passing mode"""
@@ -44,13 +44,13 @@ class TestClauseControls(unittest.TestCase):
                 ]
             }
         }
-        assertParserResultDict(controls_inet_allow_element, test_data, expected_result, True)
+        assert_parser_result_dict(controls_inet_allow_element, test_data, expected_result, True)
         test_data = 'allow { }'
         expected_result = {
             'allow': [
             ]
         }
-        assertParserResultDict(controls_inet_allow_element, test_data, expected_result, True)
+        assert_parser_result_dict(controls_inet_allow_element, test_data, expected_result, True)
 
     def test_isc_controls_inet_allow_failing(self):
         """ Clause controls; Element inet allow; failing mode """
@@ -64,31 +64,31 @@ class TestClauseControls(unittest.TestCase):
         """ Clause controls; Element key; passing mode """
         test_data = 'keys { rndc-key; }'
         expected_result = {'keys': [{'key_id': 'rndc-key'}]}
-        assertParserResultDict(controls_keys_element, test_data, expected_result, True)
+        assert_parser_result_dict(controls_keys_element, test_data, expected_result, True)
         test_data = 'keys { \'quoted-key_id\'; }'
         expected_result = {'keys': [{'key_id': '\'quoted-key_id\''}]}
-        assertParserResultDict(controls_keys_element, test_data, expected_result, True)
+        assert_parser_result_dict(controls_keys_element, test_data, expected_result, True)
         test_data = 'keys { "quoted-key_id"; }'
         expected_result = {'keys': [{'key_id': '\"quoted-key_id\"'}]}
-        assertParserResultDict(controls_keys_element, test_data, expected_result, True)
+        assert_parser_result_dict(controls_keys_element, test_data, expected_result, True)
         test_data = 'keys { unquoted-key_id; }'
         expected_result = {'keys': [{'key_id': 'unquoted-key_id'}]}
-        assertParserResultDict(controls_keys_element, test_data, expected_result, True)
+        assert_parser_result_dict(controls_keys_element, test_data, expected_result, True)
         test_data = 'keys { rndc-key; second_key; third_key;}'
         expected_result = {'keys': [{'key_id': 'rndc-key'}, {'key_id': 'second_key'}, {'key_id': 'third_key'}]}
-        assertParserResultDict(controls_keys_element, test_data, expected_result, True)
+        assert_parser_result_dict(controls_keys_element, test_data, expected_result, True)
 
     def test_isc_clause_controls_controls_inet_read_only_element_passing(self):
         """ Clause controls; Element controls_inet_read_only_element; passing """
         test_data = 'read-only true'
         expected_result = {'read-only': 'True'}
-        assertParserResultDict(controls_inet_read_only_element, test_data, expected_result, True)
+        assert_parser_result_dict(controls_inet_read_only_element, test_data, expected_result, True)
 
     def test_isc_clause_controls_controls_inet_set_passing(self):
         """ Clause controls; Element controls_inet_set; passing """
         test_data = 'inet * allow { };'
         expected_result = {'inet': {'control_server_addr': '*', 'allow': []}}
-        assertParserResultDict(controls_inet_set, test_data, expected_result, True)
+        assert_parser_result_dict(controls_inet_set, test_data, expected_result, True)
         test_data = 'inet 8.8.8.8 allow { any; };'
         expected_result = {
             'inet':
@@ -97,16 +97,16 @@ class TestClauseControls(unittest.TestCase):
                     'allow':
                         {'aml': [
                             {'keyword': 'any'}]}}}
-        assertParserResultDict(controls_inet_set, test_data, expected_result, True)
+        assert_parser_result_dict(controls_inet_set, test_data, expected_result, True)
 
     def test_isc_clause_controls_controls_inet_set_failing(self):
         """ Clause controls; Element controls_inet_set; passing """
         test_data = 'inet localhost allow { };'
         expected_result = {'inet': [{'keyword': 'localhost', 'allow': []}]}
-        assertParserResultDict(controls_inet_set, test_data, expected_result, False)
+        assert_parser_result_dict(controls_inet_set, test_data, expected_result, False)
         test_data = 'inet any allow { };'
         expected_result = {'inet': [{'keyword': 'any', 'allow': []}]}
-        assertParserResultDict(controls_inet_set, test_data, expected_result, False)
+        assert_parser_result_dict(controls_inet_set, test_data, expected_result, False)
 
     def test_isc_controls_unix_group_passing(self):
         """ Clause controls; Element inet group; passing mode """
@@ -119,7 +119,7 @@ class TestClauseControls(unittest.TestCase):
                 'uid': 101
             }
         }
-        assertParserResultDict(controls_unix_set, test_data, expected_result, True)
+        assert_parser_result_dict(controls_unix_set, test_data, expected_result, True)
 
     def test_isc_controls_inet_group_passing(self):
         """ Clause controls; Element inet group; passing mode """
@@ -158,7 +158,7 @@ class TestClauseControls(unittest.TestCase):
                 }
             ]
         }
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
     def test_isc_controls_statement_dual_passing(self):
         """ Clause controls; Dual statement, passing mode """
         test_data = 'controls { inet 128.0.0.4 port 8004 allow { 128.0.0.5; 128.0.0.6;} keys { public-rndc-key3; }; };'
@@ -179,13 +179,13 @@ class TestClauseControls(unittest.TestCase):
                 }
             ]
         }
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
     def test_isc_controls_statement_single_inet_allow_passing(self):
         """ Clause controls; Single statement, inet-allow; passing mode """
         test_data = 'controls { inet 128.0.0.2 allow {localhost;}; };'
         expected_result = {'controls': [{'inet': {'allow': {'aml': [{'keyword': 'localhost'}]},
                                                   'control_server_addr': '128.0.0.2'}}]}
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
     def test_isc_controls_statement_single_port_inet_allow_passing(self):
         """ Clause controls; Single statement, port-inet-allow; passing mode """
         test_data = 'controls { inet * port 8001 allow {} keys { my-key;};};'
@@ -193,7 +193,7 @@ class TestClauseControls(unittest.TestCase):
                                                   'control_server_addr': '*',
                                                   'ip_port_w': '8001',
                                                   'keys': [{'key_id': 'my-key'}]}}]}
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
 
     def test_isc_controls_statement_single_port_inet_allow_key_passing(self):
         """ Clause controls; Single statement, port-inet-allow-key; passing mode """
@@ -202,7 +202,7 @@ class TestClauseControls(unittest.TestCase):
                                                   'control_server_addr': '*',
                                                   'ip_port_w': '8002',
                                                   'keys': [{'key_id': "'rndc-remote'"}]}}]}
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
 
     def test_isc_controls_statement_dual_port_inet_allow_key_passing(self):
         """ Clause controls; dual statement, port-inet-allow-key; passing mode """
@@ -213,7 +213,7 @@ class TestClauseControls(unittest.TestCase):
                                                   'control_server_addr': '*',
                                                   'ip_port_w': '8003',
                                                   'keys': [{'key_id': 'mykey2'}]}}]}
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
 
     def test_isc_controls_statement_single_inet_port_allow_key_passing(self):
         """ Clause controls; single statement, inet-port-allow-key; passing mode """
@@ -222,7 +222,7 @@ class TestClauseControls(unittest.TestCase):
                                                   'control_server_addr': '128.0.0.7',
                                                   'ip_port_w': '8005',
                                                   'keys': [{'key_id': 'rndc-key4'}]}}]}
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
 
     def test_isc_controls_statement_single_inet_port_allow_list_key_passing(self):
         """ Clause controls; single statement, inet-port-allow-list-key; passing mode """
@@ -232,7 +232,7 @@ class TestClauseControls(unittest.TestCase):
                                                   'control_server_addr': '128.0.0.9',
                                                   'ip_port_w': '8006',
                                                   'read-only': 'yes'}}]}
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
 
     def test_isc_controls_statement_dual_inet_allow_localhost_passing(self):
         """ Clause controls; dual statement, inet-allow-localhost; passing mode """
@@ -258,7 +258,7 @@ class TestClauseControls(unittest.TestCase):
                         'control_server_addr': '*',
                         'ip_port_w': '8007',
                         'keys': [{'key_id': '"rndc-remote5"'}]}}]}
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
 
     def test_isc_controls_statement_unix_passing(self):
         """ Clause controls; statement, unix; passing mode """
@@ -267,7 +267,7 @@ class TestClauseControls(unittest.TestCase):
                                                   'path_name': '/tmp/x',
                                                   'perm': 666,
                                                   'uid': 101}}]}
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
 
     def test_isc_controls_statement_multiple_element_passing(self):
         """ Clause controls; Multiple Element statement, passing mode """
@@ -278,7 +278,7 @@ class TestClauseControls(unittest.TestCase):
                                                   'uid': 101}},
                                         {'inet': {'allow': {'aml': [{'keyword': 'localhost'}]},
                                                   'control_server_addr': '128.0.0.12'}}]}
-        assertParserResultDict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
 
     def test_isc_clause_stmt_controls_failing(self):
         """ Clause controls; Element statement, failing mode """
@@ -304,7 +304,7 @@ class TestClauseControls(unittest.TestCase):
                                                   'ip_port_w': '8004',
                                                   'keys': [{'key_id': 'public_rndc_key3'}]}}]}
         my_csc = clause_stmt_control_series.setWhitespaceChars(' \t\n')
-        assertParserResultDict(my_csc, test_data, expected_result, True)
+        assert_parser_result_dict(my_csc, test_data, expected_result, True)
 
     def test_isc_controls_statement_python_list2_passing(self):
         """ Clause controls; Python List, passing mode """
@@ -331,7 +331,7 @@ controls {
                                                   'perm': 444,
                                                   'uid': 555}}]}
         my_csc = clause_stmt_control_series.setWhitespaceChars(' \t\n')
-        assertParserResultDict(my_csc, test_data, expected_result, True)
+        assert_parser_result_dict(my_csc, test_data, expected_result, True)
 
 
 if __name__ == '__main__':

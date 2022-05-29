@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_options.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictFalse, assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_false, assert_parser_result_dict_true
 from bind9_parser.isc_options import options_statements_set, options_statements_series,\
     options_stmt_avoid_v4_udp_ports
 
@@ -28,7 +28,7 @@ class TestClauseOptions(unittest.TestCase):
 
     def test_isc_clause_options_all_statement_set_a_passing(self):
         """ Clause options; Statement Set All; keywords starting wtih 'a'; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             """
 allow-new-zones yes;
@@ -82,7 +82,7 @@ avoid-v6-udp-ports { 4; 5; 6; };""",
 
     def test_isc_clause_options_all_statement_set_check_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'b' to 'c'; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             """
     deny-answer-addresses { 127.0.0.1; } except-from { "172.in-addr.arpa."; };
@@ -93,7 +93,7 @@ avoid-v6-udp-ports { 4; 5; 6; };""",
 
     def test_isc_clause_options_all_statement_set_b_to_c_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'b' to 'c'; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series, """
 bindkeys-file "dir/file";
 blackhole { 127.0.0.1; };
@@ -135,7 +135,7 @@ coresize default;
 
     def test_isc_clause_options_all_statement_set_d_passing(self):
         """ Clause options; Statement Set All; keywords starting wtih 'd'; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             """
 deny-answer-addresses { 127.0.0.2/24; };
@@ -247,7 +247,7 @@ dump-file "dir/file";""",
 
     def test_isc_clause_options_all_statement_set_e_to_i_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'e' to 'i'; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             """
 edns-udp-size 512;
@@ -305,7 +305,7 @@ ixfr-from-differences primary;
 
     def test_isc_clause_options_all_statement_set_k_to_m_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'k' to 'm'; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             """
 keep-response-order { 127.0.0.1; };
@@ -397,7 +397,7 @@ max-ixfr-ratio unlimited;""",
 
     def test_isc_clause_options_all_statement_set_n_to_r_passing(self):
         """ Clause options; Statement Set All; keywords starting from 'n' to 'r'; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             """
 notify-source * port * dscp 4;
@@ -495,7 +495,7 @@ request-expire no;
         
     def test_isc_clause_options_all_statement_set_s_to_z_passing(self):
         """ Clause options; Statement Set All; keywords starting from 's' to 'z'; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             """
 secroots-file "dir/file";
@@ -628,7 +628,7 @@ zone-statistics terse;
 
     def test_isc_clause_options_all_statement_set_all_passing(self):
         """ Clause options; Statement Set All ; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             """
 allow-new-zones yes;
@@ -1263,7 +1263,7 @@ zone-statistics terse;
 
     def test_isc_clause_options_all_statement_series_2_passing(self):
         """ Clause options; Statement Series 2; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             'version 5; port 53;',
             {'ip_port': '53', 'version_string': '5'}
@@ -1271,7 +1271,7 @@ zone-statistics terse;
 
     def test_isc_clause_options_all_statement_series_3_passing(self):
         """ Clause options; Statement Series 3; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             'version 5; coresize unlimited; pid-file "/var/run/named.pid";',
             {'coresize': ['unlimited'],
@@ -1281,7 +1281,7 @@ zone-statistics terse;
 
     def test_isc_clause_options_all_statement_series_4_passing(self):
         """ Clause options; Statement Series 4; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             options_all_statements_series,
             'version 5; port 53;',
             {'ip_port': '53', 'version_string': '5'}

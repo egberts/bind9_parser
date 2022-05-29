@@ -5,7 +5,7 @@ File: test_server.py
 Description:  Performs unit test on the isc_server.py source file.
 """
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_clause_server import server_all_statements_set, \
     server_all_statements_series,\
     clause_stmt_server_standalone,clause_stmt_server_series
@@ -83,14 +83,14 @@ class TestClauseServer(unittest.TestCase):
         self.assertTrue(result[0])
 
     def test_isc_clause_stmt_server_standalone_dict_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_server_standalone,
             'server 4.4.4.4 { edns yes; };',
             {'server': [{'configs': {'edns': 'yes'}, 'ip_addr': '4.4.4.4'}]}
         )
 
     def test_isc_clause_stmt_server_standalone_dict2_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_server_standalone,
             'server 3.4.5.6 { bogus yes; edns no; edns-udp-size 102; edns-version 2;' +
             ' keys my_key_name_to_private_dns; max-udp-size 32768; notify-source *; notify-source-v6 *;' +
@@ -132,7 +132,7 @@ class TestClauseServer(unittest.TestCase):
 
     def test_isc_clause_stmt_server_series_passing(self):
         """ Clause server; Series, Statements; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_server_series,
             'server 3.3.3.3 { edns yes; };' +
             'server 4.4.4.4 { edns yes; };',

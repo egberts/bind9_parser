@@ -12,7 +12,7 @@ Description: Provides managed-key-related grammar in
 
 from pyparsing import Word, alphanums, Group, Keyword, Literal, OneOrMore
 from bind9_parser.isc_utils import semicolon, lbrack, rbrack, number_type,\
-    squote, dquote, Combine, Char
+    squote, dquote, Combine
 from bind9_parser.isc_rr import rr_domain_name_or_root
 
 
@@ -98,4 +98,3 @@ managed_keys_statement_standalone = (
     )
     + semicolon
 )('managed_keys')
-

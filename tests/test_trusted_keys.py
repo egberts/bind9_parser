@@ -10,7 +10,7 @@ Description: Provides trusted_keys-related grammar in PyParsing engine
              for ISC-configuration style
 """
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_trusted_keys import \
     trusted_keys_stmt_key_id_integer, \
     trusted_keys_protocol_type_integer, \
@@ -79,7 +79,7 @@ class TestTrustedKeys(unittest.TestCase):
     # trusted_keys_stmt_group_set
     def test_isc_trusted_keys_statements_group_set_one_passing(self):
         """ Clause trusted_keys; Statement group set one; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             trusted_keys_stmt_group_set,
             "\".\" 257 3 7 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';",
             {'trusted_keys': [{'algorithm_id': '7',
@@ -91,7 +91,7 @@ class TestTrustedKeys(unittest.TestCase):
 
     def test_isc_trusted_keys_statements_group_series_one_passing(self):
         """ Clause trusted_keys; Statement group two; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
         trusted_keys_stmt_group_series,
             "\"16.172.in-addr.arpa.\" 256 3 15 'ZZZZZZZZZ+YYYYYYYYYYYYY/XXXXXXXXXXXXXXXX';",
             {'trusted_keys': [{'algorithm_id': '15',
@@ -103,7 +103,7 @@ class TestTrustedKeys(unittest.TestCase):
 
     def test_isc_trusted_keys_statements_group_series_two_passing(self):
         """ Clause trusted_keys; Statement group two; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             trusted_keys_stmt_group_series,
             """
     \".\" 257 3 7 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';
@@ -124,7 +124,7 @@ class TestTrustedKeys(unittest.TestCase):
     # trusted_keys_stmt_group_series
     def test_isc_trusted_keys_statements_group_series_many_passing(self):
         """ Clause trusted_keys; Statement group series many; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             trusted_keys_stmt_group_series,
             """
 \".\" 257 3 8 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';
@@ -163,7 +163,7 @@ class TestTrustedKeys(unittest.TestCase):
     # trusted_keys_stmt_standalone
     def test_isc_trusted_keys_statements_standalone_passing(self):
         """ Clause trusted_keys; Statement; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             trusted_keys_stmt_standalone,
             "trusted-keys { \".\" 257 3 7 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';};",
             {'trusted_keys': [{'algorithm_id': '7',
@@ -193,7 +193,7 @@ class TestTrustedKeys(unittest.TestCase):
     "." 1 243 4 "BBBBBEEEEE++++/////ASDASDASDASDASD";
     };
             """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             trusted_keys_stmt_set,
             test_string,
             {'trusted_keys': [{'algorithm_id': '1',
@@ -220,7 +220,7 @@ class TestTrustedKeys(unittest.TestCase):
 
     def test_isc_trusted_keys_statements_set_passing2(self):
         """ Clause trusted_keys; Statement Series; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             trusted_keys_stmt_set,
             "trusted-keys { \".\" 257 3 7 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';};",
             {'trusted_keys': [{'algorithm_id': '7',
@@ -245,7 +245,7 @@ class TestTrustedKeys(unittest.TestCase):
 
     def test_isc_trusted_keys_statement_series_passing(self):
         """ Clause trusted_keys; Statement Series; passing mode """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             trusted_keys_stmt_series,
             'trusted-keys { abc 1 1 1 "ASBASDASD"; second-zone.test. 2 2 2 "ASASDASDASDASD"; };' +
             "trusted-keys { \".\" 3 3 3 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';};" +

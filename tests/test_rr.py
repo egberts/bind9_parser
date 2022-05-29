@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_rr.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_rr import \
     rr_fqdn_w_absolute,\
     rr_type_list_series,\
@@ -34,7 +34,7 @@ class TestResourceRecords(unittest.TestCase):
         ]
         result = rr_class_set.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             rr_class_set,
             'any',
             {'rr_class': 'ANY'}
@@ -58,7 +58,7 @@ class TestResourceRecords(unittest.TestCase):
         ]
         result = rr_type_set.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             rr_type_set,
             'srv',
             {'rr_type': 'SRV'}
@@ -88,7 +88,7 @@ class TestResourceRecords(unittest.TestCase):
         ]
         result = rr_type_series.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             rr_type_series,
             'A NS SRV',
             {'rr_types': ['A', 'NS', 'SRV']}

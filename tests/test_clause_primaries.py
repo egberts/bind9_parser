@@ -6,7 +6,7 @@ Description:  Performs unit test on the 'primaries' clause in isc_clause_primari
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue, assertParserResultDictFalse
+from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_clause_primaries import \
     primary_id, \
     primaries_element_series,\
@@ -19,11 +19,11 @@ class TestClausePrimaries(unittest.TestCase):
     def test_isc_primaries_name_passing(self):
         """ Clause primaries; Series Primary Name; passing mode """
         expected_result = {'primary_id': 'primary_nameservers'}
-        assertParserResultDictTrue(primary_id, 'primary_nameservers', expected_result)
+        assert_parser_result_dict_true(primary_id, 'primary_nameservers', expected_result)
         expected_result = {'primary_id': 'secondary-slaves'}
-        assertParserResultDictTrue(primary_id, 'secondary-slaves', expected_result)
+        assert_parser_result_dict_true(primary_id, 'secondary-slaves', expected_result)
         expected_result = {'primary_id': 'demilitarized_zone_servers'}
-        assertParserResultDictTrue(primary_id, 'demilitarized_zone_servers', expected_result)
+        assert_parser_result_dict_true(primary_id, 'demilitarized_zone_servers', expected_result)
 
     def test_isc_primaries_name_failing(self):
         """ Clause primaries; Series Primary Name; failing mode """
@@ -33,34 +33,34 @@ class TestClausePrimaries(unittest.TestCase):
             'no such;',
         ]
         expected_result = {'primary_id': '2.2.2.2'}
-        assertParserResultDictFalse(primary_id, 'route.net;', expected_result)
-        assertParserResultDictFalse(primary_id, 'bad host', expected_result)
-        assertParserResultDictFalse(primary_id, 'no such;', expected_result)
+        assert_parser_result_dict_false(primary_id, 'route.net;', expected_result)
+        assert_parser_result_dict_false(primary_id, 'bad host', expected_result)
+        assert_parser_result_dict_false(primary_id, 'no such;', expected_result)
 
     def test_isc_primary_name_passing(self):
         """Primaries clause, Primary Name type, passing mode"""
         test_string = 'primary_bastion_host'
         expected_result = {'primary_id': 'primary_bastion_host'}
-        assertParserResultDictTrue(primary_id, test_string, expected_result)
+        assert_parser_result_dict_true(primary_id, test_string, expected_result)
         test_string = '\'secondary_firewall_host\''
         expected_result = {'primary_id': '\'secondary_firewall_host\''}
-        assertParserResultDictTrue(primary_id, test_string, expected_result)
+        assert_parser_result_dict_true(primary_id, test_string, expected_result)
         test_string = '"hidden_primary"'
         expected_result = {'primary_id': '"hidden_primary"'}
-        assertParserResultDictTrue(primary_id, test_string, expected_result)
+        assert_parser_result_dict_true(primary_id, test_string, expected_result)
         test_string = 'asdf"asdf"'
         expected_result = {'primary_id': 'asdf"asdf"'}
-        assertParserResultDictTrue(primary_id, test_string, expected_result)
+        assert_parser_result_dict_true(primary_id, test_string, expected_result)
 
     def test_isc_primary_name_failing(self):
         """Primaries clause, Primary Name type, purposely failing mode"""
         test_string = 'netspeed 150000000'
         expected_result = {'primary_id': 'netspeed'}
-        assertParserResultDictFalse(primary_id, test_string, expected_result)
+        assert_parser_result_dict_false(primary_id, test_string, expected_result)
 
     def test_isc_primaries_element_series_passing(self):
         """Primaries clause, Primary Element series, passing mode"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             primaries_element_series,
             'primary_subdomain key "primary_key_maker";',
             {'primary_list': [{'key_id': '"primary_key_maker"',
@@ -69,7 +69,7 @@ class TestClausePrimaries(unittest.TestCase):
 
     def test_isc_primaries_element_series_2_passing(self):
         """Primaries clause, Primary Element series, passing mode"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             primaries_element_series,
             'primary_recon_border_gateway key "My_Secret_Company_Key";',
             {'primary_list': [{'key_id': '"My_Secret_Company_Key"',
@@ -84,11 +84,11 @@ class TestClausePrimaries(unittest.TestCase):
                 {'ip_addr': 'primary_recon_border_gateway', 'key_id': '"My_Secret_Company_Key"'}
             ]
         }
-        assertParserResultDictFalse(primaries_element_series, test_string, expected_result)
+        assert_parser_result_dict_false(primaries_element_series, test_string, expected_result)
 
     def test_isc_clause_stmt_primaries_standalone_passing(self):
         """Primaries clause, passing mode"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_primaries_standalone,
             'primaries ns1 { 127.0.0.1; };',
             {'primaries': [{'primary_id': 'ns1',
@@ -110,12 +110,12 @@ class TestClausePrimaries(unittest.TestCase):
                 }
             ]
         }
-        assertParserResultDictTrue(clause_stmt_primaries_standalone, test_string, expected_result)
+        assert_parser_result_dict_true(clause_stmt_primaries_standalone, test_string, expected_result)
 
     def test_isc_clause_stmt_primaries_multielement_passing(self):
         """Primaries clause, passing mode"""
         test_string = 'primaries ns1 { 127.0.0.1; 192.168.1.1; 192.168.6.1; };'
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_primaries_standalone,
             test_string,
             {'primaries': [{'primary_id': 'ns1',
@@ -126,7 +126,7 @@ class TestClausePrimaries(unittest.TestCase):
 
     def test_isc_clause_stmt_primaries_multielement_2_passing(self):
         """Primaries clause 2, passing mode"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_primaries_standalone,
             'primaries ns1 { another_bastion_hosts1; hidden_bastion2; };',
             {'primaries': [{'primary_id': 'ns1',
@@ -135,7 +135,7 @@ class TestClausePrimaries(unittest.TestCase):
         )
 
     def test_isc_clause_stmt_primaries_series_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_primaries_series,
             'primaries another_bastion_host3 { another_bastion_hosts22; }; primaries third_bastion { hidden_bastion; };',
             {'primaries': [{'primary_id': 'another_bastion_host3',
@@ -145,7 +145,7 @@ class TestClausePrimaries(unittest.TestCase):
         )
 
     def test_isc_clause_stmt_primaries_standalone3_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_primaries_standalone,
             'primaries example.com { primaries; };',
             {'primaries': [{'primary_id': 'example.com',
@@ -153,7 +153,7 @@ class TestClausePrimaries(unittest.TestCase):
         )
 
     def test_isc_clause_stmt_primaries_standalone4_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_primaries_standalone,
             'primaries ns2 { 127.0.0.1; localhost; localnets; };',
             {'primaries': [{'primary_id': 'ns2',
@@ -163,7 +163,7 @@ class TestClausePrimaries(unittest.TestCase):
         )
 
     def test_isc_clause_stmt_primaries_standalone5_passing(self):
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_primaries_standalone,
             'primaries example.com port 53 { primaries; };',
             {'primaries': [{'ip_port': '53',
@@ -184,7 +184,7 @@ class TestClausePrimaries(unittest.TestCase):
                 }
             ]
         }
-        assertParserResultDictTrue(clause_stmt_primaries_standalone, test_string, expected_result)
+        assert_parser_result_dict_true(clause_stmt_primaries_standalone, test_string, expected_result)
 
     def isc_clause_stmt_primaries_standalone7_passing(self):
         test_string = 'primaries example.com port 53 dscp 7 { big.com key partner_secret_key; };'
@@ -203,11 +203,11 @@ class TestClausePrimaries(unittest.TestCase):
                 }
             ]
         }
-        assertParserResultDictTrue(clause_stmt_primaries_standalone, test_string, expected_result)
+        assert_parser_result_dict_true(clause_stmt_primaries_standalone, test_string, expected_result)
 
     def test_isc_clause_stmt_primaries_series2_passing(self):
         """Primaries clause, Primary statement series; passing mode"""
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_primaries_series,
             'primaries A { B; C; }; primaries D { E; F; };',
             {'primaries': [{'primary_id': 'A',

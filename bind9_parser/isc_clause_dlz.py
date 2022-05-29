@@ -9,8 +9,8 @@ Title: Clause statement for the DLZ
 Description:
 """
 
-from pyparsing import Group, CaselessKeyword, alphanums, Word, ZeroOrMore, OneOrMore
-from bind9_parser.isc_utils import semicolon, name_type, isc_boolean, \
+from pyparsing import Group, CaselessKeyword, ZeroOrMore, OneOrMore
+from bind9_parser.isc_utils import semicolon, isc_boolean, \
         lbrack, rbrack, dlz_name_type,\
         dequoted_path_name
 

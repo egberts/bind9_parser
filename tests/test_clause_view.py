@@ -11,7 +11,7 @@ Description: Provides view-related grammar in PyParsing engine
 """
 import unittest
 from pyparsing import cppStyleComment, pythonStyleComment
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_view import \
     clause_stmt_view_standalone,\
     clause_stmt_view_series,\
@@ -28,11 +28,11 @@ class TestClauseView(unittest.TestCase):
         expected_result = { 'views': [ { 'view_name': 'red',
                'zones': [ { 'auto_dnssec': 'maintain',
                             'zone_name': 'www.example.com'}]}]}
-        assertParserResultDictTrue(clause_stmt_view_standalone, test_string, expected_result)
+        assert_parser_result_dict_true(clause_stmt_view_standalone, test_string, expected_result)
 
     def test_isc_clause_view_zone_standalone_one_view_passing(self):
         """ Clause view; Statement standalone one-view; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_view_standalone,
             'view red IN { zone www.example.com { auto-dnssec maintain; }; };',
             {'views': [{'class': 'IN',
@@ -64,14 +64,14 @@ view xyz { database this_one; dlz that_one; }; """
              { 'database': 'this_one',
                'dlz': 'that_one',
                'view_name': 'xyz'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_view_series,
             test_string,
             expected_result)
 
     def test_isc_clause_view_series_3_views_passing(self):
         """ Clause view; Statement series three-view; passing """
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_view_series,
             'view red { match-clients { any; }; };' +
             'view green { database those_are; };',
@@ -93,7 +93,7 @@ zone "home" IN {
                'file': '/var/lib/bind/internal/master/db.home',
                'type': 'master',
                'zone_name': 'home'}]}
-        assertParserResultDictTrue( view_all_statements_series, test_string, expected_result)
+        assert_parser_result_dict_true(view_all_statements_series, test_string, expected_result)
 
     def test_isc_view_all_statements_series_passing(self):
         """ Clause View; All Statement series; passing """
@@ -151,7 +151,7 @@ zone "home" IN {
         };
     """
     # view_all_statements_series.
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             view_all_statements_series,
             test_string,
             {'allow-recursion': {'aml': [{'acl_name': 'trusted_cablesupport_acl'}]},

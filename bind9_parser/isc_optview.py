@@ -14,21 +14,21 @@ from pyparsing import Group, Keyword, OneOrMore, Literal, \
     CaselessLiteral, Combine, Optional, Word, alphanums, ZeroOrMore,\
     ungroup
 from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
-    squote, dquote, number_type, name_type, minute_type, seconds_type, \
-    byte_type, run_me, dequoted_path_name, check_options, \
+    number_type, name_type, minute_type, \
+    dequoted_path_name, check_options, \
     size_spec, exclamation, iso8601_duration, view_name, \
-    algorithm_name, fqdn_name_dequoted, fqdn_name_dequotable,\
-    algorithm_name_list_series, charset_filename_base, size_spec_nodefault, size_spec_plain,\
+    algorithm_name, fqdn_name_dequotable,\
+    algorithm_name_list_series, charset_filename_base, size_spec_plain,\
     fixedpoint_type
 from bind9_parser.isc_aml import aml_nesting, aml_choices
-from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip6s_prefix, \
+from bind9_parser.isc_inet import ip4_addr, ip6_addr, \
     ip6_optional_prefix, ip4_addr_or_wildcard, ip6_addr_or_wildcard, \
     inet_ip_port_keyword_and_number_element, \
     inet_ip_port_keyword_and_wildcard_element, dscp_port
 from bind9_parser.isc_utils import dequotable_zone_name
 from bind9_parser.isc_domain import quoted_domain_generic_fqdn, \
-    domain_generic_fqdn, rr_fqdn_w_absolute, rr_domain_name_type, quotable_domain_generic_fqdn, \
-    soa_rname, dequotable_domain_generic_fqdn, dequoted_domain_generic_fqdn
+    domain_generic_fqdn, rr_fqdn_w_absolute, quotable_domain_generic_fqdn, \
+    soa_rname, dequotable_domain_generic_fqdn
 
 optview_stmt_acache_cleaning_interval = (
     Keyword('acache-cleaning-interval').suppress()
@@ -63,10 +63,10 @@ optview_stmt_allow_new_zones = (
 ).setName('allow-new-zones <boolean>;')
 
 optview_stmt_allow_query_cache = (
-        Keyword('allow-query-cache').suppress()
-        - Group(
-    aml_nesting('')
-)('allow_query_cache')
+    Keyword('allow-query-cache').suppress()
+    - Group(
+        aml_nesting('')
+    )('allow_query_cache')
 ).setName('allow-query-cache <aml>;')
 
 optview_stmt_allow_query_cache_on = (
@@ -884,7 +884,7 @@ optview_stmt_query_source_v6 = (
             + (
                 ip6_addr('ip6_addr')
                 | Literal('*')('ip6_addr')
-           )('')
+            )('')
         )('')
         + Optional(inet_ip_port_keyword_and_wildcard_element(''))
     )('query_source_v6')
@@ -1220,7 +1220,7 @@ optview_stmt_response_policy_zone_element_set = (
         ^ optview_stmt_response_policy_element_zone_min_update_interval  # added v9.12
         ^ optview_stmt_response_policy_element_zone_nsdname_enable  # added v9.12
         ^ optview_stmt_response_policy_element_zone_nsip_enable  # added v9.12
-        ^ optview_stmt_response_policy_element_zone_policy_type # added v9.14 (zone-specific only)
+        ^ optview_stmt_response_policy_element_zone_policy_type  # added v9.14 (zone-specific only)
         ^ optview_stmt_response_policy_element_zone_recursive_only
     )
 )
@@ -1460,8 +1460,8 @@ optview_ordering_type = (
 optview_order_element_set = (
     (
         Keyword('zone').suppress()
-            - dequotable_zone_name('name')
-        )
+        - dequotable_zone_name('name')
+    )
     | (
         Keyword('class').suppress()
         - optview_class_type('class')
@@ -1479,7 +1479,8 @@ optview_order_element_set = (
         - optview_ordering_type('order')
     )
 )
-optview_order_element_set.setName('[ class <class> ] [ type <RR_type> ] [ name <domain> ] [ order ( cyclic | random ) ];')
+optview_order_element_set.setName(
+    '[ class <class> ] [ type <RR_type> ] [ name <domain> ] [ order ( cyclic | random ) ];')
 
 optview_order_element_series = (
     Group(
@@ -1488,7 +1489,8 @@ optview_order_element_series = (
         )
     )
 )
-optview_order_element_series.setName('[ class <class> ] [ type <RR_type> ] [ name <domain> ] [ order ( cyclic | random ) ];')
+optview_order_element_series.setName(
+    '[ class <class> ] [ type <RR_type> ] [ name <domain> ] [ order ( cyclic | random ) ];')
 
 optview_rrset_order_group_series = (
     Group(

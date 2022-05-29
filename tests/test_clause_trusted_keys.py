@@ -18,7 +18,7 @@ Description:
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_trusted_keys import \
     clause_stmt_trusted_keys_standalone,\
     clause_stmt_trusted_keys_set, clause_stmt_trusted_keys_series
@@ -39,7 +39,7 @@ class TestClauseHttp(unittest.TestCase):
                       'key_id': '256',
                       'protocol_type': '3',
                       'pubkey_base64': 'ABCDEFG'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_trusted_keys_standalone,
             test_string,
             expected_result)
@@ -56,7 +56,7 @@ trusted-keys {
                       'key_id': '256',
                       'protocol_type': '3',
                       'pubkey_base64': 'ABCDEFG'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_trusted_keys_set,
             test_string,
             expected_result)
@@ -89,7 +89,7 @@ trusted-keys {
                       'key_id': '256',
                       'protocol_type': '3',
                       'pubkey_base64': 'ABCDEFG'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
                 clause_stmt_trusted_keys_series,
                 test_string,
                 expected_result)
@@ -194,7 +194,7 @@ trusted-keys {
                       'key_id': '256',
                       'protocol_type': '3',
                       'pubkey_base64': 'ABC/DEFGasdfasddfasddf'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
                 clause_stmt_trusted_keys_series,
                 test_string,
                 expected_result)

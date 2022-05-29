@@ -25,7 +25,7 @@ from pyparsing import Literal, CaselessLiteral, \
     cppStyleComment, pythonStyleComment, OneOrMore, \
     Suppress, ungroup
 
-unix_pipe_support = False
+UNIX_PIPE_SUPPORT = False
 period = Literal('.')
 exclamation = Char('!')
 exclamation.setName('not')
@@ -46,7 +46,8 @@ isc_boolean.setName('<boolean>')
 charset_hexnums = '0123456789ABCDEFabcdef'
 
 # isc_file_name has no '/', (but path_name do)
-charset_filename_base = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+,-.:?@[\\]^_`|~="
+charset_filename_base = "0123456789abcdefghijklmnopqrstuvwxyz" \
+                        + "ABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+,-.:?@[\\]^_`|~="
 # charset_filename_base is largely printable, but has
 #     no double-quote, single-quote, semicolon, curly-braces, nor slash
 
@@ -183,8 +184,14 @@ quoted_name.setName('<quoted_name>')
 name_type = quotable_name
 
 # dequotable_name
-name_dedquotable = Combine(Char('"').suppress() + Word(charset_name_dquotable, max=62) + Char('"').suppress())
-name_desquotable = Combine(Char("'").suppress() + Word(charset_name_squotable, max=62) + Char("'").suppress())
+name_dedquotable = Combine(
+    Char('"').suppress()
+    - Word(charset_name_dquotable, max=62)
+    - Char('"').suppress())
+name_desquotable = Combine(
+    Char("'").suppress()
+    - Word(charset_name_squotable, max=62)
+    - Char("'").suppress())
 dequotable_name = (
         name_desquotable
         ^ name_dedquotable
@@ -201,7 +208,8 @@ dequoted_name.setName('<quoted_name>')
 # Quoteable acl name
 # acl_name can begin with a digit/alpha/certain-symbol
 # acl_name cannot use '/!#' charset, as well as '{};\'\"'
-charset_acl_name_base = alphanums + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
+charset_acl_name_base = alphanums\
+                        + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
 charset_acl_name_dquotable = charset_acl_name_base + "'"
 charset_acl_name_squotable = charset_acl_name_base + '"'
 acl_name_base = Word(charset_acl_name_base, max=64)
@@ -238,8 +246,14 @@ quoted_key_secret = (
 )('key_secret')
 quoted_key_secret.setName('<quoted_key_secret')
 
-keysecret_dedquoted = Combine(Char('"').suppress() + Word(charset_keysecret_dquotable, max=32765) + Char('"').suppress())
-keysecret_desquoted = Combine(Char("'").suppress() + Word(charset_keysecret_squotable, max=32765) + Char("'").suppress())
+keysecret_dedquoted = Combine(
+    Char('"').suppress()
+    - Word(charset_keysecret_dquotable, max=32765)
+    - Char('"').suppress())
+keysecret_desquoted = Combine(
+    Char("'").suppress()
+    - Word(charset_keysecret_squotable, max=32765)
+    - Char("'").suppress())
 key_secret_dequoted = (
         keysecret_desquoted
         ^ keysecret_dedquoted
@@ -321,7 +335,8 @@ quotable_base64.setName('<quotable_base64>')
 # Quoteable view name
 # view_name can begin with a digit/alpha/certain-symbol
 # view_name cannot use '/!#' charset, as well as '{};\'\"'
-charset_view_name_base = alphanums + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
+charset_view_name_base = alphanums\
+                         + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
 charset_view_name_dquotable = charset_view_name_base + "\'"
 charset_view_name_squotable = charset_view_name_base + '\"'
 
@@ -340,7 +355,8 @@ view_name.setName('<view-name>')
 
 # zone_name can begin with a digit/alpha/certain-symbol
 # zone_name cannot use '/!#' charset, as well as '{};\'\"'
-charset_zone_name_base = alphanums + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
+charset_zone_name_base = alphanums\
+                         + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
 charset_zone_name_dquotable = charset_zone_name_base + "'"
 charset_zone_name_squotable = charset_zone_name_base + '"'
 
@@ -357,8 +373,14 @@ zone_name = (
 )('zone_name')
 zone_name.setName('<zone_name>')
 
-zone_name_dedquotable = Combine(dquote.suppress() + Word(charset_zone_name_dquotable) + dquote.suppress())('zone_name')
-zone_name_desquotable = Combine(squote.suppress() + Word(charset_zone_name_squotable) + squote.suppress())('zone_name')
+zone_name_dedquotable = Combine(
+    dquote.suppress()
+    - Word(charset_zone_name_dquotable)
+    - dquote.suppress())('zone_name')
+zone_name_desquotable = Combine(
+    squote.suppress()
+    - Word(charset_zone_name_squotable)
+    - squote.suppress())('zone_name')
 dequotable_zone_name = (
     zone_name_dedquotable
     | zone_name_desquotable
@@ -425,7 +447,10 @@ charset_krb5_realm = fqdn_name
 
 krb5_realm_name = fqdn_name_dequotable('<realm>')('realm')
 krb5_primary_name = Word(charset_krb5_username, min=1, max=32)('primary')
-krb5_instance_name = Word(charset_krb5_username, min=1, max=256)('instance')  # limited to length of FQDN
+krb5_instance_name = Word(
+    charset_krb5_username, min=1, max=256
+)('instance')  # limited to length of FQDN
+
 #  krb5_principal_name max=(254+1+16))  # limited to length of FQDN + '/' + URI
 krb5_principal_name_base = (
         Combine(
@@ -512,11 +537,11 @@ size_spec_plain = (
         Word(nums).setParseAction(lambda toks: int(toks[0]), max=10)('amount')
         + Optional(
             (
-            Literal('K')
-            | Literal('k')
-            | Literal('M')
-            | Literal('m')
-            | Literal('G')
+                Literal('K')
+                | Literal('k')
+                | Literal('M')
+                | Literal('m')
+                | Literal('G')
             )('unit')
         )
     )('size_spec')
@@ -524,15 +549,15 @@ size_spec_plain = (
 
 size_spec_nodefault = (
     (
-            Group(
-                Word(nums).setParseAction(lambda toks: int(toks[0]), max=10)
-                + Optional(
-                    Literal('K')
-                    | Literal('k')
-                    | Literal('M')
-                    | Literal('m')
-                    | Literal('G')
-                    | Literal('g')
+        Group(
+            Word(nums).setParseAction(lambda toks: int(toks[0]), max=10)
+            - Optional(
+                Literal('K')
+                | Literal('k')
+                | Literal('M')
+                | Literal('m')
+                | Literal('G')
+                | Literal('g')
             )
         )
         | Literal('unlimited')
@@ -558,7 +583,9 @@ master_name.setName('<master_name>')
 
 # iso8601 is not a naive nor aware ISO time-interval
 # iso8601 is a delta time (or duration)
-iso8601_duration = Word(alphanums + '-.+:', min=1, max=63)('iso8601_duration').setName('<iso8601_duration_new>')
+iso8601_duration = Word(
+    alphanums + '-.+:', min=1, max=63
+)('iso8601_duration').setName('<iso8601_duration_new>')
 
 config_base_charset = alphanums + ' \t_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon allowed
 config_base = Word(config_base_charset, min=1, max=4086)
@@ -627,7 +654,8 @@ tls_algorithm_name_list_series.setName('<tls_algorithm_name>; [ <tls_algorithm_n
 
 # Quoteable primary name
 # Yes, ISC Bind9 supports period in primary_name_type
-charset_primary_name = alphanums + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
+charset_primary_name = alphanums \
+                       + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
 primary_name_type = Word(charset_primary_name, min=1, max=63)('primary_name_type')
 primary_name_type.setName('<primary_name>')
 primary_name_type_squotable = Word(charset_primary_name + '"')
@@ -685,6 +713,15 @@ test_data_boolean_failing = [
 
 
 def unit_test_booleans(self, parser_elements):
+    """
+
+    :param self:
+    :type self:
+    :param parser_elements:
+    :type parser_elements:
+    :return:
+    :rtype:
+    """
     cumulative_result_false = False
     cumulative_result_true = True
     for this_stmt_name, this_parser_element in parser_elements:
@@ -696,7 +733,9 @@ def unit_test_booleans(self, parser_elements):
 
             constructed_stmt = this_stmt_name + ' ' + this_test_data + ';'
             print('stmt: ', constructed_stmt)
-            result = this_parser_element.runTests([constructed_stmt], failureTests=(not expected_result))
+            result = this_parser_element.runTests(
+                [constructed_stmt],
+                failureTests=(not expected_result))
             # Only takes one detractor to fail the whole unit test run
             print('result: ', result[0])
             if not result:
@@ -709,7 +748,9 @@ def unit_test_booleans(self, parser_elements):
 
             constructed_stmt = this_stmt_name + ' ' + this_test_data + ';'
             print('stmt: ', constructed_stmt)
-            result = this_parser_element.runTests([constructed_stmt], failureTests=(not expected_result))
+            result = this_parser_element.runTests(
+                [constructed_stmt],
+                failureTests=(not expected_result))
 
             # Only takes one detractor to fail the whole unit test run
             print('result: ', result[0])
@@ -720,6 +761,11 @@ def unit_test_booleans(self, parser_elements):
 
 
 def trace_me(a_tokens):
+    """
+    Tracer routine
+    :param a_tokens: takes in a list of token
+    :type a_tokens: outputs a list of token
+    """
     print('trace_me trace_me trace_me trace_me trace_me')
     a_tokens.dump()
     # print('a_tokens.dump(): %s\n' % a_tokens.dump())
@@ -773,11 +819,11 @@ def run_me(a_parse_element, a_test_data, a_parse_all=True, a_comment='#',
 pos = -1
 
 
-def assertParserResultDict(parser_element,
-                           test_strings,
-                           expected_results,
-                           assert_flag=True,
-                           message=''):
+def assert_parser_result_dict(parser_element,
+                              test_strings,
+                              expected_results,
+                              assert_flag=True,
+                              message=''):
     """
     A nice unit test tool which provides an assert()-like function
     that takes an string, parse the string, takes its computed
@@ -795,6 +841,8 @@ def assertParserResultDict(parser_element,
                          If False, then parse MUST fail or expected
                          result does not match, else an exception
                          gets raised
+    :param message:  If supplied, outputs the message associated with
+                     this error message
     :return: Always returns True (exception handles the False, like
              an assert() class would do)
     """
@@ -869,26 +917,26 @@ def assertParserResultDict(parser_element,
         raise SyntaxError(errmsg)
 
 
-def assertParserResultDictTrue(parser_element, test_strings, expected_results, message=''):
+def assert_parser_result_dict_true(parser_element, test_strings, expected_results, message=''):
     """
     A nice wrapper routine to ensure that the word 'True' is in the
     function name.
     """
-    assertParserResultDict(parser_element=parser_element,
-                           test_strings=test_strings,
-                           expected_results=expected_results,
-                           assert_flag=True, message=message)
+    assert_parser_result_dict(parser_element=parser_element,
+                              test_strings=test_strings,
+                              expected_results=expected_results,
+                              assert_flag=True, message=message)
 
 
-def assertParserResultDictFalse(parser_element, test_strings, expected_results, message=''):
+def assert_parser_result_dict_false(parser_element, test_strings, expected_results, message=''):
     """
     A nice wrapper routine to ensure that the word 'False' is in the
     function name.
     """
-    assertParserResultDict(parser_element=parser_element,
-                           test_strings=test_strings,
-                           expected_results=expected_results,
-                           assert_flag=False, message=message)
+    assert_parser_result_dict(parser_element=parser_element,
+                              test_strings=test_strings,
+                              expected_results=expected_results,
+                              assert_flag=False, message=message)
 
 
 def parse_me(apm_parse_element,
@@ -896,6 +944,22 @@ def parse_me(apm_parse_element,
              apm_assert_flag=True,
              apm_debug=False,
              apm_verbosity=False):
+    """
+     Parse this particular element
+
+    :param apm_parse_element:
+    :type apm_parse_element:
+    :param apm_test_data:
+    :type apm_test_data:
+    :param apm_assert_flag:
+    :type apm_assert_flag:
+    :param apm_debug:
+    :type apm_debug:
+    :param apm_verbosity:
+    :type apm_verbosity:
+    :return:
+    :rtype:
+    """
     apm_parse_element.setDebug(flag=apm_debug)
     if apm_verbosity:
         print('\ntest_strings: %s' % apm_assert_flag)
@@ -933,30 +997,41 @@ def parse_me(apm_parse_element,
     if status == apm_assert_flag:
         print('assert(True)')
         return retsts
-    else:
-        errmsg = 'Error(assert=' + str(apm_assert_flag) + '): \"' + apm_test_data + '\".'
-        raise SyntaxError(errmsg)
+    errmsg = 'Error(assert=' + str(apm_assert_flag) + '): \"' + apm_test_data + '\".'
+    raise SyntaxError(errmsg)
 
 
 def test_main(tm_parse_element):
     """
-    python_script              # defaults to STDIN for input a_file (good for quick test or cut-n-paste)
+    test main routine
+
+    :param tm_parse_element:
+    :type PyParsing.ParseElement:
+    :return:
+    :rtype:
+    :return:
+
+    python_script              # defaults to STDIN for input a_file
+                                 (good for quick test or cut-n-paste)
     python_script -t           # Exercise built-in unit test
     python_script <filespec>   # Read a_file and syntax-check it
     python_script -v           # Increase verbosity level
     python_script -d           # Increase PyParsing debugging
-    :return:
     """
     pgm_basename = os.path.basename(sys.argv[0])
 
-    prgm_desc = 'Exercise or test the {} function in {} python script against ParserElement "{}"'.format(
-        tm_parse_element.__class__.__name__, pgm_basename, tm_parse_element)
+    prgm_desc = 'Exercise or test the {} function in {} python script against ParserElement "{}" '\
+        .format(
+            tm_parse_element.__class__.__name__,
+            pgm_basename,
+            tm_parse_element)
     parser = argparse.ArgumentParser(description=prgm_desc)
     parser.add_argument('-v', '--verbose', action='store_true', help='Run with extra messages')
     parser.add_argument('-d', '--debug', action='store_true',
-                        help='Run with PyParsing debugging enabled; outputs "Match/Matched" a_debug lines')
+                        help='Run with PyParsing debugging enabled; '
+                             + 'outputs "Match/Matched" a_debug lines')
 
-    if unix_pipe_support:
+    if UNIX_PIPE_SUPPORT:
         default_arg1 = '-'
     else:
         default_arg1 = None
@@ -973,7 +1048,7 @@ def test_main(tm_parse_element):
         print('argparse.args:', args)
     retsts = 0
     test_data = None
-    if not unix_pipe_support:
+    if not UNIX_PIPE_SUPPORT:
         # test if file exist
         if args.filespec is None:
             retsts = errno.ENOTTY  # Most people don't want UNIX pipe support
@@ -1033,6 +1108,14 @@ def test_main(tm_parse_element):
 
 
 def x_dump_var(s, fn=repr):
+    """
+
+    :rtype: None
+    :param s: name of the string
+    :type s: str
+    :param fn:
+    :type fn:
+    """
     print("%s -> %s" % (s, fn(eval(s))))
 
     x_dump_var("list(result)")

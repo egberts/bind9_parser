@@ -16,7 +16,7 @@ Description:
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_trust_anchors import trust_anchors_stmt_key_type_keyword, \
     trust_anchors_stmt_key_id_integer, \
     trust_anchors_stmt_element, trust_anchors_stmt_element_series, \
@@ -31,7 +31,7 @@ class TestClauseHttp(unittest.TestCase):
         """ Test Clause 'trust_anchors'; key-type; passing """
         test_string = 'initial-ds'
         expected_result = {'key_type': 'initial-ds'}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             trust_anchors_stmt_key_type_keyword,
             test_string,
             expected_result)
@@ -45,7 +45,7 @@ class TestClauseHttp(unittest.TestCase):
                        'key_type': 'static-ds',
                        'protocol_type': '3',
                        'pubkey_base64': 'ABCDEFG'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             trust_anchors_stmt_element,
             test_string,
             expected_result)
@@ -89,7 +89,7 @@ test5.example static-key 256 3 15 'ABC/DEFGasdfasddfasddf';
                        'key_type': 'static-key',
                        'protocol_type': '3',
                        'pubkey_base64': 'ABC/DEFGasdfasddfasddf'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             trust_anchors_stmt_element_series,
             test_string,
             expected_result)
@@ -107,7 +107,7 @@ trust-anchors {
                        'key_type': 'initial-ds',
                        'protocol_type': '3',
                        'pubkey_base64': 'ABCDEFG'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_trust_anchors_standalone,
             test_string,
             expected_result)
@@ -125,7 +125,7 @@ trust-anchors {
                        'key_type': 'initial-ds',
                        'protocol_type': '3',
                        'pubkey_base64': 'ABCDEFG'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             clause_stmt_trust_anchors_set,
             test_string,
             expected_result)
@@ -161,7 +161,7 @@ trust-anchors {
                        'key_type': 'static-key',
                        'protocol_type': '3',
                        'pubkey_base64': 'ABCDEFG'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
                 clause_stmt_trust_anchors_series,
                 test_string,
                 expected_result)
@@ -281,7 +281,7 @@ trust-anchors {
                        'key_type': 'initial-key',
                        'protocol_type': '3',
                        'pubkey_base64': 'ABC/DEFGasdfasddfasddf'}]}
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
                 clause_stmt_trust_anchors_series,
                 test_string,
                 expected_result)

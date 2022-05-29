@@ -8,7 +8,7 @@ Description:  Performs unit test on the isc_clause_acl.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assertParserResultDictTrue
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_acl import clause_stmt_acl_series, clause_stmt_acl_standalone
 
 
@@ -68,7 +68,7 @@ class TestClauseACL(unittest.TestCase):
                 }
             ]
         }
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
                 clause_stmt_acl_standalone,
                 test_string,
                 expected_result)
@@ -96,7 +96,7 @@ class TestClauseACL(unittest.TestCase):
                     ]}
 
             ]}
-        assertParserResultDictTrue(clause_stmt_acl_series, test_data, expected_result)
+        assert_parser_result_dict_true(clause_stmt_acl_series, test_data, expected_result)
 
     def test_isc_clause_stmt_acl_public(self):
         """ Clause ACL; clause_stmt_acl_series; Public; passing """
@@ -128,7 +128,7 @@ class TestClauseACL(unittest.TestCase):
             trusted_cablesupport_acl;
             localnet_acl; }; """
         my_csa = clause_stmt_acl_series.setWhitespaceChars(' \t\n')
-        assertParserResultDictTrue(
+        assert_parser_result_dict_true(
             my_csa,
             test_data,
             {'acl': [{'acl_name': 'xfer_acl',

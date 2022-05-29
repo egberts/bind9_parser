@@ -11,7 +11,7 @@ Title: AML For controls, options, view, And zone Clauses
 Description: Provides Address Match List (AML)-related grammar in
              PyParsing engine for ISC-configuration style
 """
-from pyparsing import ZeroOrMore, Forward, Group, CaselessLiteral, ungroup, Optional
+from pyparsing import ZeroOrMore, Forward, Group, CaselessLiteral, Optional
 from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
         exclamation, acl_name
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, ip6s_subnet, ip4s_subnet
@@ -47,7 +47,6 @@ aml_choices_key_id.setName('"key" <key_id>')
 
 aml_choices_acl_name = acl_name('')
 
-# ^ (ungroup(ip46_addr_or_prefix)('ip_addr'))  # TODO: separate this apart
 aml_choices = (
         (aml_choices_key_id('key_id'))
         ^ (
@@ -72,6 +71,7 @@ aml_choices = (
 )
 
 aml_nesting = Forward()
+# pylint: disable=W0106
 aml_nesting << (
         lbrack
         + (
@@ -95,7 +95,7 @@ aml_nesting << (
                     )  # never set a ResultsLabel here, you get duplicate but un-nested 'ip_addr'
                 )  # never set a ResultsLabel here, you get no []
             )(None)
-        ) ('aml')
+        )('aml')
         + rbrack
         + semicolon
 )(None)  # ResultsLabel here didn't force a list, one before here did.

@@ -10,14 +10,14 @@ Description: Various 'options' statement that is used
              only by 'options' clause.
 """
 from pyparsing import Group, Keyword, Optional, \
-    ZeroOrMore, OneOrMore, Combine, Literal, ungroup, CaselessLiteral
+    ZeroOrMore, OneOrMore, Literal, ungroup, CaselessLiteral
 from pyparsing import pyparsing_common
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
-    name_type, dequotable_path_name, number_type, seconds_type, \
-    isc_boolean, fqdn_name, key_id, krb5_principal_name,\
-    exclamation, dequoted_path_name, squote, dquote, algorithm_name_list_series,\
+    dequotable_path_name, number_type, seconds_type, \
+    isc_boolean, krb5_principal_name,\
+    exclamation, dequoted_path_name, squote, dquote, \
     fqdn_name_dequoted, fqdn_name_dequotable, quotable_name, \
-    algorithm_name, size_spec_nodefault, iso8601_duration, tsig_session_key_name
+    size_spec_nodefault, iso8601_duration, tsig_session_key_name
 from bind9_parser.isc_inet import ip_port,\
     inet_dscp_port_keyword_and_number_element, \
     inet_http_port_keyword_and_number_element, \
@@ -1027,14 +1027,13 @@ options_statements_set = (
     ^ options_stmt_tkey_dhkey
 )
 
-#options_statements_set = (
+# options_statements_set = (
 #    options_stmt_disable_algorithms
 #    ^ options_stmt_version
 #
-#)
+# )
 options_statements_series = (
     ZeroOrMore(
         options_statements_set
     )
 )
-
