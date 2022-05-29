@@ -1718,6 +1718,58 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             {'servfail_ttl': 1}
         )
 
+    # optview_stmt_sortlist
+    def test_isc_optview_stmt_sortlist_1_passing(self):
+        """ Clause options/view; Statement sortlist; passing """
+        test_string = [
+            'sortlist { localhost; localnets; };',
+            'sortlist { localnets; };',
+            """sortlist { 
+    { localhost; 
+        { localnets; 192.168.1.0/24; 
+            { 192.168.2.0/24; 192.168.3.0/24; }; }; }; 
+    { 192.168.1.0/24; { 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; };""",
+        ]
+        result = optview_stmt_sortlist.runTests(test_string, failureTests=False)
+        self.assertTrue(result[0])
+
+    # optview_stmt_sortlist
+    def test_isc_optview_stmt_sortlist_2_passing(self):
+        """ Clause options/view; Statement sortlist; passing """
+        assertParserResultDictTrue(
+            optview_stmt_sortlist,
+            'sortlist { localhost; localnets; };',
+            {'sortlist': {'aml': [{'keyword': 'localhost'},
+                                  {'keyword': 'localnets'}]}}
+        )
+
+    def test_isc_optview_stmt_sortlist_3_passing(self):
+        """ Clause options/view; Statement sortlist 2; passing """
+        assertParserResultDictTrue(
+            optview_stmt_sortlist,
+            """sortlist { 
+    { localhost; 
+        { localnets; 192.168.1.0/24; 
+            { 192.168.2.0/24; 192.168.3.0/24; }; }; }; 
+    { 192.168.1.0/24; { 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; };""",
+            {'sortlist': {'aml': [{'aml': [{'keyword': 'localhost'},
+                                           {'aml': [{'keyword': 'localnets'},
+                                                    {'ip4_addr': '192.168.1.0',
+                                                     'prefix': '24'},
+                                                    {'aml': [{'ip4_addr': '192.168.2.0',
+                                                              'prefix': '24'},
+                                                             {'ip4_addr': '192.168.3.0',
+                                                              'prefix': '24'}]}]}]},
+                                  {'aml': [{'ip4_addr': '192.168.1.0',
+                                            'prefix': '24'},
+                                           {'aml': [{'ip4_addr': '192.168.1.0',
+                                                     'prefix': '24'},
+                                                    {'aml': [{'ip4_addr': '192.168.2.0',
+                                                              'prefix': '24'},
+                                                             {'ip4_addr': '192.168.3.0',
+                                                              'prefix': '24'}]}]}]}]}}
+        )
+
     # optview_stmt_stale_answer_client_timeout
     def test_isc_optview_stmt_stale_answer_client_timeout_passing(self):
         """ Clause options/view; Statement 'stale-answer-client-timeout'; passing """
@@ -1853,58 +1905,6 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
             optview_stmt_zero_no_soa_ttl_cache,
             'zero-no-soa-ttl-cache true;',
             {'zero_no_soa_ttl_cache': 'True'}
-        )
-
-    # optview_stmt_sortlist
-    def test_isc_optview_stmt_sortlist_1_passing(self):
-        """ Clause options/view; Statement sortlist; passing """
-        test_string = [
-            'sortlist { localhost; localnets; };',
-            'sortlist { localnets; };',
-            """sortlist { 
-    { localhost; 
-        { localnets; 192.168.1.0/24; 
-            { 192.168.2.0/24; 192.168.3.0/24; }; }; }; 
-    { 192.168.1.0/24; { 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; };""",
-        ]
-        result = optview_stmt_sortlist.runTests(test_string, failureTests=False)
-        self.assertTrue(result[0])
-
-    # optview_stmt_sortlist
-    def test_isc_optview_stmt_sortlist_2_passing(self):
-        """ Clause options/view; Statement sortlist; passing """
-        assertParserResultDictTrue(
-            optview_stmt_sortlist,
-            'sortlist { localhost; localnets; };',
-            {'sortlist': {'aml': [{'keyword': 'localhost'},
-                                  {'keyword': 'localnets'}]}}
-        )
-
-    def test_isc_optview_stmt_sortlist_3_passing(self):
-        """ Clause options/view; Statement sortlist 2; passing """
-        assertParserResultDictTrue(
-            optview_stmt_sortlist,
-            """sortlist { 
-    { localhost; 
-        { localnets; 192.168.1.0/24; 
-            { 192.168.2.0/24; 192.168.3.0/24; }; }; }; 
-    { 192.168.1.0/24; { 192.168.1.0/24; { 192.168.2.0/24; 192.168.3.0/24; }; }; }; };""",
-            {'sortlist': {'aml': [{'aml': [{'keyword': 'localhost'},
-                                           {'aml': [{'keyword': 'localnets'},
-                                                    {'ip4_addr': '192.168.1.0',
-                                                     'prefix': '24'},
-                                                    {'aml': [{'ip4_addr': '192.168.2.0',
-                                                              'prefix': '24'},
-                                                             {'ip4_addr': '192.168.3.0',
-                                                              'prefix': '24'}]}]}]},
-                                  {'aml': [{'ip4_addr': '192.168.1.0',
-                                            'prefix': '24'},
-                                           {'aml': [{'ip4_addr': '192.168.1.0',
-                                                     'prefix': '24'},
-                                                    {'aml': [{'ip4_addr': '192.168.2.0',
-                                                              'prefix': '24'},
-                                                             {'ip4_addr': '192.168.3.0',
-                                                              'prefix': '24'}]}]}]}]}}
         )
 
     def test_isc_optview_statements_set_passing(self):

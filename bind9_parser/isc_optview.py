@@ -1701,6 +1701,7 @@ optview_statements_set = (
     ^ optview_stmt_minimal_any
     ^ optview_stmt_minimal_responses
     ^ optview_stmt_new_zones_directory
+    ^ optview_stmt_no_case_compress
     ^ optview_stmt_notify_rate
     ^ optview_stmt_nsec3_test_zone
     ^ optview_stmt_nta_lifetime
