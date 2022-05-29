@@ -67,98 +67,7 @@ print(result.asDict()):
 ```
 
 
-# Bonus Tool
 
-## Offline Search Engine
-
-Also, I provide a tool to help find related clauses or statements or even keywords related to your specific topic.  
-
-Take **DNSSEC** as a topic, let us search for these keywords, oh in Bind9 version 9.8 (kinda old, uh, but it goes up to ***v9.19.1*** **!!!**:
-
-```console
-$ python3 examples/rough-draft/namedconfglobal.py  -w topic -k answer -v9.19.1
-Version: 9.19.1
-Pattern: answer
-----------------
-sortlist
-      comment:
- 
-The response to a DNS query may consist of multiple resource records
-(RRs) forming a resource record set (RRset). The name server
-normally returns the RRs within the RRset in an indeterminate order (but
-see the ``rrset-order`` statement in :ref:`rrset_ordering`). The client resolver code should
-rearrange the RRs as appropriate: that is, using any addresses on the
-local net in preference to other addresses. However, not all resolvers
-can do this or are correctly configured. When a client is using a local
-server, the sorting can be performed in the server, based on the
-client's address. This only requires configuring the name servers, not
-all the clients.
-
-The ``sortlist`` statement (see below) takes an ``address_match_list`` and
-interprets it in a special way. Each top-level statement in the ``sortlist``
-must itself be an explicit ``address_match_list`` with one or two elements. The
-first element (which may be an IP address, an IP prefix, an ACL name, or a nested
-``address_match_list``) of each top-level list is checked against the source
-address of the query until a match is found. When the addresses in the first
-element overlap, the first rule to match is selected.
-
-Once the source address of the query has been matched, if the top-level
-statement contains only one element, the actual primitive element that
-matched the source address is used to select the address in the response
-to move to the beginning of the response. If the statement is a list of
-two elements, then the second element is interpreted as a topology
-preference list. Each top-level element is assigned a distance, and the
-address in the response with the minimum distance is moved to the
-beginning of the response.
-
-In the following example, any queries received from any of the addresses
-of the host itself get responses preferring addresses on any of the
-locally connected networks. Next most preferred are addresses on the
-192.168.1/24 network, and after that either the 192.168.2/24 or
-192.168.3/24 network, with no preference shown between these two
-networks. Queries received from a host on the 192.168.1/24 network
-prefer other addresses on that network to the 192.168.2/24 and
-192.168.3/24 networks. Queries received from a host on the 192.168.4/24
-or the 192.168.5/24 network only prefer other addresses on their
-directly connected networks.
-
-
-----------------
-stale-answer-enable
-      comment:
- 
-If ``yes``, enable the returning of "stale" cached answers when the name
-servers for a zone are not answering and the ``stale-cache-enable`` option is
-also enabled. The default is not to return stale answers.
-
-Stale answers can also be enabled or disabled at runtime via
-:option:`rndc serve-stale on <rndc serve-stale>` or :option:`rndc serve-stale off <rndc serve-stale>`; these override 
-the configured setting. :option:`rndc serve-stale reset <rndc serve-stale>` restores the
-setting to the one specified in :iscman:`named.conf`. Note that if stale
-answers have been disabled by :iscman:`rndc`, they cannot be
-re-enabled by reloading or reconfiguring :iscman:`named`; they must be
-re-enabled with :option:`rndc serve-stale on <rndc serve-stale>`, or the server must be
-restarted.
-
-Information about stale answers is logged under the ``serve-stale``
-log category.
-
-
-----------------
-stale-answer-ttl
-      comment:
- 
-This specifies the TTL to be returned on stale answers. The default is 30
-seconds. The minimum allowed is 1 second; a value of 0 is updated silently
-to 1 second.
-
-For stale answers to be returned, they must be enabled, either in the
-configuration file using ``stale-answer-enable`` or via
-:option:`rndc serve-stale on <rndc serve-stale>`.
-
-
-END
-```
 # Quick HOWTO
 
 To take your `named.conf` file and output a Pythonized variable containing ALL
@@ -388,6 +297,99 @@ Closest Python (and configuration file) parser that I could find was
 Lots of generator, beautifier, lint, builder, change detector for Bind9 everywhere, but not a Python parser for Bind9 configuration file.
 
 Works for Bind 4.9 to latest v9.19.1.
+
+# Bonus Tool
+
+## Offline Search Engine
+
+Also, I provide a tool to help find related clauses or statements or even keywords related to your specific topic.  
+
+Take **DNSSEC** as a topic, let us search for these keywords, oh in Bind9 version 9.8 (kinda old, uh, but it goes up to ***v9.19.1*** **!!!**:
+
+```console
+$ python3 examples/rough-draft/namedconfglobal.py  -w topic -k answer -v9.19.1
+Version: 9.19.1
+Pattern: answer
+----------------
+sortlist
+      comment:
+ 
+The response to a DNS query may consist of multiple resource records
+(RRs) forming a resource record set (RRset). The name server
+normally returns the RRs within the RRset in an indeterminate order (but
+see the ``rrset-order`` statement in :ref:`rrset_ordering`). The client resolver code should
+rearrange the RRs as appropriate: that is, using any addresses on the
+local net in preference to other addresses. However, not all resolvers
+can do this or are correctly configured. When a client is using a local
+server, the sorting can be performed in the server, based on the
+client's address. This only requires configuring the name servers, not
+all the clients.
+
+The ``sortlist`` statement (see below) takes an ``address_match_list`` and
+interprets it in a special way. Each top-level statement in the ``sortlist``
+must itself be an explicit ``address_match_list`` with one or two elements. The
+first element (which may be an IP address, an IP prefix, an ACL name, or a nested
+``address_match_list``) of each top-level list is checked against the source
+address of the query until a match is found. When the addresses in the first
+element overlap, the first rule to match is selected.
+
+Once the source address of the query has been matched, if the top-level
+statement contains only one element, the actual primitive element that
+matched the source address is used to select the address in the response
+to move to the beginning of the response. If the statement is a list of
+two elements, then the second element is interpreted as a topology
+preference list. Each top-level element is assigned a distance, and the
+address in the response with the minimum distance is moved to the
+beginning of the response.
+
+In the following example, any queries received from any of the addresses
+of the host itself get responses preferring addresses on any of the
+locally connected networks. Next most preferred are addresses on the
+192.168.1/24 network, and after that either the 192.168.2/24 or
+192.168.3/24 network, with no preference shown between these two
+networks. Queries received from a host on the 192.168.1/24 network
+prefer other addresses on that network to the 192.168.2/24 and
+192.168.3/24 networks. Queries received from a host on the 192.168.4/24
+or the 192.168.5/24 network only prefer other addresses on their
+directly connected networks.
+
+
+----------------
+stale-answer-enable
+      comment:
+ 
+If ``yes``, enable the returning of "stale" cached answers when the name
+servers for a zone are not answering and the ``stale-cache-enable`` option is
+also enabled. The default is not to return stale answers.
+
+Stale answers can also be enabled or disabled at runtime via
+:option:`rndc serve-stale on <rndc serve-stale>` or :option:`rndc serve-stale off <rndc serve-stale>`; these override 
+the configured setting. :option:`rndc serve-stale reset <rndc serve-stale>` restores the
+setting to the one specified in :iscman:`named.conf`. Note that if stale
+answers have been disabled by :iscman:`rndc`, they cannot be
+re-enabled by reloading or reconfiguring :iscman:`named`; they must be
+re-enabled with :option:`rndc serve-stale on <rndc serve-stale>`, or the server must be
+restarted.
+
+Information about stale answers is logged under the ``serve-stale``
+log category.
+
+
+----------------
+stale-answer-ttl
+      comment:
+ 
+This specifies the TTL to be returned on stale answers. The default is 30
+seconds. The minimum allowed is 1 second; a value of 0 is updated silently
+to 1 second.
+
+For stale answers to be returned, they must be enabled, either in the
+configuration file using ``stale-answer-enable`` or via
+:option:`rndc serve-stale on <rndc serve-stale>`.
+
+
+END
+```
 
 # Coverages
 * [![Coverage Status (master)](https://coveralls.io/repos/github/egberts/bind9_parser/badge.svg?branch=master)](https://coveralls.io/github/egberts/bind9_parser?branch=master)
