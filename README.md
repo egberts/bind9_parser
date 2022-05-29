@@ -304,7 +304,7 @@ Works for Bind 4.9 to latest v9.19.1.
 
 Also, I provide a tool to help find related clauses or statements or even keywords related to your specific topic.  
 
-Take **DNSSEC** as a topic, let us search for these keywords, oh in Bind9 version 9.8 (kinda old, uh, but it goes up to ***v9.19.1*** **!!!**:
+Take **ANSWER** as a topic, let us search for this keyword, oh in Bind9 version 9.8 (kinda old, uh, but it goes up to ***v9.19.1*** **!!!**:
 
 ```console
 $ python3 examples/rough-draft/namedconfglobal.py  -w topic -k answer -v9.19.1
