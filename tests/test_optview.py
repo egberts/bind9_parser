@@ -777,7 +777,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assert_parser_result_dict_true(
             optview_stmt_fetches_per_server,
             'fetches-per-server 0 fail;',
-            {'action': 'fail', 'fetches_per_server': 0}
+            {'fetches_per_server': {'action': 'fail', 'fetches': 0}}
         )
 
     def test_isc_optview_stmt_fetches_per_zone_ut_passing(self):
@@ -796,7 +796,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assert_parser_result_dict_true(
             optview_stmt_fetches_per_zone,
             'fetches-per-zone 0 drop;',
-            {'action': 'drop', 'fetches_per_zone': 0}
+            {'fetches_per_zone': {'action': 'drop', 'fetches': 0}}
         )
 
     # XXXX optview_stmt_files

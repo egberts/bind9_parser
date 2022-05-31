@@ -521,22 +521,26 @@ optview_stmt_fetch_quota_params.setName('fetch-quota-params <number> <float> <fl
 
 optview_stmt_fetches_per_server = (
     Keyword('fetches-per-server').suppress()
-    - ungroup(number_type)('fetches_per_server')
-    - Optional(
-        Keyword('drop')
-        | Keyword('fail')
-    )('action')
+    - Group(
+        number_type('fetches')
+        - Optional(
+            Keyword('drop')
+            | Keyword('fail')
+        )('action')
+    )('fetches_per_server')
     - semicolon
 )
 optview_stmt_fetches_per_server.setName('fetches-per-server <fetches_per_query> [ ( drop | fail ) ];')
 
 optview_stmt_fetches_per_zone = (
     Keyword('fetches-per-zone').suppress()
-    - ungroup(number_type)('fetches_per_zone')
-    - Optional(
-        Keyword('drop')
-        | Keyword('fail')
-    )('action')
+    - Group(
+         number_type('fetches')
+        - Optional(
+            Keyword('drop')
+            | Keyword('fail')
+        )('action')
+    )('fetches_per_zone')
     - semicolon
 )
 optview_stmt_fetches_per_zone.setName('fetches-per-zone <fetches_per_query> [ ( drop | fail ) ];')
