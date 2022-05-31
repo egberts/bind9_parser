@@ -62,13 +62,25 @@ options_all_statements_series = (
     )
 )
 
+clause_stmt_options_standalone = (
+    Keyword('options').suppress()
+    - Group(
+        lbrack
+        - (
+            options_all_statements_series
+        )
+        + rbrack
+    )('options*')
+    + semicolon
+)
+
 clause_stmt_options = (
     Keyword('options').setParseAction(counter_options).suppress()
     - Group(
         lbrack
         - ZeroOrMore(options_all_statements_set)
         + rbrack
-    )('')
+    )('options*')  # single unordered dict; if statement gets reused, then that statement is indexed instead
     + semicolon
-)('options')
+)
 clause_stmt_options.setName('options { <options-statement>; ... };')

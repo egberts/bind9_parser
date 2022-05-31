@@ -19,7 +19,7 @@ from bind9_parser.isc_clause_http import clause_stmt_http_standalone
 from bind9_parser.isc_clause_key import clause_stmt_key_standalone
 from bind9_parser.isc_clause_logging import clause_stmt_logging_standalone
 from bind9_parser.isc_clause_managed_keys import clause_stmt_managed_keys_standalone
-from bind9_parser.isc_clause_options import clause_stmt_options
+from bind9_parser.isc_clause_options import clause_stmt_options_standalone
 from bind9_parser.isc_clause_parental_agents import clause_stmt_parental_agents_standalone
 from bind9_parser.isc_clause_plugin import clause_stmt_plugin_standalone
 from bind9_parser.isc_clause_primaries import clause_stmt_primaries_standalone
@@ -37,25 +37,25 @@ from bind9_parser.isc_clause_zone import clause_stmt_zone_standalone
 optional_clause_stmt_set = (
         clause_stmt_acl_standalone
         #    | (clause_catalog_zones + semicolon)
-        | clause_stmt_control_standalone
-        | clause_stmt_dnssecpolicy_standalone
-        | clause_stmt_dlz_standalone
-        | clause_stmt_dyndb_standalone
-        | clause_stmt_key_standalone
-        | clause_stmt_http_standalone
-        | clause_stmt_logging_standalone
-        #    | (clause_lwres + semicolon)
-        | clause_stmt_managed_keys_standalone
-        | clause_stmt_parental_agents_standalone
-        | clause_stmt_plugin_standalone
-        | clause_stmt_primaries_standalone
-        | clause_stmt_server_standalone
-        | clause_stmt_statistics_channels_standalone
-        | clause_stmt_tls_standalone
-        | clause_stmt_trust_anchors_standalone
-        | clause_stmt_trusted_keys_standalone
-        | clause_stmt_view_standalone
-        | clause_stmt_zone_standalone
+        ^ clause_stmt_control_standalone
+        ^ clause_stmt_dnssecpolicy_standalone
+        ^ clause_stmt_dlz_standalone
+        ^ clause_stmt_dyndb_standalone
+        ^ clause_stmt_key_standalone
+        ^ clause_stmt_http_standalone
+        ^ clause_stmt_logging_standalone
+        ^ clause_stmt_managed_keys_standalone
+        # 'options' is not optional but mandatory, gets included elsewhere
+        ^ clause_stmt_parental_agents_standalone
+        ^ clause_stmt_plugin_standalone
+        ^ clause_stmt_primaries_standalone
+        ^ clause_stmt_server_standalone
+        ^ clause_stmt_statistics_channels_standalone
+        ^ clause_stmt_tls_standalone
+        ^ clause_stmt_trust_anchors_standalone
+        ^ clause_stmt_trusted_keys_standalone
+        ^ clause_stmt_view_standalone
+        ^ clause_stmt_zone_standalone
         )
 
 
@@ -68,7 +68,7 @@ optional_clause_stmt_series = (
 
 # Exactly one 'options' clause
 # options { a; };
-mandatory_clause_stmt_set = clause_stmt_options
+mandatory_clause_stmt_set = clause_stmt_options_standalone
 
 # Use the ZeroOrMore(optional) & mandatory & ZeroOrMore(optional) approach
 # clause_statements = (
@@ -83,6 +83,6 @@ mandatory_clause_stmt_set = clause_stmt_options
 # TODO: Unable to enforce mixed mode 1-* and 1-1 clauses (external logic required here?)
 # TODO: BUG https://github.com/pyparsing/pyparsing/issues/167
 clause_statements = ZeroOrMore(
-    mandatory_clause_stmt_set
-    | optional_clause_stmt_set
+    optional_clause_stmt_set
+    ^ mandatory_clause_stmt_set
 )(None)
