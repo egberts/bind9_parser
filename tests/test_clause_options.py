@@ -274,17 +274,16 @@ ipv4only-enable no;
 ipv4only-server ipv4only.con-tact.string.content;
 ixfr-from-differences primary;
 """,
-            {'action': 'drop',
-             'edns_udp_size': 512,
+            {'edns_udp_size': 512,
              'empty_contact': {'soa_contact_name': 'empty-contact-string-content'},
              'empty_server': {'soa_contact_name': 'empty-server-string-content'},
              'empty_zones_enable': 'no',
-             'fetch_quota_params': {'high_threshold': 10,
-                                    'low_threshold': 10,
-                                    'moving_average_discount_rate': 10,
+             'fetch_quota_params': {'high_threshold': 10.0,
+                                    'low_threshold': 10.0,
+                                    'moving_average_discount_rate': 10.0,
                                     'moving_avg_recalculate_interval': 5},
-             'fetches_per_server': 5,
-             'fetches_per_zone': 4,
+             'fetches_per_server': {'action': 'drop', 'fetches': 5},
+             'fetches_per_zone': {'action': 'drop', 'fetches': 4},
              'files': {'files_count': 'unlimited'},
              'flush_zones_on_shutdown': 'no',
              'forward': 'only',
@@ -894,8 +893,7 @@ zero-no-soa-ttl-cache no;
 zone-statistics terse;
 
 """,
-            {'action': 'drop',
-             'allow-recursion': {'aml': [{'ip4_addr': '127.0.0.1'}]},
+            {'allow-recursion': {'aml': [{'ip4_addr': '127.0.0.1'}]},
              'allow-recursion-on': {'aml': [{'ip4_addr': '127.0.0.1'}]},
              'allow_new_zones': 'yes',
              'allow_notify': {'aml': [{'ip4_addr': '127.0.0.1'}]},
@@ -987,8 +985,8 @@ zone-statistics terse;
                                     'low_threshold': 1.0,
                                     'moving_average_discount_rate': 1.0,
                                     'moving_avg_recalculate_interval': 5},
-             'fetches_per_server': 5,
-             'fetches_per_zone': 4,
+             'fetches_per_server': {'action': 'drop', 'fetches': 5},
+             'fetches_per_zone': {'action': 'drop', 'fetches': 4},
              'files': {'files_count': 'unlimited'},
              'flush_zones_on_shutdown': 'no',
              'forward': 'only',
@@ -1572,8 +1570,7 @@ options {
     zone-statistics terse;
 };
             """,
-            {'options': [{'action': 'drop',
-                          'allow-recursion': {'aml': [{'ip4_addr': '127.0.0.1'}]},
+            {'options': [{'allow-recursion': {'aml': [{'ip4_addr': '127.0.0.1'}]},
                           'allow-recursion-on': {'aml': [{'ip4_addr': '127.0.0.1'}]},
                           'allow_new_zones': 'yes',
                           'allow_notify': {'aml': [{'ip4_addr': '127.0.0.1'}]},
@@ -1668,8 +1665,10 @@ options {
                                                  'low_threshold': 1.0,
                                                  'moving_average_discount_rate': 1.0,
                                                  'moving_avg_recalculate_interval': 5},
-                          'fetches_per_server': 5,
-                          'fetches_per_zone': 4,
+                          'fetches_per_server': {'action': 'drop',
+                                                 'fetches': 5},
+                          'fetches_per_zone': {'action': 'drop',
+                                               'fetches': 4},
                           'files': {'files_count': 'unlimited'},
                           'flush_zones_on_shutdown': 'no',
                           'forward': 'only',
@@ -1931,6 +1930,7 @@ options {
                           'zero_no_soa_ttl': 'no',
                           'zero_no_soa_ttl_cache': 'no',
                           'zone_statistics': 'terse'}]}
+
         )
 
     def test_isc_clause_stmt_options_failing(self):
