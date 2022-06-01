@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_clause_controls.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict
+from bind9_parser.isc_utils import assert_parser_result_dict, assert_parser_result_dict_true
 from bind9_parser.isc_clause_controls import controls_inet_addr_and_port, controls_inet_allow_element,\
     controls_inet_read_only_element,\
     controls_keys_element, controls_inet_set, clause_stmt_control_series,\
@@ -45,12 +45,14 @@ class TestClauseControls(unittest.TestCase):
             }
         }
         assert_parser_result_dict(controls_inet_allow_element, test_data, expected_result, True)
-        test_data = 'allow { }'
-        expected_result = {
-            'allow': [
-            ]
-        }
-        assert_parser_result_dict(controls_inet_allow_element, test_data, expected_result, True)
+
+    def test_isc_controls_allow_2_passing(self):
+        """ Clause controls; Element inet allow 2; passing mode """
+        assert_parser_result_dict_true(
+            controls_inet_allow_element,
+            'allow { }',
+            {'allow': {'aml': []}}
+        )
 
     def test_isc_controls_inet_allow_failing(self):
         """ Clause controls; Element inet allow; failing mode """
@@ -86,18 +88,20 @@ class TestClauseControls(unittest.TestCase):
 
     def test_isc_clause_controls_controls_inet_set_passing(self):
         """ Clause controls; Element controls_inet_set; passing """
-        test_data = 'inet * allow { };'
-        expected_result = {'inet': {'control_server_addr': '*', 'allow': []}}
-        assert_parser_result_dict(controls_inet_set, test_data, expected_result, True)
-        test_data = 'inet 8.8.8.8 allow { any; };'
-        expected_result = {
-            'inet':
-                {
-                    'control_server_addr': '8.8.8.8',
-                    'allow':
-                        {'aml': [
-                            {'keyword': 'any'}]}}}
-        assert_parser_result_dict(controls_inet_set, test_data, expected_result, True)
+        assert_parser_result_dict_true(
+            controls_inet_set,
+            'inet * allow { };',
+            {'inet': {'allow': {'aml': []}, 'control_server_addr': '*'}}
+        )
+
+    def test_isc_clause_controls_controls_inet_set_2_passing(self):
+        """ Clause controls; Element controls_inet_set 2; passing """
+        assert_parser_result_dict_true(
+            controls_inet_set,
+            'inet 8.8.8.8 allow { any; };',
+            {'inet': {'allow': {'aml': [{'keyword': 'any'}]},
+                      'control_server_addr': '8.8.8.8'}}
+        )
 
     def test_isc_clause_controls_controls_inet_set_failing(self):
         """ Clause controls; Element controls_inet_set; passing """
@@ -147,18 +151,13 @@ class TestClauseControls(unittest.TestCase):
 
     def test_isc_controls_statement_single_passing(self):
         """ Clause controls; Single statement, passing mode """
-        test_data = 'controls { inet 128.0.0.1 allow {}; };'
-        expected_result = {
-            'controls': [
-                {
-                    'inet': {
-                        'control_server_addr': '128.0.0.1',
-                        'allow': []
-                    }
-                }
-            ]
-        }
-        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict_true(
+            clause_stmt_control_series,
+            'controls { inet 128.0.0.1 allow {}; };',
+            {'controls': [{'inet': {'allow': {'aml': []},
+                                    'control_server_addr': '128.0.0.1'}}]}
+        )
+
     def test_isc_controls_statement_dual_passing(self):
         """ Clause controls; Dual statement, passing mode """
         test_data = 'controls { inet 128.0.0.4 port 8004 allow { 128.0.0.5; 128.0.0.6;} keys { public-rndc-key3; }; };'
@@ -180,20 +179,24 @@ class TestClauseControls(unittest.TestCase):
             ]
         }
         assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
+
     def test_isc_controls_statement_single_inet_allow_passing(self):
         """ Clause controls; Single statement, inet-allow; passing mode """
         test_data = 'controls { inet 128.0.0.2 allow {localhost;}; };'
         expected_result = {'controls': [{'inet': {'allow': {'aml': [{'keyword': 'localhost'}]},
                                                   'control_server_addr': '128.0.0.2'}}]}
         assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
+
     def test_isc_controls_statement_single_port_inet_allow_passing(self):
         """ Clause controls; Single statement, port-inet-allow; passing mode """
-        test_data = 'controls { inet * port 8001 allow {} keys { my-key;};};'
-        expected_result = {'controls': [{'inet': {'allow': [],
-                                                  'control_server_addr': '*',
-                                                  'ip_port_w': '8001',
-                                                  'keys': [{'key_id': 'my-key'}]}}]}
-        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict_true(
+            clause_stmt_control_series,
+            'controls { inet * port 8001 allow {} keys { my-key;};};',
+            {'controls': [{'inet': {'allow': {'aml': []},
+                                    'control_server_addr': '*',
+                                    'ip_port_w': '8001',
+                                    'keys': [{'key_id': 'my-key'}]}}]}
+        )
 
     def test_isc_controls_statement_single_port_inet_allow_key_passing(self):
         """ Clause controls; Single statement, port-inet-allow-key; passing mode """
@@ -206,14 +209,16 @@ class TestClauseControls(unittest.TestCase):
 
     def test_isc_controls_statement_dual_port_inet_allow_key_passing(self):
         """ Clause controls; dual statement, port-inet-allow-key; passing mode """
-        test_data = 'controls { inet 128.0.0.3 allow {}; inet * port 8003 allow {} keys { mykey2;};};'
-        expected_result = {'controls': [{'inet': {'allow': [],
-                                                  'control_server_addr': '128.0.0.3'}},
-                                        {'inet': {'allow': [],
-                                                  'control_server_addr': '*',
-                                                  'ip_port_w': '8003',
-                                                  'keys': [{'key_id': 'mykey2'}]}}]}
-        assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
+        assert_parser_result_dict_true(
+            clause_stmt_control_series,
+            'controls { inet 128.0.0.3 allow {}; inet * port 8003 allow {} keys { mykey2;};};',
+            {'controls': [{'inet': {'allow': {'aml': []},
+                                    'control_server_addr': '128.0.0.3'}},
+                          {'inet': {'allow': {'aml': []},
+                                    'control_server_addr': '*',
+                                    'ip_port_w': '8003',
+                                    'keys': [{'key_id': 'mykey2'}]}}]}
+        )
 
     def test_isc_controls_statement_single_inet_port_allow_key_passing(self):
         """ Clause controls; single statement, inet-port-allow-key; passing mode """

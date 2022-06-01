@@ -13,6 +13,7 @@ Description: Utility functions for pyparsing of ISC-style
 
 Requires: pyparsing-2.4.3 (Char method)
 """
+import copy
 import os
 import os.path
 import errno
@@ -181,7 +182,7 @@ quoted_name = (
     ^ name_dquotable
 )('name')
 quoted_name.setName('<quoted_name>')
-name_type = quotable_name
+name_type = copy.deepcopy(quotable_name)
 
 # dequotable_name
 name_dedquotable = Combine(
@@ -238,7 +239,7 @@ key_secret = (
         ^ keysecret_base
 )('key_secret')
 key_secret.setName('<secret_string>')
-quotable_key_secret = key_secret
+quotable_key_secret = copy.deepcopy(key_secret)
 quotable_key_secret.setName('<quotable_key_secret')
 quoted_key_secret = (
     keysecret_squotable
@@ -867,9 +868,9 @@ def assert_parser_result_dict(parser_element,
         return _inner
 
     import pyparsing
-    pyparsing._defaultStartDebugAction = incr_pos(pyparsing._defaultStartDebugAction)
-    pyparsing._defaultSuccessDebugAction = decr_pos(pyparsing._defaultSuccessDebugAction)
-    pyparsing._defaultExceptionDebugAction = incr_pos(pyparsing._defaultExceptionDebugAction)
+#    pyparsing._defaultStartDebugAction = incr_pos(pyparsing._defaultStartDebugAction)
+#    pyparsing._defaultSuccessDebugAction = decr_pos(pyparsing._defaultSuccessDebugAction)
+    #pyparsing._defaultExceptionDebugAction = incr_pos(pyparsing._defaultExceptionDebugAction)
     try:
         parser_element = parser_element.setDebug(True)
         result = parser_element.parseString(test_strings, parseAll=True)

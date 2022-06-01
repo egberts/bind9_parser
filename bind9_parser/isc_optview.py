@@ -10,6 +10,8 @@ Description: isc_optview contains all parse elements pertaining
              to both options and view (but not zones)
 
 """
+import copy
+
 from pyparsing import Group, Keyword, OneOrMore, Literal, \
     CaselessLiteral, Combine, Optional, Word, alphanums, ZeroOrMore,\
     ungroup
@@ -90,7 +92,7 @@ optview_stmt_allow_recursion_on = (
     )('allow-recursion-on')
 ).setName('allow-recursion-on <aml>;')
 
-optview_attach_cache_name = name_type  # TODO: Identify when it got obsoleted???
+optview_attach_cache_name = copy.deepcopy(name_type)  # TODO: Identify when it got obsoleted???
 optview_attach_cache_name.setName('<cache_name>')
 optview_stmt_attach_cache = (
     Keyword('attach-cache').suppress()

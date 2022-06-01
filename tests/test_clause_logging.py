@@ -9,27 +9,57 @@ Element: logging
 Title: Clause logging; Element logging
 
 Description:  Performs unit test on the isc_clause_logging.py source file.
+
+logging {
+        category <string> { <string>; ... }; // may occur multiple times
+        channel <string> {
+                buffered <boolean>;
+                file <quoted_string> [ versions ( unlimited | <integer> ) ]
+                    [ size <size> ] [ suffix ( increment | timestamp ) ];
+                null;
+                print-category <boolean>;
+                print-severity <boolean>;
+                print-time ( iso8601 | iso8601-utc | local | <boolean> );
+                severity <log_severity>;
+                stderr;
+                syslog [ <syslog_facility> ];
+        }; // may occur multiple times
+};
+
 """
 
 import unittest
 from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
-from bind9_parser.isc_clause_logging import logging_chan_file_path_version_element,\
-    logging_chan_file_path_size_element, logging_chan_file_path_element,\
-    logging_chan_file_method, logging_chan_syslog_severity_element,\
-    logging_chan_syslog_severity_select,\
-    logging_chan_print_category_element, logging_chan_print_severity_element,\
-    logging_chan_print_time_element, logging_chan_method_option_set,\
+from bind9_parser.isc_clause_logging import \
+    logging_chan_file_path_version_element,\
+    logging_chan_file_path_size_element, \
+    logging_chan_file_path_element,\
+    logging_chan_syslog_facility_name, \
+    logging_chan_syslog_element,\
+    logging_chan_file_method, \
+    logging_chan_syslog_severity_select, \
+    logging_chan_syslog_severity_element,\
+    logging_chan_print_category_element, \
+    logging_chan_print_severity_element,\
+    logging_chan_print_time_element, \
+    logging_chan_buffered_element, \
+    logging_chan_method_option_set,\
     logging_chan_method_option_series, \
+    logging_chan_method_element, \
     logging_stmt_channel_set, \
-    logging_stmt_category_set,\
-    logging_chan_method_element,\
-    logging_channel_name_series, logging_category_name,\
-    logging_stmt_set, logging_stmt_series,\
+    logging_channel_name_series,\
+    logging_category_name, \
+    logging_stmt_category_set, \
+    logging_stmt_set, \
+    logging_stmt_series,\
     clause_stmt_logging_standalone
 
 
 class TestClauseLogging(unittest.TestCase):
     """ Clause logging """
+
+    # CHANNELS
+    # Versions for number of copies of recent files to keep
     def test_isc_logging_chan_file_path_version_element_passing(self):
         """ Clause logging; Element File path version; passing mode """
         test_string = 'versions 0'
@@ -155,23 +185,53 @@ class TestClauseLogging(unittest.TestCase):
                                        test_string,
                                        expected_result, 'did not detect missing semicolon')
 
-    def test_isc_logging_chan_file_path_element_failing(self):
+    def test_isc_logging_chan_file_path_element_nosemicolon_failing(self):
         """ Clause logging; Element File path; failing mode """
+
         test_string = 'file "/control_r\rsubdir/unquoted-key_id"'
         expected_result = {'path_name': '/control_r\rsubdir/unquoted-key_id'}
-        assert_parser_result_dict_false(logging_chan_file_path_element,
-                                        test_string,
-                                        expected_result, 'did not detect missing semicolon')
+        assert_parser_result_dict_false(
+            logging_chan_file_path_element,
+            test_string,
+            expected_result, 'did not detect missing semicolon')
+
+    def test_isc_logging_chan_file_path_element_unquoted_failing(self):
+        """ Clause logging; Element File path; failing mode """
         test_string = 'file /control_b\bsubdir/unquoted-key_id'
         expected_result = {'path_name': '/control_b\bsubdir/unquoted-key_id'}
         assert_parser_result_dict_false(logging_chan_file_path_element,
                                         test_string,
                                         expected_result, 'did not detect missing semicolon')
+
         test_string = 'file /gappy subdir/unquoted-key_id'
         expected_result = {'path_name': '/gappy subdir/unquoted-key_id'}
         assert_parser_result_dict_false(logging_chan_file_path_element,
                                         test_string,
                                         expected_result, 'did not detect missing semicolon')
+
+    def test_isc_logging_chan_syslog_facility_name_passing(self):
+        """ Clause logging: Keyword facility; passing """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_facility_name,
+            'authpriv',
+            {'facility': 'authpriv'}
+        )
+
+    def test_isc_logging_chan_syslog_facility_element_empty_passing(self):
+        """ Clause logging: Element facility, empty; passing """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_element,
+            'syslog',
+            {'syslog': []}
+        )
+
+    def test_isc_logging_chan_syslog_facility_element_passing(self):
+        """ Clause logging: Element facility; passing """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_element,
+            'syslog authpriv',
+            {'syslog': {'facility': 'authpriv'}}
+        )
 
     def test_isc_logging_chan_file_method_passing(self):
         """ Clause logging; Element File Method; passing mode """
@@ -180,13 +240,13 @@ class TestClauseLogging(unittest.TestCase):
         assert_parser_result_dict_true(logging_chan_file_method,
                                        test_string,
                                        expected_result)
-        test_string = 'syslog syslog;'
-        expected_result = {'facility': 'syslog'}
+        test_string = 'syslog ;'
+        expected_result = {'syslog': []}
         assert_parser_result_dict_true(logging_chan_file_method,
                                        test_string,
                                        expected_result)
         test_string = 'syslog daemon;'
-        expected_result = {'facility': 'daemon'}
+        expected_result = {'syslog': {'facility': 'daemon'}}
         assert_parser_result_dict_true(logging_chan_file_method,
                                        test_string,
                                        expected_result)
@@ -229,61 +289,85 @@ class TestClauseLogging(unittest.TestCase):
                                         test_string,
                                         expected_result, 'did not detect missing semicolon')
 
-    def test_isc_logging_chan_severity_select_passing(self):
-        """ Clause logging; Type Channel Severity; passing """
-        test_string = "debug"
-        expected_result = {'debug': []}
-        assert_parser_result_dict_true(logging_chan_syslog_severity_select,
-                                       test_string,
-                                       expected_result)
-        test_string = "debug 2"
-        expected_result = {'debug': [2]}
-        assert_parser_result_dict_true(logging_chan_syslog_severity_select,
-                                       test_string,
-                                       expected_result)
+    def test_isc_logging_chan_severity_select_debug_passing(self):
+        """ Clause logging; Type Channel Severity debug; passing """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_severity_select,
+            'debug',
+            {'debug': 'debug'}
+        )
 
-    def test_isc_logging_chan_severity_element_passing(self):
-        """ Clause logging; Element Channel Severity; passing mode """
-        test_string = 'severity critical;'
-        expected_result = {'severity': ['critical']}
-        assert_parser_result_dict_true(logging_chan_syslog_severity_element,
-                                       test_string,
-                                       expected_result)
-        test_string = 'severity error;'
-        expected_result = {'severity': ['error']}
-        assert_parser_result_dict_true(logging_chan_syslog_severity_element,
-                                       test_string,
-                                       expected_result)
-        test_string = 'severity warning;'
-        expected_result = {'severity': ['warning']}
-        assert_parser_result_dict_true(logging_chan_syslog_severity_element,
-                                       test_string,
-                                       expected_result)
-        test_string = 'severity notice;'
-        expected_result = {'severity': ['notice']}
-        assert_parser_result_dict_true(logging_chan_syslog_severity_element,
-                                       test_string,
-                                       expected_result)
-        test_string = 'severity info;'
-        expected_result = {'severity': ['info']}
-        assert_parser_result_dict_true(logging_chan_syslog_severity_element,
-                                       test_string,
-                                       expected_result)
-        test_string = 'severity debug;'
-        expected_result = {'severity': {'debug': []}}
-        assert_parser_result_dict_true(logging_chan_syslog_severity_element,
-                                       test_string,
-                                       expected_result)
-        test_string = 'severity debug 1;'
-        expected_result = {'severity': {'debug': [1]}}
-        assert_parser_result_dict_true(logging_chan_syslog_severity_element,
-                                       test_string,
-                                       expected_result)
-        test_string = 'severity warning;'
-        expected_result = {'severity': ['warning']}
-        assert_parser_result_dict_true(logging_chan_syslog_severity_element,
-                                       test_string,
-                                       expected_result)
+    def test_isc_logging_chan_severity_select_debug2_passing(self):
+        """ Clause logging; Type Channel Severity debug2; passing """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_severity_select,
+            "debug 2",
+            {'debug': {'debug_level': 2}}
+        )
+
+    def test_isc_logging_chan_severity_element_debug_passing(self):
+        """ Clause logging; Element Channel Severity debug; passing mode """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_severity_element,
+            'severity debug;',
+            {'severity': {'debug': 'debug'}}
+        )
+
+    def test_isc_logging_chan_severity_element_debug1_passing(self):
+        """ Clause logging; Element Channel Severity debug 1; passing mode """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_severity_element,
+            'severity debug 1;',
+            {'severity': {'debug': {'debug_level': 1}}}
+        )
+
+    def test_isc_logging_chan_severity_element_critical_passing(self):
+        """ Clause logging; Element Channel Severity critical; passing mode """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_severity_element,
+            'severity critical;',
+            {'severity': ['critical']}
+        )
+
+    def test_isc_logging_chan_severity_element_error_passing(self):
+        """ Clause logging; Element Channel Severity error; passing mode """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_severity_element,
+            'severity error;',
+            {'severity': ['error']}
+        )
+
+    def test_isc_logging_chan_severity_element_warning_passing(self):
+        """ Clause logging; Element Channel Severity warning; passing mode """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_severity_element,
+            'severity warning;',
+            {'severity': ['warning']}
+        )
+
+    def test_isc_logging_chan_severity_element_notice_passing(self):
+        """ Clause logging; Element Channel Severity notice; passing mode """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_severity_element,
+            'severity notice;',
+            {'severity': ['notice']}
+        )
+
+    def test_isc_logging_chan_severity_element_info_passing(self):
+        """ Clause logging; Element Channel Severity info; passing mode """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_severity_element,
+            'severity info;',
+            {'severity': ['info']}
+        )
+
+    def test_isc_logging_chan_severity_element_warning2_passing(self):
+        """ Clause logging; Element Channel Severity warning; passing mode """
+        assert_parser_result_dict_true(
+            logging_chan_syslog_severity_element,
+            'severity warning;',
+            {'severity': ['warning']}
+        )
 
     def test_isc_logging_chan_severity_element_failing(self):
         """ Clause logging; Element Channel Severity; failing mode """
@@ -432,6 +516,22 @@ class TestClauseLogging(unittest.TestCase):
                                         test_string,
                                         expected_result)
 
+    def test_isc_logging_chan_buffered_element_passing(self):
+        """  Clause logging; Channel buffered element; passing """
+        assert_parser_result_dict_true(
+            logging_chan_buffered_element,
+            'buffered yes;',
+            {'buffered': 'yes'}
+        )
+
+    def test_isc_logging_chan_method_buffer_element_severity_warning_passing(selfs):
+        """  Clause logging; Buffer element; passing mode """
+        assert_parser_result_dict_true(
+            logging_chan_method_option_set,
+            'severity warning;',
+            {'severity': ['warning']}
+        )
+
     def test_isc_logging_chan_method_option_set_passing(self):
         """ Clause logging; Set Method; passing mode """
         test_string = 'print-time 1;'
@@ -469,12 +569,12 @@ class TestClauseLogging(unittest.TestCase):
     def test_isc_logging_chan_method_element_passing(self):
         """ Clause logging; Element Channel Method; passing mode """
         test_string = 'syslog mail;'
-        expected_result = {'facility': 'mail'}
+        expected_result = {'syslog': {'facility': 'mail'}}
         assert_parser_result_dict_true(logging_chan_method_element,
                                        test_string,
                                        expected_result)
         test_string = 'syslog local0;'
-        expected_result = {'facility': 'local0'}
+        expected_result = {'syslog': {'facility': 'local0'}}
         assert_parser_result_dict_true(logging_chan_method_element,
                                        test_string,
                                        expected_result)
@@ -499,23 +599,23 @@ class TestClauseLogging(unittest.TestCase):
 
     def test_isc_logging_stmt_channel_passing(self):
         """ Clause logging; Statement Channel; passing mode """
-        test_string = 'channel bleep { file "/tmp/x" size 38M; severity warning;};'
-        expected_result = { 'channel': [ { 'channel_name': 'bleep',
-                 'path_name': '/tmp/x',
-                 'severity': ['warning'],
-                 'size_spec': [38, 'M']}]}
-        assert_parser_result_dict_true(logging_stmt_channel_set,
-                                       test_string,
-                                       expected_result)
+        assert_parser_result_dict_true(
+            logging_stmt_channel_set,
+            'channel bleep { file "/tmp/x" size 38M; severity warning;};',
+            {'channels': [{'channel_name': 'bleep',
+                           'path_name': '/tmp/x',
+                           'severity': ['warning'],
+                           'size_spec': [38, 'M']}]}
+        )
 
     def test_isc_logging_stmt_channel2_passing(self):
-        test_string = 'channel klaxon { file "/tmp/x" size 38M; };'
-        expected_result = { 'channel': [ { 'channel_name': 'klaxon',
-                 'path_name': '/tmp/x',
-                 'size_spec': [38, 'M']}]}
-        assert_parser_result_dict_true(logging_stmt_channel_set,
-                                       test_string,
-                                       expected_result)
+        assert_parser_result_dict_true(
+            logging_stmt_channel_set,
+            'channel klaxon { file "/tmp/x" size 38M; };',
+            {'channels': [{'channel_name': 'klaxon',
+                           'path_name': '/tmp/x',
+                           'size_spec': [38, 'M']}]}
+        )
 
     def test_isc_logging_stmt_channel_failing(self):
         """ Clause logging; Statement Channel; failing mode """
@@ -531,104 +631,122 @@ class TestClauseLogging(unittest.TestCase):
                                         test_string,
                                         expected_result)
 
-    def test_isc_clause_logging_logging_stmt_category_passing(self):
+    def test_isc_logging_stmt_channel_series_passing(self):
+        """ Clause logging; Statement Channel series; passing mode """
+        assert_parser_result_dict_true(
+            logging_stmt_channel_set,
+            'channel bl { file "/tmp/x" size 38M; severity warning;};',
+            {'channels': [{'channel_name': 'bl',
+                           'path_name': '/tmp/x',
+                           'severity': ['warning'],
+                           'size_spec': [38, 'M']}]}
+        )
+
+    #
+    # CATEGORIES
+    #
+    def test_isc_clause_logging_logging_category_name_passing(self):
+        """ Clause logging; Statement Category name; passing mode """
+        assert_parser_result_dict_true(
+            logging_category_name,
+            'abcdefg',
+            {'name': 'abcdefg'}
+        )
+
+    def test_isc_clause_logging_category_stmt_category_passing(self):
         """ Clause logging; Statement Category; passing mode """
-        test_string = 'category default { default_syslog; default_debug; };'
-        expected_result = { 'category_group': [ { 'categories': [ 'default_syslog',
-                                        'default_debug'],
-                        'category_group_name': 'default'}]}
-        assert_parser_result_dict_true(logging_stmt_category_set,
-                                       test_string,
-                                       expected_result)
+        assert_parser_result_dict_true(
+            logging_stmt_category_set,
+            'category default { default_syslog; default_debug; };',
+            {'category_groups': [{'category_group_name': 'default',
+                                  'channel_names': ['default_syslog',
+                                                    'default_debug']}]}
+        )
 
     def test_isc_clause_logging_logging_stmt_category2_passing(self):
-        test_string = 'category unmatched { null; };'
-        expected_result = { 'category_group': [ { 'categories': ['null'],
-                        'category_group_name': 'unmatched'}]}
-        assert_parser_result_dict_true(logging_stmt_category_set,
-                                       test_string,
-                                       expected_result)
+        assert_parser_result_dict_true(
+            logging_stmt_category_set,
+            'category unmatched { null; };',
+            {'category_groups': [{'category_group_name': 'unmatched',
+                                  'channel_names': ['null']}]}
+        )
 
     def test_isc_clause_logging_logging_stmt_category_failing(self):
         """ Clause logging; Statement Category; failing mode """
-        test_string = 'category k l { b; c; d; };'
-        expected_result = {
-            'category_group': {
-                'categories': ['b', 'c', 'd'],
-                'category_group_name': 'k'}}
-        assert_parser_result_dict_false(logging_stmt_category_set,
-                                        test_string,
-                                        expected_result)
+        assert_parser_result_dict_false(
+            logging_stmt_category_set,
+            'category k l { b; c; d; };',
+            {}
+        )
 
     def test_isc_clause_stmt_logging_passing(self):
         """ Clause logging; Statement Logging; passing mode """
-        test_string = 'logging { channel siren { file "/tmp/x" size 30M; severity info; print-time yes;}; };'
-        expected_result = { 'logging': [ { 'channel': [ { 'channel_name': 'siren',
-                                'path_name': '/tmp/x',
-                                'print_time': 'yes',
-                                'severity': ['info'],
-                                'size_spec': [30, 'M']}]}]}
-        assert_parser_result_dict_true(clause_stmt_logging_standalone,
-                                       test_string,
-                                       expected_result)
+        assert_parser_result_dict_true(
+            clause_stmt_logging_standalone,
+            'logging { channel siren { file "/tmp/x" size 30M; severity info; print-time yes;}; };',
+            {'logging': {'channels': [{'channel_name': 'siren',
+                                       'path_name': '/tmp/x',
+                                       'print_time': 'yes',
+                                       'severity': ['info'],
+                                       'size_spec': [30, 'M']}]}}
+        )
 
     def test_isc_clause_stmt_logging2_passing(self):
-        test_string = 'logging { channel floodwatch { file "/tmp/x" size 30M; print-time yes; severity info;}; };'
-        expected_result = { 'logging': [ { 'channel': [ { 'channel_name': 'floodwatch',
-                                'path_name': '/tmp/x',
-                                'print_time': 'yes',
-                                'severity': ['info'],
-                                'size_spec': [30, 'M']}]}]}
-        assert_parser_result_dict_true(clause_stmt_logging_standalone,
-                                       test_string,
-                                       expected_result)
+        assert_parser_result_dict_true(
+            clause_stmt_logging_standalone,
+            'logging { channel floodwatch { file "/tmp/x" size 30M; print-time yes; severity info;}; };',
+            {'logging': {'channels': [{'channel_name': 'floodwatch',
+                                       'path_name': '/tmp/x',
+                                       'print_time': 'yes',
+                                       'severity': ['info'],
+                                       'size_spec': [30, 'M']}]}}
+        )
 
     def test_isc_clause_stmt_logging3_passing(self):
-        test_string = 'logging { channel tv { file "/tmp/x" size 30M; severity info; print-time yes;}; };'
-        expected_result = { 'logging': [ { 'channel': [ { 'channel_name': 'tv',
-                                'path_name': '/tmp/x',
-                                'print_time': 'yes',
-                                'severity': ['info'],
-                                'size_spec': [30, 'M']}]}]}
-        assert_parser_result_dict_true(clause_stmt_logging_standalone,
-                                       test_string,
-                                       expected_result)
+        assert_parser_result_dict_true(
+            clause_stmt_logging_standalone,
+            'logging { channel tv { file "/tmp/x" size 30M; severity info; print-time yes;}; };',
+            {'logging': {'channels': [{'channel_name': 'tv',
+                                       'path_name': '/tmp/x',
+                                       'print_time': 'yes',
+                                       'severity': ['info'],
+                                       'size_spec': [30, 'M']}]}}
+        )
 
     def test_isc_clause_stmt_logging4_passing(self):
-        test_string = 'logging { channel office_vpn { file "/tmp/x" size 42M; severity critical; print-time no;}; };'
-        expected_result = { 'logging': [ { 'channel': [ { 'channel_name': 'office_vpn',
-                                'path_name': '/tmp/x',
-                                'print_time': 'no',
-                                'severity': ['critical'],
-                                'size_spec': [42, 'M']}]}]}
-        assert_parser_result_dict_true(clause_stmt_logging_standalone,
-                                       test_string,
-                                       expected_result)
+        assert_parser_result_dict_true(
+            clause_stmt_logging_standalone,
+            'logging { channel office_vpn { file "/tmp/x" size 42M; severity critical; print-time no;}; };',
+            {'logging': {'channels': [{'channel_name': 'office_vpn',
+                                       'path_name': '/tmp/x',
+                                       'print_time': 'no',
+                                       'severity': ['critical'],
+                                       'size_spec': [42, 'M']}]}}
+        )
 
     def test_isc_clause_stmt_logging_multiple_passing(self):
         """ Clause logging; Statement, Multiple; passing mode """
-
-        test_string = 'logging { channel salesfolks { file "/tmp/sales.log" size 5M; severity info; print-time no;};'\
-        ' channel accounting { file "/tmp/acct.log" size 30M; severity info; print-time no;};'\
-        ' channel badguys { file "/tmp/alert" size 255G; severity debug 77; print-time yes;}; };'
-        expected_result = { 'logging': [ { 'channel': [ { 'channel_name': 'salesfolks',
-                                'path_name': '/tmp/sales.log',
-                                'print_time': 'no',
-                                'severity': ['info'],
-                                'size_spec': [5, 'M']}]},
-               { 'channel': [ { 'channel_name': 'accounting',
-                                'path_name': '/tmp/acct.log',
-                                'print_time': 'no',
-                                'severity': ['info'],
-                                'size_spec': [30, 'M']}]},
-               { 'channel': [ { 'channel_name': 'badguys',
-                                'path_name': '/tmp/alert',
-                                'print_time': 'yes',
-                                'severity': {'debug': [77]},
-                                'size_spec': [255, 'G']}]}]}
-        assert_parser_result_dict_true(clause_stmt_logging_standalone,
-                                       test_string,
-                                       expected_result)
+        assert_parser_result_dict_true(
+            clause_stmt_logging_standalone,
+            'logging { channel salesfolks { file "/tmp/sales.log" size 5M; severity info; print-time no;};'  +
+            ' channel accounting { file "/tmp/acct.log" size 30M; severity info; print-time no;};' +
+            ' channel badguys { file "/tmp/alert" size 255G; severity debug 77; print-time yes;}; };',
+            {'logging': {'channels': [{'channel_name': 'salesfolks',
+                                       'path_name': '/tmp/sales.log',
+                                       'print_time': 'no',
+                                       'severity': ['info'],
+                                       'size_spec': [5, 'M']},
+                                      {'channel_name': 'accounting',
+                                       'path_name': '/tmp/acct.log',
+                                       'print_time': 'no',
+                                       'severity': ['info'],
+                                       'size_spec': [30, 'M']},
+                                      {'channel_name': 'badguys',
+                                       'path_name': '/tmp/alert',
+                                       'print_time': 'yes',
+                                       'severity': {'debug': {'debug_level': 77}},
+                                       'size_spec': [255, 'G']}]}}
+        )
 
     def test_isc_logging_clause_stmt_failing(self):
         """ Clause logging; Statement Logging; failing mode """
@@ -642,6 +760,437 @@ class TestClauseLogging(unittest.TestCase):
         assert_parser_result_dict_false(clause_stmt_logging_standalone,
                                         test_string,
                                         expected_result)
+
+    def test_isc_clause_stmt_logging_issue33_passing(self):
+        assert_parser_result_dict_true(
+            clause_stmt_logging_standalone,
+            """
+logging {
+channel "general_file" {
+file "/var/log/named/general.log" versions 10 size 104857600;
+severity dynamic;
+print-time yes;
+print-severity yes;
+print-category yes;
+};
+category "general" {
+"general_file";
+"notice-alert_file"; 
+};
+};""",
+            {'logging': {'category_groups': [{'category_group_name': 'general',
+                                              'channel_names': ['general_file',
+                                                                'notice-alert_file']}],
+                         'channels': [{'channel_name': 'general_file',
+                                       'path_name': '/var/log/named/general.log',
+                                       'print_category': 'yes',
+                                       'print_severity': 'yes',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [104857600],
+                                       'versions': 10}]}}
+        )
+
+    def test_isc_clause_stmt_logging_maximum_passing(self):
+        assert_parser_result_dict_true(
+            clause_stmt_logging_standalone,
+            """
+logging {
+    channel default_channel {
+        file "/var/log/named/public/default.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel general_channel {
+        file "/var/log/named/public/general.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel database_channel {
+        file "/var/log/named/public/database.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel security_channel {
+        file "/var/log/named/public/security.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+    };
+    channel config_channel {
+        file "/var/log/named/public/config.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel resolver_channel {
+        file "/var/log/named/public/resolver.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel xfer-in_channel {
+        file "/var/log/named/public/xfer-in.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel xfer-out_channel {
+        file "/var/log/named/public/xfer-out.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel notify_channel {
+        file "/var/log/named/public/notify.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel client_channel {
+        file "/var/log/named/public/client.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel unmatched_channel {
+        file "/var/log/named/public/unmatched.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel queries_channel {
+        file "/var/log/named/public/queries.log" versions 3 size 5m;
+        severity info;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel query-errors_channel {
+        file "/var/log/named/public/query-errors.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel network_channel {
+        file "/var/log/named/public/network.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel update_channel {
+        file "/var/log/named/public/update.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel update-security_channel {
+        file "/var/log/named/public/update-security.log" versions 3 size 5m;
+        severity info;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel dispatch_channel {
+        file "/var/log/named/public/dispatch.log" versions 3 size 5m;
+        severity dynamic;
+        print-time no;
+        print-severity true;
+        print-category true;
+    };
+    channel dnssec_channel {
+        file "/var/log/named/public/dnssec.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity no;
+        print-category true;
+    };
+    channel lame-servers_channel {
+        file "/var/log/named/public/lame-servers.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel delegation-only_channel {
+        file "/var/log/named/public/delegation-only.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category no;
+    };
+    channel rate-limit_channel {
+        file "/var/log/named/public/rate-limit.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+    channel audit_channel {
+        file "/var/log/named/public/audit.log" versions 3 size 5m;
+        severity dynamic;
+        print-time yes;
+        print-severity true;
+        print-category true;
+    };
+
+    category default { default_channel; general_channel; database_channel; };
+    category general { general_channel; };
+    category database { database_channel; };
+    category security { security_channel; };
+    category config { config_channel; };
+    category resolver { resolver_channel; };
+    category xfer-in { xfer-in_channel; };
+    category xfer-out { xfer-out_channel; };
+    category notify { notify_channel; };
+    category client { client_channel; };
+    category unmatched { unmatched_channel; };
+    category queries { queries_channel; };
+    category query-errors { query-errors_channel; };
+    category network { network_channel; };
+    category update { update_channel; };
+    category update-security { update-security_channel; };
+    category dispatch { dispatch_channel; };
+    category dnssec { dnssec_channel; };
+    category lame-servers { lame-servers_channel; };
+    category delegation-only { delegation-only_channel; };
+    category rate-limit { rate-limit_channel; };
+};
+""",
+            {'logging': {'category_groups': [{'category_group_name': 'default',
+                                              'channel_names': ['default_channel',
+                                                                'general_channel',
+                                                                'database_channel']},
+                                             {'category_group_name': 'general',
+                                              'channel_names': ['general_channel']},
+                                             {'category_group_name': 'database',
+                                              'channel_names': ['database_channel']},
+                                             {'category_group_name': 'security',
+                                              'channel_names': ['security_channel']},
+                                             {'category_group_name': 'config',
+                                              'channel_names': ['config_channel']},
+                                             {'category_group_name': 'resolver',
+                                              'channel_names': ['resolver_channel']},
+                                             {'category_group_name': 'xfer-in',
+                                              'channel_names': ['xfer-in_channel']},
+                                             {'category_group_name': 'xfer-out',
+                                              'channel_names': ['xfer-out_channel']},
+                                             {'category_group_name': 'notify',
+                                              'channel_names': ['notify_channel']},
+                                             {'category_group_name': 'client',
+                                              'channel_names': ['client_channel']},
+                                             {'category_group_name': 'unmatched',
+                                              'channel_names': ['unmatched_channel']},
+                                             {'category_group_name': 'queries',
+                                              'channel_names': ['queries_channel']},
+                                             {'category_group_name': 'query-errors',
+                                              'channel_names': ['query-errors_channel']},
+                                             {'category_group_name': 'network',
+                                              'channel_names': ['network_channel']},
+                                             {'category_group_name': 'update',
+                                              'channel_names': ['update_channel']},
+                                             {'category_group_name': 'update-security',
+                                              'channel_names': ['update-security_channel']},
+                                             {'category_group_name': 'dispatch',
+                                              'channel_names': ['dispatch_channel']},
+                                             {'category_group_name': 'dnssec',
+                                              'channel_names': ['dnssec_channel']},
+                                             {'category_group_name': 'lame-servers',
+                                              'channel_names': ['lame-servers_channel']},
+                                             {'category_group_name': 'delegation-only',
+                                              'channel_names': ['delegation-only_channel']},
+                                             {'category_group_name': 'rate-limit',
+                                              'channel_names': ['rate-limit_channel']}],
+                         'channels': [{'channel_name': 'default_channel',
+                                       'path_name': '/var/log/named/public/default.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'general_channel',
+                                       'path_name': '/var/log/named/public/general.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'database_channel',
+                                       'path_name': '/var/log/named/public/database.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'security_channel',
+                                       'path_name': '/var/log/named/public/security.log',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'config_channel',
+                                       'path_name': '/var/log/named/public/config.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'resolver_channel',
+                                       'path_name': '/var/log/named/public/resolver.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'xfer-in_channel',
+                                       'path_name': '/var/log/named/public/xfer-in.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'xfer-out_channel',
+                                       'path_name': '/var/log/named/public/xfer-out.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'notify_channel',
+                                       'path_name': '/var/log/named/public/notify.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'client_channel',
+                                       'path_name': '/var/log/named/public/client.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'unmatched_channel',
+                                       'path_name': '/var/log/named/public/unmatched.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'queries_channel',
+                                       'path_name': '/var/log/named/public/queries.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['info'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'query-errors_channel',
+                                       'path_name': '/var/log/named/public/query-errors.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'network_channel',
+                                       'path_name': '/var/log/named/public/network.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'update_channel',
+                                       'path_name': '/var/log/named/public/update.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'update-security_channel',
+                                       'path_name': '/var/log/named/public/update-security.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['info'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'dispatch_channel',
+                                       'path_name': '/var/log/named/public/dispatch.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'no',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'dnssec_channel',
+                                       'path_name': '/var/log/named/public/dnssec.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'no',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'lame-servers_channel',
+                                       'path_name': '/var/log/named/public/lame-servers.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'delegation-only_channel',
+                                       'path_name': '/var/log/named/public/delegation-only.log',
+                                       'print_category': 'no',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'rate-limit_channel',
+                                       'path_name': '/var/log/named/public/rate-limit.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3},
+                                      {'channel_name': 'audit_channel',
+                                       'path_name': '/var/log/named/public/audit.log',
+                                       'print_category': 'True',
+                                       'print_severity': 'True',
+                                       'print_time': 'yes',
+                                       'severity': ['dynamic'],
+                                       'size_spec': [5, 'm'],
+                                       'versions': 3}]}}
+        )
 
 
 # TODO: Needs unit test for
