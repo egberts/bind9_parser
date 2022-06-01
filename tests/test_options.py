@@ -844,31 +844,46 @@ deny-answer-addresses {
         )
 
     # options_stmt_use_v4_udp_ports
-    def test_isc_options_stmt_use_v4_udp_ports_passing(self):
+    def test_isc_options_stmt_use_v4_udp_ports_ut_passing(self):
         test_data = [
-            'use-v4-udp-ports { range 443 1023; };',
-            'use-v4-udp-ports { range 1024 45535; };',
+            'use-v4-udp-ports { 443 1023; };',
+            'use-v4-udp-ports { 1024 45535; };',
+            'use-v4-udp-ports { 1024 45535; 1 321; 61121 61122; };',
+            'use-v4-udp-ports { 1024 45535; range 1 321; 61121 61122; };',
+            'use-v4-udp-ports { range 1024 45535; range 1 321; range 61121 61122; };',
         ]
         result = options_stmt_use_v4_udp_ports.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_options_stmt_use_v4_udp_ports_passing(self):
         assert_parser_result_dict_true(
             options_stmt_use_v4_udp_ports,
-            'use-v4-udp-ports { range 1024 45535; };',
-            {'use_v4_udp_ports': {'port_end': 45535, 'port_start': 1024}}
+            'use-v4-udp-ports { 1024 45535; range 1 11; 812 817;};',
+            {'use_v4_udp_ports': [{'port_end': 45535, 'port_start': 1024},
+                                  {'port_end': 11, 'port_start': 1},
+                                  {'port_end': 817, 'port_start': 812}]}
         )
 
     # options_stmt_use_v6_udp_ports
-    def test_isc_options_stmt_use_v6_udp_ports_passing(self):
+    def test_isc_options_stmt_use_v6_udp_ports_ut_passing(self):
         test_data = [
-            'use-v6-udp-ports { range 443 1023; };',
-            'use-v6-udp-ports { range 1024 45535; };',
+            'use-v6-udp-ports { 443 1023; };',
+            'use-v6-udp-ports { 1024 45535; };',
+            'use-v6-udp-ports { 1024 45535; 1 321; 61121 61122; };',
+            'use-v6-udp-ports { range 1024 45535; 1 321; range 61121 61122; };',
+            'use-v6-udp-ports { range 1024 45535; range 1 321; range 61121 61122; };',
         ]
         result = options_stmt_use_v6_udp_ports.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
+
+    def test_isc_options_stmt_use_v6_udp_ports_passing(self):
         assert_parser_result_dict_true(
             options_stmt_use_v6_udp_ports,
-            'use-v6-udp-ports { range 1024 45535; };',
-            {'use_v6_udp_ports': {'port_end': 45535, 'port_start': 1024}}
+            'use-v6-udp-ports { range 1024 45535; 1 2; 818 819; 65533 65534; };',
+            {'use_v6_udp_ports': [{'port_end': 45535, 'port_start': 1024},
+                                  {'port_end': 2, 'port_start': 1},
+                                  {'port_end': 819, 'port_start': 818},
+                                  {'port_end': 65534, 'port_start': 65533}]}
         )
 
     def test_isc_options_version_passing(self):

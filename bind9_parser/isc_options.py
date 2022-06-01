@@ -878,36 +878,52 @@ options_stmt_udp_send_buffer = (
 )
 options_stmt_udp_send_buffer.setName('udp-send-buffer <integer>;')
 
+options_port_range = (
+    (
+        number_type('port_start')
+        - number_type('port_end')
+        - semicolon
+    )  # no label, we are squishing dict items up-group
+)
+
+# port_range - serialized the 'range' keyword into separate logic
+options_port_range_group = (
+    # Match the keyword firstly otherwise fallback to numeric port numbers and its pair-thereof
+    (
+        Keyword('range').suppress()
+        - options_port_range
+    )
+    ^ options_port_range
+)
 # options_stmt_use_v4_udp_ports
 # use-v4-udp-ports { range 1024 65535; };
 options_stmt_use_v4_udp_ports = (
-    Keyword('use-v4-udp-ports')
+    Keyword('use-v4-udp-ports').suppress()
     - lbrack
-    - Group(
-        Keyword('range')
-        - number_type('port_start')
-        - number_type('port_end')
-        - semicolon
-    )('use_v4_udp_ports')
+    - OneOrMore(
+        Group(
+            options_port_range_group
+        )
+    )
     - rbrack
     - semicolon
-)
+)('use_v4_udp_ports')
 options_stmt_use_v4_udp_ports.setName('use-v4-udp-ports { range <start_port> <end_port>; };')
 
 # options_stmt_use_v6_udp_ports
 # use-v6-udp-ports { range 1024 65535; };
 options_stmt_use_v6_udp_ports = (
-    Keyword('use-v6-udp-ports')
+    Keyword('use-v6-udp-ports').suppress()
     - lbrack
-    - Group(
-        Keyword('range')
-        - number_type('port_start')
-        - number_type('port_end')
-        - semicolon
-    )('use_v6_udp_ports')
+    - OneOrMore(
+        Group(
+            options_port_range_group
+        )
+    )
     - rbrack
     - semicolon
-).setName('use-v6-udp-ports { range <start_port> <end_port>; };')
+)('use_v6_udp_ports')
+options_stmt_use_v6_udp_ports.setName('use-v6-udp-ports { range <start_port> <end_port>; };')
 
 # version_string is latest as quoted_path_name, but it's path_name for backward compatibility
 options_version_string = dequotable_path_name

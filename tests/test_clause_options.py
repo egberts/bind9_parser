@@ -549,8 +549,8 @@ try-tcp-refresh no;
 udp-receive-buffer 60;
 udp-send-buffer 60;
 update-check-ksk no;
-use-v4-udp-ports { range 1 1023; };
-use-v6-udp-ports { range 1024 44371; };
+use-v4-udp-ports { 1 1023; };
+use-v6-udp-ports { 1024 44371; };
 v6-bias 60;
 validate-except { "168.192.in-addr.arpa."; };
 zero-no-soa-ttl no;
@@ -615,8 +615,8 @@ zone-statistics terse;
              'udp_send_buffer': 60,
              'update_check_ksk': 'no',
              'use_alt_transfer_source': 'no',
-             'use_v4_udp_ports': {'port_end': 1023, 'port_start': 1},
-             'use_v6_udp_ports': {'port_end': 44371, 'port_start': 1024},
+             'use_v4_udp_ports': [{'port_end': 1023, 'port_start': 1}],
+             'use_v6_udp_ports': [{'port_end': 44371, 'port_start': 1024}],
              'v6_bias': 60,
              'validate_except': ['168.192.in-addr.arpa.'],
              'version_string': 'funky dns server, uh?',
@@ -883,8 +883,8 @@ udp-receive-buffer 60;
 udp-send-buffer 60;
 update-check-ksk no;
 use-alt-transfer-source no;
-use-v4-udp-ports { range 1 1024; };
-use-v6-udp-ports { range 1025 44315; };
+use-v4-udp-ports { 1 1024; };
+use-v6-udp-ports { 1025 44315; };
 v6-bias 60;
 validate-except { "168.192.in-addr.arpa."; };
 version "funky dns server, uh?";
@@ -1232,8 +1232,8 @@ zone-statistics terse;
              'udp_send_buffer': 60,
              'update_check_ksk': 'no',
              'use_alt_transfer_source': 'no',
-             'use_v4_udp_ports': {'port_end': 1024, 'port_start': 1},
-             'use_v6_udp_ports': {'port_end': 44315, 'port_start': 1025},
+             'use_v4_udp_ports': [{'port_end': 1024, 'port_start': 1}],
+             'use_v6_udp_ports': [{'port_end': 44315, 'port_start': 1025}],
              'v6_bias': 60,
              'validate_except': ['168.192.in-addr.arpa.'],
              'version_string': 'funky dns server, uh?',
@@ -1560,8 +1560,8 @@ options {
     udp-send-buffer 60;
     update-check-ksk no;
     use-alt-transfer-source no;
-    use-v4-udp-ports { range 1 1024; };
-    use-v6-udp-ports { range 1025 44315; };
+    use-v4-udp-ports { 1 1024; };
+    use-v6-udp-ports { 1025 44315; };
     v6-bias 60;
     validate-except { "168.192.in-addr.arpa."; };
     version "funky dns server, uh?";
@@ -1920,10 +1920,10 @@ options {
                           'udp_send_buffer': 60,
                           'update_check_ksk': 'no',
                           'use_alt_transfer_source': 'no',
-                          'use_v4_udp_ports': {'port_end': 1024,
-                                               'port_start': 1},
-                          'use_v6_udp_ports': {'port_end': 44315,
-                                               'port_start': 1025},
+                          'use_v4_udp_ports': [{'port_end': 1024,
+                                                'port_start': 1}],
+                          'use_v6_udp_ports': [{'port_end': 44315,
+                                               'port_start': 1025}],
                           'v6_bias': 60,
                           'validate_except': ['168.192.in-addr.arpa.'],
                           'version_string': 'funky dns server, uh?',
