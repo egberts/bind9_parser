@@ -15,7 +15,7 @@ from bind9_parser.isc_utils import semicolon, lbrack, rbrack, dequoted_path_name
     isc_boolean, view_name, isc_file_name,\
     number_type, check_options, \
     key_id_keyword_and_name_pair, squote, dquote, \
-    krb5_realm_name, master_name
+    krb5_realm_name, master_name_dequotable
 from bind9_parser.isc_inet import ip4_addr,\
     ip6_addr, inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element,\
@@ -114,7 +114,7 @@ zone_masters_set = (
                     ip6_addr
                     - Optional(inet_ip_port_keyword_and_number_element('ip_port'))
             )('ip6')
-            ^ master_name('master_name')
+            ^ master_name_dequotable('master_name')
         )('')
         - Optional(key_id_keyword_and_name_pair)
     )('')
@@ -145,14 +145,14 @@ zone_stmt_masters = (
                 + zone_masters_series
                 + rbrack
             )
-            | (
+            ^ (
                 inet_ip_port_keyword_and_number_element
                 + Optional(inet_dscp_port_keyword_and_number_element)
                 - lbrack
                 - zone_masters_series
                 + rbrack
             )
-            | (
+            ^ (
                 inet_dscp_port_keyword_and_number_element
                 + Optional(inet_ip_port_keyword_and_number_element)
                 - lbrack

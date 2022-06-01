@@ -3274,6 +3274,7 @@ g_nc_keywords['masters'] = \
         'validity': {'function': 'masters_zone'},
         'found-in': {'zone'},
         'introduced': '9.0.0',
+        'obsoleted': '9.18.0',  # got renamed to 'primaries' instead
         'topic': 'masters',
         'zone-type': {'slave', 'mirror', 'stub', 'redirect', 'secondary'},
         'occurs-multiple-times': False,

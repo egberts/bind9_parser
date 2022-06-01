@@ -184,7 +184,6 @@ class TestZone(unittest.TestCase):
         result = zone_stmt_ixfr_base.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
-
     def test_isc_zone_stmt_ixfr_from_differences_passing(self):
         """ Test Clause Zone; Statement ixfr-from-differences; passing """
         test_string = [
@@ -230,6 +229,16 @@ class TestZone(unittest.TestCase):
         result = zone_stmt_journal.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
         pass
+
+    def test_isc_zone_stmt_element_github_issue35(self):
+        """ """
+        assert_parser_result_dict_true(
+            zone_masters_set,
+            """
+    "DNS123" ;
+    """,
+            {'master_name': ['DNS123']}
+        )
 
     # zone_masters_set
     def test_isc_zone_stmt_masters_name_by_ipv6_passing(self):
@@ -325,8 +334,8 @@ class TestZone(unittest.TestCase):
             zone_masters_series,
             'another_bastion_host_group key priv_dns_chan_key0;',
             {'zone_master_list': [{'key_id': 'priv_dns_chan_key0',
-                                'master_name': 'another_bastion_host_group'},
-                               ]
+                                   'master_name': 'another_bastion_host_group'},
+                                  ]
              }
         )
 
@@ -349,7 +358,7 @@ class TestZone(unittest.TestCase):
             zone_masters_series,
             'another_bastion_host_group; 128.0.0.1;',
             {'zone_master_list': [{'master_name': 'another_bastion_host_group'},
-                               {'ip4': '128.0.0.1'}]}
+                                  {'ip4': '128.0.0.1'}]}
         )
 
     def test_isc_zone_stmt_masters_series_two_mixed_w_key_passing(self):
@@ -886,7 +895,6 @@ class TestZone(unittest.TestCase):
         }
         assert_parser_result_dict_true(zone_statements_series, test_string, expected_result)
 
-
     def test_isc_zone_stmt_statements_series_failing(self):
         """ Test Clause Zone; Statement statements_series; failing """
         test_string = [
@@ -908,6 +916,20 @@ class TestZone(unittest.TestCase):
              'masters_zone': {'zone_master_list': [{'ip4': '127.0.0.1'}]},
              'type': 'slave'}
         )
+
+    def test_isc_zone_stmt_statements_github_issue35(self):
+        assert_parser_result_dict_true(
+            zone_statements_series,
+            """type slave;
+file "oncampus/net.umichtest";
+masters {
+"DNS123" ;
+};""",
+            {'file': 'oncampus/net.umichtest',
+             'masters_zone': {'zone_master_list': [{'master_name': ['DNS123']}]},
+             'type': 'slave'}
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

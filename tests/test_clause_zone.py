@@ -11,10 +11,9 @@ Description: Provides zone-related grammar in PyParsing engine
 """
 import unittest
 from pyparsing import cppStyleComment, pythonStyleComment
-from bind9_parser.isc_utils import assert_parser_result_dict_false, assert_parser_result_dict_true
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_zone import \
     zone_all_stmts_set,\
-    zone_all_stmts_series,\
     clause_stmt_zone_standalone,\
     clause_stmt_zone_series
 
@@ -30,6 +29,7 @@ class TestClauseZone(unittest.TestCase):
          | optviewzoneserver_statements_set
          | viewzone_statements_set
         )"""
+    
     def test_isc_clause_zone__all_stmts_set_file(self):
         """ Clause zone; All Zone statement file from isc_zone.py via zone_statements_set; passing mode """
         test_string = 'file "a.b.type";'
@@ -41,7 +41,8 @@ class TestClauseZone(unittest.TestCase):
         )
 
     def test_isc_clause_zone__all_stmts_set_notify_to_soa(self):
-        """ Clause zone; All Zone statement 'notify-to-soa' (from isc_optzone.py via 'optzone_statements_set'dd); passing mode """
+        """ Clause zone; All Zone statement 'notify-to-soa' (from isc_optzone.py via \
+         'optzone_statements_set'dd); passing mode """
         test_string = """notify-to-soa yes;"""
         expected_result = {'notify_to_soa': 'yes'}
         assert_parser_result_dict_true(
@@ -51,7 +52,8 @@ class TestClauseZone(unittest.TestCase):
         )
 
     def test_isc_clause_zone__all_stmts_set_also_notify(self):
-        """ Clause zone; All Zone statement 'also-notify' (from isc_optzoneserver.py via 'optzoneserver_statements_set'dd); passing mode """
+        """ Clause zone; All Zone statement 'also-notify' (from isc_optzoneserver.py via \
+        'optzoneserver_statements_set'dd); passing mode """
         test_string = """also-notify {mymaster; 1.2.3.4;};"""
         assert_parser_result_dict_true(
             zone_all_stmts_set,
@@ -61,7 +63,8 @@ class TestClauseZone(unittest.TestCase):
         )
 
     def test_isc_clause_zone__all_stmts_set_database(self):
-        """ Clause zone; All Zone statement 'database' (from isc_viewzone.py via 'viewzone_statements_set'dd); passing mode """
+        """ Clause zone; All Zone statement 'database' (from isc_viewzone.py via \
+        'viewzone_statements_set'dd); passing mode """
         test_string = """database abcd;"""
         expected_result = {'database': 'abcd'}
         assert_parser_result_dict_true(
@@ -125,7 +128,6 @@ notify-to-soa yes; };"""
                         'zone_name': 'white.com'}]}
         )
 
-
     def test_isc_clause_zone__clause_stmt_zone_standalone_dict_passing(self):
         """ Clause zone; Statement zone standalone dict; passing mode """
         assert_parser_result_dict_true(
@@ -163,12 +165,11 @@ notify-to-soa yes; };"""
                             {'keyword': 'none'}
                         ]
                     },
-                   'class': 'IN',
-                   'file': '/var/lib/bind/internal/master/db.home',
-                   'type': 'master',
-                   'zone_name': 'home'
-                }
-              ]
+                    'class': 'IN',
+                    'file': '/var/lib/bind/internal/master/db.home',
+                    'type': 'master',
+                    'zone_name': 'home'
+                }]
             }
         )
 
@@ -297,6 +298,23 @@ zone "fifth_zone" in{
                         'file': '192.168.0.rev',
                         'type': 'master',
                         'zone_name': 'fifth_zone'}]}
+        )
+
+    def test_isc_clause_stmt_zone_series_issue35(self):
+        """ Clause, All; Zone Statements group; passing """
+        assert_parser_result_dict_true(
+            clause_stmt_zone_series,
+            """zone "umichtest.net" {
+type slave;
+file "oncampus/net.umichtest";
+masters {
+"DNS123" ;
+};
+};""",
+            {'zones': [{'file': 'oncampus/net.umichtest',
+                        'masters_zone': {'zone_master_list': [{'master_name': ['DNS123']}]},
+                        'type': 'slave',
+                        'zone_name': 'umichtest.net'}]}
         )
 
 

@@ -578,8 +578,26 @@ database_name_type = Word(alphanums + '_-.', max=63)('dlz_name')
 
 charset_master_name_base = alphanums + '_-'
 master_name_base = Word(charset_master_name_base, max=62)
+master_name = copy.deepcopy(master_name_base('master_name'))
 
-master_name = master_name_base('master_name')
+master_name_base_dequoted = (
+    (
+        Char('"').suppress()
+        - Word(charset_master_name_base, max=62)
+        - Char('"').suppress()
+    )
+    ^ (
+        Char("'").suppress()
+        - Word(charset_master_name_base, max=62)
+        - Char("'").suppress()
+    )
+)
+
+master_name_dequotable = (
+   master_name_base_dequoted
+   ^ master_name
+)('master_name').setName('<master-name>')
+
 master_name.setName('<master_name>')
 
 # iso8601 is not a naive nor aware ISO time-interval
