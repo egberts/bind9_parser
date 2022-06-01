@@ -18,7 +18,7 @@ packages = [
     'bind9_parser',
 ]
 
-bind9_parser_version = '0.9.98.3'
+bind9_parser_version = '0.9.98.4'
 
 setup(  # Distribution meta-data
     name='bind9_parser',
@@ -30,7 +30,7 @@ setup(  # Distribution meta-data
     author_email='egberts@yahoo.com',
     keywords='bind9 configuration parser isc named.conf',
     url='https://github.com/egberts/bind9_parser',
-    download_url='https://github.com/egberts/bind9_parser/archive/0.9.98.tar.gz',
+    download_url='https://github.com/egberts/bind9_parser/archive/0.9.98.4.tar.gz',
     license='MIT License',
     packages=packages,
     python_requires='>=3.6',
