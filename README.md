@@ -392,7 +392,8 @@ END
 ```
 
 # Coverages
-* [![Coverage Status (master)](https://coveralls.io/repos/github/egberts/bind9_parser/badge.svg?branch=master)](https://coveralls.io/github/egberts/bind9_parser?branch=master)
+[![build status](https://api.travis-ci.org/egberts/bind9_parser.svg)](https://travis-ci.org/egberts/bind9_parser)
+[![coverage status](https://coveralls.io/repos/github/egberts/bind9_parser/badge.svg)](https://coveralls.io/github/egberts/bind9_parser)  
 |  |license| |versions| |status|
 |  |ci-status| |win-ci-status| |docs| |codecov|
 |  |kit| |format| |repos| |downloads|
