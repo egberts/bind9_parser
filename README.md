@@ -396,6 +396,8 @@ END
 [![coverage status](https://coveralls.io/repos/github/egberts/bind9_parser/badge.svg)](https://coveralls.io/github/egberts/bind9_parser)  
 |  |license| |[![GitHub version](https://badge.fury.io/gh/egberts%2Fbind9_parser.svg)](https://badge.fury.io/gh/egberts%2Fbind9_parser)| |status|
 |  |ci-status| |win-ci-status| |docs| | [![codecov](https://codecov.io/gh/egberts/bind9_parser/branch/master/graph/badge.svg?token=V8RieceAFx)](https://codecov.io/gh/egberts/bind9_parser) |
+[![star this repo](http://githubbadges.com/star.svg?user=egberts&repo=bind9_parser)](http://github.com/egberts/bind9_parser/star)
+[![fork this repo](http://githubbadges.com/fork.svg?user=egberts&repo=bind9_parser)](http://github.com/egberts/bind9_parser/fork)
 |  |kit| |format| |repos| |downloads|
-|  |[![star](http://githubbadges.com/star.svg?user=egberts&repo=bind9_parser&background=007ecg&color=bbb&style=flat)](https://github.com/egberts/bind9_parser)| |http://githubbadges.com/star.svg?user=egberts&repo=bind9_parser&background=007ecg&color=bbb&style=flat| |contributors|
+|| |contributors|
 |  |tidelift| |twitter-coveragepy| |twitter-nedbat|
