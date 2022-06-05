@@ -395,7 +395,7 @@ END
 [![build status](https://api.travis-ci.org/egberts/bind9_parser.svg)](https://travis-ci.org/egberts/bind9_parser)
 [![coverage status](https://coveralls.io/repos/github/egberts/bind9_parser/badge.svg)](https://coveralls.io/github/egberts/bind9_parser)  
 |  |license| |versions| |status|
-|  |ci-status| |win-ci-status| |docs| |codecov|
+|  |ci-status| |win-ci-status| |docs| | [![codecov](https://codecov.io/gh/egberts/bind9_parser/branch/master/graph/badge.svg?token=V8RieceAFx)](https://codecov.io/gh/egberts/bind9_parser) |
 |  |kit| |format| |repos| |downloads|
 |  |stars| |forks| |contributors|
 |  |tidelift| |twitter-coveragepy| |twitter-nedbat|
