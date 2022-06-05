@@ -397,5 +397,5 @@ END
 |  |license| |[![GitHub version](https://badge.fury.io/gh/egberts%2Fbind9_parser.svg)](https://badge.fury.io/gh/egberts%2Fbind9_parser)| |status|
 |  |ci-status| |win-ci-status| |docs| | [![codecov](https://codecov.io/gh/egberts/bind9_parser/branch/master/graph/badge.svg?token=V8RieceAFx)](https://codecov.io/gh/egberts/bind9_parser) |
 |  |kit| |format| |repos| |downloads|
-|  |stars| |forks| |contributors|
+|  |http://githubbadges.com/star.svg?user=egberts&repo=bind9_parser&background=007ecg&color=bbb&style=flat| |http://githubbadges.com/star.svg?user=egberts&repo=bind9_parser&background=007ecg&color=bbb&style=flat| |contributors|
 |  |tidelift| |twitter-coveragepy| |twitter-nedbat|
