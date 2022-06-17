@@ -8,10 +8,12 @@ Now we can parse `named.conf` with relative ease using Python.  Could even outpu
 
 # Features
 
-* Pythonized `named.conf` settings
-* JSON output
-* Schema lookup
-* offline local search engine on all Bind9 clauses, statements, and keywords.
+* Pythonized `named.conf` settings (DONE)
+* JSON output (DONE)
+* Schema lookup (DONE)
+* offline local search engine on all Bind9 clauses, statements, and keywords. (DONE)
+* Python chaining the setters/getters of `view`/`zone` clauses
+* Outputting `named.conf`
 
 # Introduction
 
