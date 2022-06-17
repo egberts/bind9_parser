@@ -1889,7 +1889,7 @@ specifically queried for. The default is yes.""",
 g_nc_keywords['dnssec-dnskey-kskonly'] = \
     {
         'default': 'no',
-        'validity': {'boolean'},
+        'validity': {'statement(s) boolean'},
         'found-in': {'options', 'view', 'zone'},
         'introduced': '9.7.0',
         'topic': 'DNSSEC',
@@ -3779,7 +3779,7 @@ g_nc_keywords['memstatistics-file'] = \
     {
         'default': '"named.memstats"',
         'validity': {'function': "quoted_path_name"},
-        'found-in': {'options'},
+        5found-in': {'options'},
         'introduced': '8.1',
         'topic': 'operating-system',
         'comment': """The pathname of the file the server writes memory usage statistics to on exit.
@@ -4643,7 +4643,7 @@ g_nc_keywords['recursive-clients'] = \
 
 g_nc_keywords['request-expire'] = \
     {
-        'default': 'true',  # was 'yes' in v9.11
+        'default': 'true',
         'validity': {'regex': r'(true|false|yes|no)'},
         'found-in': {'options', 'view', 'server', 'zone'},
         'introduced': '9.11.0',
@@ -4732,16 +4732,6 @@ g_nc_keywords['require-server-cookie'] = \
             full response, while also requiring a legitimate
             client to follow up with a second query with the
             new, valid, cookie.""",
-    }
-
-g_nc_keywords['require-server-cookie'] = \
-    {
-        'default': 'no',
-        'validity': {'regex': r"(yes|no)"},
-        'found-in': {'options', 'view'},
-        'introduced': '9.11.0',
-        'topic': 'server resource',
-        'comment': '',
     }
 
 g_nc_keywords['reserved-sockets'] = \
