@@ -71,7 +71,7 @@ purpose of this design is to get all the raw `named.conf` settings. No CST suppo
 original file containing such annotation.
 
 It is all about extracting the settings. Writing it back out into a `named.conf`-style file has become a secondary goal
-here because too many passive security tools awaits those settings.
+here because too many passive security tools awaits this (pending) outputter() feature.
 
 # Python  Design
 
