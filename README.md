@@ -51,7 +51,7 @@ Tokenize `named.conf` variable consists of `dict` and `list` to ameliorate and p
 Token parser is chosen here for the primary purpose of performing automated checking of its valid settings. No concrete 
 syntax tree (and certainly no abstract syntax tree either).
 
-This is about as simple as getting and setting configurations with like an `.INI` file, but with the complex `named.conf`
+This is about as simple as getting and setting configurations with like an `.INI` file, but with the complexity of `named.conf`
 instead.
 
 # Token Parser Design
