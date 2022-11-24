@@ -49,7 +49,7 @@ clause_stmt_key_standalone = (
         + rbrack
     )
     + semicolon
-)('key')
+)('key*')
 
 # {0-*} statement
 clause_stmt_key_series = (
