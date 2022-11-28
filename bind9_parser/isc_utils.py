@@ -271,8 +271,8 @@ charset_key_id_base = alphanums + '_-'
 charset_key_id_dquotable = charset_key_id_base + "'"
 charset_key_id_squotable = charset_key_id_base + '"'
 key_id_base = Word(charset_key_id_base, max=62)
-key_id_dquotable = Combine(Char('"') + Word(charset_key_id_dquotable, max=64) + Char('"'))
-key_id_squotable = Combine(Char("'") + Word(charset_key_id_squotable, max=64) + Char("'"))
+key_id_dquotable = Combine(Char('"').suppress() + Word(charset_key_id_dquotable, max=64) + Char('"').suppress())
+key_id_squotable = Combine(Char("'").suppress() + Word(charset_key_id_squotable, max=64) + Char("'").suppress())
 
 key_id = (
         key_id_dquotable
