@@ -267,7 +267,7 @@ key_secret_dequotable = (
 
 g_expose_secrets = False
 
-charset_key_id_base = alphanums + '_-'
+charset_key_id_base = alphanums + '_-.'
 charset_key_id_dquotable = charset_key_id_base + "'"
 charset_key_id_squotable = charset_key_id_base + '"'
 key_id_base = Word(charset_key_id_base, max=62)
