@@ -582,7 +582,7 @@ size_spec_nodefault = (
 size_spec = (
     Group(
             ungroup(size_spec_nodefault)
-            | Literal('default')
+            | CaselessLiteral('default')
     )
 )('size')
 size_spec.setName('( <size-spec> | unlimited | default )')

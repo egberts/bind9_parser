@@ -13,7 +13,7 @@ from bind9_parser.isc_utils import assert_parser_result_dict_true,\
     view_name, view_name_dquotable, view_name_squotable, \
     zone_name, zone_name_dquotable, zone_name_squotable, \
     fqdn_name, krb5_principal_name, \
-    check_options, \
+    check_options, master_name_base_dequoted, master_name_dequotable, \
     filename_base, size_spec, path_name, algorithm_name,\
     algorithm_name_list_set, algorithm_name_list_series, \
     key_id_list_series, primary_id
@@ -504,7 +504,7 @@ class TestConfigUtils(unittest.TestCase):
         result = size_spec.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
 
-    def test_isc_utils_check_options_failing(self):
+    def test_isc_utils_check_options_passing(self):
         """ ISC Utilities; Type CheckOptions; passing """
         test_data = [
             'warn',
@@ -518,6 +518,61 @@ class TestConfigUtils(unittest.TestCase):
             'ignOre',
         ]
         result = check_options.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_check_options_failing(self):
+        """ ISC Utilities; Type CheckOptions; failing """
+        test_data = [
+            'warning',
+            'WARNS',
+            'WaRe',
+            'failing',
+            'FAILURE',
+            'fAiLs',
+            'ignored',
+            'IGNORED',
+            'ignOrinG',
+        ]
+        result = check_options.runTests(test_data, failureTests=True)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_master_dequoted_name_passing(self):
+        """ ISC Utilities; Type QuotedMasterName; passing """
+        test_data = [
+            '"master_name_is_given"',
+            '"a"',
+            '"a.b.c.d"',
+        ]
+        result = master_name_base_dequoted.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_master_dequoted_name_failing(self):
+        """ ISC Utilities; Type QuotedMasterName; failing """
+        test_data = [
+            'unquoted_master_name',
+            'z',
+        ]
+        result = master_name_base_dequoted.runTests(test_data, failureTests=True)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_master_name_dequotable_passing(self):
+        """ ISC Utilities; Type QuotableMasterName; passing """
+        test_data = [
+            '"master_name_is_given"',
+            "'a'",
+            'a.b.c.d',
+        ]
+        result = master_name_dequotable.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_master_name_dequotable_failing(self):
+        """ ISC Utilities; Type QuotedMasterName; failing """
+        test_data = [
+            '"fron_quoted_master_name',
+            'rear_quoted_master_name"',
+            'midquoted_"master_name',
+        ]
+        result = master_name_dequotable.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
 
     def test_isc_utils_inline_comments_passing(self):

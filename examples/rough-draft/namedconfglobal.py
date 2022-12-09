@@ -233,7 +233,7 @@ g_nc_keywords['lwres'] = \
 
 g_nc_keywords['managed-keys'] = \
     {
-        'occurs-multiple-times': True,  # was shocked that this is a multiple entry supported clause
+        'occurs-multiple-times': True,  # CFG_CLAUSEFLAG_MULTI
         'topblock': False,
         'found-in': {'', 'view'},  # also at top-statement-level
         'introduced': '9.5.0',
@@ -248,9 +248,10 @@ g_nc_keywords['masters'] = \
     {
         'occurs-multiple-times': True,
         'topblock': True,
-        'found-in': {'', 'zone'},  # Only found in zone-slave/zone-stub
+        'found-in': {'', 'zone'},  # Only found in zone-slave/zone-mirror/zone-redirect/zone-stub
         'user-defined-indices': True,
         'output-order-id': 8,  # masters should be after 'view'/'zone'
+        'zone-type': {'secondary', 'mirror', 'redirect', 'stub', 'slave'},
         'topic': 'nameserver, master, server, transfer',
         'introduced': "4.8",
     }

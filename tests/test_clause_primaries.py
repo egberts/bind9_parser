@@ -9,6 +9,7 @@ import unittest
 from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_clause_primaries import \
     primary_id, \
+    primaries_element_list, \
     primaries_element_series,\
     clause_stmt_primaries_standalone, clause_stmt_primaries_series
 
@@ -58,12 +59,30 @@ class TestClausePrimaries(unittest.TestCase):
         expected_result = {'primary_id': 'netspeed'}
         assert_parser_result_dict_false(primary_id, test_string, expected_result)
 
+    def test_isc_primaries_element_list_passing(self):
+        """Primaries clause, Primary Element list, passing mode"""
+        assert_parser_result_dict_true(
+            primaries_element_list,
+            'primary_subdomain key "primary_key_maker";',
+            {'key_id': 'primary_key_maker',
+             'primary_name': 'primary_subdomain'}
+        )
+
+    def test_isc_primaries_element_list_2_passing(self):
+        """Primaries clause, Primary Element list, passing mode"""
+        assert_parser_result_dict_true(
+            primaries_element_list,
+            'primary_recon_border_gateway key "My_Secret_Company_Key";',
+            {'key_id': 'My_Secret_Company_Key',
+             'primary_name': 'primary_recon_border_gateway'}
+        )
+
     def test_isc_primaries_element_series_passing(self):
         """Primaries clause, Primary Element series, passing mode"""
         assert_parser_result_dict_true(
             primaries_element_series,
             'primary_subdomain key "primary_key_maker";',
-            {'primary_list': [{'key_id': '"primary_key_maker"',
+            {'primary_list': [{'key_id': 'primary_key_maker',
                                'primary_name': 'primary_subdomain'}]}
         )
 
@@ -72,7 +91,7 @@ class TestClausePrimaries(unittest.TestCase):
         assert_parser_result_dict_true(
             primaries_element_series,
             'primary_recon_border_gateway key "My_Secret_Company_Key";',
-            {'primary_list': [{'key_id': '"My_Secret_Company_Key"',
+            {'primary_list': [{'key_id': 'My_Secret_Company_Key',
                                'primary_name': 'primary_recon_border_gateway'}]}
         )
 

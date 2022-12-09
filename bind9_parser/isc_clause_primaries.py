@@ -73,6 +73,23 @@ primary_keyword = (
         Keyword('primaries').suppress()
         ^ Keyword('masters').suppress()
         )
+
+# Used only within 'zone' clause
+zone_stmt_primaries_standalone = (
+    Group(
+        primary_id('primary_id')
+        - Optional(inet_ip_port_keyword_and_number_element)
+        - Optional(inet_dscp_port_keyword_and_number_element)
+        - Group(
+            lbrack
+            + primaries_element_series('')
+            + rbrack
+        )('primary_list')
+    )
+    + semicolon
+)('primaries')
+
+# Used only as top-level clause
 clause_stmt_primaries_standalone = (
     primary_keyword
     - Group(
