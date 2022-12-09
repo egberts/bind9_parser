@@ -452,6 +452,18 @@ krb5_instance_name = Word(
     charset_krb5_username, min=1, max=256
 )('instance')  # limited to length of FQDN
 
+# Valid inputs:
+#   user@DOMAIN.COM
+#   user/admin@DOMAIN.COM
+#   host/host.domain.com@DOMAIN.COM
+#   root/host.domain.com@DOMAIN.COM
+#   nfs/host.domain.com@DOMAIN.COM
+#   user@DOMAIN.COM:123
+#   user/admin@DOMAIN.COM:123
+#   host/host.domain.com@DOMAIN.COM:234
+#   root/host.domain.com@DOMAIN.COM:456
+#   nfs/host.domain.com@DOMAIN.COM:890
+
 #  krb5_principal_name max=(254+1+16))  # limited to length of FQDN + '/' + URI
 krb5_principal_name_base = (
         Combine(
@@ -461,7 +473,12 @@ krb5_principal_name_base = (
             - '@'
             - krb5_realm_name
         )
-        | Combine(
+        ^ Combine(
+            krb5_primary_name
+            - '/'
+            - krb5_realm_name
+        )
+        ^ Combine(
             krb5_primary_name
             - '@'
             - krb5_realm_name

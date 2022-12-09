@@ -411,6 +411,15 @@ class TestConfigUtils(unittest.TestCase):
         result = krb5_principal_name.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
+    # no instance in KRB5 principal name (it is OK)
+    def test_isc_krb5_principal_name_instance_passing(self):
+        """ ISC Utilities; Type KRB5 Principal Name; passing """
+        test_data = [
+            "instance/quoted.fqdn.org",
+        ]
+        result = krb5_principal_name.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
     def test_isc_krb5_principal_name_passing(self):
         """ ISC Utilities; Type KRB5 Principal Name; passing """
         test_data = [
