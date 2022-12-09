@@ -497,9 +497,9 @@ krb5_principal_name = (
 krb5_principal_name.setName('<principal>')
 
 check_options = (
-        Literal('warn')
-        | Literal('fail')
-        | Literal('ignore')
+        CaselessLiteral('warn')
+        | CaselessLiteral('fail')
+        | CaselessLiteral('ignore')
 )('check_type')
 check_options.setName('( warn | fail | ignore )')
 
@@ -570,15 +570,12 @@ size_spec_nodefault = (
         Group(
             Word(nums).setParseAction(lambda toks: int(toks[0]), max=10)
             - Optional(
-                Literal('K')
-                | Literal('k')
-                | Literal('M')
-                | Literal('m')
-                | Literal('G')
-                | Literal('g')
+                CaselessLiteral('K')
+                | CaselessLiteral('M')
+                | CaselessLiteral('G')
             )
         )
-        | Literal('unlimited')
+        | CaselessLiteral('unlimited')
     )
 ).setName('( <size-spec> | unlimited )')
 
@@ -611,8 +608,8 @@ master_name_base_dequoted = (
 )
 
 master_name_dequotable = (
-   master_name_base_dequoted
-   ^ master_name
+       ungroup(master_name_base_dequoted)
+       ^ master_name
 )('master_name').setName('<master-name>')
 
 master_name.setName('<master_name>')

@@ -234,9 +234,7 @@ class TestZone(unittest.TestCase):
         """ """
         assert_parser_result_dict_true(
             zone_masters_set,
-            """
-    "DNS123" ;
-    """,
+            'DNS123 ;',
             {'master_name': ['DNS123']}
         )
 

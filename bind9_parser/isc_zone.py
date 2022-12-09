@@ -114,7 +114,7 @@ zone_masters_set = (
                     ip6_addr
                     - Optional(inet_ip_port_keyword_and_number_element('ip_port'))
             )('ip6')
-            ^ master_name_dequotable('master_name')
+            ^ ungroup(master_name_dequotable('master_name'))
         )('')
         - Optional(key_id_keyword_and_name_pair)
     )('')

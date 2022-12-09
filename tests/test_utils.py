@@ -13,6 +13,7 @@ from bind9_parser.isc_utils import assert_parser_result_dict_true,\
     view_name, view_name_dquotable, view_name_squotable, \
     zone_name, zone_name_dquotable, zone_name_squotable, \
     fqdn_name, krb5_principal_name, \
+    check_options, \
     filename_base, size_spec, path_name, algorithm_name,\
     algorithm_name_list_set, algorithm_name_list_series, \
     key_id_list_series, primary_id
@@ -501,6 +502,22 @@ class TestConfigUtils(unittest.TestCase):
             'defaults',
         ]
         result = size_spec.runTests(test_data, failureTests=True)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_check_options_failing(self):
+        """ ISC Utilities; Type CheckOptions; passing """
+        test_data = [
+            'warn',
+            'WARN',
+            'WaRn',
+            'fail',
+            'FAIL',
+            'fAiL',
+            'ignore',
+            'IGNORE',
+            'ignOre',
+        ]
+        result = check_options.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
     def test_isc_utils_inline_comments_passing(self):
