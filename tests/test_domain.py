@@ -113,7 +113,7 @@ class TestDomain(unittest.TestCase):
             '_965,_tcp.example.net',
         ]
         result = domain_fqdn.runTests(test_data, failureTests=True)
-        self.assertTrue(result[0])
+        self.assertFalse(result[0])
 
     def test_isc_domain_domain_generic_fqdn_passing(self):
         """ Element domain; Type Generic FQDN; passing mode """
