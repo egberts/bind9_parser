@@ -6,56 +6,15 @@ Description:  Performs unit test on the 'primaries' clause in isc_clause_primari
 """
 
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
+from bind9_parser.isc_utils import primaries_id,\
+    assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_clause_primaries import \
-    clause_stmt_primaries_standalone, \
+    clause_cloned_primaries_remoteserver_element_series, \
     clause_stmt_primaries_series
 
 
 class TestClausePrimaries(unittest.TestCase):
     """ Clause primaries """
-
-    def test_isc_primaries_name_passing(self):
-        """ Clause primaries; Series Primary Name; passing mode """
-        expected_result = {'primary_id': 'primary_nameservers'}
-        assert_parser_result_dict_true(primary_id, 'primary_nameservers', expected_result)
-        expected_result = {'primary_id': 'secondary-slaves'}
-        assert_parser_result_dict_true(primary_id, 'secondary-slaves', expected_result)
-        expected_result = {'primary_id': 'demilitarized_zone_servers'}
-        assert_parser_result_dict_true(primary_id, 'demilitarized_zone_servers', expected_result)
-
-    def test_isc_primaries_name_failing(self):
-        """ Clause primaries; Series Primary Name; failing mode """
-        test_data = [
-            'route,net;',
-            'bad host',
-            'no such;',
-        ]
-        expected_result = {'primary_id': '2.2.2.2'}
-        assert_parser_result_dict_false(primary_id, 'route.net;', expected_result)
-        assert_parser_result_dict_false(primary_id, 'bad host', expected_result)
-        assert_parser_result_dict_false(primary_id, 'no such;', expected_result)
-
-    def test_isc_primary_name_passing(self):
-        """Primaries clause, Primary Name type, passing mode"""
-        test_string = 'primary_bastion_host'
-        expected_result = {'primary_id': 'primary_bastion_host'}
-        assert_parser_result_dict_true(primary_id, test_string, expected_result)
-        test_string = '\'secondary_firewall_host\''
-        expected_result = {'primary_id': '\'secondary_firewall_host\''}
-        assert_parser_result_dict_true(primary_id, test_string, expected_result)
-        test_string = '"hidden_primary"'
-        expected_result = {'primary_id': '"hidden_primary"'}
-        assert_parser_result_dict_true(primary_id, test_string, expected_result)
-        test_string = 'asdf"asdf"'
-        expected_result = {'primary_id': 'asdf"asdf"'}
-        assert_parser_result_dict_true(primary_id, test_string, expected_result)
-
-    def test_isc_primary_name_failing(self):
-        """Primaries clause, Primary Name type, purposely failing mode"""
-        test_string = 'netspeed 150000000'
-        expected_result = {'primary_id': 'netspeed'}
-        assert_parser_result_dict_false(primary_id, test_string, expected_result)
 
     def test_isc_primaries_element_list_passing(self):
         """Primaries clause, Primary Element list, passing mode"""

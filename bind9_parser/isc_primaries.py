@@ -30,16 +30,16 @@ primaries_remoteserver_element = (
         + Optional(inet_ip_port_keyword_and_number_element)
         + Optional(key_id_keyword_and_name_pair)
     )('')
-    | (
+    ^ (
             ip6_addr('ip6_addr')
             + Optional(inet_ip_port_keyword_and_number_element)
             + Optional(key_id_keyword_and_name_pair)
     )('')
-    | (
+    ^ (
             primaries_id('primaries_name')
             + Optional(key_id_keyword_and_name_pair)
     )('')   # TODO investigate if a series of primary_id is supported in primaries clause
-    | (
+    ^ (
             primaries_id('primaries_name')
     )('')
 ).setName('<remote-server>|<ip4-addr>|<ip6-addr>')
@@ -95,7 +95,11 @@ zone_stmt_primaries_standalone = (
     - Optional(inet_ip_port_keyword_and_number_element)
     - Optional(inet_dscp_port_keyword_and_number_element)
     - lbrack
-    + primaries_remoteserver_element_series('')
+    - OneOrMore(
+        Group(    # Started indexing via list []
+            primaries_remoteserver_set
+        )
+    )('primaries_list')
     - rbrack
     + semicolon
 ).setName('primaries <remote-server-name> [ port <port-no> ] [ dscp <dscp-id> ] { <series-remote-servers> };')
