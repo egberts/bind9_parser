@@ -15,7 +15,8 @@ from bind9_parser.isc_utils import semicolon, lbrack, rbrack, dequoted_path_name
     isc_boolean, view_name, isc_file_name,\
     number_type, check_options, \
     key_id_keyword_and_name_pair, squote, dquote, \
-    krb5_realm_name, master_name_dequotable
+    krb5_realm_name, primaries_name_type_dequotable, \
+    primaries_keyword
 from bind9_parser.isc_inet import ip4_addr,\
     ip6_addr, inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element,\
@@ -87,23 +88,23 @@ zone_stmt_journal = (
     + semicolon
 )
 
-# masters
-# Note: Not the same syntax as clause_stmt_masters_series
+# primaries statement (not primaries clause)
+# Note: Not the same syntax as clause_stmt_primaries_series
 #
 # Only found in secondary, slave, mirror, stub, redirect, zone-stub or zone-slave
-# masters [ port <integer> ] [ dscp <integer> ]
+# primaries [ port <integer> ] [ dscp <integer> ]
 #         {
 #             (
 #               <ipv4_address> [ port <integer> ]
 #               | <ipv6_address> [ port <integer> ]
-#               | <masters>
+#               | <primaries>
 #             )
 #             [ key <string> ]
 #             ;
 #             ...
 #         };
 
-zone_masters_set = (
+zone_primaries_set = (
     (
         (
             ungroup(
@@ -114,54 +115,47 @@ zone_masters_set = (
                     ip6_addr
                     - Optional(inet_ip_port_keyword_and_number_element('ip_port'))
             )('ip6')
-            ^ ungroup(master_name_dequotable('master_name'))
+            ^ ungroup(primaries_name_type_dequotable('remotesselect_name'))
         )('')
         - Optional(key_id_keyword_and_name_pair)
     )('')
     + semicolon
 )('')
 
-zone_masters_series = (
+zone_primaries_series = (
     OneOrMore(
         Group(
-            zone_masters_set('')
+            zone_primaries_set('')
         )('')
-    )('zone_master_list')  # without that PyParsing label, we cannot get standalone grouping, must be labeled.
+    )('zone_primaries_list')  # without that PyParsing label, we cannot get standalone grouping, must be labeled.
 )
 
-# 'masters' clause has a name field for the 1st argument;
-#     'masters' statement in the zone clause does not have a <master_name> field but it has 'port' or 'dscp'
-primaries_keyword = (
-        Keyword('primaries').suppress()
-        ^ Keyword('masters').suppress()
-        )
-
-zone_stmt_masters = (
+zone_stmt_primaries = (
     Group(
         primaries_keyword  # if we could have a lookahead of 'primaries {';
         - (
             (
                 lbrack
-                + zone_masters_series
+                + zone_primaries_series
                 + rbrack
             )
             ^ (
                 inet_ip_port_keyword_and_number_element
                 + Optional(inet_dscp_port_keyword_and_number_element)
                 - lbrack
-                - zone_masters_series
+                - zone_primaries_series
                 + rbrack
             )
             ^ (
                 inet_dscp_port_keyword_and_number_element
                 + Optional(inet_ip_port_keyword_and_number_element)
                 - lbrack
-                + zone_masters_series
+                + zone_primaries_series
                 + rbrack
             )
         )
         # Had to break out the permutation of port/dscp due to compete with top-level 'masters' clause
-    )('masters_zone')
+    )('primaries_zone')
     + semicolon
 )
 
@@ -371,10 +365,10 @@ zone_stmt_use_id_pool = (
 )
 
 # Multiple-statement #
-zone_multiple_stmt_masters = (
+zone_multiple_stmt_primaries = (
     ZeroOrMore(
         (
-            zone_stmt_masters('')  # blank this label so that a multiple group can assume this label
+            zone_stmt_primaries('')  # blank this label so that a multiple group can assume this label
         )('')
     )('masters')
 )
@@ -389,7 +383,7 @@ zone_statements_set = (
     | zone_stmt_ixfr_base
     | zone_stmt_ixfr_from_differences
     | zone_stmt_journal
-    | zone_stmt_masters
+    | zone_stmt_primaries
     | zone_stmt_pubkey
     | zone_stmt_server_addresses
     | zone_stmt_server_names

@@ -312,7 +312,7 @@ masters {
 };
 };""",
             {'zones': [{'file': 'oncampus/net.umichtest',
-                        'masters_zone': {'zone_master_list': [{'master_name': ['DNS123']}]},
+                        'masters_zone': {'zone_master_list': ['DNS123']},
                         'type': 'slave',
                         'zone_name': 'umichtest.net'}]}
         )
