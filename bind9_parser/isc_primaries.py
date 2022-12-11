@@ -9,7 +9,7 @@ Title: Primary Servers statement for Zone clauses
 Description: Provides primary-related grammar in PyParsing engine
              for ISC-configuration style
 """
-from pyparsing import OneOrMore, Group, Optional
+from pyparsing import OneOrMore, Group, Optional, ungroup
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, \
     key_id_keyword_and_name_pair, tls_id_keyword_and_name_pair, \
     primaries_id, primaries_keyword
@@ -29,20 +29,20 @@ primaries_remoteserver_element = (
         ip4_addr('ip4_addr')
         + Optional(inet_ip_port_keyword_and_number_element)
         + Optional(key_id_keyword_and_name_pair)
-    )
+    )('')
     | (
             ip6_addr('ip6_addr')
             + Optional(inet_ip_port_keyword_and_number_element)
             + Optional(key_id_keyword_and_name_pair)
-    )
+    )('')
     | (
             primaries_id('primaries_name')
             + Optional(key_id_keyword_and_name_pair)
-    )   # TODO investigate if a series of primary_id is supported in primaries clause
+    )('')   # TODO investigate if a series of primary_id is supported in primaries clause
     | (
             primaries_id('primaries_name')
-    )
-)
+    )('')
+).setName('<remote-server>|<ip4-addr>|<ip6-addr>')
 
 # one remote server (ends with a semicolon)
 #
@@ -56,10 +56,10 @@ primaries_remoteserver_element = (
 
 primaries_remoteserver_set = (
     primaries_remoteserver_element
-    + key_id_keyword_and_name_pair
-    + tls_id_keyword_and_name_pair
+    + Optional(key_id_keyword_and_name_pair)
+    + Optional(tls_id_keyword_and_name_pair)
     - semicolon
-)
+).setName('<remote-server>|<ip4-addr>|<ip6-addr> [ key <key-value> ] [ tls <tls-value> ];')
 
 # a set of remote servers (ends with a right-brace)
 primaries_remoteserver_element_series = (
@@ -68,7 +68,7 @@ primaries_remoteserver_element_series = (
             primaries_remoteserver_set
         )
     )('primaries_list')
-)
+).setName('<remote-server>|<ip4-addr>|<ip6-addr> [ key <key-value> ] [ tls <tls-value> ]; ...')
 
 # zone <zone-name> {
 #     primaries [ port <integer> ] [ dscp <integer> ]
@@ -98,4 +98,5 @@ zone_stmt_primaries_standalone = (
     + primaries_remoteserver_element_series('')
     - rbrack
     + semicolon
-)('primaries')
+).setName('primaries <remote-server-name> [ port <port-no> ] [ dscp <dscp-id> ] { <series-remote-servers> };')
+

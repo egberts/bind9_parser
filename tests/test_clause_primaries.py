@@ -8,10 +8,8 @@ Description:  Performs unit test on the 'primaries' clause in isc_clause_primari
 import unittest
 from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_clause_primaries import \
-    primary_id, \
-    primaries_element_list, \
-    primaries_element_series,\
-    clause_stmt_primaries_standalone, clause_stmt_primaries_series
+    clause_stmt_primaries_standalone, \
+    clause_stmt_primaries_series
 
 
 class TestClausePrimaries(unittest.TestCase):
