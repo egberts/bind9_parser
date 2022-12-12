@@ -10,12 +10,27 @@ from bind9_parser.isc_utils import primaries_id,\
     assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_clause_primaries import \
     clause_cloned_primaries_remoteserver_element_series, \
+    clause_stmt_primaries_standalone, \
     clause_stmt_primaries_series
 
 
 class TestClausePrimaries(unittest.TestCase):
     """ Clause primaries """
 
+    def test_isc_primary_name_standalone_passing(self):
+        """Primaries statement, primary name 2; passing mode"""
+        assert_parser_result_dict_true(
+            clause_stmt_primaries_standalone,
+            'primaries oldmaster { remote-server-name; 1.2.3.4; 2e:fe::1; 2.3.4.5 key "123" tls "asdd"; };',
+            {
+                'primaries_list': [
+                    {'primaries_name': 'remote-server-name'},
+                    {'ip4_addr': '1.2.3.4'},
+                    {'ip6_addr': '2e:fe::1'},
+                    {'ip4_addr': '2.3.4.5',
+                                 'key_id': '123',
+                                 'tls_id': 'asdd'}]}
+        )
     def test_isc_primaries_element_list_passing(self):
         """Primaries clause, Primary Element list, passing mode"""
         assert_parser_result_dict_true(

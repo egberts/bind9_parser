@@ -22,7 +22,7 @@ Syntax:
       };
 """
 import copy
-from pyparsing import OneOrMore, Group
+from pyparsing import OneOrMore, Group, ungroup
 from bind9_parser.isc_utils import Optional, lbrack, rbrack, semicolon, \
     primaries_keyword, primaries_id
 from bind9_parser.isc_inet import \
@@ -35,7 +35,7 @@ clause_cloned_primaries_remoteserver_element_series = copy.deepcopy(primaries_re
 
 # Used only as top-level clause
 clause_stmt_primaries_standalone = (
-        primaries_keyword
+        ungroup(primaries_keyword)('primaries_id')
         - primaries_id
         - Optional(inet_ip_port_keyword_and_number_element)
         - Optional(inet_dscp_port_keyword_and_number_element)
