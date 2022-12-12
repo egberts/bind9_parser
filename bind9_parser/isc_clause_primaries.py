@@ -22,33 +22,49 @@ Syntax:
       };
 """
 import copy
-from pyparsing import OneOrMore, Group, ungroup
+from pyparsing import OneOrMore, Group, ungroup, Combine, ZeroOrMore
 from bind9_parser.isc_utils import Optional, lbrack, rbrack, semicolon, \
     primaries_keyword, primaries_id
 from bind9_parser.isc_inet import \
     inet_ip_port_keyword_and_number_element,\
     inet_dscp_port_keyword_and_number_element
-from bind9_parser.isc_primaries import primaries_remoteserver_element_series
+from bind9_parser.isc_primaries import primaries_remoteserver_set
 
 
-clause_cloned_primaries_remoteserver_element_series = copy.deepcopy(primaries_remoteserver_element_series)
+clause_cloned_primaries_remoteserver_set = copy.deepcopy(primaries_remoteserver_set)
 
 # Used only as top-level clause
 clause_stmt_primaries_standalone = (
-        ungroup(primaries_keyword)('primaries_id')
-        - primaries_id
-        - Optional(inet_ip_port_keyword_and_number_element)
-        - Optional(inet_dscp_port_keyword_and_number_element)
+    Group(
+        primaries_keyword
+        - primaries_id('primaries_id')
+        - (
+            (
+                Optional(inet_ip_port_keyword_and_number_element)
+                - Optional(inet_dscp_port_keyword_and_number_element)
+            )
+            ^ (
+                Optional(inet_dscp_port_keyword_and_number_element)
+                - Optional(inet_ip_port_keyword_and_number_element)
+            )
+        )
         - lbrack
-        + clause_cloned_primaries_remoteserver_element_series('')
+        - ZeroOrMore(    # Started indexing via list []
+            Group(
+                clause_cloned_primaries_remoteserver_set
+            )('remote_servers*')
+        )('')
         - rbrack
-        + semicolon
-)('primaries')
+    )('primaries')
+    + semicolon
+)('').setName('primaries <remote-server-name> [ port <port-no> ] [ dscp <dscp-id> ] { <series-remote-servers> };')
 
 # clause_stmt_primaries_series cannot be used within 'zone' clause, use clause_stmt_primaries_set instead
 clause_stmt_primaries_series = (
-    OneOrMore(
-            clause_stmt_primaries_standalone
-    )
-)('primaries')
+    ZeroOrMore(
+    Group(
+            ungroup(clause_stmt_primaries_standalone(''))('')
+        )('')
+    )('')
+)('primaries').setName('primaries [ port <port> ] [ dscp <dscp> ] { ( <fqdn> | <ip4_addr> | <ip6_addr> ) [ key <key-value> ] [ tls <tls-value ]; ... };')
 clause_stmt_primaries_series.setName('primaries <name> key <key_id>')

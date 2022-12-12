@@ -722,7 +722,7 @@ primaries_id = primaries_name_type_dequotable
 primaries_keyword = (
         CaselessKeyword('primaries').suppress()
         ^ CaselessKeyword('masters').suppress()
-        )
+        ).setName('primaries')
 
 
 # Boolean support

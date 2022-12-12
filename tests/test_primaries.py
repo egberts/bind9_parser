@@ -143,7 +143,6 @@ class TestClausePrimaries(unittest.TestCase):
                                                    'tls_id': 'asdd'}}]}
         )
 
-#####
     def test_isc_primary_standalone_name_standalone_port_passing(self):
         """Primaries set, Primary Standalone with 'port' keyword, passing mode"""
         assert_parser_result_dict_true(
