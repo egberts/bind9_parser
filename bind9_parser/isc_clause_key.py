@@ -54,7 +54,7 @@ clause_stmt_key_standalone = (
 # {0-*} statement
 clause_stmt_key_series = (
     ZeroOrMore(
-        clause_stmt_key_standalone
+        clause_stmt_key_standalone('')
     )
 )('key')
 clause_stmt_key_series.setName('key <key-name> { algorithm <string>; secret <key-secret>; };')
