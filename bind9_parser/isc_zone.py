@@ -9,21 +9,21 @@ Title: Statements Used Only By zone Clause
 Description: Provides Zone-related grammar in PyParsing engine
              for ISC-configuration style
 """
+import copy
+
 from pyparsing import Keyword, Group, Literal, CaselessLiteral, OneOrMore,\
     ZeroOrMore, Word, Optional, ungroup, Combine
 from bind9_parser.isc_utils import semicolon, lbrack, rbrack, dequoted_path_name,\
     isc_boolean, view_name, isc_file_name,\
     number_type, check_options, \
-    key_id_keyword_and_name_pair, squote, dquote, \
-    krb5_realm_name, primaries_name_type_dequotable, \
-    primaries_keyword
-from bind9_parser.isc_inet import ip4_addr,\
-    ip6_addr, inet_ip_port_keyword_and_number_element,\
-    inet_dscp_port_keyword_and_number_element,\
-    ip46_addr_and_port_list
+    squote, dquote, \
+    krb5_realm_name
+from bind9_parser.isc_inet import ip46_addr_and_port_list
 from bind9_parser.isc_rr import rr_type_series
 from bind9_parser.isc_domain import \
     dequotable_domain_generic_fqdn, rr_fqdn_w_absolute
+from bind9_parser.isc_primaries import primaries_remoteserver_set, \
+    zone_stmt_primaries_standalone, primaries_remoteserver_element_series
 
 
 # Zone statements #
@@ -94,33 +94,18 @@ zone_stmt_journal = (
 # Only found in secondary, slave, mirror, stub, redirect, zone-stub or zone-slave
 # primaries [ port <integer> ] [ dscp <integer> ]
 #         {
-#             (
-#               <ipv4_address> [ port <integer> ]
-#               | <ipv6_address> [ port <integer> ]
-#               | <primaries>
-#             )
-#             [ key <string> ]
-#             ;
-#             ...
-#         };
+# one remote server (ends with a semicolon)
+#
+#         (
+#             <remote-servers>
+#             | <ipv4_address> [ port <integer> ]
+#             | <ipv6_address> [ port <integer> ]
+#         )
+#         [ key <string> ]
+#         [ tls <string> ];
 
-zone_primaries_set = (
-    (
-        (
-            ungroup(
-                    ip4_addr
-                    - Optional(inet_ip_port_keyword_and_number_element('ip_port'))
-            )('ip4')
-            ^ ungroup(
-                    ip6_addr
-                    - Optional(inet_ip_port_keyword_and_number_element('ip_port'))
-            )('ip6')
-            ^ ungroup(primaries_name_type_dequotable('remotesselect_name'))
-        )('')
-        - Optional(key_id_keyword_and_name_pair)
-    )('')
-    + semicolon
-)('')
+zone_primaries_set = copy.deepcopy(primaries_remoteserver_set)
+
 
 zone_primaries_series = (
     OneOrMore(
@@ -130,34 +115,7 @@ zone_primaries_series = (
     )('zone_primaries_list')  # without that PyParsing label, we cannot get standalone grouping, must be labeled.
 )
 
-zone_stmt_primaries = (
-    Group(
-        primaries_keyword  # if we could have a lookahead of 'primaries {';
-        - (
-            (
-                lbrack
-                + zone_primaries_series
-                + rbrack
-            )
-            ^ (
-                inet_ip_port_keyword_and_number_element
-                + Optional(inet_dscp_port_keyword_and_number_element)
-                - lbrack
-                - zone_primaries_series
-                + rbrack
-            )
-            ^ (
-                inet_dscp_port_keyword_and_number_element
-                + Optional(inet_ip_port_keyword_and_number_element)
-                - lbrack
-                + zone_primaries_series
-                + rbrack
-            )
-        )
-        # Had to break out the permutation of port/dscp due to compete with top-level 'masters' clause
-    )('primaries_zone')
-    + semicolon
-)
+zone_stmt_primaries = copy.deepcopy(zone_stmt_primaries_standalone)
 
 # pubkey number number number string; [ Zone ]
 # The DNSSEC flags, protocol, and algorithm are specified, as well as a base-64 encoded string representing the key.

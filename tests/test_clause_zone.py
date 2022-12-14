@@ -58,7 +58,7 @@ class TestClauseZone(unittest.TestCase):
         assert_parser_result_dict_true(
             zone_all_stmts_set,
             test_string,
-            {'also-notify': {'remote': [{'primary_name': 'mymaster'},
+            {'also-notify': {'remote': [{'primaries_name': 'mymaster'},
                                         {'ip_addr': '1.2.3.4'}]}}
         )
 
@@ -83,7 +83,7 @@ notify-to-soa yes; };"""
         assert_parser_result_dict_true(
             clause_stmt_zone_standalone,
             test_string,
-            {'zones': [{'also-notify': {'remote': [{'primary_name': 'mymaster'},
+            {'zones': [{'also-notify': {'remote': [{'primaries_name': 'mymaster'},
                                                    {'ip_addr': '1.2.3.4'}]},
                         'database': 'abcd',
                         'forwarders': {'forwarder': [{'ip_addr': '5.6.7.8'},
@@ -312,7 +312,7 @@ masters {
 };
 };""",
             {'zones': [{'file': 'oncampus/net.umichtest',
-                        'masters_zone': {'zone_master_list': ['DNS123']},
+                        'primaries': {'remote_servers': [{'remote_server': {'primaries_name': '"DNS123"'}}]},
                         'type': 'slave',
                         'zone_name': 'umichtest.net'}]}
         )

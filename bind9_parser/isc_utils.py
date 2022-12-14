@@ -580,7 +580,7 @@ size_spec_plain = (
             (
                 CaselessLiteral('K')
                 | CaselessLiteral('M')
-                | CaselessLiteral('S')
+                | CaselessLiteral('G')
             )('unit')
         )
     )('size_spec')

@@ -786,9 +786,9 @@ deny-answer-addresses {
     # options_stmt_tkey_gssapi_credential
     def test_isc_options_stmt_tkey_gssapi_credential_ut_failing(self):
         test_data = [
-            'tkey-gssapi-credential "ABC/admin@master.example.test@EXAMPLE.TEST;',  # two '@'s
-            'tkey-gssapi-credential "krb5_credential@example.test";',
-            'tkey-gssapi-credential "krb5_credential/example.test";',
+            'tkey-gssapi-credential "ABC/admin@master.example.test@EXAMPLE.TEST";',  # two '@'s
+            'tkey-gssapi-credential "krb5_credential$example.test";',
+            'tkey-gssapi-credential "krb5_credential\example.test";',
         ]
         result = options_stmt_tkey_gssapi_credential.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])

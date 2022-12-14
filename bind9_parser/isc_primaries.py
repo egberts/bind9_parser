@@ -114,5 +114,5 @@ zone_stmt_primaries_standalone = (
         - rbrack
     )('primaries')
     + semicolon
-).setName('primaries <remote-server-name> [ port <port-no> ] [ dscp <dscp-id> ] { <series-remote-servers> };')
+).setName('primaries  [ port <port-no> ] [ dscp <dscp-id> ] { <series-remote-servers> };')
 

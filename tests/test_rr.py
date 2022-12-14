@@ -6,22 +6,13 @@ Description:  Performs unit test on the isc_rr.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_true
+
 from bind9_parser.isc_rr import \
-    rr_fqdn_w_absolute,\
-    rr_type_list_series,\
-    rr_domain_name_or_root,\
-    rr_domain_name,\
-    rr_domain_name_or_wildcard,\
-    rr_class_any,\
-    rr_class_in,\
-    rr_class_hesiod,\
     rr_type_a, \
-    rr_type_aaaa,\
-    rr_type_ns, \
-    rr_class_set,\
-    rr_type_set,\
+    rr_class_set, \
+    rr_type_set, \
     rr_type_series
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 
 
 class TestResourceRecords(unittest.TestCase):

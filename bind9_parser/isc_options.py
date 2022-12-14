@@ -804,7 +804,7 @@ options_stmt_tkey_gssapi_credential = (
                 - krb5_principal_name
                 - squote.suppress()
             )
-            | (
+            ^ (
                 dquote.suppress()
                 - krb5_principal_name
                 - dquote.suppress()

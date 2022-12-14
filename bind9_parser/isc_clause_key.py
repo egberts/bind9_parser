@@ -40,21 +40,21 @@ key_secret_element.setName('secret <key_secret>;')
 #   secret secret_string;
 # };
 clause_stmt_key_standalone = (
-    Keyword('key').suppress()
-    - Group(
-        key_id('key_id')
+    Group(
+        Keyword('key').suppress()
+        - key_id('key_id')
         + lbrack
         - key_algorithm_element
         - key_secret_element
         + rbrack
+        + semicolon
     )
-    + semicolon
 )('key*')
 
 # {0-*} statement
 clause_stmt_key_series = (
     ZeroOrMore(
-        clause_stmt_key_standalone('')
+        clause_stmt_key_standalone
     )
-)('key')
+)
 clause_stmt_key_series.setName('key <key-name> { algorithm <string>; secret <key-secret>; };')
