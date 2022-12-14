@@ -10,7 +10,6 @@ Description: Provides zone-related grammar in PyParsing engine
              for ISC-configuration style
 """
 import unittest
-from pyparsing import cppStyleComment, pythonStyleComment
 from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_zone import \
     zone_all_stmts_set,\
@@ -143,11 +142,16 @@ notify-to-soa yes; };"""
 
     def test_isc_clause_zone__clause_zone_standalone_passing_5(self):
         """ Clause zone; Statement zone standalone 5; passing mode """
-        test_data = [""" zone "home" { type master; file "/var/lib/bind/internal/master/db.home"; allow-update { none; }; };"""]
-        test_clause_stmt_zone = clause_stmt_zone_standalone.copy()
-        test_clause_stmt_zone = test_clause_stmt_zone.setWhitespaceChars(' \t')
-        test_clause_stmt_zone = test_clause_stmt_zone.ignore(pythonStyleComment)
-        test_clause_stmt_zone = test_clause_stmt_zone.ignore(cppStyleComment)
+        test_data = ["""
+zone "home" {
+    type master; 
+    file "/var/lib/bind/internal/master/db.home"; 
+    allow-update { none; };
+    };"""]
+#        test_clause_stmt_zone = clause_stmt_zone_standalone.copy()
+#        test_clause_stmt_zone = test_clause_stmt_zone.setWhitespaceChars(' \t')
+#        test_clause_stmt_zone = test_clause_stmt_zone.ignore(pythonStyleComment)
+#        test_clause_stmt_zone = test_clause_stmt_zone.ignore(cppStyleComment)
 #        test_clause_stmt_zone.ignore(pythonStyleComment)
 #        test_clause_stmt_zone.ignore(cppStyleComment)
         result = clause_stmt_zone_standalone.runTests(test_data, failureTests=False)

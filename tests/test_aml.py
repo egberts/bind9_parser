@@ -97,10 +97,11 @@ class TestAML(unittest.TestCase):
 
     def test_isc_aml_ip4s_prefix_passing(self):
         """ Element AML; Type ip4s_prefix; passing"""
-        assert_parser_result_dict(aml_choices,
-                                '10.10.10.10/10',
-                                  {'ip4_addr': '10.10.10.10', 'prefix': '10'}
-                                  , True)
+        assert_parser_result_dict(
+            aml_choices,
+            '10.10.10.10/10',
+            {'ip4_addr': '10.10.10.10', 'prefix': '10'},
+            True)
 
     def test_isc_aml_ip4s_prefix_failing(self):
         """ Element AML; Type ip4s_prefix; failing"""
@@ -216,87 +217,102 @@ class TestAML(unittest.TestCase):
         assert_parser_result_dict(aml_choices, 'master;nameservers_acl;', {}, False)
 
     def test_aml_nesting_forward_passing(self):
-        assert_parser_result_dict(aml_nesting,
-                                '{ 1.1.1.1; { 127.0.0.1;}; };',
-                                  {'aml': [{'ip4_addr': '1.1.1.1'}, {'aml': [{'ip4_addr': '127.0.0.1'}]}]},
-                                  True)
-        assert_parser_result_dict(aml_nesting,
-                                '{ { 8.8.8.8; }; };',
-                                  {'aml': [{'aml': [{'ip4_addr': '8.8.8.8'}]}]},
-                                  True)
-        assert_parser_result_dict(aml_nesting,
-                                '{ { { 9.9.9.9; }; }; };',
-                                  {'aml': [{'aml': [{'aml': [{'ip4_addr': '9.9.9.9'}]}]}]},
-                                  True)
+        assert_parser_result_dict(
+            aml_nesting,
+            '{ 1.1.1.1; { 127.0.0.1;}; };',
+            {'aml': [{'ip4_addr': '1.1.1.1'}, {'aml': [{'ip4_addr': '127.0.0.1'}]}]},
+            True)
+        assert_parser_result_dict(
+            aml_nesting,
+            '{ { 8.8.8.8; }; };',
+            {'aml': [{'aml': [{'ip4_addr': '8.8.8.8'}]}]},
+            True)
+        assert_parser_result_dict(
+            aml_nesting,
+            '{ { { 9.9.9.9; }; }; };',
+            {'aml': [{'aml': [{'aml': [{'ip4_addr': '9.9.9.9'}]}]}]},
+            True)
 
     def test_aml_nesting_forward_exclamation_passing(self):
-        assert_parser_result_dict(aml_nesting,
-                                '{ ! { 1.1.1.1; { 127.0.0.1;}; }; };',
-                                  {
-                                    'aml': [
-                                        {
-                                            'aml': [
-                                                {'ip4_addr': '1.1.1.1'},
-                                                {'aml': [
-                                                    {'ip4_addr': '127.0.0.1'}
-                                                ]
-                                                }
-                                            ],
-                                            'not': '!'
-                                        }
-                                    ]
-                                },
-                                  True)
-        assert_parser_result_dict(aml_nesting,
-                                '{ ! 11.11.11.11; { 192.168.1.1;}; };',
-                                  {
-                                    'aml': [
-                                        {'ip4_addr': '11.11.11.11', 'not': '!'},
-                                        {'aml': [{'ip4_addr': '192.168.1.1'}]}
-                                    ]
-                                },
-                                  True)
-        assert_parser_result_dict(aml_nesting,
-                                '{ 3.3.3.3; ! { 127.0.0.1;}; };',
-                                  {
-                                    'aml': [
-                                        {'ip4_addr': '3.3.3.3'},
-                                        {'aml': [{'ip4_addr': '127.0.0.1'}], 'not': '!'}
-                                    ]},
-                                  True)
-        assert_parser_result_dict(aml_nesting,
-                                '{ 4.4.4.4; { ! 127.0.0.1;}; };',
-                                  {
-                                    'aml': [
-                                        {'ip4_addr': '4.4.4.4'},
-                                        {'aml': [
-                                            {
-                                                'ip4_addr': '127.0.0.1',
-                                                'not': '!'
-                                            }
-                                        ]}
-                                    ]},
-                                  True)
-        assert_parser_result_dict(aml_nesting,
-                                '{ 5.5.5.5; { 127.0.0.1;}; };',
-                                  {'aml': [
-                                    {'ip4_addr': '5.5.5.5'},
-                                    {'aml': [
-                                        {'ip4_addr': '127.0.0.1'}]}]},
-                                  True)
-        assert_parser_result_dict(aml_nesting,
-                                '{ { 6.6.6.6; }; };',
-                                  {'aml': [
-                                    {'aml': [
-                                        {'ip4_addr': '6.6.6.6'}]}]},
-                                  True)
-        assert_parser_result_dict(aml_nesting,
-                                '{ { { 7.7.7.7; }; }; };',
-                                  {'aml': [
-                                    {'aml': [
-                                        {'aml': [
-                                            {'ip4_addr': '7.7.7.7'}]}]}]},
-                                  True)
+        assert_parser_result_dict(
+            aml_nesting,
+            '{ ! { 1.1.1.1; { 127.0.0.1;}; }; };',
+            {
+                'aml': [
+                    {
+                        'aml': [
+                            {'ip4_addr': '1.1.1.1'},
+                            {'aml': [
+                                {'ip4_addr': '127.0.0.1'}
+                            ]
+                            }
+                        ],
+                        'not': '!'
+                    }
+                ]
+            },
+            True)
+        assert_parser_result_dict(
+            aml_nesting,
+            '{ ! 11.11.11.11; { 192.168.1.1;}; };',
+            {
+                'aml': [
+                    {
+                        'ip4_addr': '11.11.11.11', 'not': '!'},
+                    {'aml': [{'ip4_addr': '192.168.1.1'}]}
+                ]
+            },
+            True)
+        assert_parser_result_dict(
+            aml_nesting,
+            '{ 3.3.3.3; ! { 127.0.0.1;}; };',
+            {
+                'aml': [
+                    {'ip4_addr': '3.3.3.3'},
+                    {'aml': [{'ip4_addr': '127.0.0.1'}], 'not': '!'}
+                ]},
+            True)
+        assert_parser_result_dict(
+            aml_nesting,
+            '{ 4.4.4.4; { ! 127.0.0.1;}; };',
+            {
+                'aml': [
+                    {'ip4_addr': '4.4.4.4'},
+                    {'aml': [
+                        {
+                            'ip4_addr': '127.0.0.1',
+                            'not': '!'
+                        }
+                    ]}
+                ]},
+            True)
+        assert_parser_result_dict(
+            aml_nesting,
+            '{ 5.5.5.5; { 127.0.0.1;}; };',
+            {
+                'aml': [
+                    {'ip4_addr': '5.5.5.5'},
+                    {'aml': [
+                        {'ip4_addr': '127.0.0.1'}]}]},
+            True)
+        assert_parser_result_dict(
+            aml_nesting,
+            '{ { 6.6.6.6; }; };',
+            {'aml': [
+                {'aml': [
+                    {'ip4_addr': '6.6.6.6'}]}]},
+            True)
+        assert_parser_result_dict(
+            aml_nesting,
+            '{ { { 7.7.7.7; }; }; };',
+            {
+                'aml': [
+                    {
+                        'aml': [
+                            {
+                                'aml': [
+                                    {'ip4_addr': '7.7.7.7'}]}]}]},
+            True)
 
     def test_aml_nesting_first_addr(self):
         assert_parser_result_dict(aml_nesting.setDebug(True), '{ key mykey; };', {'aml': [{'key_id': ['mykey']}]}, True)
@@ -338,7 +354,7 @@ class TestAML(unittest.TestCase):
         expected_result = {'aml': [{'keyword': 'localhost'}]}
         assert_parser_result_dict(aml_nesting, test_data, expected_result, True)
 
-    def test_isc_aml_aml_nesting_passing(self):
+    def test_isc_aml_aml_nesting_2_passing(self):
         """Address Match List (AML) name"""
         test_data = [
             '{ 1.1.1.1; };',

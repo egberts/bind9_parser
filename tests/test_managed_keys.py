@@ -14,15 +14,10 @@ Description:  Performs unit test on the isc_managed_keys.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
-from bind9_parser.isc_managed_keys import managed_keyname_type,\
-    managed_keyname_dquoted, managed_keyname_squoted,\
-    managed_key_domain_name, managed_key_type,\
-    managed_key_flags_type, managed_key_protocol_type,\
-    managed_key_algorithm_name, managed_key_algorithm_type,\
-    managed_key_secret_type, managed_keys_set,\
-    managed_keys_series, managed_keys_statement_standalone,\
-    quoted_managed_key_secret_type
+from bind9_parser.isc_managed_keys import \
+    managed_key_domain_name, \
+    managed_key_algorithm_name, \
+    managed_keys_series, managed_keys_statement_standalone
 
 
 class TestManagedKeys(unittest.TestCase):

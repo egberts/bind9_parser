@@ -20,7 +20,7 @@ class TestClausePrimaries(unittest.TestCase):
         assert_parser_result_dict_true(
             clause_stmt_primaries_standalone,
             'primaries oldmaster {  };',
-            {'primaries': {'primaries_id': 'oldmaster' }}
+            {'primaries': {'primaries_id': 'oldmaster'}}
         )
 
     def test_isc_clause_primary_standalone_port_passing(self):

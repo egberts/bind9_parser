@@ -164,7 +164,7 @@ class TestINET(unittest.TestCase):
             {'ip_port_w': '*'}
         )
 
-    def test_isc_inet_port_element_wildcard_high_failing(self):
+    def test_isc_inet_port_element_wildcard_high_2_failing(self):
         """INET clause; port element; wildcard; failing"""
         assert_parser_result_dict_false(
             inet_ip_port_keyword_and_wildcard_element,
@@ -405,7 +405,7 @@ class TestINET(unittest.TestCase):
             '::255.255.255.255',  # (IPv4-mapped IPv6 addresses and IPv4-translated addresses)
             '2001:db8::2:192.0.2.33',  # (unknown 2-1 combo)
             '2001::13f:9:192.8.1.16',  # (unknown 1-2 combo)
-            '2001::13f:192.8.1.16',   #  (unknown 1-1 combo)
+            '2001::13f:192.8.1.16',  # (unknown 1-1 combo)
             '2001::192.8.1.16',  # (unknown 1-0 combo)'
             ]
         result = ip6_addr.runTests(test_data, failureTests=False)
@@ -428,7 +428,6 @@ class TestINET(unittest.TestCase):
             'fe80::1%ne0',
             'fe80::1ff:fe23:4567:890a%eth2',  # Nearly all *nixes
             'fe80::1ff:fe23:4567:890a%3',  # Microsoft Windows
-            ### 'fe80:3::1ff:fe23:4567:890a',  # BSD and macOS
             'A:a:a:a:a:a:a:a%wlan0',
             'f:f:f:f:f:f:f:f%vps1',
             'f:f:f:f:f:f:f:f%wirelan0',
@@ -443,7 +442,7 @@ class TestINET(unittest.TestCase):
             'fe80::1?ne0',  # only accepts '%'  TODO: Consider an extra ':' for BSD/macOS?
             'fe80::1ff:fe23:4567:890a%___2',  # Invalid device name
             'fe80::1ff:fe23:4567:890a%-1',  # Microsoft Windows
-            ### 'fe80:3::1ff:fe23:4567:890a',  # BSD and macOS
+            # 'fe80:3::1ff:fe23:4567:890a',  # BSD and macOS
         ]
         result = ip6_addr_index.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
@@ -457,7 +456,7 @@ class TestINET(unittest.TestCase):
             'fe80::1%ne0',
             'fe80::1ff:fe23:4567:890a%eth2',  # Nearly all *nixes
             'fe80::1ff:fe23:4567:890a%3',  # Microsoft Windows
-            ### 'fe80:3::1ff:fe23:4567:890a',  # BSD and macOS
+            # 'fe80:3::1ff:fe23:4567:890a',  # BSD and macOS
             'A:a:a:a:a:a:a:a%wlan0',
             'f:f:f:f:f:f:f:f%vps1',
             'f:f:f:f:f:f:f:f%wirelan0',
@@ -557,8 +556,6 @@ class TestINET(unittest.TestCase):
         result = ip46_addr_or_prefix.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
 
-
-
     def test_isc_inet_ip46_addr_or_wildcard_passing(self):
         """INET clause, IPv4/6 address with optional wildcard optionpassing"""
         test_data = [
@@ -654,6 +651,7 @@ class TestINET(unittest.TestCase):
             '1.1.1.1;',
             {'ip_addr': '1.1.1.1'}
         )
+
     def test_isc_inet_ip46_addr_and_port_list_1_ip4_port_passing(self):
         """INET clause, IPv4 and port; one IPv4 with port; passing"""
         assert_parser_result_dict_true(
@@ -666,8 +664,8 @@ class TestINET(unittest.TestCase):
         """INET clause, IPv4 address with semicolon; failing"""
         test_data = [
             '-1',
-#            '65538',
-#            '100000',
+            #    '65538',
+            #   '100000',
         ]
         result = ip4_addr_list.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])

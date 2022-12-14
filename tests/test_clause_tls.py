@@ -28,7 +28,7 @@ from bind9_parser.isc_clause_tls import tls_stmt_ca_file_element, \
     tls_stmt_key_file_element, tls_stmt_prefer_server_ciphers_element, tls_stmt_protocols_element,\
     tls_stmt_remote_hostname_element, tls_stmt_session_tickets_element,\
     tls_stmt_element_set, tls_stmt_element_series, clause_stmt_tls_standalone,\
-    clause_stmt_tls_set, clause_stmt_tls_series
+    clause_stmt_tls_series
 
 
 class TestClauseHttp(unittest.TestCase):
@@ -117,7 +117,7 @@ class TestClauseHttp(unittest.TestCase):
 
     def test_tls_stmt_element_set_ca_file_passing(self):
         """ Test Clause 'tls'; element set 'ca-file'; passing """
-        test_string = 'ca-file "/etc/pki/tunnel/ca-cert.crt.pem";';
+        test_string = 'ca-file "/etc/pki/tunnel/ca-cert.crt.pem";'
         expected_result = {'ca_file': '/etc/pki/tunnel/ca-cert.crt.pem'}
         assert_parser_result_dict_true(
             tls_stmt_element_set,
@@ -154,15 +154,16 @@ class TestClauseHttp(unittest.TestCase):
     protocols { TLSv1.2; 'TLSv1.3'; };
     prefer-server-ciphers yes;
     cert-file '/etc/pki/cacert.key'; """
-        expected_result = { 'ca_file': '/etc/bind/cakeys/stuff.pem',
-  'cert_file': '/etc/pki/cacert.key',
-  'ciphers': 'aes256',
-  'dhparam_file': 'dhparam.md5',
-  'key_file': 'key.key',
-  'prefer_server_ciphers': 'yes',
-  'protocols': ['TLSv1.2', 'TLSv1.3'],
-  'remote_hostname': 'example.test',
-  'session_tickets': 'no'}
+        expected_result = {
+            'ca_file': '/etc/bind/cakeys/stuff.pem',
+            'cert_file': '/etc/pki/cacert.key',
+            'ciphers': 'aes256',
+            'dhparam_file': 'dhparam.md5',
+            'key_file': 'key.key',
+            'prefer_server_ciphers': 'yes',
+            'protocols': ['TLSv1.2', 'TLSv1.3'],
+            'remote_hostname': 'example.test',
+            'session_tickets': 'no'}
         assert_parser_result_dict_true(
                 tls_stmt_element_series,
                 test_string,

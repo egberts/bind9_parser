@@ -21,9 +21,7 @@ Description:
 
 import unittest
 from bind9_parser.isc_utils import assert_parser_result_dict_true
-from bind9_parser.isc_inet import ip46_addr_or_wildcard
 from bind9_parser.isc_clause_statistics_channels import \
-    clause_stmt_statistics_channels_standalone, \
     clause_stmt_statistics_channels_set, clause_stmt_statistics_channels_series
 
 
@@ -42,8 +40,11 @@ class TestClauseHttp(unittest.TestCase):
     def test_stmt_clause_statistics_channels_set_port_passing(self):
         """ Test Clause 'statistics-channels'; set port; passing """
         test_string = """statistics-channels { inet 127.0.0.1 port 854; };"""
-        expected_result = { 'statistics_channels': [ { 'ip_addr': '127.0.0.1',
-                             'ip_port_w': ['854']}]}
+        expected_result = {
+            'statistics_channels': [
+                {
+                    'ip_addr': '127.0.0.1',
+                    'ip_port_w': ['854']}]}
         assert_parser_result_dict_true(
             clause_stmt_statistics_channels_set,
             test_string,

@@ -53,7 +53,6 @@ class TestClauseDLZ(unittest.TestCase):
             {'search': 'True'}
         )
 
-
     def test_isc_dlz_search_element_failing(self):
         """ Clause dlz; Element search; failing mode """
         test_data = [
