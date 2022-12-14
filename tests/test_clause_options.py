@@ -1852,7 +1852,7 @@ options {
                           'servfail_ttl': 1,
                           'session_keyalg': 'hmac-md5',
                           'session_keyfile': 'dir/file',
-                          'session_keyname': '"session_keyname"',
+                          'session_keyname': 'session_keyname',
                           'sig_signing_nodes': 5,
                           'sig_signing_signatures': 5,
                           'sig_signing_type': 6,
@@ -1920,14 +1920,13 @@ options {
                           'use_v4_udp_ports': [{'port_end': 1024,
                                                 'port_start': 1}],
                           'use_v6_udp_ports': [{'port_end': 44315,
-                                               'port_start': 1025}],
+                                                'port_start': 1025}],
                           'v6_bias': 60,
                           'validate_except': ['168.192.in-addr.arpa.'],
                           'version_string': 'funky dns server, uh?',
                           'zero_no_soa_ttl': 'no',
                           'zero_no_soa_ttl_cache': 'no',
                           'zone_statistics': 'terse'}]}
-
         )
 
     def test_isc_clause_stmt_options_failing(self):
