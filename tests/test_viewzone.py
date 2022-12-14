@@ -6,11 +6,11 @@ Description:  Performs unit test on the isc_viewzone.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_true, dlz_name_type
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_viewzone import \
-    viewzone_stmt_database,\
-    viewzone_stmt_dlz,\
-    viewzone_statements_set,\
+    viewzone_stmt_database, \
+    viewzone_stmt_dlz, \
+    viewzone_statements_set, \
     viewzone_statements_series
 
 
@@ -33,7 +33,6 @@ class TestViewZone(unittest.TestCase):
         ]
         result = viewzone_stmt_database.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
-
 
     def test_isc_zone_stmt_database_dict_passing(self):
         assert_parser_result_dict_true(
@@ -79,7 +78,6 @@ class TestViewZone(unittest.TestCase):
         ]
         result = viewzone_statements_set.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
-
 
     def test_isc_viewzone_statements_series_passing(self):
         """ Clause viewzone; Statement viewzone_statements_series; passing """

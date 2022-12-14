@@ -33,7 +33,6 @@ class TestOptionsZone(unittest.TestCase):
             {'notify_to_soa': 'yes'}
         )
 
-
     def test_isc_optzone_statements_set_passing(self):
         """ Clause optzone; Statement statements_set; passing """
         test_string = [

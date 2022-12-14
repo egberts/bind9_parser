@@ -13,14 +13,14 @@ Description: isc_optview contains all parse elements pertaining
 import copy
 
 from pyparsing import Group, Keyword, OneOrMore, Literal, \
-    CaselessLiteral, Combine, Optional, Word, alphanums, ZeroOrMore,\
+    CaselessLiteral, Combine, Optional, Word, alphanums, ZeroOrMore, \
     ungroup
 from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     number_type, name_type, minute_type, \
     dequoted_path_name, check_options, \
     size_spec, exclamation, iso8601_duration, view_name, \
-    algorithm_name, fqdn_name_dequotable,\
-    algorithm_name_list_series, charset_filename_base, size_spec_plain,\
+    algorithm_name, fqdn_name_dequotable, \
+    algorithm_name_list_series, charset_filename_base, size_spec_plain, \
     fixedpoint_type
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, \

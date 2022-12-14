@@ -28,7 +28,7 @@ from pyparsing import Group, ungroup, ZeroOrMore
 from bind9_parser.isc_utils import Optional, lbrack, rbrack, semicolon, \
     primaries_keyword, primaries_id
 from bind9_parser.isc_inet import \
-    inet_ip_port_keyword_and_number_element,\
+    inet_ip_port_keyword_and_number_element, \
     inet_dscp_port_keyword_and_number_element
 from bind9_parser.isc_primaries import primaries_remoteserver_set
 

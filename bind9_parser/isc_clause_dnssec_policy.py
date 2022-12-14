@@ -25,7 +25,7 @@ Description:
     };
 """
 from pyparsing import Word, Group, Keyword, ZeroOrMore, OneOrMore, Optional, nums
-from bind9_parser.isc_utils import semicolon, iso8601_duration, name_base,\
+from bind9_parser.isc_utils import semicolon, iso8601_duration, name_base, \
     lbrack, rbrack, dequoted_path_name
 
 # NOTE: If any declaration here is to be used OUTSIDE of 

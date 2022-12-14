@@ -6,44 +6,44 @@ Description:  Performs unit test on the isc_options.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import unit_test_booleans, assert_parser_result_dict,\
+from bind9_parser.isc_utils import unit_test_booleans, assert_parser_result_dict, \
     assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_options import \
-    options_stmt_acache_cleaning_interval,options_stmt_acache_enable,\
-    options_stmt_answer_cookie, options_stmt_automatic_interface_scan,\
-    options_stmt_avoid_v4_udp_ports,\
-    options_stmt_avoid_v6_udp_ports, options_stmt_bindkeys_file,\
+    options_stmt_acache_cleaning_interval, options_stmt_acache_enable, \
+    options_stmt_answer_cookie, options_stmt_automatic_interface_scan, \
+    options_stmt_avoid_v4_udp_ports, \
+    options_stmt_avoid_v6_udp_ports, options_stmt_bindkeys_file, \
     options_stmt_blackhole, \
-    options_stmt_coresize, options_stmt_datasize,\
-    options_stmt_deallocate_on_exit, options_stmt_deny_answer_addresses,\
-    options_stmt_deny_answer_aliases, options_stmt_directory,\
+    options_stmt_coresize, options_stmt_datasize, \
+    options_stmt_deallocate_on_exit, options_stmt_deny_answer_addresses, \
+    options_stmt_deny_answer_aliases, options_stmt_directory, \
     options_stmt_dnstap_identity, \
-    options_stmt_dnstap_output,\
-    options_stmt_dnstap_version,\
-    options_stmt_dscp,\
-    options_stmt_dump_file,\
-    options_stmt_fake_iquery, options_stmt_flush_zones_on_shutdown,\
-    options_stmt_geoip_directory,\
+    options_stmt_dnstap_output, \
+    options_stmt_dnstap_version, \
+    options_stmt_dscp, \
+    options_stmt_dump_file, \
+    options_stmt_fake_iquery, options_stmt_flush_zones_on_shutdown, \
+    options_stmt_geoip_directory, \
     options_stmt_has_old_clients, \
     options_stmt_http_listener_clients, \
-    options_stmt_http_port,\
+    options_stmt_http_port, \
     options_stmt_http_streams_per_connection, \
-    options_stmt_https_port,\
-    options_stmt_hostname_statistics, options_stmt_hostname_statistics_max,\
-    options_stmt_interface_interval, options_stmt_keep_response_order,\
+    options_stmt_https_port, \
+    options_stmt_hostname_statistics, options_stmt_hostname_statistics_max, \
+    options_stmt_interface_interval, options_stmt_keep_response_order, \
     options_stmt_listen_on, options_multiple_stmt_listen_on, \
-    options_stmt_listen_on_v6, options_stmt_match_mapped_addresses,\
-    options_stmt_max_cache_ttl, options_stmt_max_clients_per_query,\
-    options_stmt_max_rsa_exponent_size, options_stmt_memstatistics,\
-    options_stmt_memstatistics_file, options_stmt_multiple_cnames,\
-    options_stmt_named_xfer, options_stmt_nocookie_udp_size, options_stmt_pid_file,\
-    options_stmt_port, options_stmt_prefetch,\
-    options_stmt_querylog, options_stmt_random_device,\
-    options_stmt_recursing_file, options_stmt_recursive_clients,\
-    options_stmt_resolver_query_timeout, options_stmt_reuseport, options_stmt_secroots_file,\
+    options_stmt_listen_on_v6, options_stmt_match_mapped_addresses, \
+    options_stmt_max_cache_ttl, options_stmt_max_clients_per_query, \
+    options_stmt_max_rsa_exponent_size, options_stmt_memstatistics, \
+    options_stmt_memstatistics_file, options_stmt_multiple_cnames, \
+    options_stmt_named_xfer, options_stmt_nocookie_udp_size, options_stmt_pid_file, \
+    options_stmt_port, options_stmt_prefetch, \
+    options_stmt_querylog, options_stmt_random_device, \
+    options_stmt_recursing_file, options_stmt_recursive_clients, \
+    options_stmt_resolver_query_timeout, options_stmt_reuseport, options_stmt_secroots_file, \
     options_stmt_serial_query_rate, \
-    options_stmt_server_id, options_stmt_session_keyalg,\
-    options_stmt_session_keyname, options_stmt_session_keyfile,\
+    options_stmt_server_id, options_stmt_session_keyalg, \
+    options_stmt_session_keyname, options_stmt_session_keyfile, \
     options_stmt_stacksize, \
     options_stmt_statistics_file, \
     options_stmt_startup_notify_rate, \
@@ -60,14 +60,14 @@ from bind9_parser.isc_options import \
     options_stmt_udp_send_buffer, \
     options_stmt_use_v4_udp_ports, \
     options_stmt_use_v6_udp_ports, \
-    options_stmt_statistics_file,\
-    options_stmt_tcp_clients, options_stmt_tcp_listen_queue,\
-    options_stmt_tkey_dhkey,\
-    options_multiple_stmt_tkey_dhkey,\
+    options_stmt_statistics_file, \
+    options_stmt_tcp_clients, options_stmt_tcp_listen_queue, \
+    options_stmt_tkey_dhkey, \
+    options_multiple_stmt_tkey_dhkey, \
     options_stmt_tkey_domain, \
-    options_stmt_tkey_gssapi_keytab, options_stmt_transfers_in,\
-    options_stmt_transfers_out, options_stmt_transfers_per_ns,\
-    options_stmt_version,\
+    options_stmt_tkey_gssapi_keytab, options_stmt_transfers_in, \
+    options_stmt_transfers_out, options_stmt_transfers_per_ns, \
+    options_stmt_version, \
     options_statements_set, options_statements_series
 
 
@@ -77,20 +77,20 @@ class TestOptions(unittest.TestCase):
     def test_isc_options_all_booleans(self):
         """ Clause options; all boolean statements; passing mode """
         test_syntax_boolean = [
-            [ 'acache-enable', options_stmt_acache_enable, ],
-            [ 'answer-cookie', options_stmt_answer_cookie, ],
-            [ 'automatic-interface-scan', options_stmt_automatic_interface_scan, ],
-            [ 'deallocate-on-exit', options_stmt_deallocate_on_exit, ],
-            [ 'fake-iquery', options_stmt_fake_iquery, ],
-            [ 'flush-zones-on-shutdown', options_stmt_flush_zones_on_shutdown, ],
-            [ 'has-old-clients', options_stmt_has_old_clients, ],
-            [ 'hostname-statistics', options_stmt_hostname_statistics, ],
-            [ 'hostname-statistics-max', options_stmt_hostname_statistics_max, ],
-            [ 'match-mapped-addresses', options_stmt_match_mapped_addresses, ],
-            [ 'memstatistics', options_stmt_memstatistics, ],
-            [ 'multiple-cnames', options_stmt_multiple_cnames, ],
-            [ 'querylog', options_stmt_querylog, ],
-            [ 'reuseport', options_stmt_reuseport, ],
+            ['acache-enable', options_stmt_acache_enable, ],
+            ['answer-cookie', options_stmt_answer_cookie, ],
+            ['automatic-interface-scan', options_stmt_automatic_interface_scan, ],
+            ['deallocate-on-exit', options_stmt_deallocate_on_exit, ],
+            ['fake-iquery', options_stmt_fake_iquery, ],
+            ['flush-zones-on-shutdown', options_stmt_flush_zones_on_shutdown, ],
+            ['has-old-clients', options_stmt_has_old_clients, ],
+            ['hostname-statistics', options_stmt_hostname_statistics, ],
+            ['hostname-statistics-max', options_stmt_hostname_statistics_max, ],
+            ['match-mapped-addresses', options_stmt_match_mapped_addresses, ],
+            ['memstatistics', options_stmt_memstatistics, ],
+            ['multiple-cnames', options_stmt_multiple_cnames, ],
+            ['querylog', options_stmt_querylog, ],
+            ['reuseport', options_stmt_reuseport, ],
         ]
         unit_test_booleans(self, test_syntax_boolean)
 
@@ -102,7 +102,7 @@ class TestOptions(unittest.TestCase):
             {'acache_cleaning_interval':  15}
             )
         assert_parser_result_dict_true(options_stmt_acache_cleaning_interval,
-                                   'acache-cleaning-interval 123;',
+                                       'acache-cleaning-interval 123;',
                                        {'acache_cleaning_interval': 123})
 
     def test_isc_options_stmt_avoid_v4_udp_ports_3port_passing(self):
@@ -154,14 +154,14 @@ class TestOptions(unittest.TestCase):
                                    {'aml': [{'keyword': 'any'}], 'not': '!'},
                                    {'aml': [{'keyword': 'none'}]}]}})
         assert_parser_result_dict_true(options_stmt_blackhole,
-                                   'blackhole { 127.0.0.1; };',
+                                       'blackhole { 127.0.0.1; };',
                                        {
-                                       'blackhole': {
-                                           'aml': [
-                                               {'ip4_addr': '127.0.0.1'}
-                                           ]
-                                       }
-                                   })
+                                           'blackhole': {
+                                               'aml': [
+                                                   {'ip4_addr': '127.0.0.1'}
+                                               ]
+                                           }
+                                       })
 
     def test_isc_options_stmt_coresize_passing(self):
         assert_parser_result_dict_true(
@@ -171,7 +171,7 @@ class TestOptions(unittest.TestCase):
 
     def test_isc_options_stmt_datasize_passing(self):
         assert_parser_result_dict_true(options_stmt_datasize,
-                                   'datasize 256G;',
+                                       'datasize 256G;',
                                        {'datasize': [256, 'G']})
 
     def test_isc_options_stmt_deny_answer_addresses_passing(self):
@@ -279,11 +279,11 @@ deny-answer-addresses {
 
     def test_isc_options_stmt_directory_passing(self):
         assert_parser_result_dict_true(options_stmt_directory,
-                                   'directory "/etc/bind/";',
+                                       'directory "/etc/bind/";',
                                        {'directory': '/etc/bind/'})
 
         assert_parser_result_dict_true(options_stmt_directory,
-                                   'directory \'/etc/bind/\';',
+                                       'directory \'/etc/bind/\';',
                                        {'directory': '/etc/bind/'})
 
     def test_isc_options_stmt_dnstap_dscp_passing(self):
@@ -322,7 +322,8 @@ deny-answer-addresses {
         )
 
     def test_isc_options_stmt_dump_file_passing(self):
-        assert_parser_result_dict_true(options_stmt_dump_file, 'dump-file "/tmp/crapola";', {'dump_file': '/tmp/crapola'})
+        assert_parser_result_dict_true(options_stmt_dump_file, 'dump-file "/tmp/crapola";',
+                                       {'dump_file': '/tmp/crapola'})
 
     def test_isc_options_stmt_geoip_directory(self):
         """ Clause options; Statement geoip-directory; passing mode """
@@ -386,7 +387,7 @@ deny-answer-addresses {
 
     def test_isc_options_stmt_interface_interval_passing(self):
         assert_parser_result_dict_true(options_stmt_interface_interval,
-                                   'interface-interval 3600;',
+                                       'interface-interval 3600;',
                                        {'interface_interval': 3600})
 
     def test_isc_options_stmt_keep_response_order_passing(self):
@@ -502,11 +503,11 @@ deny-answer-addresses {
 
     def test_isc_options_stmt_named_xfer_passing(self):
         assert_parser_result_dict_true(options_stmt_named_xfer,
-                                   'named-xfer "/etc/bind/";',
+                                       'named-xfer "/etc/bind/";',
                                        {'named_xfer': '/etc/bind/'})
 
         assert_parser_result_dict_true(options_stmt_named_xfer,
-                                   'named-xfer \'/etc/bind/\';',
+                                       'named-xfer \'/etc/bind/\';',
                                        {'named_xfer': '/etc/bind/'})
 
     def test_isc_options_stmt_nocookie_udp_size_passing(self):
@@ -788,7 +789,7 @@ deny-answer-addresses {
         test_data = [
             'tkey-gssapi-credential "ABC/admin@master.example.test@EXAMPLE.TEST";',  # two '@'s
             'tkey-gssapi-credential "krb5_credential$example.test";',
-            'tkey-gssapi-credential "krb5_credential\example.test";',
+            'tkey-gssapi-credential "krb5_credential\\example.test";',
         ]
         result = options_stmt_tkey_gssapi_credential.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])

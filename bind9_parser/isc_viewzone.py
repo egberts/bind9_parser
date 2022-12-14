@@ -9,7 +9,7 @@ Title: Statements Used Only By view And zone Clauses
 Description: isc_viewzone contains all parse elements pertaining
              to both options and zone (but not view)
 """
-from pyparsing import Group, CaselessKeyword, OneOrMore, Keyword
+from pyparsing import CaselessKeyword, OneOrMore, Keyword
 from bind9_parser.isc_utils import semicolon, database_name_type
 from bind9_parser.isc_clause_dlz import dlz_name_type
 

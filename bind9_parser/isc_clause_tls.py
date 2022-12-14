@@ -25,9 +25,9 @@ Description:
 """
 from pyparsing import Group, Keyword, ZeroOrMore, OneOrMore
 from bind9_parser.isc_utils import semicolon, \
-        fqdn_name, \
-        lbrack, rbrack, dequoted_path_name, isc_boolean,\
-        dequotable_name
+    fqdn_name, \
+    lbrack, rbrack, dequoted_path_name, isc_boolean, \
+    dequotable_name
 
 # NOTE: If any declaration here is to be used OUTSIDE of 
 # the 'tls' clause, it should instead be defined within isc_utils.py

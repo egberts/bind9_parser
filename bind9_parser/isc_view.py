@@ -21,7 +21,6 @@ from bind9_parser.isc_utils import semicolon, isc_boolean, lbrack, rbrack
 from bind9_parser.isc_inet import ip46_addr_or_prefix
 from bind9_parser.isc_aml import aml_nesting
 from bind9_parser.isc_server import server_statement_series
-from bind9_parser.isc_clause_trusted_keys import clause_stmt_trusted_keys_set
 
 
 #   match-clients { aml; } ; [ View ]

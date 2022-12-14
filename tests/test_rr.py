@@ -63,7 +63,6 @@ class TestResourceRecords(unittest.TestCase):
         result = rr_type_set.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
-
     def test_isc_rr_type_series_passing(self):
         """ Clause rr; Series Type; passing """
         test_string = [
@@ -84,6 +83,7 @@ class TestResourceRecords(unittest.TestCase):
             'A NS SRV',
             {'rr_types': ['A', 'NS', 'SRV']}
         )
+
 
 if __name__ == '__main__':
     unittest.main()

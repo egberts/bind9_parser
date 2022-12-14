@@ -6,7 +6,7 @@ Description:  Performs unit test on the isc_view.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_false, assert_parser_result_dict_true
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_view import view_stmt_match_clients,\
     view_stmt_match_destinations, view_stmt_match_recursive_only,\
     view_statements_series, view_statements_set

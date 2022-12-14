@@ -6,33 +6,33 @@ Description:  Performs unit test on the isc_zone.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_zone import \
-    zone_stmt_delegation_only,\
-    zone_stmt_check_names,\
-    zone_stmt_file,\
+    zone_stmt_delegation_only, \
+    zone_stmt_check_names, \
+    zone_stmt_file, \
     zone_stmt_in_view, \
-    zone_stmt_inline_signing,\
-    zone_stmt_ixfr_base,\
-    zone_stmt_ixfr_from_differences,\
-    zone_stmt_journal,\
-    zone_primaries_set,\
-    zone_primaries_series,\
-    zone_multiple_stmt_primaries,\
-    zone_stmt_primaries,\
-    zone_stmt_pubkey,\
-    zone_stmt_server_addresses,\
-    zone_stmt_server_names,\
-    zone_stmt_type,\
-    zone_update_policy_name_and_rr_type_fields,\
-    zone_update_policy_rr_type_series,\
-    zone_update_policy_matchtype,\
-    zone_update_policy_matchtype_krb5_self,\
-    zone_stmt_update_policy_nonlocal,\
+    zone_stmt_inline_signing, \
+    zone_stmt_ixfr_base, \
+    zone_stmt_ixfr_from_differences, \
+    zone_stmt_journal, \
+    zone_primaries_set, \
+    zone_primaries_series, \
+    zone_multiple_stmt_primaries, \
+    zone_stmt_primaries, \
+    zone_stmt_pubkey, \
+    zone_stmt_server_addresses, \
+    zone_stmt_server_names, \
+    zone_stmt_type, \
+    zone_update_policy_name_and_rr_type_fields, \
+    zone_update_policy_rr_type_series, \
+    zone_update_policy_matchtype, \
+    zone_update_policy_matchtype_krb5_self, \
+    zone_stmt_update_policy_nonlocal, \
     zone_stmt_update_policy_nonlocal_series, \
-    zone_stmt_update_policy,\
-    zone_stmt_use_id_pool,\
-    zone_statements_set,\
+    zone_stmt_update_policy, \
+    zone_stmt_use_id_pool, \
+    zone_statements_set, \
     zone_statements_series
 
 
@@ -324,7 +324,7 @@ class TestZone(unittest.TestCase):
         assert_parser_result_dict_true(
             zone_primaries_series,
             'another_bastion_host_group ;',
-            { 'zone_primaries_list': [ { 'remote_server': { 'primaries_name': 'another_bastion_host_group'}}]}
+            {'zone_primaries_list': [{'remote_server': {'primaries_name': 'another_bastion_host_group'}}]}
         )
 
     def test_isc_zone_stmt_primaries_series_singleset_keyid_passing(self):
@@ -491,7 +491,7 @@ class TestZone(unittest.TestCase):
         assert_parser_result_dict_true(
             zone_stmt_primaries,
             'masters { another_bastion_host_group; };',
-            { 'primaries': { 'remote_servers': [ { 'remote_server': { 'primaries_name': 'another_bastion_host_group'}}]}}
+            {'primaries': {'remote_servers': [{'remote_server': {'primaries_name': 'another_bastion_host_group'}}]}}
         )
 
     def test_isc_zone_stmt_pubkey_passing(self):
@@ -543,6 +543,7 @@ class TestZone(unittest.TestCase):
             'server-addresses { 1.2.3.4; };',
             {'server_addresses': [{'ip_addr': '1.2.3.4'}]}
         )
+
     def test_isc_zone_stmt_server_addresses_1_ip6_passing(self):
         """ Test Clause Zone; Statement server-addresses; one IPv6; passing """
         assert_parser_result_dict_true(
@@ -550,6 +551,7 @@ class TestZone(unittest.TestCase):
             'server-addresses { fb03::7; };',
             {'server_addresses': [{'ip_addr': 'fb03::7'}]}
         )
+
     def test_isc_zone_stmt_server_addresses_1_ip4_port_passing(self):
         """ Test Clause Zone; Statement server-addresses; one IPv4 port; passing """
         assert_parser_result_dict_true(
@@ -557,6 +559,7 @@ class TestZone(unittest.TestCase):
             'server-addresses { 1.2.3.4 port 9553; };',
             {'server_addresses': [{'ip_addr': '1.2.3.4', 'ip_port': '9553'}]}
         )
+
     def test_isc_zone_stmt_server_addresses_1_ip6_port_passing(self):
         """ Test Clause Zone; Statement server-addresses; one IPv6 port; passing """
         assert_parser_result_dict_true(
@@ -564,6 +567,7 @@ class TestZone(unittest.TestCase):
             'server-addresses { fb03::7 port 4321; };',
             {'server_addresses': [{'ip_addr': 'fb03::7', 'ip_port': '4321'}]}
         )
+
     def test_isc_zone_stmt_server_addresses_mixed_ip46_passing(self):
         """ Test Clause Zone; Statement server-addresses; mixed IPv4/IPv6; passing """
         assert_parser_result_dict_true(
@@ -574,6 +578,7 @@ class TestZone(unittest.TestCase):
                                   {'ip_addr': '3.3.3.3', 'ip_port': '3333'},
                                   {'ip_addr': 'fc44::4'}]}
         )
+
     def test_isc_zone_stmt_server_addresses_failing(self):
         """ Test Clause Zone; Statement server-addresses; failing """
         test_string = [
@@ -608,7 +613,6 @@ class TestZone(unittest.TestCase):
         result = zone_stmt_server_names.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
 
-
     def test_isc_zone_stmt_type_passing(self):
         """ Test Clause Zone; Statement type; passing """
         test_string = [
@@ -639,8 +643,6 @@ class TestZone(unittest.TestCase):
         ]
         result = zone_stmt_type.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
-
-
 
     def test_isc_zone_stmt_update_policy_rr_type_series_passing(self):
         """ Test Clause Zone; Statement update_policy_rr_type_series; passing """
@@ -691,9 +693,9 @@ class TestZone(unittest.TestCase):
         assert_parser_result_dict_true(
             zone_update_policy_matchtype_krb5_self,
             'krb5-self www.example.com mx ns caa wks hinfo txt',
-            { 'impacting_realm': 'www.example.com',
-              'policy': 'krb5-self',
-              'rr_types': ['MX', 'NS', 'CAA', 'WKS', 'HINFO', 'TXT']}
+            {'impacting_realm': 'www.example.com',
+             'policy': 'krb5-self',
+             'rr_types': ['MX', 'NS', 'CAA', 'WKS', 'HINFO', 'TXT']}
         )
 
     def test_isc_zone_stmt_update_policy_matchtype_passing(self):

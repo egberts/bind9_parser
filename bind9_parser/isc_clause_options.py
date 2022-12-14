@@ -17,7 +17,6 @@ from bind9_parser.isc_optviewzone import optviewzone_statements_set
 from bind9_parser.isc_optviewserver import optviewserver_statements_set
 from bind9_parser.isc_optviewzoneserver import optviewzoneserver_statements_set
 from bind9_parser.isc_optzone import optzone_statements_set
-from bind9_parser.isc_viewzone import viewzone_statements_set
 
 
 class InvalidArgumentException(ParseFatalException):
@@ -36,6 +35,7 @@ class InvalidFunctionException(ParseFatalException):
 def error(exceptionClass):
     def raise_exception(s, l, t):
         raise exceptionClass(s, l, t[0])
+
     return Word(alphas, alphanums).setParseAction(raise_exception)
 
 

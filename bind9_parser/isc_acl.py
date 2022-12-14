@@ -15,7 +15,7 @@ Description: Provides ACL-related grammar in PyParsing engine
              define to be defined.
 
 """
-from pyparsing import CaselessKeyword, Word, alphanums, nums, alphas,\
+from pyparsing import CaselessKeyword, Word, alphanums, nums, alphas, \
     Optional, Combine, CaselessLiteral
 from bind9_parser.isc_utils import fqdn_name, semicolon
 

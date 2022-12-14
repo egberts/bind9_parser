@@ -28,8 +28,8 @@ from pyparsing import Group, Keyword, \
     ZeroOrMore, OneOrMore, Optional, ungroup
 from bind9_parser.isc_utils import semicolon, \
     quotable_name, \
-    lbrack, rbrack, key_id, fqdn_name
-from bind9_parser.isc_inet import ip46_addr, \
+    lbrack, rbrack
+from bind9_parser.isc_inet import \
     inet_ip_port_keyword_and_number_element, \
     inet_dscp_port_keyword_and_number_element
 from bind9_parser.isc_primaries import primaries_remoteserver_set

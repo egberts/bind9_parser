@@ -10,7 +10,7 @@ Description: Provides server-related grammar in PyParsing engine
              for ISC-configuration style
 """
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 
 from bind9_parser.isc_server import server_stmt_bogus, server_stmt_edns,\
     server_stmt_edns_version,\
@@ -470,7 +470,7 @@ class TestServer(unittest.TestCase):
         result = server_stmt_transfer_source_v6.runTests(test_string, failureTests=False)
         self.assertTrue(result[0])
 
-    def test_isc_server_stmt_transfer_source_v6_passing(self):
+    def test_isc_server_stmt_transfer_source_v6_2_passing(self):
         """ Clause server; Statement transfer-source-v6; passing mode """
         assert_parser_result_dict_true(
             server_stmt_transfer_source_v6,

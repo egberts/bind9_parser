@@ -20,7 +20,7 @@ Description:
 """
 from pyparsing import Group, Keyword, ZeroOrMore, OneOrMore, Optional
 from bind9_parser.isc_utils import semicolon, \
-        lbrack, rbrack
+    lbrack, rbrack
 from bind9_parser.isc_inet import ip46_addr_or_wildcard, inet_ip_port_keyword_and_wildcard_element
 
 # NOTE: If any declaration here is to be used OUTSIDE of 

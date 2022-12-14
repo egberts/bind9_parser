@@ -11,10 +11,10 @@ Description: Provides Zone-related grammar in PyParsing engine
 """
 import copy
 
-from pyparsing import Keyword, Group, Literal, CaselessLiteral, OneOrMore,\
+from pyparsing import Keyword, Group, Literal, CaselessLiteral, OneOrMore, \
     ZeroOrMore, Word, Optional, ungroup, Combine
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, dequoted_path_name,\
-    isc_boolean, view_name, isc_file_name,\
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, dequoted_path_name, \
+    isc_boolean, view_name, isc_file_name, \
     number_type, check_options, \
     squote, dquote, \
     krb5_realm_name
@@ -23,7 +23,7 @@ from bind9_parser.isc_rr import rr_type_series
 from bind9_parser.isc_domain import \
     dequotable_domain_generic_fqdn, rr_fqdn_w_absolute
 from bind9_parser.isc_primaries import primaries_remoteserver_set, \
-    zone_stmt_primaries_standalone, primaries_remoteserver_element_series
+    zone_stmt_primaries_standalone
 
 
 # Zone statements #

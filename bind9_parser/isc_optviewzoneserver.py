@@ -11,11 +11,9 @@ Description: Provides statement support for ones found in all
              PyParsing engine for ISC-configuration style
 """
 from pyparsing import Group, Keyword, OneOrMore, Optional, ungroup
-from bind9_parser.isc_utils import semicolon, lbrack, rbrack, tls_algorithm_name,\
+from bind9_parser.isc_utils import semicolon, lbrack, rbrack, tls_algorithm_name, \
     primaries_id, isc_boolean
-
 from bind9_parser.isc_clause_key import key_id
-
 from bind9_parser.isc_inet import \
     ip46_addr_and_port_list_set, \
     inet_ip_port_keyword_and_number_element, \

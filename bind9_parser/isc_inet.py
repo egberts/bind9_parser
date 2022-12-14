@@ -11,7 +11,7 @@ Description: Provides inet-related grammar in PyParsing engine
 
 """
 from pyparsing import Word, nums, Combine, Group, \
-    pyparsing_common, ZeroOrMore, Literal, Keyword,\
+    pyparsing_common, ZeroOrMore, Literal, Keyword, \
     ungroup, OneOrMore, Optional, Regex, alphanums
 from bind9_parser.isc_utils import semicolon, squote, dquote, view_name
 

@@ -12,13 +12,13 @@ Description: Various 'options' statement that is used
 from pyparsing import Group, Keyword, Optional, \
     ZeroOrMore, OneOrMore, Literal, ungroup, CaselessLiteral
 from pyparsing import pyparsing_common
-from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec, \
     dequotable_path_name, number_type, seconds_type, \
-    isc_boolean, krb5_principal_name,\
+    isc_boolean, krb5_principal_name, \
     exclamation, dequoted_path_name, squote, dquote, \
     fqdn_name_dequoted, fqdn_name_dequotable, quotable_name, \
     size_spec_nodefault, iso8601_duration, tsig_session_key_name
-from bind9_parser.isc_inet import ip_port,\
+from bind9_parser.isc_inet import ip_port, \
     inet_dscp_port_keyword_and_number_element, \
     inet_http_port_keyword_and_number_element, \
     inet_ip_port_keyword_and_number_element, \
