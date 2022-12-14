@@ -578,11 +578,9 @@ size_spec_plain = (
         Word(nums).setParseAction(lambda toks: int(toks[0]), max=10)('amount')
         + Optional(
             (
-                Literal('K')
-                | Literal('k')
-                | Literal('M')
-                | Literal('m')
-                | Literal('G')
+                CaselessLiteral('K')
+                | CaselessLiteral('M')
+                | CaselessLiteral('S')
             )('unit')
         )
     )('size_spec')
