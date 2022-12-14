@@ -19,73 +19,28 @@ Description:
 import unittest
 from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_parental_agents import \
-    parental_agents_server_address_element, parental_agents_key_element, \
-    parental_agents_tls_element, clause_stmt_parental_agents_standalone, \
+    clause_stmt_parental_agents_standalone, \
     clause_stmt_parental_agents_set, clause_stmt_parental_agents_series
 
 
 class TestClauseParentalAgents(unittest.TestCase):
     """ Test Clause 'parental-agents' """
 
-    def test_parental_agents_server_address_ipv4_passing(self):
-        """ Test Clause 'parental-agents'; server address element IPv4; passing """
-        test_string = '1.2.3.4'
-        expected_result = {'ip_addr': '1.2.3.4'}
-        assert_parser_result_dict_true(
-            parental_agents_server_address_element,
-            test_string,
-            expected_result)
-
-    def test_parental_agents_server_address_ipv6_passing(self):
-        """ Test Clause 'parental-agents'; server address element IPv6; passing """
-        test_string = 'fe00::1'
-        expected_result = {'ip_addr': 'fe00::1'}
-        assert_parser_result_dict_true(
-            parental_agents_server_address_element,
-            test_string,
-            expected_result)
-
-    def test_parental_agents_server_address_fqdn_passing(self):
-        """ Test Clause 'parental-agents'; server address element FQDN; passing """
-        test_string = 'example.com'
-        expected_result = {'fqdn': 'example.com'}
-        assert_parser_result_dict_true(
-            parental_agents_server_address_element,
-            test_string,
-            expected_result)
-
-    def test_parental_agents_key_element(self):
-        """ Test Clause 'parental-agents'; key element; passing """
-        test_string = 'key my_key_name'
-        expected_result = {'key_id': 'my_key_name'}
-        assert_parser_result_dict_true(
-            parental_agents_key_element,
-            test_string,
-            expected_result)
-
-
-    def test_parental_agents_tls_element(self):
-        """ Test Clause 'parental-agents'; tls element; passing """
-        test_string = 'tls my_tls_name'
-        expected_result = {'tls_name': 'my_tls_name'}
-        assert_parser_result_dict_true(
-            parental_agents_tls_element,
-            test_string,
-            expected_result)
-
     def test_clause_stmt_parental_agents_standalone(self):
         """ Test Clause 'parental-agents'; standalone; passing """
-        test_string = """parental-agents tunneled_office port 853 dscp 5 { 127.0.0.1 port 853 key "asdfasdfasdf" tls "asdfasdfasdf"; };"""
+        test_string = """
+parental-agents tunneled_office port 853 dscp 5 {
+    127.0.0.1 port 853 key "asdfasdfasdf" tls "asdfasdfasdf"; };"""
         assert_parser_result_dict_true(
             clause_stmt_parental_agents_standalone,
             test_string,
             {'parental_agents': [{'dscp_port': 5,
                                   'ip_port': '853',
                                   'parental_agent_name': 'tunneled_office',
-                                  'parental_agent_servers': [{'ip_addr': '127.0.0.1',
-                                                              'ip_port': '853',
-                                                              'key_id': 'asdfasdfasdf',
-                                                              'tls_name': 'asdfasdfasdf'}]}]}
+                                  'remote_servers': [{'ip4_addr': '127.0.0.1',
+                                                      'ip_port': '853',
+                                                      'key_id': 'asdfasdfasdf',
+                                                      'tls_id': 'asdfasdfasdf'}]}]}
         )
 
     def test_clause_stmt_parental_agents_set_passing(self):
@@ -100,10 +55,10 @@ class TestClauseParentalAgents(unittest.TestCase):
             {'parental_agents': [{'dscp_port': 5,
                                   'ip_port': '853',
                                   'parental_agent_name': 'tunneled_office',
-                                  'parental_agent_servers': [{'ip_addr': '127.0.0.1',
-                                                              'ip_port': '853',
-                                                              'key_id': 'asdfasdfasdf',
-                                                              'tls_name': 'asdfasdfasdf'}]}]}
+                                  'remote_servers': [{'ip4_addr': '127.0.0.1',
+                                                      'ip_port': '853',
+                                                      'key_id': 'asdfasdfasdf',
+                                                      'tls_id': 'asdfasdfasdf'}]}]}
         )
 
     def test_clause_stmt_parental_agents_set_two_elements_passing(self):
@@ -119,9 +74,8 @@ parental-agents tunneled_office port 853 dscp 5 {
             {'parental_agents': [{'dscp_port': 5,
                                   'ip_port': '853',
                                   'parental_agent_name': 'tunneled_office',
-                                  'parental_agent_servers': [{'ip_addr': '192.168.1.1'},
-                                                             {'ip_addr': '172.16.1.1'}]}]}
-
+                                  'remote_servers': [{'ip4_addr': '192.168.1.1'},
+                                                     {'ip4_addr': '172.16.1.1'}]}]}
         )
 
     def test_clause_stmt_parental_agents_set_multiple_element_passing(self):
@@ -139,26 +93,26 @@ parental-agents tunneled_office port 853 dscp 5 {
         assert_parser_result_dict_true(
             clause_stmt_parental_agents_set,
             test_string,
-            { 'parental_agents': [ { 'dscp_port': 5,
-                         'ip_port': '853',
-                         'parental_agent_name': 'tunneled_office',
-                         'parental_agent_servers': [ { 'ip_addr': '127.0.0.1',
-                                                       'ip_port': '853',
-                                                       'key_id': 'asdfasdfasdf',
-                                                       'tls_name': 'asdfasdfasdf'},
-                                                     { 'ip_addr': '192.168.1.1'},
-                                                     { 'ip_addr': '172.16.1.1',
-                                                       'ip_port': '853'},
-                                                     { 'ip_addr': '172.16.1.2',
-                                                       'key_id': 'third_key'},
-                                                     { 'ip_addr': '172.16.1.3',
-                                                       'tls_name': 'third_tls'},
-                                                     { 'ip_addr': '172.16.1.4',
-                                                       'ip_port': '853',
-                                                       'tls_name': 'fourth_tls'},
-                                                     { 'ip_addr': '172.16.1.4',
-                                                       'ip_port': '853',
-                                                       'key_id': 'fourth_key'}]}]}
+            {'parental_agents': [{'dscp_port': 5,
+                                  'ip_port': '853',
+                                  'parental_agent_name': 'tunneled_office',
+                                  'remote_servers': [{'ip4_addr': '127.0.0.1',
+                                                      'ip_port': '853',
+                                                      'key_id': 'asdfasdfasdf',
+                                                      'tls_id': 'asdfasdfasdf'},
+                                                     {'ip4_addr': '192.168.1.1'},
+                                                     {'ip4_addr': '172.16.1.1',
+                                                      'ip_port': '853'},
+                                                     {'ip4_addr': '172.16.1.2',
+                                                      'key_id': 'third_key'},
+                                                     {'ip4_addr': '172.16.1.3',
+                                                      'tls_id': 'third_tls'},
+                                                     {'ip4_addr': '172.16.1.4',
+                                                      'ip_port': '853',
+                                                      'tls_id': 'fourth_tls'},
+                                                     {'ip4_addr': '172.16.1.4',
+                                                      'ip_port': '853',
+                                                      'key_id': 'fourth_key'}]}]}
         )
 
     def test_clause_stmt_parental_agents_series(self):
@@ -167,8 +121,8 @@ parental-agents tunneled_office port 853 dscp 5 {
 parental-agents tunneled_office port 853 dscp 5 {
     127.0.0.1 port 853 key "asdfasdfasdf" tls "asdfasdfasdf";
     };
-parental-agents tunneled_office port 853 dscp 5 {
-    127.0.0.1 port 853 key "asdfasdfasdf" tls "asdfasdfasdf";
+parental-agents tunneled_office port 854 dscp 6 {
+    127.0.0.2 port 857 key "zxcvzxcvzxcv" tls "zxcvzxccvzxcv";
     };
 """
         assert_parser_result_dict_true(
@@ -177,17 +131,17 @@ parental-agents tunneled_office port 853 dscp 5 {
             {'parental_agents': [{'dscp_port': 5,
                                   'ip_port': '853',
                                   'parental_agent_name': 'tunneled_office',
-                                  'parental_agent_servers': [{'ip_addr': '127.0.0.1',
-                                                              'ip_port': '853',
-                                                              'key_id': 'asdfasdfasdf',
-                                                              'tls_name': 'asdfasdfasdf'}]},
-                                 {'dscp_port': 5,
-                                  'ip_port': '853',
+                                  'remote_servers': [{'ip4_addr': '127.0.0.1',
+                                                      'ip_port': '853',
+                                                      'key_id': 'asdfasdfasdf',
+                                                      'tls_id': 'asdfasdfasdf'}]},
+                                 {'dscp_port': 6,
+                                  'ip_port': '854',
                                   'parental_agent_name': 'tunneled_office',
-                                  'parental_agent_servers': [{'ip_addr': '127.0.0.1',
-                                                              'ip_port': '853',
-                                                              'key_id': 'asdfasdfasdf',
-                                                              'tls_name': 'asdfasdfasdf'}]}]}
+                                  'remote_servers': [{'ip4_addr': '127.0.0.2',
+                                                      'ip_port': '857',
+                                                      'key_id': 'zxcvzxcvzxcv',
+                                                      'tls_id': 'zxcvzxccvzxcv'}]}]}
         )
 
 

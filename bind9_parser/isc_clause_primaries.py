@@ -8,7 +8,9 @@ Title: Clause Statement for Primary Servers
 
 Description: Provides primary-related grammar in PyParsing engine
              for ISC-configuration style
-             
+
+    Only for zone-type: secondary, mirror, stub, & redirect
+
 Syntax:
       primaries <string> [ port <integer> ] [ dscp <integer> ]
       {
@@ -22,7 +24,7 @@ Syntax:
       };
 """
 import copy
-from pyparsing import OneOrMore, Group, ungroup, Combine, ZeroOrMore
+from pyparsing import Group, ungroup, ZeroOrMore
 from bind9_parser.isc_utils import Optional, lbrack, rbrack, semicolon, \
     primaries_keyword, primaries_id
 from bind9_parser.isc_inet import \
@@ -62,9 +64,10 @@ clause_stmt_primaries_standalone = (
 # clause_stmt_primaries_series cannot be used within 'zone' clause, use clause_stmt_primaries_set instead
 clause_stmt_primaries_series = (
     ZeroOrMore(
-    Group(
+        Group(
             ungroup(clause_stmt_primaries_standalone(''))('')
         )('')
     )('')
-)('primaries').setName('primaries [ port <port> ] [ dscp <dscp> ] { ( <fqdn> | <ip4_addr> | <ip6_addr> ) [ key <key-value> ] [ tls <tls-value ]; ... };')
+)('primaries').setName("""primaries [ port <port> ] [ dscp <dscp> ] {
+    ( <fqdn> | <ip4_addr> | <ip6_addr> ) [ key <key-value> ] [ tls <tls-value ]; ... };""")
 clause_stmt_primaries_series.setName('primaries <name> key <key_id>')

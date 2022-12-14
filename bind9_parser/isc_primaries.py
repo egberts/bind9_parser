@@ -8,8 +8,11 @@ Title: Primary Servers statement for Zone clauses
 
 Description: Provides primary-related grammar in PyParsing engine
              for ISC-configuration style
+
+    Only for zone-type: secondary, mirror, stub, & redirect
+
 """
-from pyparsing import OneOrMore, Group, Optional, ungroup, ZeroOrMore, Combine
+from pyparsing import OneOrMore, Group, Optional, ZeroOrMore
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, \
     key_id_keyword_and_name_pair, tls_id_keyword_and_name_pair, \
     primaries_id, primaries_keyword
@@ -38,7 +41,7 @@ primaries_remoteserver_element = (
     ^ (
             primaries_id('primaries_name')
             + Optional(key_id_keyword_and_name_pair)
-    )('').setName('<primaries-name> [ key "ABCDEFGHIJKLMNO" ]')   # TODO investigate if a series of primary_id is supported in primaries clause
+    )('').setName('<primaries-name> [ key "ABCDEFGHIJKLMNO" ]')
     ^ (
             primaries_id('primaries_name')
     )('').setName('<primaries-name>')
@@ -59,15 +62,15 @@ primaries_remoteserver_set = (
         primaries_remoteserver_element('')
         + Optional(key_id_keyword_and_name_pair)
         + Optional(tls_id_keyword_and_name_pair)
-    )('remote_server')
+    )('remote_server')  # do not insert '*' indexing here, that is done elsewhere
     - semicolon
-).setName('<remote-server>|<ip4-addr>|<ip6-addr> [ key <key-value> ] [ tls <tls-value> ];')
+)('').setName('<remote-server>|<ip4-addr>|<ip6-addr> [ key <key-value> ] [ tls <tls-value> ];')
 
 # a set of remote servers (ends with a right-brace)
 primaries_remoteserver_element_series = (
     OneOrMore(
         Group(    # Started indexing via list []
-            primaries_remoteserver_set
+            primaries_remoteserver_set('')
         )
     )('remote_servers')
 ).setName('<remote-server>|<ip4-addr>|<ip6-addr> [ key <key-value> ] [ tls <tls-value> ]; ...')
@@ -108,11 +111,10 @@ zone_stmt_primaries_standalone = (
         - lbrack
         - ZeroOrMore(    # Started indexing via list []
             Group(
-                primaries_remoteserver_set
+                primaries_remoteserver_set('')
             )('remote_servers*')
         )('')
         - rbrack
     )('primaries')
     + semicolon
 ).setName('primaries  [ port <port-no> ] [ dscp <dscp-id> ] { <series-remote-servers> };')
-
