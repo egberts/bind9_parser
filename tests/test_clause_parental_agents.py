@@ -84,9 +84,8 @@ class TestClauseParentalAgents(unittest.TestCase):
                                   'parental_agent_name': 'tunneled_office',
                                   'parental_agent_servers': [{'ip_addr': '127.0.0.1',
                                                               'ip_port': '853',
-                                                              'key_id': '"asdfasdfasdf"',
-                                                              'tls_name': '"asdfasdfasdf"'}]}]}
-
+                                                              'key_id': 'asdfasdfasdf',
+                                                              'tls_name': 'asdfasdfasdf'}]}]}
         )
 
     def test_clause_stmt_parental_agents_set_passing(self):
@@ -103,9 +102,8 @@ class TestClauseParentalAgents(unittest.TestCase):
                                   'parental_agent_name': 'tunneled_office',
                                   'parental_agent_servers': [{'ip_addr': '127.0.0.1',
                                                               'ip_port': '853',
-                                                              'key_id': '"asdfasdfasdf"',
-                                                              'tls_name': '"asdfasdfasdf"'}]}]}
-
+                                                              'key_id': 'asdfasdfasdf',
+                                                              'tls_name': 'asdfasdfasdf'}]}]}
         )
 
     def test_clause_stmt_parental_agents_set_two_elements_passing(self):
@@ -141,26 +139,26 @@ parental-agents tunneled_office port 853 dscp 5 {
         assert_parser_result_dict_true(
             clause_stmt_parental_agents_set,
             test_string,
-            {'parental_agents': [{'dscp_port': 5,
-                                  'ip_port': '853',
-                                  'parental_agent_name': 'tunneled_office',
-                                  'parental_agent_servers': [{'ip_addr': '127.0.0.1',
-                                                              'ip_port': '853',
-                                                              'key_id': '"asdfasdfasdf"',
-                                                              'tls_name': '"asdfasdfasdf"'},
-                                                             {'ip_addr': '192.168.1.1'},
-                                                             {'ip_addr': '172.16.1.1',
-                                                              'ip_port': '853'},
-                                                             {'ip_addr': '172.16.1.2',
-                                                              'key_id': '"third_key"'},
-                                                             {'ip_addr': '172.16.1.3',
-                                                              'tls_name': '"third_tls"'},
-                                                             {'ip_addr': '172.16.1.4',
-                                                              'ip_port': '853',
-                                                              'tls_name': '"fourth_tls"'},
-                                                             {'ip_addr': '172.16.1.4',
-                                                              'ip_port': '853',
-                                                              'key_id': '"fourth_key"'}]}]}
+            { 'parental_agents': [ { 'dscp_port': 5,
+                         'ip_port': '853',
+                         'parental_agent_name': 'tunneled_office',
+                         'parental_agent_servers': [ { 'ip_addr': '127.0.0.1',
+                                                       'ip_port': '853',
+                                                       'key_id': 'asdfasdfasdf',
+                                                       'tls_name': 'asdfasdfasdf'},
+                                                     { 'ip_addr': '192.168.1.1'},
+                                                     { 'ip_addr': '172.16.1.1',
+                                                       'ip_port': '853'},
+                                                     { 'ip_addr': '172.16.1.2',
+                                                       'key_id': 'third_key'},
+                                                     { 'ip_addr': '172.16.1.3',
+                                                       'tls_name': 'third_tls'},
+                                                     { 'ip_addr': '172.16.1.4',
+                                                       'ip_port': '853',
+                                                       'tls_name': 'fourth_tls'},
+                                                     { 'ip_addr': '172.16.1.4',
+                                                       'ip_port': '853',
+                                                       'key_id': 'fourth_key'}]}]}
         )
 
     def test_clause_stmt_parental_agents_series(self):
@@ -181,15 +179,15 @@ parental-agents tunneled_office port 853 dscp 5 {
                                   'parental_agent_name': 'tunneled_office',
                                   'parental_agent_servers': [{'ip_addr': '127.0.0.1',
                                                               'ip_port': '853',
-                                                              'key_id': '"asdfasdfasdf"',
-                                                              'tls_name': '"asdfasdfasdf"'}]},
+                                                              'key_id': 'asdfasdfasdf',
+                                                              'tls_name': 'asdfasdfasdf'}]},
                                  {'dscp_port': 5,
                                   'ip_port': '853',
                                   'parental_agent_name': 'tunneled_office',
                                   'parental_agent_servers': [{'ip_addr': '127.0.0.1',
                                                               'ip_port': '853',
-                                                              'key_id': '"asdfasdfasdf"',
-                                                              'tls_name': '"asdfasdfasdf"'}]}]}
+                                                              'key_id': 'asdfasdfasdf',
+                                                              'tls_name': 'asdfasdfasdf'}]}]}
         )
 
 
