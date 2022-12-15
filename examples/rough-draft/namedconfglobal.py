@@ -2582,7 +2582,6 @@ g_nc_keywords['filter-aaaa'] = \
         'topic': 'ancient, filtering',
         'comment':
             """Specifies a list of addresses to which
-filter-aaaa-on-v4 is applies.
 
 The default is any.
 Option 'filter-aaaa' activated at v9.12.0

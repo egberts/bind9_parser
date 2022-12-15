@@ -22,7 +22,9 @@ from bind9_parser.isc_options import \
     options_stmt_dnstap_version, \
     options_stmt_dscp, \
     options_stmt_dump_file, \
-    options_stmt_fake_iquery, options_stmt_flush_zones_on_shutdown, \
+    options_stmt_fake_iquery, \
+    options_stmt_filter_aaaa_on_v4, options_stmt_filter_aaaa_on_v6, options_stmt_filter_aaaa, \
+    options_stmt_flush_zones_on_shutdown, \
     options_stmt_geoip_directory, \
     options_stmt_has_old_clients, \
     options_stmt_http_listener_clients, \
@@ -83,6 +85,8 @@ class TestOptions(unittest.TestCase):
             ['deallocate-on-exit', options_stmt_deallocate_on_exit, ],
             ['fake-iquery', options_stmt_fake_iquery, ],
             ['flush-zones-on-shutdown', options_stmt_flush_zones_on_shutdown, ],
+            ['filter-aaaa-on-v4', options_stmt_flush_zones_on_shutdown, ],
+            ['filter-aaaa-on-v6', options_stmt_flush_zones_on_shutdown, ],
             ['has-old-clients', options_stmt_has_old_clients, ],
             ['hostname-statistics', options_stmt_hostname_statistics, ],
             ['hostname-statistics-max', options_stmt_hostname_statistics_max, ],
@@ -324,6 +328,70 @@ deny-answer-addresses {
     def test_isc_options_stmt_dump_file_passing(self):
         assert_parser_result_dict_true(options_stmt_dump_file, 'dump-file "/tmp/crapola";',
                                        {'dump_file': '/tmp/crapola'})
+
+    def test_isc_options_stmt_filter_aaaa_on_v4_passing(self):
+        assert_parser_result_dict_true(
+            options_stmt_filter_aaaa_on_v4,
+            'filter-aaaa-on-v4  yes;',
+            {'filter_aaaa_on_v4': 'yes'}
+        )
+
+    def test_isc_options_stmt_filter_aaaa_on_v4_2_passing(self):
+        assert_parser_result_dict_true(
+            options_stmt_filter_aaaa_on_v4,
+            'filter-aaaa-on-v4  false;',
+            {'filter_aaaa_on_v4': 'False'}
+        )
+
+    def test_isc_options_stmt_filter_aaaa_on_v4_3_passing(self):
+        assert_parser_result_dict_true(
+            options_stmt_filter_aaaa_on_v4,
+            'filter-aaaa-on-v4  break-dnssec;',
+            {'filter_aaaa_on_v4': 'break-dnssec'}
+        )
+
+    def test_isc_options_stmt_filter_aaaa_on_v6_passing(self):
+        assert_parser_result_dict_true(
+            options_stmt_filter_aaaa_on_v6,
+            'filter-aaaa-on-v6  yes;',
+            {'filter_aaaa_on_v6': 'yes'}
+        )
+
+    def test_isc_options_stmt_filter_aaaa_on_v6_2_passing(self):
+        assert_parser_result_dict_true(
+            options_stmt_filter_aaaa_on_v6,
+            'filter-aaaa-on-v6  false;',
+            {'filter_aaaa_on_v6': 'False'}
+        )
+
+    def test_isc_options_stmt_filter_aaaa_on_v6_3_passing(self):
+        assert_parser_result_dict_true(
+            options_stmt_filter_aaaa_on_v6,
+            'filter-aaaa-on-v6  break-dnssec;',
+            {'filter_aaaa_on_v6': 'break-dnssec'}
+        )
+
+    def test_isc_options_stmt_filter_aaaa_passing(self):
+        assert_parser_result_dict_true(
+            options_stmt_filter_aaaa,
+            'filter-aaaa { };',
+            {'filter_aaaa': {'aml': []}}
+        )
+
+    def test_isc_options_stmt_filter_aaaa_2_passing(self):
+        assert_parser_result_dict_true(
+            options_stmt_filter_aaaa,
+            'filter-aaaa { 1.1.1.1; };',
+            {'filter_aaaa': {'aml': [{'ip4_addr': '1.1.1.1'}]}}
+        )
+
+    def test_isc_options_stmt_filter_aaaa_3_passing(self):
+        assert_parser_result_dict_true(
+            options_stmt_filter_aaaa,
+            'filter-aaaa { 1.2.3.4; 5.6.7.8; };',
+            {'filter_aaaa': {'aml': [{'ip4_addr': '1.2.3.4'},
+                                     {'ip4_addr': '5.6.7.8'}]}}
+        )
 
     def test_isc_options_stmt_geoip_directory(self):
         """ Clause options; Statement geoip-directory; passing mode """
