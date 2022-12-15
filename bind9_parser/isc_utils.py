@@ -267,7 +267,7 @@ key_secret_dequotable = (
 
 g_expose_secrets = False
 
-charset_tls_id_base = alphanums + '_-'
+charset_tls_id_base = alphanums + '_-.'
 charset_tls_id_dquotable = charset_tls_id_base + "'"
 charset_tls_id_squotable = charset_tls_id_base + '"'
 tls_id_base = Word(charset_tls_id_base, max=62)
