@@ -9,9 +9,10 @@ my copy of `named.conf`.
 
 ### Outputting in Python dictionary/list Format
 
+```bash
+dump-named-conf.py examples/named-conf/basic/named.conf
+```
 ```python
-    $ dump-named-conf.py examples/named-conf/basic/named.conf
-
     print(result.asDict()):
     {'options': [{'directory': '/tmp',
                   'forwarders': {'forwarder': [{'ip_addr': '10.0.0.1'}]},
@@ -28,15 +29,16 @@ my copy of `named.conf`.
                 'file': 'root.hint',
                 'type': 'hint',
                 'zone_name': '.'}]}
-    end of result.
 ```
 
 ### Outputting in JSON Format
 
-```json
+```console
     $ dump-named-conf-json.py examples/named-conf/basic/named.conf
     <snipped output of Python dict/list>
-    json-pretty:  {
+```
+```json
+    "json-pretty":  {
         "options": [
             {
                 "directory": "/tmp",
@@ -71,7 +73,6 @@ my copy of `named.conf`.
             }
         ]
     }
-    end of result.
 ```
 
 ## Original `named.conf` File
