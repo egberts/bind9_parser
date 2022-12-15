@@ -78,7 +78,7 @@ dump-named-conf.py examples/named-conf/basic/named.conf
 ## Original `named.conf` File
 
 All results above are derived from using this
-`examples/named-conf/basic/named.conf` file:
+[examples/named-conf/basic/named.conf](https://github.com/egberts/bind9_parser/blob/11cc8a7134838f10fa987c5445f87e246fd02dd7/examples/named-conf/basic/named.conf) file:
 
 ```nginx
 options { 
