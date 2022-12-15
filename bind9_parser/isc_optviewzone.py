@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: isc_optviewzone.py
 
@@ -142,7 +142,7 @@ optviewzone_stmt_check_sibling = (
 
 optviewzone_stmt_dialup = (
     Keyword('dialup').suppress()
-    - ( 
+    - (
         Literal('notify-passive')
         | Literal('notify')
         | Literal('no')

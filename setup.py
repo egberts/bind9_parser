@@ -18,7 +18,7 @@ packages = [
     'bind9_parser',
 ]
 
-bind9_parser_version = '0.9.98.4'
+bind9_parser_version = '0.9.98.5'
 
 setup(  # Distribution meta-data
     name='bind9_parser',
@@ -30,10 +30,10 @@ setup(  # Distribution meta-data
     author_email='egberts@yahoo.com',
     keywords='bind9 configuration parser isc named.conf',
     url='https://github.com/egberts/bind9_parser',
-    download_url='https://github.com/egberts/bind9_parser/archive/0.9.98.4.tar.gz',
+    download_url='https://github.com/egberts/bind9_parser/archive/0.9.98.5.tar.gz',
     license='MIT License',
     packages=packages,
-    python_requires='>=3.6',
+    python_requires='>=3.7',
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     install_requires=['pyparsing'],
@@ -48,8 +48,6 @@ setup(  # Distribution meta-data
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',

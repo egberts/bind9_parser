@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: test_view.py
 
@@ -42,13 +42,13 @@ class TestClauseView(unittest.TestCase):
     def test_isc_clause_view__series_two_view_passing(self):
         """ Clause view; Statement standalone two-view; passing """
         test_string = """
-view chaos { 
-    match-clients { any; }; 
+view chaos {
+    match-clients { any; };
     zone "bind" {
-        type master; 
-        file "/var/lib/bind/internal/master/db.bind"; 
-        allow-update { none; }; 
-        allow-transfer { none; }; 
+        type master;
+        file "/var/lib/bind/internal/master/db.bind";
+        allow-update { none; };
+        allow-transfer { none; };
     };
 };
 view xyz { database this_one; dlz that_one; }; """

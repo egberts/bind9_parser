@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: test_trusted_keys.py
 
@@ -186,7 +186,7 @@ class TestTrustedKeys(unittest.TestCase):
 
     def test_isc_trusted_keys_statements_set_multiple_passing(self):
         """ Clause trusted_keys; Statement Set multiple; passing mode """
-        test_string = """trusted-keys { 
+        test_string = """trusted-keys {
     abc 1 1 1 "ASBASDASD";
     "." 257 3 3 "AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC";
     \".\" 257 3 3 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';

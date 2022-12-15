@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: test_zone.py
 
@@ -28,7 +28,7 @@ class TestClauseZone(unittest.TestCase):
          | optviewzoneserver_statements_set
          | viewzone_statements_set
         )"""
-    
+
     def test_isc_clause_zone__all_stmts_set_file(self):
         """ Clause zone; All Zone statement file from isc_zone.py via zone_statements_set; passing mode """
         test_string = 'file "a.b.type";'
@@ -76,8 +76,8 @@ class TestClauseZone(unittest.TestCase):
 
     def test_isc_clause_zone__all_stmts_set_combo(self):
         """ Clause zone; All Zone statement 'combo' (from various isc_[opt][view][opt][server].py); passing mode """
-        test_string = """zone public { forwarders { 5.6.7.8; 1.2.3.4; }; 
-database abcd; also-notify {mymaster; 1.2.3.4;}; 
+        test_string = """zone public { forwarders { 5.6.7.8; 1.2.3.4; };
+database abcd; also-notify {mymaster; 1.2.3.4;};
 notify-to-soa yes; };"""
         assert_parser_result_dict_true(
             clause_stmt_zone_standalone,
@@ -144,8 +144,8 @@ notify-to-soa yes; };"""
         """ Clause zone; Statement zone standalone 5; passing mode """
         test_data = ["""
 zone "home" {
-    type master; 
-    file "/var/lib/bind/internal/master/db.home"; 
+    type master;
+    file "/var/lib/bind/internal/master/db.home";
     allow-update { none; };
     };"""]
 #        test_clause_stmt_zone = clause_stmt_zone_standalone.copy()

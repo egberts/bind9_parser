@@ -12,12 +12,13 @@ Now we can parse `named.conf` with relative ease using Python.  Could even outpu
 * JSON output (DONE)
 * Schema lookup (DONE)
 * offline local search engine on all Bind9 clauses, statements, and keywords. (DONE)
-* Python chaining the setters/getters of `view`/`zone` clauses
-* Outputting `named.conf`
+* Python chaining the setters/getters of `view`/`zone` clauses (DONE)
+* Outputting `named.conf` (IN-PROGRES)
 
 # Introduction
 
-bind9_parser is a pythonized token constructor of `named.conf`.
+bind9_parser is a pythonized token constructor of `named.conf` configuration file 
+used in ISC Bind9 DNS name server daemon.
 
 bind9_parser parses a text-based `named.conf` containing ISC Bind9 configuration settings, such as:
 
@@ -80,8 +81,8 @@ The token tree consists of a Pythonized `dict`/`list` that is fully readable by 
 There is a work-in-progress DESIGN document that will:
 
 * tokenize `named.conf` (DONE)
-* Python chaining the setters/getters of `view`/`zone` clauses
-* Outputting `named.conf` from its tokenized Python variable
+* Python chaining the setters/getters of `view`/`zone` clauses (DONE)
+* Outputting `named.conf` from its tokenized Python variable (IN-PROGRES)
 
 [DESIGN-work-in-progress.md](DESIGN-work-in-progress.md)
 
