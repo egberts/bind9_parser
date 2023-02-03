@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: test_trusted_keys.py
 
@@ -10,7 +10,7 @@ Description: Provides trusted_keys-related grammar in PyParsing engine
              for ISC-configuration style
 """
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_trusted_keys import \
     trusted_keys_stmt_key_id_integer, \
     trusted_keys_protocol_type_integer, \
@@ -39,7 +39,7 @@ class TestTrustedKeys(unittest.TestCase):
     def test_isc_trusted_keys_statements_element_key_id_failing(self):
         """ Clause trusted_keys; Statement; key-id; failing mode """
         test_string = [
-            '-1', # '65536', '99999'   # TODO need a 16-bit range
+            '-1',  # '65536', '99999'   # TODO need a 16-bit range
         ]
         result = trusted_keys_stmt_key_id_integer.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
@@ -55,7 +55,7 @@ class TestTrustedKeys(unittest.TestCase):
     def test_isc_trusted_keys_statements_element_protocol_failing(self):
         """ Clause trusted_keys; Statement; protocol; failing mode """
         test_string = [
-            '-1',  '1.1' # '256', '999', '65536', '99999'   # TODO need a 8-bit range
+            '-1',  '1.1'  # '256', '999', '65536', '99999'   # TODO need a 8-bit range
         ]
         result = trusted_keys_protocol_type_integer.runTests(test_string, failureTests=True)
         self.assertTrue(result[0])
@@ -92,14 +92,14 @@ class TestTrustedKeys(unittest.TestCase):
     def test_isc_trusted_keys_statements_group_series_one_passing(self):
         """ Clause trusted_keys; Statement group two; passing mode """
         assert_parser_result_dict_true(
-        trusted_keys_stmt_group_series,
+            trusted_keys_stmt_group_series,
             "\"16.172.in-addr.arpa.\" 256 3 15 'ZZZZZZZZZ+YYYYYYYYYYYYY/XXXXXXXXXXXXXXXX';",
             {'trusted_keys': [{'algorithm_id': '15',
                                'domain': '"16.172.in-addr.arpa."',
                                'key_id': '256',
                                'protocol_type': '3',
                                'pubkey_base64': 'ZZZZZZZZZ+YYYYYYYYYYYYY/XXXXXXXXXXXXXXXX'}]}
-            )
+        )
 
     def test_isc_trusted_keys_statements_group_series_two_passing(self):
         """ Clause trusted_keys; Statement group two; passing mode """
@@ -186,7 +186,7 @@ class TestTrustedKeys(unittest.TestCase):
 
     def test_isc_trusted_keys_statements_set_multiple_passing(self):
         """ Clause trusted_keys; Statement Set multiple; passing mode """
-        test_string = """trusted-keys { 
+        test_string = """trusted-keys {
     abc 1 1 1 "ASBASDASD";
     "." 257 3 3 "AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC";
     \".\" 257 3 3 'AAAAAAAAA+BBBBBBBBBBBBB/CCXCCCCCCCCCCCCC';

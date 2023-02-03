@@ -20,7 +20,7 @@ import errno
 import sys
 import argparse
 from pprint import PrettyPrinter
-from pyparsing import Literal, CaselessLiteral, \
+from pyparsing import CaselessKeyword, Literal, CaselessLiteral, \
     ParseException, ParseSyntaxException, \
     Word, alphanums, Group, Optional, nums, Combine, Char, \
     cppStyleComment, pythonStyleComment, OneOrMore, \
@@ -267,12 +267,35 @@ key_secret_dequotable = (
 
 g_expose_secrets = False
 
-charset_key_id_base = alphanums + '_-'
+charset_tls_id_base = alphanums + '_-.'
+charset_tls_id_dquotable = charset_tls_id_base + "'"
+charset_tls_id_squotable = charset_tls_id_base + '"'
+tls_id_base = Word(charset_tls_id_base, max=62)
+tls_id_dquotable = Combine(Char('"').suppress() + Word(charset_tls_id_dquotable, max=64) + Char('"').suppress())
+tls_id_squotable = Combine(Char("'").suppress() + Word(charset_tls_id_squotable, max=64) + Char("'").suppress())
+
+tls_id = (
+        tls_id_dquotable
+        ^ tls_id_squotable
+        ^ tls_id_base
+)('tls_id')
+tls_id.setName('<tls_id>')
+
+# tls <tls-name>
+tls_id_keyword_and_name_pair = (
+        Literal('tls').suppress()
+        + (
+            tls_id('')
+        )('tls_id')
+)
+tls_id_keyword_and_name_pair.setName('"tls" <tls_id>')
+
+charset_key_id_base = alphanums + '_-.'
 charset_key_id_dquotable = charset_key_id_base + "'"
 charset_key_id_squotable = charset_key_id_base + '"'
 key_id_base = Word(charset_key_id_base, max=62)
-key_id_dquotable = Combine(Char('"') + Word(charset_key_id_dquotable, max=64) + Char('"'))
-key_id_squotable = Combine(Char("'") + Word(charset_key_id_squotable, max=64) + Char("'"))
+key_id_dquotable = Combine(Char('"').suppress() + Word(charset_key_id_dquotable, max=64) + Char('"').suppress())
+key_id_squotable = Combine(Char("'").suppress() + Word(charset_key_id_squotable, max=64) + Char("'").suppress())
 
 key_id = (
         key_id_dquotable
@@ -452,6 +475,18 @@ krb5_instance_name = Word(
     charset_krb5_username, min=1, max=256
 )('instance')  # limited to length of FQDN
 
+# Valid inputs:
+#   user@DOMAIN.COM
+#   user/admin@DOMAIN.COM
+#   host/host.domain.com@DOMAIN.COM
+#   root/host.domain.com@DOMAIN.COM
+#   nfs/host.domain.com@DOMAIN.COM
+#   user@DOMAIN.COM:123
+#   user/admin@DOMAIN.COM:123
+#   host/host.domain.com@DOMAIN.COM:234
+#   root/host.domain.com@DOMAIN.COM:456
+#   nfs/host.domain.com@DOMAIN.COM:890
+
 #  krb5_principal_name max=(254+1+16))  # limited to length of FQDN + '/' + URI
 krb5_principal_name_base = (
         Combine(
@@ -461,7 +496,12 @@ krb5_principal_name_base = (
             - '@'
             - krb5_realm_name
         )
-        | Combine(
+        ^ Combine(
+            krb5_primary_name
+            - '/'
+            - krb5_realm_name
+        )
+        ^ Combine(
             krb5_primary_name
             - '@'
             - krb5_realm_name
@@ -480,9 +520,9 @@ krb5_principal_name = (
 krb5_principal_name.setName('<principal>')
 
 check_options = (
-        Literal('warn')
-        | Literal('fail')
-        | Literal('ignore')
+        CaselessLiteral('warn')
+        | CaselessLiteral('fail')
+        | CaselessLiteral('ignore')
 )('check_type')
 check_options.setName('( warn | fail | ignore )')
 
@@ -538,11 +578,9 @@ size_spec_plain = (
         Word(nums).setParseAction(lambda toks: int(toks[0]), max=10)('amount')
         + Optional(
             (
-                Literal('K')
-                | Literal('k')
-                | Literal('M')
-                | Literal('m')
-                | Literal('G')
+                CaselessLiteral('K')
+                | CaselessLiteral('M')
+                | CaselessLiteral('G')
             )('unit')
         )
     )('size_spec')
@@ -553,22 +591,19 @@ size_spec_nodefault = (
         Group(
             Word(nums).setParseAction(lambda toks: int(toks[0]), max=10)
             - Optional(
-                Literal('K')
-                | Literal('k')
-                | Literal('M')
-                | Literal('m')
-                | Literal('G')
-                | Literal('g')
+                CaselessLiteral('K')
+                | CaselessLiteral('M')
+                | CaselessLiteral('G')
             )
         )
-        | Literal('unlimited')
+        | CaselessLiteral('unlimited')
     )
 ).setName('( <size-spec> | unlimited )')
 
 size_spec = (
     Group(
             ungroup(size_spec_nodefault)
-            | Literal('default')
+            | CaselessLiteral('default')
     )
 )('size')
 size_spec.setName('( <size-spec> | unlimited | default )')
@@ -576,29 +611,6 @@ size_spec.setName('( <size-spec> | unlimited | default )')
 dlz_name_type = Word(alphanums + '_-.', max=63)('dlz_name')
 database_name_type = Word(alphanums + '_-.', max=63)('dlz_name')
 
-charset_master_name_base = alphanums + '_-'
-master_name_base = Word(charset_master_name_base, max=62)
-master_name = copy.deepcopy(master_name_base('master_name'))
-
-master_name_base_dequoted = (
-    (
-        Char('"').suppress()
-        - Word(charset_master_name_base, max=62)
-        - Char('"').suppress()
-    )
-    ^ (
-        Char("'").suppress()
-        - Word(charset_master_name_base, max=62)
-        - Char("'").suppress()
-    )
-)
-
-master_name_dequotable = (
-   master_name_base_dequoted
-   ^ master_name
-)('master_name').setName('<master-name>')
-
-master_name.setName('<master_name>')
 
 # iso8601 is not a naive nor aware ISO time-interval
 # iso8601 is a delta time (or duration)
@@ -673,22 +685,22 @@ tls_algorithm_name_list_series.setName('<tls_algorithm_name>; [ <tls_algorithm_n
 
 # Quoteable primary name
 # Yes, ISC Bind9 supports period in primary_name_type
-charset_primary_name = alphanums \
-                       + '_-.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
-primary_name_type = Word(charset_primary_name, min=1, max=63)('primary_name_type')
-primary_name_type.setName('<primary_name>')
-primary_name_type_squotable = Word(charset_primary_name + '"')
-primary_name_type_dquotable = Word(charset_primary_name + "'")
+charset_primaries_name = alphanums \
+                       + '_-\.+~@$%^&*()=[]\\|:<>`?'  # no semicolon nor curly braces allowed
+primaries_name_type = Word(charset_primaries_name, min=1, max=63)('primaries_name_type')
+primaries_name_type.setName('<primaries_name>')
+primaries_name_type_squotable = Word(charset_primaries_name + '"')
+primaries_name_type_dquotable = Word(charset_primaries_name + "'")
 
 primary_name_type_with_squote = Combine(
     dquote
-    - primary_name_type_dquotable
+    - primaries_name_type_dquotable
     + dquote
 )
 
-primary_name_type_with_dquote = Combine(
+primaries_name_type_with_dquote = Combine(
     squote
-    - primary_name_type_squotable
+    - primaries_name_type_squotable
     + squote
 )
 
@@ -696,11 +708,19 @@ primary_name_type_with_dquote = Combine(
 #   * primaries clause,
 #   * primaries statement or
 #   * also-notify statement of options/view/zone clauses.
-primary_id = (
-        primary_name_type_squotable
-        | primary_name_type_dquotable
-        | primary_name_type
-)('primary_id')
+
+primaries_name_type_dequotable = (
+        primaries_name_type_squotable
+        | primaries_name_type_dquotable
+        | primaries_name_type
+)('primaries_id')
+
+primaries_id = primaries_name_type_dequotable
+
+primaries_keyword = (
+        CaselessKeyword('primaries').suppress()
+        ^ CaselessKeyword('masters').suppress()
+        ).setName('primaries')
 
 
 # Boolean support

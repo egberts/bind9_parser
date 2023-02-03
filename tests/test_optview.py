@@ -944,7 +944,7 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assert_parser_result_dict_true(
             optview_stmt_max_cache_size,
             'max-cache-size 14m;',
-            {'max_cache_size': [14, 'm']}
+            {'max_cache_size': [14, 'M']}
         )
         assert_parser_result_dict_true(
             optview_stmt_max_cache_size,

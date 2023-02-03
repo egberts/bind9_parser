@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: isc_options.py
 
@@ -9,16 +9,16 @@ Title: Statements Used Only By 'options' Clause
 Description: Various 'options' statement that is used
              only by 'options' clause.
 """
-from pyparsing import Group, Keyword, Optional, \
+from pyparsing import Group, Keyword, Optional, Combine, \
     ZeroOrMore, OneOrMore, Literal, ungroup, CaselessLiteral
 from pyparsing import pyparsing_common
-from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec,\
+from bind9_parser.isc_utils import lbrack, rbrack, semicolon, size_spec, \
     dequotable_path_name, number_type, seconds_type, \
-    isc_boolean, krb5_principal_name,\
+    isc_boolean, krb5_principal_name, \
     exclamation, dequoted_path_name, squote, dquote, \
     fqdn_name_dequoted, fqdn_name_dequotable, quotable_name, \
     size_spec_nodefault, iso8601_duration, tsig_session_key_name
-from bind9_parser.isc_inet import ip_port,\
+from bind9_parser.isc_inet import ip_port, \
     inet_dscp_port_keyword_and_number_element, \
     inet_http_port_keyword_and_number_element, \
     inet_ip_port_keyword_and_number_element, \
@@ -338,6 +338,37 @@ options_stmt_fake_iquery = (
     + semicolon
 )
 options_stmt_fake_iquery.setName('fake-iquery <boolean>;')
+
+#         filter-aaaa-on-v4 ( break-dnssec | <boolean> ); // not configured
+options_stmt_filter_aaaa_on_v4 = (
+        Keyword('filter-aaaa-on-v4').suppress()
+        - Combine(
+            isc_boolean()
+            | Keyword('break-dnssec')
+        )('filter_aaaa_on_v4')
+        + semicolon
+)
+options_stmt_filter_aaaa_on_v4.setName('filter-aaaa-on-v4 { break-dnssec | <boolean> );')
+
+#         filter-aaaa-on-v6 ( break-dnssec | <boolean> ); // not configured
+options_stmt_filter_aaaa_on_v6 = (
+        Keyword('filter-aaaa-on-v6').suppress()
+        - Combine(
+            isc_boolean()
+            | Keyword('break-dnssec')
+        )('filter_aaaa_on_v6')
+        + semicolon
+)
+options_stmt_filter_aaaa_on_v6.setName('filter-aaaa-on-v6 { break-dnssec | <boolean> );')
+
+#         filter-aaaa { <address_match_element>; ... }; // not configured
+options_stmt_filter_aaaa = (
+        Keyword('filter-aaaa').suppress()
+        - Group(
+            aml_nesting('')
+        )('filter_aaaa')
+)
+options_stmt_filter_aaaa.setName('filter-aaaa { <aml>; .... };')
 
 # flush-zones-on-shutdown <boolean>; [ Opt ]    # v9.3+
 options_stmt_flush_zones_on_shutdown = (
@@ -804,7 +835,7 @@ options_stmt_tkey_gssapi_credential = (
                 - krb5_principal_name
                 - squote.suppress()
             )
-            | (
+            ^ (
                 dquote.suppress()
                 - krb5_principal_name
                 - dquote.suppress()
@@ -977,6 +1008,9 @@ options_statements_set = (
     ^ options_stmt_dscp
     ^ options_stmt_dump_file
     ^ options_stmt_fake_iquery
+    ^ options_stmt_filter_aaaa_on_v4
+    ^ options_stmt_filter_aaaa_on_v6
+    ^ options_stmt_filter_aaaa
     ^ options_stmt_flush_zones_on_shutdown
     ^ options_stmt_geoip_directory
     ^ options_stmt_has_old_clients

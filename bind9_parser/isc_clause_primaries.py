@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: isc_clause_primaries.py
 
@@ -8,90 +8,66 @@ Title: Clause Statement for Primary Servers
 
 Description: Provides primary-related grammar in PyParsing engine
              for ISC-configuration style
+
+    Only for zone-type: secondary, mirror, stub, & redirect
+
+Syntax:
+      primaries <string> [ port <integer> ] [ dscp <integer> ]
+      {
+          ( <remote-servers>
+            | <ipv4_address> [ port <integer> ]
+            | <ipv6_address> [ port <integer> ]
+          )
+         [ key <string> ]
+         [ tls <string> ];
+         ...
+      };
 """
-from pyparsing import OneOrMore, Group, Keyword, Optional
-from bind9_parser.isc_utils import lbrack, rbrack, semicolon, \
-    key_id_keyword_and_name_pair, \
-    primary_id
-from bind9_parser.isc_inet import ip4_addr, ip6_addr,\
-    inet_ip_port_keyword_and_number_element,\
+import copy
+from pyparsing import Group, ungroup, ZeroOrMore
+from bind9_parser.isc_utils import Optional, lbrack, rbrack, semicolon, \
+    primaries_keyword, primaries_id
+from bind9_parser.isc_inet import \
+    inet_ip_port_keyword_and_number_element, \
     inet_dscp_port_keyword_and_number_element
+from bind9_parser.isc_primaries import primaries_remoteserver_set
 
 
-# { ( primaries
-#     | ipv4_address [ port integer ]
-#     | ipv6_address [ port integer ]
-#     | 'primaries'                      # New in 9.15.1???
-#   )
-#   [ key string ];
-#   ...
-# };
-primaries_element_list = (
-    (
-        ip4_addr('ip4_addr')
-        + Optional(inet_ip_port_keyword_and_number_element)
-        + Optional(key_id_keyword_and_name_pair)
-        + semicolon
-    )
-    | (
-            ip6_addr('ip6_addr')
-            + Optional(inet_ip_port_keyword_and_number_element)
-            + Optional(key_id_keyword_and_name_pair)
-            + semicolon
-    )
-    | (
-            primary_id('primary_name')
-            + Optional(key_id_keyword_and_name_pair)
-            + semicolon
-    )   # TODO investigate if a series of primary_id is supported in primaries clause
-    | (
-            primary_id('primary_name')
-            + semicolon
-    )
-)
+clause_cloned_primaries_remoteserver_set = copy.deepcopy(primaries_remoteserver_set)
 
-primaries_element_series = (
-    OneOrMore(
-        Group(    # Started indexing via list []
-            primaries_element_list
-        )
-    )('primary_list')
-)
-
-# primaries string [ port integer ]
-#                [ dscp integer ]
-#                {
-#                    ( primaries
-#                      | ipv4_address [ port integer ]
-#                      | ipv6_address [ port integer ]
-#                    )
-#                    [ key string ];
-#                    ...
-#                };
-
-primary_keyword = (
-        Keyword('primaries').suppress()
-        ^ Keyword('masters').suppress()
-        )
+# Used only as top-level clause
 clause_stmt_primaries_standalone = (
-    primary_keyword
-    - Group(
-        primary_id('primary_id')
-        - Optional(inet_ip_port_keyword_and_number_element)
-        - Optional(inet_dscp_port_keyword_and_number_element)
-        - Group(
-            lbrack
-            + primaries_element_series('')
-            + rbrack
-        )('primary_list')
-    )
+    Group(
+        primaries_keyword
+        - primaries_id('primaries_id')
+        - (
+            (
+                Optional(inet_ip_port_keyword_and_number_element)
+                - Optional(inet_dscp_port_keyword_and_number_element)
+            )
+            ^ (
+                Optional(inet_dscp_port_keyword_and_number_element)
+                - Optional(inet_ip_port_keyword_and_number_element)
+            )
+        )
+        - lbrack
+        - ZeroOrMore(    # Started indexing via list []
+            Group(
+                clause_cloned_primaries_remoteserver_set
+            )('remote_servers*')
+        )('')
+        - rbrack
+    )('primaries')
     + semicolon
-)('primaries')
+)('').setName('primaries <remote-server-name> [ port <port-no> ] [ dscp <dscp-id> ] { <series-remote-servers> };')
 
 # clause_stmt_primaries_series cannot be used within 'zone' clause, use clause_stmt_primaries_set instead
 clause_stmt_primaries_series = (
-    OneOrMore(
-            clause_stmt_primaries_standalone
-    )
-)('primaries')
+    ZeroOrMore(
+        Group(
+            ungroup(clause_stmt_primaries_standalone(''))('')
+        )('')
+    )('')
+)('primaries').setName("""primaries [ port <port> ] [ dscp <dscp> ] {
+    ( <fqdn> | <ip4_addr> | <ip6_addr> ) [ key <key-value> ] [ tls <tls-value ]; ... };""")
 clause_stmt_primaries_series.setName('primaries <name> key <key_id>')

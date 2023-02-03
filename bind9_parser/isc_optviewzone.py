@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: isc_optviewzone.py
 
@@ -9,15 +9,15 @@ Title: Statements Used Only By options, view, And zone Clauses
 Description: isc_optviewzone covers configuration options that
              goes into 'options', 'view', AND 'zone'.
 """
-from pyparsing import Group, Keyword, Optional,\
+from pyparsing import Group, Keyword, Optional, \
     Literal, ZeroOrMore, CaselessLiteral, ungroup
 from bind9_parser.isc_utils import lbrack, rbrack, semicolon, isc_boolean, \
-    seconds_type, days_type, minute_type, dequoted_path_name,\
-    size_spec, name_base, fqdn_name, check_options, number_type, iso8601_duration,\
+    seconds_type, days_type, minute_type, dequoted_path_name, \
+    size_spec, name_base, fqdn_name, check_options, number_type, iso8601_duration, \
     percentage_type
 from bind9_parser.isc_inet import ip4_addr, ip_port, \
-    inet_ip_port_keyword_and_wildcard_element, ip6_addr,\
-    inet_ip_port_keyword_and_number_element, ip46_addr_or_prefix,\
+    inet_ip_port_keyword_and_wildcard_element, ip6_addr, \
+    inet_ip_port_keyword_and_number_element, ip46_addr_or_prefix, \
     ip4_addr_or_wildcard, ip6_addr_or_wildcard, inet_dscp_port_keyword_and_number_element
 from bind9_parser.isc_aml import aml_nesting
 
@@ -142,7 +142,7 @@ optviewzone_stmt_check_sibling = (
 
 optviewzone_stmt_dialup = (
     Keyword('dialup').suppress()
-    - ( 
+    - (
         Literal('notify-passive')
         | Literal('notify')
         | Literal('no')

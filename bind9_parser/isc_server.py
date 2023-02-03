@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: isc_server.py
 
@@ -12,8 +12,8 @@ Description: Provides server-related grammar in PyParsing engine
 from pyparsing import Group, Keyword, Optional, ZeroOrMore, ungroup
 from bind9_parser.isc_utils import isc_boolean, semicolon, number_type, \
     key_id, byte_type
-from bind9_parser.isc_inet import ip4_addr_or_wildcard, ip6_addr_or_wildcard,\
-    inet_ip_port_keyword_and_wildcard_element,\
+from bind9_parser.isc_inet import ip4_addr_or_wildcard, ip6_addr_or_wildcard, \
+    inet_ip_port_keyword_and_wildcard_element, \
     inet_dscp_port_keyword_and_number_element
 
 #  Be careful of deleting any statements here

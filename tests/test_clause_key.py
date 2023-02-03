@@ -44,12 +44,12 @@ class TestClauseKey(unittest.TestCase):
                                        test_data,
                                        expected_result)
         test_data = 'key "my_dquoted_key_id"'
-        expected_result = {'key_id': '"my_dquoted_key_id"'}
+        expected_result = {'key_id': 'my_dquoted_key_id'}
         assert_parser_result_dict_true(key_id_keyword_and_name_pair,
                                        test_data,
                                        expected_result)
         test_data = 'key \'my_squoted_key_id\''
-        expected_result = {'key_id': '\'my_squoted_key_id\''}
+        expected_result = {'key_id': 'my_squoted_key_id'}
         assert_parser_result_dict_true(key_id_keyword_and_name_pair,
                                        test_data,
                                        expected_result)

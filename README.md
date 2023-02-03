@@ -12,12 +12,13 @@ Now we can parse `named.conf` with relative ease using Python.  Could even outpu
 * JSON output (DONE)
 * Schema lookup (DONE)
 * offline local search engine on all Bind9 clauses, statements, and keywords. (DONE)
-* Python chaining the setters/getters of `view`/`zone` clauses
-* Outputting `named.conf`
+* Python chaining the setters/getters of `view`/`zone` clauses (DONE)
+* Outputting `named.conf` (IN-PROGRES)
 
 # Introduction
 
-bind9_parser is a pythonized token constructor of `named.conf`.
+bind9_parser is a pythonized token constructor of `named.conf` configuration file 
+used in ISC Bind9 DNS name server daemon.
 
 bind9_parser parses a text-based `named.conf` containing ISC Bind9 configuration settings, such as:
 
@@ -51,7 +52,7 @@ Tokenize `named.conf` variable consists of `dict` and `list` to ameliorate and p
 Token parser is chosen here for the primary purpose of performing automated checking of its valid settings. No concrete 
 syntax tree (and certainly no abstract syntax tree either).
 
-This is about as simple as getting and setting configurations with like an `.INI` file, but with the complex `named.conf`
+This is about as simple as getting and setting configurations with like an `.INI` file, but with the complexity of `named.conf`
 instead.
 
 # Token Parser Design
@@ -71,7 +72,7 @@ purpose of this design is to get all the raw `named.conf` settings. No CST suppo
 original file containing such annotation.
 
 It is all about extracting the settings. Writing it back out into a `named.conf`-style file has become a secondary goal
-here because too many passive security tools awaits those settings.
+here because too many passive security tools awaits this (pending) outputter() feature.
 
 # Python  Design
 
@@ -80,8 +81,8 @@ The token tree consists of a Pythonized `dict`/`list` that is fully readable by 
 There is a work-in-progress DESIGN document that will:
 
 * tokenize `named.conf` (DONE)
-* Python chaining the setters/getters of `view`/`zone` clauses
-* Outputting `named.conf` from its tokenized Python variable
+* Python chaining the setters/getters of `view`/`zone` clauses (DONE)
+* Outputting `named.conf` from its tokenized Python variable (IN-PROGRES)
 
 [DESIGN-work-in-progress.md](DESIGN-work-in-progress.md)
 

@@ -68,10 +68,10 @@ class TestClauseControls(unittest.TestCase):
         expected_result = {'keys': [{'key_id': 'rndc-key'}]}
         assert_parser_result_dict(controls_keys_element, test_data, expected_result, True)
         test_data = 'keys { \'quoted-key_id\'; }'
-        expected_result = {'keys': [{'key_id': '\'quoted-key_id\''}]}
+        expected_result = {'keys': [{'key_id': 'quoted-key_id'}]}
         assert_parser_result_dict(controls_keys_element, test_data, expected_result, True)
         test_data = 'keys { "quoted-key_id"; }'
-        expected_result = {'keys': [{'key_id': '\"quoted-key_id\"'}]}
+        expected_result = {'keys': [{'key_id': 'quoted-key_id'}]}
         assert_parser_result_dict(controls_keys_element, test_data, expected_result, True)
         test_data = 'keys { unquoted-key_id; }'
         expected_result = {'keys': [{'key_id': 'unquoted-key_id'}]}
@@ -204,7 +204,7 @@ class TestClauseControls(unittest.TestCase):
         expected_result = {'controls': [{'inet': {'allow': {'aml': [{'acl_name': "'rndc-users'"}]},
                                                   'control_server_addr': '*',
                                                   'ip_port_w': '8002',
-                                                  'keys': [{'key_id': "'rndc-remote'"}]}}]}
+                                                  'keys': [{'key_id': "rndc-remote"}]}}]}
         assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
 
     def test_isc_controls_statement_dual_port_inet_allow_key_passing(self):
@@ -262,7 +262,7 @@ class TestClauseControls(unittest.TestCase):
                         },
                         'control_server_addr': '*',
                         'ip_port_w': '8007',
-                        'keys': [{'key_id': '"rndc-remote5"'}]}}]}
+                        'keys': [{'key_id': 'rndc-remote5'}]}}]}
         assert_parser_result_dict(clause_stmt_control_series, test_data, expected_result, True)
 
     def test_isc_controls_statement_unix_passing(self):
@@ -330,7 +330,7 @@ controls {
                                         {'inet': {'allow': {'aml': [{'acl_name': '"rndc-users"'}]},
                                                   'control_server_addr': '*',
                                                   'ip_port_w': '8008',
-                                                  'keys': [{'key_id': '"rndc-remote5"'}]}},
+                                                  'keys': [{'key_id': 'rndc-remote5'}]}},
                                         {'unix': {'gid': 666,
                                                   'path_name': '/tmp/x',
                                                   'perm': 444,

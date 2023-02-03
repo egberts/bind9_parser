@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: isc_clause_controls.py
 
@@ -8,7 +8,7 @@ Title: Clause statement for the 'controls' connections.
 
 Description
 """
-from pyparsing import Keyword, Group, Optional, Literal, OneOrMore, ZeroOrMore
+from pyparsing import Keyword, Group, Optional, Literal, ZeroOrMore
 from bind9_parser.isc_utils import semicolon, lbrack, rbrack, \
     isc_boolean, dequoted_path_name, number_type, \
     exclamation, key_id
@@ -109,7 +109,7 @@ clause_stmt_control_standalone = (
         Keyword('controls').suppress()
         + lbrack
         + Group(
-            OneOrMore(
+            ZeroOrMore(
                 Group(controls_inet_set('inet'))
                 | Group(controls_unix_set('unix'))
             )

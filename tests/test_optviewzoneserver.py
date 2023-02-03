@@ -194,7 +194,7 @@ class TestOptionsViewZoneServer(unittest.TestCase):
         """ Clause options/view/zone/server; Statement request-expire; passing """
         assert_parser_result_dict_true(
             optviewzoneserver_stmt_request_expire,
-           'request-expire yes;',
+            'request-expire yes;',
             {'request_expire': 'yes'}
         )
 

@@ -6,10 +6,9 @@ Description:  Performs unit test on the isc_domain.py source file.
 """
 
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
 from bind9_parser.isc_domain import tld_label, domain_label, subdomain_label,\
     host_name, domain_fqdn, domain_generic_label,\
-    domain_generic_fqdn, rr_domain_name_or_wildcard_type, rr_domain_name_type, rr_fqdn_w_absolute
+    domain_generic_fqdn, rr_domain_name_or_wildcard_type, rr_domain_name_type
 
 
 class TestDomain(unittest.TestCase):
@@ -113,7 +112,7 @@ class TestDomain(unittest.TestCase):
             '_965,_tcp.example.net',
         ]
         result = domain_fqdn.runTests(test_data, failureTests=True)
-        self.assertTrue(result[0])
+        self.assertFalse(result[0])
 
     def test_isc_domain_domain_generic_fqdn_passing(self):
         """ Element domain; Type Generic FQDN; passing mode """

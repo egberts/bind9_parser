@@ -51,10 +51,14 @@ class TestClauseDnssecPolicy(unittest.TestCase):
     def test_dnssecpolicy_keys_passing(self):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
         test_string = 'keys { csk lifetime 1d algorithm SHA256 256; };'
-        expected_result = { 'keys': [ { 'algorithm': { 'algorithm_name': 'SHA256',
-                             'algorithm_size': '256'},
-              'lifetime': {'iso8601_duration': '1d'},
-              'type': 'csk'}]}
+        expected_result = {
+            'keys': [
+                {
+                    'algorithm': {
+                        'algorithm_name': 'SHA256',
+                        'algorithm_size': '256'},
+                    'lifetime': {'iso8601_duration': '1d'},
+                    'type': 'csk'}]}
         assert_parser_result_dict_true(
             dnssecpolicy_keys_element,
             test_string,
@@ -151,21 +155,24 @@ dnssec-policy strict {
         assert_parser_result_dict_true(
             clause_stmt_dnssecpolicy_set,
             test_string,
-            { 'dnssec_policy': [ { 'dnssec_policy_name': 'strict',
-                       'keys': [ { 'algorithm': { 'algorithm_name': 'SHA256',
-                                                  'algorithm_size': '256'},
-                                   'lifetime': { 'iso8601_duration': '1d'},
-                                   'type': 'csk'},
-                                 { 'algorithm': { 'algorithm_name': 'SHA386',
-                                                  'algorithm_size': '386'},
-                                   'key_directory': '/var/lib/named/primary/dnssec.key',
-                                   'lifetime': { 'iso8601_duration': '365D'},
-                                   'type': 'ksk'}]}]}
+            {'dnssec_policy': [{'dnssec_policy_name': 'strict',
+                                'keys': [{'algorithm': {'algorithm_name': 'SHA256',
+                                                        'algorithm_size': '256'},
+                                          'lifetime': {'iso8601_duration': '1d'},
+                                          'type': 'csk'},
+                                         {'algorithm': {'algorithm_name': 'SHA386',
+                                                        'algorithm_size': '386'},
+                                          'key_directory': '/var/lib/named/primary/dnssec.key',
+                                          'lifetime': {'iso8601_duration': '365D'},
+                                          'type': 'ksk'}]}]}
         )
 
     def test_clause_stmt_dnssecpolicy_series_passing(self):
         """ Test Clause DNSSEC Policy; DNSKEY TTL; passing """
-        test_string = """
+
+        assert_parser_result_dict_true(
+            clause_stmt_dnssecpolicy_series,
+            """
 dnssec-policy standard {
     keys { ksk lifetime 365d algorithm SHA256; };
     keys { zsk lifetime 30d algorithm SHA256 256; };
@@ -178,33 +185,30 @@ dnssec-policy enterprise {
     keys { zsk lifetime 4y algorithm SHA386; };
     keys { csk lifetime 4y algorithm SHA386; };
     };
-    """
-        expected_result = { 'dnssec_policy': [ { 'dnssec_policy_name': 'standard',
-                       'keys': [ { 'algorithm': { 'algorithm_name': 'SHA256'},
-                                   'lifetime': { 'iso8601_duration': '365d'},
-                                   'type': 'ksk'},
-                                 { 'algorithm': { 'algorithm_name': 'SHA256',
-                                                  'algorithm_size': '256'},
-                                   'lifetime': { 'iso8601_duration': '30d'},
-                                   'type': 'zsk'},
-                                 { 'algorithm': { 'algorithm_name': 'SHA256'},
-                                   'lifetime': { 'iso8601_duration': '1d'},
-                                   'type': 'csk'}]},
-                     { 'dnssec_policy_name': 'exlax',
-                       'keys': [ { 'algorithm': { 'algorithm_name': 'SHA128'},
-                                   'lifetime': { 'iso8601_duration': '365d'},
-                                   'type': 'csk'}]},
-                     { 'dnssec_policy_name': 'enterprise',
-                       'keys': [ { 'algorithm': { 'algorithm_name': 'SHA386'},
-                                   'lifetime': { 'iso8601_duration': '4y'},
-                                   'type': 'zsk'},
-                                 { 'algorithm': { 'algorithm_name': 'SHA386'},
-                                   'lifetime': { 'iso8601_duration': '4y'},
-                                   'type': 'csk'}]}]}
-        assert_parser_result_dict_true(
-            clause_stmt_dnssecpolicy_series,
-            test_string,
-            expected_result)
+    """,
+            {'dnssec_policy': [{'dnssec_policy_name': 'standard',
+                                'keys': [{'algorithm': {'algorithm_name': 'SHA256'},
+                                          'lifetime': {'iso8601_duration': '365d'},
+                                          'type': 'ksk'},
+                                         {'algorithm': {'algorithm_name': 'SHA256',
+                                                        'algorithm_size': '256'},
+                                          'lifetime': {'iso8601_duration': '30d'},
+                                          'type': 'zsk'},
+                                         {'algorithm': {'algorithm_name': 'SHA256'},
+                                          'lifetime': {'iso8601_duration': '1d'},
+                                          'type': 'csk'}]},
+                               {'dnssec_policy_name': 'exlax',
+                                'keys': [{'algorithm': {'algorithm_name': 'SHA128'},
+                                          'lifetime': {'iso8601_duration': '365d'},
+                                          'type': 'csk'}]},
+                               {'dnssec_policy_name': 'enterprise',
+                                'keys': [{'algorithm': {'algorithm_name': 'SHA386'},
+                                          'lifetime': {'iso8601_duration': '4y'},
+                                          'type': 'zsk'},
+                                         {'algorithm': {'algorithm_name': 'SHA386'},
+                                          'lifetime': {'iso8601_duration': '4y'},
+                                          'type': 'csk'}]}]}
+)
 
 
 if __name__ == '__main__':

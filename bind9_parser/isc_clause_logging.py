@@ -115,7 +115,8 @@ logging_chan_syslog_facility_name = (
     ^ Keyword('local6')
     ^ Keyword('local7')
 )('facility')
-logging_chan_syslog_facility_name.setName('(kern|user|mail|daemon|auth|syslog|lpr|news|uucp|cron|authpriv|ftp|local1-7)')\
+logging_chan_syslog_facility_name.setName(
+    '(kern|user|mail|daemon|auth|syslog|lpr|news|uucp|cron|authpriv|ftp|local1-7)')
 
 logging_chan_syslog_element = (
     Group(

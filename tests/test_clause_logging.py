@@ -124,7 +124,7 @@ class TestClauseLogging(unittest.TestCase):
                                        test_string,
                                        expected_result)
         test_string = 'size 10g'
-        expected_result = {'size_spec': [10, 'g']}
+        expected_result = {'size_spec': [10, 'G']}
         assert_parser_result_dict_true(logging_chan_file_path_size_element,
                                        test_string,
                                        expected_result)
@@ -797,152 +797,152 @@ category "general" {
             """
 logging {
     channel default_channel {
-        file "/var/log/named/public/default.log" versions 3 size 5m;
+        file "/var/log/named/public/default.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel general_channel {
-        file "/var/log/named/public/general.log" versions 3 size 5m;
+        file "/var/log/named/public/general.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel database_channel {
-        file "/var/log/named/public/database.log" versions 3 size 5m;
+        file "/var/log/named/public/database.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel security_channel {
-        file "/var/log/named/public/security.log" versions 3 size 5m;
+        file "/var/log/named/public/security.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
     };
     channel config_channel {
-        file "/var/log/named/public/config.log" versions 3 size 5m;
+        file "/var/log/named/public/config.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel resolver_channel {
-        file "/var/log/named/public/resolver.log" versions 3 size 5m;
+        file "/var/log/named/public/resolver.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel xfer-in_channel {
-        file "/var/log/named/public/xfer-in.log" versions 3 size 5m;
+        file "/var/log/named/public/xfer-in.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel xfer-out_channel {
-        file "/var/log/named/public/xfer-out.log" versions 3 size 5m;
+        file "/var/log/named/public/xfer-out.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel notify_channel {
-        file "/var/log/named/public/notify.log" versions 3 size 5m;
+        file "/var/log/named/public/notify.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel client_channel {
-        file "/var/log/named/public/client.log" versions 3 size 5m;
+        file "/var/log/named/public/client.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel unmatched_channel {
-        file "/var/log/named/public/unmatched.log" versions 3 size 5m;
+        file "/var/log/named/public/unmatched.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel queries_channel {
-        file "/var/log/named/public/queries.log" versions 3 size 5m;
+        file "/var/log/named/public/queries.log" versions 3 size 5M;
         severity info;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel query-errors_channel {
-        file "/var/log/named/public/query-errors.log" versions 3 size 5m;
+        file "/var/log/named/public/query-errors.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel network_channel {
-        file "/var/log/named/public/network.log" versions 3 size 5m;
+        file "/var/log/named/public/network.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel update_channel {
-        file "/var/log/named/public/update.log" versions 3 size 5m;
+        file "/var/log/named/public/update.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel update-security_channel {
-        file "/var/log/named/public/update-security.log" versions 3 size 5m;
+        file "/var/log/named/public/update-security.log" versions 3 size 5M;
         severity info;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel dispatch_channel {
-        file "/var/log/named/public/dispatch.log" versions 3 size 5m;
+        file "/var/log/named/public/dispatch.log" versions 3 size 5M;
         severity dynamic;
         print-time no;
         print-severity true;
         print-category true;
     };
     channel dnssec_channel {
-        file "/var/log/named/public/dnssec.log" versions 3 size 5m;
+        file "/var/log/named/public/dnssec.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity no;
         print-category true;
     };
     channel lame-servers_channel {
-        file "/var/log/named/public/lame-servers.log" versions 3 size 5m;
+        file "/var/log/named/public/lame-servers.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel delegation-only_channel {
-        file "/var/log/named/public/delegation-only.log" versions 3 size 5m;
+        file "/var/log/named/public/delegation-only.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category no;
     };
     channel rate-limit_channel {
-        file "/var/log/named/public/rate-limit.log" versions 3 size 5m;
+        file "/var/log/named/public/rate-limit.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
         print-category true;
     };
     channel audit_channel {
-        file "/var/log/named/public/audit.log" versions 3 size 5m;
+        file "/var/log/named/public/audit.log" versions 3 size 5M;
         severity dynamic;
         print-time yes;
         print-severity true;
@@ -1022,7 +1022,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'general_channel',
                                        'path_name': '/var/log/named/public/general.log',
@@ -1030,7 +1030,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'database_channel',
                                        'path_name': '/var/log/named/public/database.log',
@@ -1038,13 +1038,13 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'security_channel',
                                        'path_name': '/var/log/named/public/security.log',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'config_channel',
                                        'path_name': '/var/log/named/public/config.log',
@@ -1052,7 +1052,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'resolver_channel',
                                        'path_name': '/var/log/named/public/resolver.log',
@@ -1060,7 +1060,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'xfer-in_channel',
                                        'path_name': '/var/log/named/public/xfer-in.log',
@@ -1068,7 +1068,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'xfer-out_channel',
                                        'path_name': '/var/log/named/public/xfer-out.log',
@@ -1076,7 +1076,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'notify_channel',
                                        'path_name': '/var/log/named/public/notify.log',
@@ -1084,7 +1084,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'client_channel',
                                        'path_name': '/var/log/named/public/client.log',
@@ -1092,7 +1092,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'unmatched_channel',
                                        'path_name': '/var/log/named/public/unmatched.log',
@@ -1100,7 +1100,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'queries_channel',
                                        'path_name': '/var/log/named/public/queries.log',
@@ -1108,7 +1108,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['info'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'query-errors_channel',
                                        'path_name': '/var/log/named/public/query-errors.log',
@@ -1116,7 +1116,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'network_channel',
                                        'path_name': '/var/log/named/public/network.log',
@@ -1124,7 +1124,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'update_channel',
                                        'path_name': '/var/log/named/public/update.log',
@@ -1132,7 +1132,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'update-security_channel',
                                        'path_name': '/var/log/named/public/update-security.log',
@@ -1140,7 +1140,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['info'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'dispatch_channel',
                                        'path_name': '/var/log/named/public/dispatch.log',
@@ -1148,7 +1148,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'no',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'dnssec_channel',
                                        'path_name': '/var/log/named/public/dnssec.log',
@@ -1156,7 +1156,7 @@ logging {
                                        'print_severity': 'no',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'lame-servers_channel',
                                        'path_name': '/var/log/named/public/lame-servers.log',
@@ -1164,7 +1164,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'delegation-only_channel',
                                        'path_name': '/var/log/named/public/delegation-only.log',
@@ -1172,7 +1172,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'rate-limit_channel',
                                        'path_name': '/var/log/named/public/rate-limit.log',
@@ -1180,7 +1180,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3},
                                       {'channel_name': 'audit_channel',
                                        'path_name': '/var/log/named/public/audit.log',
@@ -1188,7 +1188,7 @@ logging {
                                        'print_severity': 'True',
                                        'print_time': 'yes',
                                        'severity': ['dynamic'],
-                                       'size_spec': [5, 'm'],
+                                       'size_spec': [5, 'M'],
                                        'versions': 3}]}}
         )
 

@@ -13,9 +13,13 @@ from bind9_parser.isc_utils import assert_parser_result_dict_true,\
     view_name, view_name_dquotable, view_name_squotable, \
     zone_name, zone_name_dquotable, zone_name_squotable, \
     fqdn_name, krb5_principal_name, \
+    check_options, \
+    primaries_name_type, primaries_name_type_squotable, \
+    primaries_name_type_dquotable, \
+    primaries_name_type_dequotable, \
     filename_base, size_spec, path_name, algorithm_name,\
     algorithm_name_list_set, algorithm_name_list_series, \
-    key_id_list_series, primary_id
+    key_id_list_series, primaries_id
 
 
 class TestConfigUtils(unittest.TestCase):
@@ -411,6 +415,15 @@ class TestConfigUtils(unittest.TestCase):
         result = krb5_principal_name.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
 
+    # no instance in KRB5 principal name (it is OK)
+    def test_isc_krb5_principal_name_instance_passing(self):
+        """ ISC Utilities; Type KRB5 Principal Name; passing """
+        test_data = [
+            "instance/quoted.fqdn.org",
+        ]
+        result = krb5_principal_name.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
     def test_isc_krb5_principal_name_passing(self):
         """ ISC Utilities; Type KRB5 Principal Name; passing """
         test_data = [
@@ -494,6 +507,109 @@ class TestConfigUtils(unittest.TestCase):
         result = size_spec.runTests(test_data, failureTests=True)
         self.assertTrue(result[0])
 
+    def test_isc_utils_check_options_passing(self):
+        """ ISC Utilities; Type CheckOptions; passing """
+        test_data = [
+            'warn',
+            'WARN',
+            'WaRn',
+            'fail',
+            'FAIL',
+            'fAiL',
+            'ignore',
+            'IGNORE',
+            'ignOre',
+        ]
+        result = check_options.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_check_options_failing(self):
+        """ ISC Utilities; Type CheckOptions; failing """
+        test_data = [
+            'warning',
+            'WARNS',
+            'WaRe',
+            'failing',
+            'FAILURE',
+            'fAiLs',
+            'ignored',
+            'IGNORED',
+            'ignOrinG',
+        ]
+        result = check_options.runTests(test_data, failureTests=True)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_primaries_unquoted_name_passing(self):
+        """ ISC Utilities; Type UnQuotedPrimariesName; passing """
+        test_data = [
+            'master_name_is_given',
+            'a',
+            'a.b.c.d',
+        ]
+        result = primaries_name_type.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_primaries_unquoted_name_failing(self):
+        """ ISC Utilities; Type UnQuotedPrimariesName; failing """
+        test_data = [
+            '"master_name_is_given"',
+            '\'a\'',
+            '\'a.b.\'c.d',
+        ]
+        result = primaries_name_type.runTests(test_data, failureTests=True)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_master_squoted_name_passing(self):
+        """ ISC Utilities; Type SingleQuotePrimariesName; passing """
+        test_data = [
+            '"unquoted_primary_name"',
+            '"z',
+            'abcd"efgh"ijkl'
+        ]
+        result = primaries_name_type_squotable.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_master_squoted_name_failing(self):
+        """ ISC Utilities; Type SingleQuotePrimariesName; failing """
+        test_data = [
+            '\'a.b.c.d\'',
+            '"unquoted_primary_name\'',
+            'z\'',
+        ]
+        result = primaries_name_type_squotable.runTests(test_data, failureTests=True)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_master_dquoted_name_passing(self):
+        """ ISC Utilities; Type DoubleQuotePrimariesName; passing """
+        test_data = [
+            '\'unquoted_primary_name\'',
+            '\'z',
+            'abcd\'efghijkl',
+            'abcd\'efgh\'ijkl'
+        ]
+        result = primaries_name_type_dquotable.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_master_dquoted_name_failing(self):
+        """ ISC Utilities; Type DoubleQuotePrimariesName; failing """
+        test_data = [
+            '"a.b.c.d"',
+            '\'unquoted_primary_name"',
+            'z"',
+        ]
+        result = primaries_name_type_dquotable.runTests(test_data, failureTests=True)
+        self.assertTrue(result[0])
+
+    def test_isc_utils_primaries_name_dequotable_passing(self):
+        """ ISC Utilities; Type QuotablePrimariesName; passing """
+        test_data = [
+            '"primary_name_is_given"',
+            "'a'",
+            'a.b.c.d',
+        ]
+        result = primaries_name_type_dequotable.runTests(test_data, failureTests=False)
+        self.assertTrue(result[0])
+
     def test_isc_utils_inline_comments_passing(self):
 
         test_string = """
@@ -508,7 +624,7 @@ class TestConfigUtils(unittest.TestCase):
         assert_parser_result_dict_true(new_key_id_series,
                                        test_string,
                                        expected_result,
-                                        'Unable to handle inline comments.')
+                                       'Unable to handle inline comments.')
 
     def test_isc_utils_algorithm_name_passing(self):
         """ ISC Utilities; Type algorithm_name; passing """
@@ -531,24 +647,25 @@ class TestConfigUtils(unittest.TestCase):
     def test_isc_utils_algorithm_name_series_passing(self):
         """ ISC Utilities; Type algorithm_name_list_series; passing """
         test_string = 'SHA512; sha-128; dsa; rsa; ED448; ED25519;'
-        expected_result = { 'algorithm_name': [ 'SHA512',
-                                                'sha-128',
-                                                'dsa',
-                                                'rsa',
-                                                'ED448',
-                                                'ED25519']}
+        expected_result = {'algorithm_name': ['SHA512',
+                                              'sha-128',
+                                              'dsa',
+                                              'rsa',
+                                              'ED448',
+                                              'ED25519']}
         assert_parser_result_dict_true(
             algorithm_name_list_series,
             test_string,
             expected_result)
 
-    def test_isc_utils_primary_name_passing(self):
-        """ ISC Utilities; Type primary_id; passing """
+    def test_isc_utils_primaries_name_passing(self):
+        """ ISC Utilities; Type primaries_id; passing """
         assert_parser_result_dict_true(
-            primary_id,
+            primaries_id,
             'myprimary_name',
-            {'primary_id': 'myprimary_name'}
+            {'primaries_id': 'myprimary_name'}
             )
+
 
 if __name__ == '__main__':
     unittest.main()

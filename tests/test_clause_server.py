@@ -5,16 +5,14 @@ File: test_server.py
 Description:  Performs unit test on the isc_server.py source file.
 """
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_server import server_all_statements_set, \
     server_all_statements_series,\
-    clause_stmt_server_standalone,clause_stmt_server_series
+    clause_stmt_server_standalone, clause_stmt_server_series
 
 
 class TestClauseServer(unittest.TestCase):
     """ Clause server """
-
-    # TODO: Exercise server_all_statements_set, server_all_statements_series
 
     def test_isc_server_all_statements_set_passing(self):
         """ Clause server; Set Statements; passing mode """
@@ -137,7 +135,7 @@ class TestClauseServer(unittest.TestCase):
             'server 3.3.3.3 { edns yes; };' +
             'server 4.4.4.4 { edns yes; };',
             {'server': [{'ip_addr': '3.3.3.3', 'configs': {'edns': 'yes'}},
-                         {'ip_addr': '4.4.4.4', 'configs': {'edns': 'yes'}}]}
+                        {'ip_addr': '4.4.4.4', 'configs': {'edns': 'yes'}}]}
         )
 
 

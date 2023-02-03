@@ -6,216 +6,196 @@ Description:  Performs unit test on the 'primaries' clause in isc_clause_primari
 """
 
 import unittest
-from bind9_parser.isc_utils import assert_parser_result_dict_true, assert_parser_result_dict_false
+from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_primaries import \
-    primary_id, \
-    primaries_element_series,\
-    clause_stmt_primaries_standalone, clause_stmt_primaries_series
+    clause_stmt_primaries_standalone, \
+    clause_stmt_primaries_series
 
 
 class TestClausePrimaries(unittest.TestCase):
     """ Clause primaries """
 
-    def test_isc_primaries_name_passing(self):
-        """ Clause primaries; Series Primary Name; passing mode """
-        expected_result = {'primary_id': 'primary_nameservers'}
-        assert_parser_result_dict_true(primary_id, 'primary_nameservers', expected_result)
-        expected_result = {'primary_id': 'secondary-slaves'}
-        assert_parser_result_dict_true(primary_id, 'secondary-slaves', expected_result)
-        expected_result = {'primary_id': 'demilitarized_zone_servers'}
-        assert_parser_result_dict_true(primary_id, 'demilitarized_zone_servers', expected_result)
-
-    def test_isc_primaries_name_failing(self):
-        """ Clause primaries; Series Primary Name; failing mode """
-        test_data = [
-            'route,net;',
-            'bad host',
-            'no such;',
-        ]
-        expected_result = {'primary_id': '2.2.2.2'}
-        assert_parser_result_dict_false(primary_id, 'route.net;', expected_result)
-        assert_parser_result_dict_false(primary_id, 'bad host', expected_result)
-        assert_parser_result_dict_false(primary_id, 'no such;', expected_result)
-
-    def test_isc_primary_name_passing(self):
-        """Primaries clause, Primary Name type, passing mode"""
-        test_string = 'primary_bastion_host'
-        expected_result = {'primary_id': 'primary_bastion_host'}
-        assert_parser_result_dict_true(primary_id, test_string, expected_result)
-        test_string = '\'secondary_firewall_host\''
-        expected_result = {'primary_id': '\'secondary_firewall_host\''}
-        assert_parser_result_dict_true(primary_id, test_string, expected_result)
-        test_string = '"hidden_primary"'
-        expected_result = {'primary_id': '"hidden_primary"'}
-        assert_parser_result_dict_true(primary_id, test_string, expected_result)
-        test_string = 'asdf"asdf"'
-        expected_result = {'primary_id': 'asdf"asdf"'}
-        assert_parser_result_dict_true(primary_id, test_string, expected_result)
-
-    def test_isc_primary_name_failing(self):
-        """Primaries clause, Primary Name type, purposely failing mode"""
-        test_string = 'netspeed 150000000'
-        expected_result = {'primary_id': 'netspeed'}
-        assert_parser_result_dict_false(primary_id, test_string, expected_result)
-
-    def test_isc_primaries_element_series_passing(self):
-        """Primaries clause, Primary Element series, passing mode"""
-        assert_parser_result_dict_true(
-            primaries_element_series,
-            'primary_subdomain key "primary_key_maker";',
-            {'primary_list': [{'key_id': '"primary_key_maker"',
-                               'primary_name': 'primary_subdomain'}]}
-        )
-
-    def test_isc_primaries_element_series_2_passing(self):
-        """Primaries clause, Primary Element series, passing mode"""
-        assert_parser_result_dict_true(
-            primaries_element_series,
-            'primary_recon_border_gateway key "My_Secret_Company_Key";',
-            {'primary_list': [{'key_id': '"My_Secret_Company_Key"',
-                               'primary_name': 'primary_recon_border_gateway'}]}
-        )
-
-    def test_isc_primaries_element_series_failing(self):
-        """Primaries clause, Primary Element series, purposely failing mode"""
-        test_string = 'netspeed 150000000'
-        expected_result = {
-            'primary_list': [
-                {'ip_addr': 'primary_recon_border_gateway', 'key_id': '"My_Secret_Company_Key"'}
-            ]
-        }
-        assert_parser_result_dict_false(primaries_element_series, test_string, expected_result)
-
-    def test_isc_clause_stmt_primaries_standalone_passing(self):
-        """Primaries clause, passing mode"""
+    def test_isc_clause_primary_standalone_bare_passing(self):
+        """Primaries clause, Primary Standalone bare; passing mode"""
         assert_parser_result_dict_true(
             clause_stmt_primaries_standalone,
-            'primaries ns1 { 127.0.0.1; };',
-            {'primaries': [{'primary_id': 'ns1',
-                            'primary_list': [{'ip4_addr': '127.0.0.1'}]}]}
+            'primaries oldmaster {  };',
+            {'primaries': {'primaries_id': 'oldmaster'}}
         )
 
-# primaries example.com { primaries; my_secondaries; };
-    def test_isc_clause_stmt_primaries_ACLname_passing(self):
-        """ Primaries clause, ACL usages; passing mode"""
-        test_string = 'primaries 127.0.0.1 { 172.16.0.1; 10.0.0.1; };'
-        expected_result = {
-            'primaries': [
-                {
-                    'primary_id': '127.0.0.1',
-                    'primary_list': [
-                        {'ip4_addr': '172.16.0.1'},
-                        {'ip4_addr': '10.0.0.1'}
-                    ]
+    def test_isc_clause_primary_standalone_port_passing(self):
+        """Primaries clause, Primary Standalone port; passing mode"""
+        assert_parser_result_dict_true(
+            clause_stmt_primaries_standalone,
+            'primaries oldmaster port 5353  {  };',
+            {
+                'primaries': {
+                    'ip_port': '5353',
+                    'primaries_id': 'oldmaster'
                 }
-            ]
-        }
-        assert_parser_result_dict_true(clause_stmt_primaries_standalone, test_string, expected_result)
-
-    def test_isc_clause_stmt_primaries_multielement_passing(self):
-        """Primaries clause, passing mode"""
-        test_string = 'primaries ns1 { 127.0.0.1; 192.168.1.1; 192.168.6.1; };'
-        assert_parser_result_dict_true(
-            clause_stmt_primaries_standalone,
-            test_string,
-            {'primaries': [{'primary_id': 'ns1',
-                            'primary_list': [{'ip4_addr': '127.0.0.1'},
-                                             {'ip4_addr': '192.168.1.1'},
-                                             {'ip4_addr': '192.168.6.1'}]}]}
+            }
         )
 
-    def test_isc_clause_stmt_primaries_multielement_2_passing(self):
-        """Primaries clause 2, passing mode"""
+    def test_isc_clause_primary_standalone_dscp_passing(self):
+        """Primaries clause, Primary Standalone dscp; passing mode"""
         assert_parser_result_dict_true(
             clause_stmt_primaries_standalone,
-            'primaries ns1 { another_bastion_hosts1; hidden_bastion2; };',
-            {'primaries': [{'primary_id': 'ns1',
-                            'primary_list': [{'primary_name': 'another_bastion_hosts1'},
-                                             {'primary_name': 'hidden_bastion2'}]}]}
+            'primaries my_primary dscp 12 {  };',
+            {
+                'primaries': {
+                    'dscp_port': 12,
+                    'primaries_id': 'my_primary'
+                }
+            }
         )
 
-    def test_isc_clause_stmt_primaries_series_passing(self):
+    def test_isc_clause_primary_standalone_port_dscp_passing(self):
+        """Primaries clause, Primary Standalone port/dscp; passing mode"""
+        assert_parser_result_dict_true(
+            clause_stmt_primaries_standalone,
+            'primaries red_zone port 5454 dscp 13 {  };',
+            {
+                'primaries': {
+                    'dscp_port': 13,
+                    'ip_port': '5454',
+                    'primaries_id': 'red_zone'
+                }
+            }
+        )
+
+    def test_isc_clause_primary_standalone_port_dscp_reversed_passing(self):
+        """Primaries clause, Primary Standalone reversed port/dscp; passing mode"""
+        assert_parser_result_dict_true(
+            clause_stmt_primaries_standalone,
+            'primaries demilitarized_zone dscp 14 port 5555 {  };',
+            {
+                'primaries': {
+                    'dscp_port': 14,
+                    'ip_port': '5555',
+                    'primaries_id': 'demilitarized_zone'
+                }
+            }
+        )
+
+    def test_isc_clause_primary_standalone_acl_passing(self):
+        """Primaries clause, Primary Standalone ACL; passing mode"""
+        assert_parser_result_dict_true(
+            clause_stmt_primaries_standalone,
+            'primaries corp_zone { eng_zone; };',
+            {'primaries': {'primaries_id': 'corp_zone',
+                           'remote_servers': [{'remote_server': {'primaries_name': 'eng_zone'}}]}},
+        )
+
+    def test_isc_clause_primary_standalone_acls_passing(self):
+        """Primaries clause, Primary Standalone ACLs; passing mode"""
+        assert_parser_result_dict_true(
+            clause_stmt_primaries_standalone,
+            'primaries corp_zone { abc.example.tld; 2.3.4.5; 2.3.4.5 key "2345" tls "qwer"; 2e:fe::1; };',
+            {'primaries': {'primaries_id': 'corp_zone',
+                           'remote_servers': [{'remote_server': {'primaries_name': 'abc.example.tld'}},
+                                              {'remote_server': {'ip4_addr': '2.3.4.5'}},
+                                              {'remote_server': {'ip4_addr': '2.3.4.5',
+                                                                 'key_id': '2345',
+                                                                 'tls_id': 'qwer'}},
+                                              {'remote_server': {'ip6_addr': '2e:fe::1'}}]}}
+        )
+
+    def test_isc_clause_primary_standalone_full_passing(self):
+        """Primaries clause, Primary Standalone full; passing mode"""
+        assert_parser_result_dict_true(
+            clause_stmt_primaries_standalone,
+            """
+    primaries corp_zone port 5252 dscp 8 {
+        remote-server-name; 
+        4.5.6.7 key "zxcv" tls "sdfg";
+        6.6.7.8; 
+        2e:fe::2; 
+        };""",
+            {'primaries': {'dscp_port': 8,
+                           'ip_port': '5252',
+                           'primaries_id': 'corp_zone',
+                           'remote_servers': [{'remote_server': {'primaries_name': 'remote-server-name'}},
+                                              {'remote_server': {'ip4_addr': '4.5.6.7',
+                                                                 'key_id': 'zxcv',
+                                                                 'tls_id': 'sdfg'}},
+                                              {'remote_server': {'ip4_addr': '6.6.7.8'}},
+                                              {'remote_server': {'ip6_addr': '2e:fe::2'}}]}}
+        )
+
+    def test_isc_clause_primary_series_passing(self):
+        """Primaries clause, general; passing mode"""
         assert_parser_result_dict_true(
             clause_stmt_primaries_series,
-            'primaries another_bastion_host3 { another_bastion_hosts22; }; primaries third_bastion { hidden_bastion; };',
-            {'primaries': [{'primary_id': 'another_bastion_host3',
-                            'primary_list': [{'primary_name': 'another_bastion_hosts22'}]},
-                           {'primary_id': 'third_bastion',
-                            'primary_list': [{'primary_name': 'hidden_bastion'}]}]}
+            """primaries oldmaster { remote-server-name; 1.2.3.4; 2e:fe::1; 2.3.4.5 key "123" tls "asdd"; };
+    primaries newmaster port 5353 { new-master-name; 2.3.4.5; 4.5.6.7 key "123"; };""",
+            {'primaries': [{'primaries_id': 'oldmaster',
+                            'remote_servers': [{'remote_server': {'primaries_name': 'remote-server-name'}},
+                                               {'remote_server': {'ip4_addr': '1.2.3.4'}},
+                                               {'remote_server': {'ip6_addr': '2e:fe::1'}},
+                                               {'remote_server': {'ip4_addr': '2.3.4.5',
+                                                                  'key_id': '123',
+                                                                  'tls_id': 'asdd'}}]},
+                           {'ip_port': '5353',
+                            'primaries_id': 'newmaster',
+                            'remote_servers': [{'remote_server': {'primaries_name': 'new-master-name'}},
+                                               {'remote_server': {'ip4_addr': '2.3.4.5'}},
+                                               {'remote_server': {'ip4_addr': '4.5.6.7',
+                                                                  'key_id': '123'}}]}]}
         )
 
-    def test_isc_clause_stmt_primaries_standalone3_passing(self):
-        assert_parser_result_dict_true(
-            clause_stmt_primaries_standalone,
-            'primaries example.com { primaries; };',
-            {'primaries': [{'primary_id': 'example.com',
-                            'primary_list': [{'primary_name': 'primaries'}]}]}
-        )
-
-    def test_isc_clause_stmt_primaries_standalone4_passing(self):
-        assert_parser_result_dict_true(
-            clause_stmt_primaries_standalone,
-            'primaries ns2 { 127.0.0.1; localhost; localnets; };',
-            {'primaries': [{'primary_id': 'ns2',
-                            'primary_list': [{'ip4_addr': '127.0.0.1'},
-                                             {'primary_name': 'localhost'},
-                                             {'primary_name': 'localnets'}]}]}
-        )
-
-    def test_isc_clause_stmt_primaries_standalone5_passing(self):
-        assert_parser_result_dict_true(
-            clause_stmt_primaries_standalone,
-            'primaries example.com port 53 { primaries; };',
-            {'primaries': [{'ip_port': '53',
-                            'primary_id': 'example.com',
-                            'primary_list': [{'primary_name': 'primaries'}]}]}
-        )
-
-    def isc_test_clause_stmt_primaries_standalone6_passing(self):
-        test_string = 'primaries example.com dscp 7 { primaries; };'
-        expected_result = {
-            'primaries': [
-                {
-                    'dscp_port': 7,
-                    'primary_id': 'example.com',
-                    'primary_list': [
-                        {'addr': 'primaries'}
-                    ]
-                }
-            ]
-        }
-        assert_parser_result_dict_true(clause_stmt_primaries_standalone, test_string, expected_result)
-
-    def isc_clause_stmt_primaries_standalone7_passing(self):
-        test_string = 'primaries example.com port 53 dscp 7 { big.com key partner_secret_key; };'
-        expected_result = {
-            'primaries': [
-                {
-                    'dscp_port': '7',
-                    'ip_port': '53',
-                    'primary_id': 'example.com',
-                    'primary_list': [
-                        {
-                            'addr': 'big.com',
-                            'key_id': 'partner_secret_key'
-                        }
-                    ]
-                }
-            ]
-        }
-        assert_parser_result_dict_true(clause_stmt_primaries_standalone, test_string, expected_result)
-
-    def test_isc_clause_stmt_primaries_series2_passing(self):
-        """Primaries clause, Primary statement series; passing mode"""
+    def test_isc_clause_primary_series_2_passing(self):
+        """Primaries clause, general; passing mode"""
         assert_parser_result_dict_true(
             clause_stmt_primaries_series,
-            'primaries A { B; C; }; primaries D { E; F; };',
-            {'primaries': [{'primary_id': 'A',
-                            'primary_list': [{'primary_name': 'B'},
-                                             {'primary_name': 'C'}]},
-                           {'primary_id': 'D',
-                            'primary_list': [{'primary_name': 'E'},
-                                             {'primary_name': 'F'}]}]}
+            """
+    primaries oldmaster {  };
+    primaries my_primary dscp 12 {  };
+    primaries oldmaster port 5353  {  };
+    primaries red_zone port 5454 dscp 13 {  };
+    primaries demilitarized_zone dscp 14 port 5555 {  };
+    primaries corp_zone port 5252 dscp 8 {
+        remote-server-name; 
+        4.5.6.7 key "zxcv" tls "sdfg";
+        6.6.7.8; 
+        2e:fe::2; 
+        };
+    primaries corp_zone { eng_zone; };
+    primaries corp2_zone { 6.7.8.10; };
+    primaries corp3_zone { 2e:fd::10; };
+    primaries corp4_zone { abc.example.tld; 2.3.4.5; 2.3.4.5 key "2345" tls "qwer"; 2e:fe::1; };
+""",
+            {'primaries': [{'primaries_id': 'oldmaster'},
+                           {'dscp_port': 12, 'primaries_id': 'my_primary'},
+                           {'ip_port': '5353', 'primaries_id': 'oldmaster'},
+                           {'dscp_port': 13,
+                            'ip_port': '5454',
+                            'primaries_id': 'red_zone'},
+                           {'dscp_port': 14,
+                            'ip_port': '5555',
+                            'primaries_id': 'demilitarized_zone'},
+                           {'dscp_port': 8,
+                            'ip_port': '5252',
+                            'primaries_id': 'corp_zone',
+                            'remote_servers': [{'remote_server': {'primaries_name': 'remote-server-name'}},
+                                               {'remote_server': {'ip4_addr': '4.5.6.7',
+                                                                  'key_id': 'zxcv',
+                                                                  'tls_id': 'sdfg'}},
+                                               {'remote_server': {'ip4_addr': '6.6.7.8'}},
+                                               {'remote_server': {'ip6_addr': '2e:fe::2'}}]},
+                           {'primaries_id': 'corp_zone',
+                            'remote_servers': [{'remote_server': {'primaries_name': 'eng_zone'}}]},
+                           {'primaries_id': 'corp2_zone',
+                            'remote_servers': [{'remote_server': {'ip4_addr': '6.7.8.10'}}]},
+                           {'primaries_id': 'corp3_zone',
+                            'remote_servers': [{'remote_server': {'ip6_addr': '2e:fd::10'}}]},
+                           {'primaries_id': 'corp4_zone',
+                            'remote_servers': [{'remote_server': {'primaries_name': 'abc.example.tld'}},
+                                               {'remote_server': {'ip4_addr': '2.3.4.5'}},
+                                               {'remote_server': {'ip4_addr': '2.3.4.5',
+                                                                  'key_id': '2345',
+                                                                  'tls_id': 'qwer'}},
+                                               {'remote_server': {'ip6_addr': '2e:fe::1'}}]}]}
+
         )
 
 

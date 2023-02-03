@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: isc_dlz
 
@@ -11,8 +11,8 @@ Description:
 
 from pyparsing import Group, CaselessKeyword, ZeroOrMore, OneOrMore
 from bind9_parser.isc_utils import semicolon, isc_boolean, \
-        lbrack, rbrack, dlz_name_type,\
-        dequoted_path_name
+    lbrack, rbrack, dlz_name_type, \
+    dequoted_path_name
 
 
 #  database "<string>";

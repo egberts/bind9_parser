@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: isc_optview.py
 
@@ -13,14 +13,14 @@ Description: isc_optview contains all parse elements pertaining
 import copy
 
 from pyparsing import Group, Keyword, OneOrMore, Literal, \
-    CaselessLiteral, Combine, Optional, Word, alphanums, ZeroOrMore,\
+    CaselessLiteral, Combine, Optional, Word, alphanums, ZeroOrMore, \
     ungroup
 from bind9_parser.isc_utils import isc_boolean, semicolon, lbrack, rbrack, \
     number_type, name_type, minute_type, \
     dequoted_path_name, check_options, \
     size_spec, exclamation, iso8601_duration, view_name, \
-    algorithm_name, fqdn_name_dequotable,\
-    algorithm_name_list_series, charset_filename_base, size_spec_plain,\
+    algorithm_name, fqdn_name_dequotable, \
+    algorithm_name_list_series, charset_filename_base, size_spec_plain, \
     fixedpoint_type
 from bind9_parser.isc_aml import aml_nesting, aml_choices
 from bind9_parser.isc_inet import ip4_addr, ip6_addr, \
@@ -1244,14 +1244,14 @@ optview_stmt_response_policy_zone_group_set = (
     )
 )
 optview_stmt_response_policy_zone_group_set.setName("""
-        zone string 
+        zone string
         [ add-soa boolean ]  # v9.14
         [ log boolean ]  # v9.11
-        [ max-policy-ttl duration ] 
+        [ max-policy-ttl duration ]
         [ min-update-interval duration ]   # 9.12
         [ policy ( cname | disabled   # cname used to take a string @9.8
           | drop | given | no-op   # drop @ v9.10
-          | nodata | nxdomain 
+          | nodata | nxdomain
           | passthru | tcp-only quoted_string ) ]  # tcp-only @ v9.10
         [ recursive-only boolean ]
         [ nsip-enable boolean ]  # v9.12
@@ -1383,21 +1383,21 @@ optview_stmt_response_policy = (
 )('response_policy')
 
 optview_stmt_response_policy.setName("""
-response-policy { 
-    zone string 
+response-policy {
+    zone string
     [ add-soa boolean ]  # v9.14
     [ log boolean ]  # v9.11
-    [ max-policy-ttl duration ] 
+    [ max-policy-ttl duration ]
     [ min-update-interval duration ]   # 9.12
     [ policy ( cname | disabled   # cname used to take a string @9.8
       | drop | given | no-op   # drop @ v9.10
-      | nodata | nxdomain 
+      | nodata | nxdomain
       | passthru | tcp-only quoted_string ) ]  # tcp-only @ v9.10
     [ recursive-only boolean ]
     [ nsip-enable boolean ]  # v9.12
     [ nsdname-enable boolean ];  # v9.12
-     ... 
-    } 
+     ...
+    }
     [ add-soa boolean ]   # v9.14
     [ break-dnssec boolean ]
     [ max-policy-ttl duration ]
@@ -1517,8 +1517,8 @@ optview_stmt_rrset_order = (
     )
     - semicolon
 )  # only one (, the last one) 'rrset-order' allowed, so no List [] here
-optview_stmt_rrset_order.setName("""rrset-order { [ zone <string> ] [ class <class> ] 
-    [ type <rr_type> ] [ name <domain> ] 
+optview_stmt_rrset_order.setName("""rrset-order { [ zone <string> ] [ class <class> ]
+    [ type <rr_type> ] [ name <domain> ]
     [ order ( cyclic | random); ... };""")
 
 #  optview_stmt_sortlist { aml; ... };

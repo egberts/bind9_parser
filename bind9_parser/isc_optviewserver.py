@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: isc_optviewserver.py
 
@@ -12,7 +12,7 @@ Description: Provides 'options' and 'server'-related grammar in
 from pyparsing import ZeroOrMore, Keyword, Literal, Optional, Group
 from bind9_parser.isc_utils import semicolon, isc_boolean, number_type
 from bind9_parser.isc_inet import ip4_addr_or_wildcard, ip6_addr_or_wildcard, \
-    inet_ip_port_keyword_and_wildcard_element,\
+    inet_ip_port_keyword_and_wildcard_element, \
     inet_dscp_port_keyword_and_number_element
 
 

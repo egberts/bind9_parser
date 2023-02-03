@@ -55,16 +55,6 @@ class TestClauseDynDB(unittest.TestCase):
     def test_isc_clause_stmt_dyndb_passing(self):
         """ Clause dyndb; Element Dynamic Database; passing """
         test_data = 'dyndb My_Custom_database_name "My_Custom_module_name" { unspecified-text };'
-        expected_result = {
-            'dyndb': [
-                {
-                    'db_name': 'My_Custom_database_name',
-                    'driver_parameters': 'unspecified-text ',
-                    # Aha, there is a space before the '}' that we must test for
-                    'module_filename': '"My_Custom_module_name"'
-                }
-            ]
-        }
         assert_parser_result_dict_true(
             clause_stmt_dyndb_series,
             test_data,
@@ -89,31 +79,31 @@ dyndb "example-ldap" "/usr/lib64/bind/ldap.so" {
 """
         assert_parser_result_dict(
             clause_stmt_dyndb_series, 
-            test_data, 
-            { 'dyndb': [ { 'db_name': 'sample',
-               'driver_parameters': 'ipv4.example.nil. '
-                                    'in-addr.arpa. ',
-               'module_filename': '../driver/.libs/sample.so'},
-             { 'db_name': 'sample2',
-               'driver_parameters': 'ipv6.example.nil. '
-                                    '8.b.d.0.1.0.0.2.ip6.arpa. ',
-               'module_filename': '../driver/.libs/sample.so'},
-             { 'db_name': 'sample',
-               'driver_parameters': 'example.nil. arpa. ',
-               'module_filename': 'sample.so'},
-             { 'db_name': 'My_Custom_database_name',
-               'driver_parameters': 'unspecified-text ',
-               'module_filename': 'dir/file'},
-             { 'db_name': 'hyperfast_mariadb',
-               'driver_parameters': 'max_soconn=4 ',
-               'module_filename': '/usr/lib/libmariadb.so'},
-             { 'db_name': '"example-ldap"',
-               'driver_parameters': 'uri '
-                                    '"ldap://ldap.example.com";\n'
-                                    '    base "cn=dns, '
-                                    'dc=example,dc=com";\n'
-                                    '    auth_method "none";\n',
-               'module_filename': '/usr/lib64/bind/ldap.so'}]}, 
+            test_data,
+            {'dyndb': [{'db_name': 'sample',
+                        'driver_parameters': 'ipv4.example.nil. '
+                                             'in-addr.arpa. ',
+                        'module_filename': '../driver/.libs/sample.so'},
+                       {'db_name': 'sample2',
+                        'driver_parameters': 'ipv6.example.nil. '
+                                             '8.b.d.0.1.0.0.2.ip6.arpa. ',
+                        'module_filename': '../driver/.libs/sample.so'},
+                       {'db_name': 'sample',
+                        'driver_parameters': 'example.nil. arpa. ',
+                        'module_filename': 'sample.so'},
+                       {'db_name': 'My_Custom_database_name',
+                        'driver_parameters': 'unspecified-text ',
+                        'module_filename': 'dir/file'},
+                       {'db_name': 'hyperfast_mariadb',
+                        'driver_parameters': 'max_soconn=4 ',
+                        'module_filename': '/usr/lib/libmariadb.so'},
+                       {'db_name': '"example-ldap"',
+                        'driver_parameters': 'uri '
+                                             '"ldap://ldap.example.com";\n'
+                                             '    base "cn=dns, '
+                                             'dc=example,dc=com";\n'
+                                             '    auth_method "none";\n',
+                        'module_filename': '/usr/lib64/bind/ldap.so'}]},
             True)
 
 

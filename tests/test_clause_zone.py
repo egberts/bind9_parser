@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 """
 File: test_zone.py
 
@@ -10,7 +10,6 @@ Description: Provides zone-related grammar in PyParsing engine
              for ISC-configuration style
 """
 import unittest
-from pyparsing import cppStyleComment, pythonStyleComment
 from bind9_parser.isc_utils import assert_parser_result_dict_true
 from bind9_parser.isc_clause_zone import \
     zone_all_stmts_set,\
@@ -29,7 +28,7 @@ class TestClauseZone(unittest.TestCase):
          | optviewzoneserver_statements_set
          | viewzone_statements_set
         )"""
-    
+
     def test_isc_clause_zone__all_stmts_set_file(self):
         """ Clause zone; All Zone statement file from isc_zone.py via zone_statements_set; passing mode """
         test_string = 'file "a.b.type";'
@@ -58,7 +57,7 @@ class TestClauseZone(unittest.TestCase):
         assert_parser_result_dict_true(
             zone_all_stmts_set,
             test_string,
-            {'also-notify': {'remote': [{'primary_name': 'mymaster'},
+            {'also-notify': {'remote': [{'primaries_name': 'mymaster'},
                                         {'ip_addr': '1.2.3.4'}]}}
         )
 
@@ -77,13 +76,13 @@ class TestClauseZone(unittest.TestCase):
 
     def test_isc_clause_zone__all_stmts_set_combo(self):
         """ Clause zone; All Zone statement 'combo' (from various isc_[opt][view][opt][server].py); passing mode """
-        test_string = """zone public { forwarders { 5.6.7.8; 1.2.3.4; }; 
-database abcd; also-notify {mymaster; 1.2.3.4;}; 
+        test_string = """zone public { forwarders { 5.6.7.8; 1.2.3.4; };
+database abcd; also-notify {mymaster; 1.2.3.4;};
 notify-to-soa yes; };"""
         assert_parser_result_dict_true(
             clause_stmt_zone_standalone,
             test_string,
-            {'zones': [{'also-notify': {'remote': [{'primary_name': 'mymaster'},
+            {'zones': [{'also-notify': {'remote': [{'primaries_name': 'mymaster'},
                                                    {'ip_addr': '1.2.3.4'}]},
                         'database': 'abcd',
                         'forwarders': {'forwarder': [{'ip_addr': '5.6.7.8'},
@@ -143,11 +142,16 @@ notify-to-soa yes; };"""
 
     def test_isc_clause_zone__clause_zone_standalone_passing_5(self):
         """ Clause zone; Statement zone standalone 5; passing mode """
-        test_data = [""" zone "home" { type master; file "/var/lib/bind/internal/master/db.home"; allow-update { none; }; };"""]
-        test_clause_stmt_zone = clause_stmt_zone_standalone.copy()
-        test_clause_stmt_zone = test_clause_stmt_zone.setWhitespaceChars(' \t')
-        test_clause_stmt_zone = test_clause_stmt_zone.ignore(pythonStyleComment)
-        test_clause_stmt_zone = test_clause_stmt_zone.ignore(cppStyleComment)
+        test_data = ["""
+zone "home" {
+    type master;
+    file "/var/lib/bind/internal/master/db.home";
+    allow-update { none; };
+    };"""]
+#        test_clause_stmt_zone = clause_stmt_zone_standalone.copy()
+#        test_clause_stmt_zone = test_clause_stmt_zone.setWhitespaceChars(' \t')
+#        test_clause_stmt_zone = test_clause_stmt_zone.ignore(pythonStyleComment)
+#        test_clause_stmt_zone = test_clause_stmt_zone.ignore(cppStyleComment)
 #        test_clause_stmt_zone.ignore(pythonStyleComment)
 #        test_clause_stmt_zone.ignore(cppStyleComment)
         result = clause_stmt_zone_standalone.runTests(test_data, failureTests=False)
@@ -312,7 +316,7 @@ masters {
 };
 };""",
             {'zones': [{'file': 'oncampus/net.umichtest',
-                        'masters_zone': {'zone_master_list': [{'master_name': ['DNS123']}]},
+                        'primaries': {'remote_servers': [{'remote_server': {'primaries_name': '"DNS123"'}}]},
                         'type': 'slave',
                         'zone_name': 'umichtest.net'}]}
         )
