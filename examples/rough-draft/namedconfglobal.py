@@ -59,7 +59,7 @@ abc = {
 # cursor position embedded in self.current['keyword']
 # as a reordering guide for this.
 global g_nc_keywords
-g_nc_keywords = dict()
+# g_nc_keywords = dict()
 
 g_nc_keywords['acl'] = \
     {
@@ -3779,7 +3779,7 @@ g_nc_keywords['memstatistics-file'] = \
     {
         'default': '"named.memstats"',
         'validity': {'function': "quoted_path_name"},
-        5found-in': {'options'},
+        'found-in': {'options'},
         'introduced': '8.1',
         'topic': 'operating-system',
         'comment': """The pathname of the file the server writes memory usage statistics to on exit.
@@ -6136,7 +6136,6 @@ The default value is 10.""",
 g_nc_keywords['transfers-per-ns'] = \
     {
         'default': 2,
-        'validity': {'function': "time_duration"},
         'validity': {'range': {1, 65535}},
         'unit': 'concurrent_inbound_zone_transfers',
         'found-in': {'options'},
@@ -6221,7 +6220,8 @@ g_nc_keywords['type'] = \
         'default': 'primary',  # change from 'delegation-only' in v9.13
         # 'mirror' added in v9.15
         'validity': {
-            'regex': r'(delegation\-only|master|primary|slave|secondary|stub|static\-stub|hint|forward|redirect|mirror)'},
+            'regex':
+                r'(delegation\-only|master|primary|slave|secondary|stub|static\-stub|hint|forward|redirect|mirror)'},
         'found-in': {'zone'},
         'zone-type': {'delegation-only', 'forward', 'hint', 'in-view', 'master', 'primary', 'redirect', 'slave',
                       'secondary',
@@ -6999,7 +6999,7 @@ def validate():
         print_master_dictionary()
 
     print("##############################################")
-    ## pp = PrettyPrinter(indent=4)
+    # pp = PrettyPrinter(indent=4)
     ncg.print_versioned_dictionary()
     # print_clause_keywords(ncg)
 

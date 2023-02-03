@@ -33,16 +33,17 @@ class InvalidFunctionException(ParseFatalException):
                 s, loc, "invalid function '%s'" % msg)
 
 
-def error(exceptionClass):
+def error(exception_class):
     def raise_exception(s, l, t):
-        raise exceptionClass(s, l, t[0])
+        raise exception_class(s, l, t[0])
     return Word(alphas, alphanums).setParseAction(raise_exception)
 
 
 options_stmt_counter = 0
 
 
-def counter_options(strg, loc, toks):
+# def counter_options(strg, loc, toks):
+def counter_options(_strg, _loc, _toks):
     global options_stmt_counter
     options_stmt_counter = options_stmt_counter + 1
 

@@ -185,7 +185,6 @@ if __name__ == '__main__':
         exit(errno.ENOENT)
     named_conf_filepath = args.config_filepath
 
-
     # use g_include_directive.transformString to perform includes
     if args.root is not None:
         g_root_dir = args.root

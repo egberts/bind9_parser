@@ -306,7 +306,7 @@ class NamedConf(object):
 
         # check that ACL is initialized as a dict {}
         if not isinstance(self.current['acl'], dict):
-        # if type(self.current['acl']) is not dict:
+            # if type(self.current['acl']) is not dict:
             print("add_acl_name: ", self.current['acl'])
             print("CRITICAL add_acl: is a %s type; supposed to be a dict() type" % type(self.current['acl']))
             return False

@@ -155,14 +155,14 @@ def read_include_contents(st, locn, toks):
     return result_include_line
 
 
-def myAction2(strg, loc, toks):
+def my_action_2(strg, loc, toks):
     if g_verbosity:
-        print('myAction2: index(strg,;)', strg.index(';'))
+        print('my_action_2: index(strg,;)', strg.index(';'))
         short_string = strg[loc:strg.index(';')]
-        print('myAction2: len(strg):', len(short_string))
-        print('myAction2: strg:', short_string)
-        print('myAction2: loc:', loc)
-        print('myAction2: toks:', toks)
+        print('my_action_2: len(strg):', len(short_string))
+        print('my_action_2: strg:', short_string)
+        print('my_action_2: loc:', loc)
+        print('my_action_2: toks:', toks)
 
 
 if __name__ == '__main__':
@@ -201,7 +201,6 @@ if __name__ == '__main__':
         print("Must specify filepath/filespec to the named.conf file.")
         exit(errno.ENOENT)
     named_conf_filepath = args.config_filepath
-
 
     # use g_include_directive.transformString to perform includes
     if args.root is not None:
@@ -246,7 +245,7 @@ if __name__ == '__main__':
 
     my_clauses = bind9_parser.clause_statements \
                      .setDebug(g_verbosity) \
-                     .setParseAction(myAction2) \
+                     .setParseAction(my_action_2) \
                      .ignore(pp.cStyleComment) \
                      .ignore(pp.cppStyleComment) \
                      .ignore(pp.pythonStyleComment)
@@ -263,7 +262,6 @@ if __name__ == '__main__':
 #    pp.__diag__.enable("warn_ungrouped_named_tokens_in_collection")
 #    pp.__diag__.enable("warn_name_set_on_empty_Forward")
 #    pp.__diag__.enable("warn_on_multiple_string_args_to_oneof")
-
 
     if args.debug:
         print("Start: Is the library quiet?")

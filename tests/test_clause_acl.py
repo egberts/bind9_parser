@@ -180,6 +180,43 @@ class TestClauseACL(unittest.TestCase):
                                               {'acl_name': 'localnet_acl'}]}]}]}
         )
 
+    def test_isc_clause_stmt_acl_public(self):
+        """ Clause ACL; clause_stmt_acl_series; Public; passing """
+        test_data = """
+        acl "a3internet" { 10.1.12.25; 10.1.12.26; };
+        acl "my" { 127.0.0.1; };
+        """
+        my_csa = clause_stmt_acl_series.setWhitespaceChars(' \t\n')
+        assert_parser_result_dict_true(
+            my_csa,
+            test_data,
+            {
+                'acl': [
+                    {
+                        'acl_name': '"a3internet"',
+                        'aml_series': [
+                            {
+                                'aml': [
+                                    {'ip4_addr': '10.1.12.25'},
+                                    {'ip4_addr': '10.1.12.26'}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'acl_name': '"my"',
+                        'aml_series': [
+                            {
+                                'aml': [
+                                    {'ip4_addr': '127.0.0.1'}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        )
+
 
 if __name__ == '__main__':
     unittest.main()

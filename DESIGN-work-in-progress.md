@@ -106,7 +106,7 @@ This calls for a reconstruction of `PyParsing` given a specific version.  We hop
     toplevel_config = process_entire_file_content(named_config)
     nc_parser = bind9_parser.clause_statements \
                      .setDebug(g_verbosity) \
-                     .setParseAction(myAction2) \
+                     .setParseAction(my_action_2) \
                      .ignore(pp.cStyleComment) \
                      .ignore(pp.cppStyleComment) \
                      .ignore(pp.pythonStyleComment)
