@@ -150,8 +150,7 @@ class TestAML(unittest.TestCase):
         test_data = [
             """        {
                key DDNS_UPDATER;
-               };
-   """
+               };"""
         ]
         result = aml_nesting.runTests(test_data, failureTests=False)
         self.assertTrue(result[0])
@@ -199,6 +198,7 @@ class TestAML(unittest.TestCase):
         assert_parser_result_dict(aml_choices, 'fe03::3', {'ip6_addr': 'fe03::3'}, True)
         assert_parser_result_dict(aml_choices, 'key my_own_key_id', {'key_id': ['my_own_key_id']}, True)
         assert_parser_result_dict(aml_choices, 'master_nameservers_acl', {'acl_name': 'master_nameservers_acl'}, True)
+        assert_parser_result_dict(aml_choices, '"master_nameservers_acl"', {'acl_name': 'master_nameservers_acl'}, True)
 
     def test_isc_aml_aml_choices_finer(self):
         parse_me(aml_choices, 'key\nA8', True)

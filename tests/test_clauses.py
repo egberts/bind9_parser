@@ -1581,10 +1581,10 @@ acl "my" { 127.0.0.1; };
 options {
     tcp-listen-queue 60;
 };""",
-            {'acl': [{'acl_name': '"a3internet"',
+            {'acl': [{'acl_name': 'a3internet',
                        'aml_series': [{'aml': [{'ip4_addr': '10.1.12.25'},
                                                {'ip4_addr': '10.1.12.26'}]}]},
-                     {'acl_name': '"my"',
+                     {'acl_name': 'my',
                        'aml_series': [{'aml': [{'ip4_addr': '127.0.0.1'}]}]}],
              'options': [{'tcp_listen_queue': 60}]}
         )

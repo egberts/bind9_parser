@@ -1132,8 +1132,8 @@ disable-algorithms "www.example.test." { RSASHA512; AES512; ED25519; };""",
         assert_parser_result_dict_true(
             optview_stmt_no_case_compress,
             'no-case-compress { "corp"; "museum"; net; };',
-            {'no_case_compress': [{'acl_name': '"corp"'},
-                                  {'acl_name': '"museum"'},
+            {'no_case_compress': [{'acl_name': 'corp'},
+                                  {'acl_name': 'museum'},
                                   {'acl_name': 'net'}]}
         )
 

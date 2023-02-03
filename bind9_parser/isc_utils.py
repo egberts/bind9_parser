@@ -214,8 +214,8 @@ charset_acl_name_base = alphanums\
 charset_acl_name_dquotable = charset_acl_name_base + "'"
 charset_acl_name_squotable = charset_acl_name_base + '"'
 acl_name_base = Word(charset_acl_name_base, max=64)
-acl_name_dquotable = Combine(Char('"') + Word(charset_acl_name_dquotable, max=62) + Char('"'))
-acl_name_squotable = Combine(Char("'") + Word(charset_acl_name_squotable, max=62) + Char("'"))
+acl_name_dquotable = Combine(Char('"').suppress() + Word(charset_acl_name_dquotable, max=62) + Char('"').suppress())
+acl_name_squotable = Combine(Char("'").suppress() + Word(charset_acl_name_squotable, max=62) + Char("'").suppress())
 
 acl_name = (
         acl_name_squotable

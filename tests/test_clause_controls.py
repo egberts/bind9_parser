@@ -201,7 +201,7 @@ class TestClauseControls(unittest.TestCase):
     def test_isc_controls_statement_single_port_inet_allow_key_passing(self):
         """ Clause controls; Single statement, port-inet-allow-key; passing mode """
         test_data = "controls { inet * port 8002 allow {'rndc-users';} keys {'rndc-remote';};};"
-        expected_result = {'controls': [{'inet': {'allow': {'aml': [{'acl_name': "'rndc-users'"}]},
+        expected_result = {'controls': [{'inet': {'allow': {'aml': [{'acl_name': 'rndc-users'}]},
                                                   'control_server_addr': '*',
                                                   'ip_port_w': '8002',
                                                   'keys': [{'key_id': "rndc-remote"}]}}]}
@@ -257,7 +257,7 @@ class TestClauseControls(unittest.TestCase):
                     'inet': {
                         'allow': {
                             'aml': [
-                                {'acl_name': '"rndc-users"'}
+                                {'acl_name': 'rndc-users'}
                             ]
                         },
                         'control_server_addr': '*',
@@ -327,7 +327,7 @@ controls {
                                                   'uid': 222}},
                                         {'inet': {'allow': {'aml': [{'keyword': 'localhost'}]},
                                                   'control_server_addr': '128.0.0.13'}},
-                                        {'inet': {'allow': {'aml': [{'acl_name': '"rndc-users"'}]},
+                                        {'inet': {'allow': {'aml': [{'acl_name': 'rndc-users'}]},
                                                   'control_server_addr': '*',
                                                   'ip_port_w': '8008',
                                                   'keys': [{'key_id': 'rndc-remote5'}]}},
