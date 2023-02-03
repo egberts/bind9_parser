@@ -25,7 +25,7 @@ controls_inet_addr_and_port = (
 controls_inet_allow_element = Group(
     Keyword('allow').suppress()
     + lbrack
-    + (
+    + Group(
         ZeroOrMore(
             Group(
                 (

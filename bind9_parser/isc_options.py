@@ -365,7 +365,7 @@ options_stmt_filter_aaaa_on_v6.setName('filter-aaaa-on-v6 { break-dnssec | <bool
 options_stmt_filter_aaaa = (
         Keyword('filter-aaaa').suppress()
         - Group(
-            aml_nesting('')
+            aml_nesting('aml')
         )('filter_aaaa')
 )
 options_stmt_filter_aaaa.setName('filter-aaaa { <aml>; .... };')
