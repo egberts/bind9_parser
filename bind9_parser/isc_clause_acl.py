@@ -54,15 +54,15 @@ clause_stmt_acl_standalone = (
                     )  # ('aml_series3')
                 )
             )('aml_series')
-        )
-)('acl')
+        )('acl*')
+)
 
 # Syntax:
 #         acl a { b; };  acl c { d; e; f; }; acl g { ! h; ! { i; }; };
 #
 # {0-*} statement
-clause_stmt_acl_series = ZeroOrMore(
-    (
-        clause_stmt_acl_standalone
-    )
-)('acl')
+# clause_stmt_acl_series = ZeroOrMore(
+#     (
+#         clause_stmt_acl_standalone
+#     )
+# )('acl_series_all')
