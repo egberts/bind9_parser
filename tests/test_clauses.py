@@ -1572,6 +1572,42 @@ options {
                         'zone_name': 'green'}]}
         )
 
+    def test_isc_clause_issue_50_passing(self):
+        """ Clause, Issue#50l; ACL clauses; passing """
+        assert_parser_result_dict_true(
+            clause_statements, """
+acl "a3internet" { 10.1.12.25; 10.1.12.26; };
+acl "my" { 127.0.0.1; };
+options {
+    tcp-listen-queue 60;
+};""",
+            {
+                'acl': [
+                    {
+                        'acl_name': '"a3internet"',
+                        'aml_series': [
+                            {
+                                'aml': [
+                                    {'ip4_addr': '10.1.12.25'},
+                                    {'ip4_addr': '10.1.12.26'}
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        'acl_name': '"my"',
+                        'aml_series': [
+                            {
+                                'aml': [
+                                    {'ip4_addr': '127.0.0.1'}
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
