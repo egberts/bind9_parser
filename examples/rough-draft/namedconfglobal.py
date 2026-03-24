@@ -64,7 +64,7 @@ abc = {
 # cursor position embedded in self.current['keyword']
 # as a reordering guide for this.
 global g_nc_keywords
-# g_nc_keywords = dict()
+g_nc_keywords = dict()
 
 g_nc_keywords['acl'] = \
     {
@@ -77,7 +77,42 @@ g_nc_keywords['acl'] = \
         'introduced': "8.1",
         'topblock': True,
         'topic': 'access control list, RPZ rewriting, content filtering',
-        'comment': 'Access Control List',
+        'comment': """Defines a named set of address match elements used to control access
+throughout the BIND configuration.
+
+Syntax:
+    acl <name> {
+    <address_match_element>;
+    ...
+    };
+
+Address match elements may include:
+
+  * IPv4 or IPv6 addresses (e.g., 192.0.2.1, 2001:db8::1)
+  * Network prefixes (e.g., 192.0.2.0/24)
+  * Predefined keywords: any, none, localhost, localnets
+  * TSIG keys: key <key-name>
+  * Other ACL names (nesting supported)
+  * Negation using '!' (e.g., !192.0.2.5)
+
+Evaluation rules:
+
+  * Processed top-down
+  * First matching rule determines the result
+  * Negations must appear before broader allows to be effective
+
+Common usage contexts:
+
+  * allow-query
+  * allow-recursion
+  * allow-transfer
+  * blackhole
+
+Notes:
+
+  * Improves readability and reuse of policy
+  * Ordering is critical when mixing allow/deny logic
+  * Frequently used with 'view' for split DNS deployments"""
     }
 
 g_nc_keywords['controls'] = \
@@ -104,7 +139,34 @@ g_nc_keywords['dnssec-keys'] = \
         'introduced': '9.15.2',
         'obsoleted': '9.15.6',  # arguably the shortest-lived 'clause'
         'topic': 'DNSSEC, key',
-        'comment': '',
+        'comment': """Defines DNSSEC key material explicitly within configuration.
+
+Syntax:
+    dnssec-keys {
+        key <name> {
+            algorithm <alg>;
+            secret "<base64>";
+            flags <flags>;
+            protocol <protocol>;
+        };
+        ...
+    };
+
+Purpose:
+
+  * Provides inline definition of DNSSEC keys
+  * Can be used instead of external key files in some workflows
+
+Behavior:
+
+  * Keys are loaded at startup
+  * Used for signing or validation depending on context
+
+Notes:
+
+  * Rarely used in modern configurations
+  * Superseded by 'dnssec-policy' and automatic key management
+  * Manual handling increases operational complexity and risk""",
     }
 
 #  dlz <string> { database <string>; search <boolean>; }; [ DLZ ]
@@ -120,7 +182,43 @@ g_nc_keywords['dlz'] = \
         'zone-type': {'master', 'slave', 'redirect', 'primary', 'secondary'},
         'introduced': "9.5.0",
         'obsoleted': '9.17.19', # also at top-statement-level
-        'comment': """ Introduced 'search' statement in v9.10.0 """,
+        'comment': """Provides DNS data from external sources via dynamically loaded drivers.
+
+Syntax:
+    dlz <name> {
+    database "<driver configuration string>";
+    search yes | no;
+    };
+
+Behavior:
+
+  * Queries are resolved via an external backend instead of zone files
+  * Supports authoritative responses depending on backend
+  * May support dynamic updates (driver dependent)
+
+Common backends:
+
+  * MySQL
+  * PostgreSQL
+  * LDAP
+
+Custom modules
+
+Options:
+  * 'database': Backend-specific connection/configuration string
+  * 'search": If yes, allows fallback lookup when not
+              authoritative (introduced in v9.10.0)
+
+Limitations:
+
+  * Limited DNSSEC support depending on driver
+  * Performance depends on backend responsiveness
+  * Fewer features than native zone support
+
+Notes:
+
+  * Consider 'dyndb' for newer deployments
+  * Often used in legacy or specialized systems""",
     }
 
 g_nc_keywords['dnssec-policy'] = \
@@ -135,7 +233,46 @@ g_nc_keywords['dnssec-policy'] = \
         'found-in': {'', 'options'},
         'introduced': '9.17.0',
         'topic': 'DNSSEC, policy',
-        'comment': '',
+        'comment': """Defines automated DNSSEC key management and signing behavior.
+
+Syntax:
+    dnssec-policy <name> {
+    keys {
+        ksk lifetime <duration> algorithm <alg>;
+        zsk lifetime <duration> algorithm <alg>;
+    };
+    max-zone-ttl <duration>;
+    signatures-refresh <duration>;
+    signatures-validity <duration>;
+    dnskey-ttl <duration>;
+    publish-safety <duration>;
+    retire-safety <duration>;
+    };
+
+Purpose:
+
+  * Automates key creation, rollover, and zone signing
+  * Replaces manual DNSSEC workflows
+
+Key concepts:
+  * 'KSK': Signs the DNSKEY RRset
+  * 'ZSK': Signs all other zone data
+
+Timing parameters:
+
+  * Control how early keys are published and retired
+  * Ensure safe rollover without validation failures
+
+Behavior:
+
+  * Keys are generated and maintained automatically
+  * Requires zone to reference the policy
+  * Works in conjunction with 'inline-signing'.
+
+Notes:
+
+  * Recommended for modern DNSSEC deployments
+  * Reduces operational complexity and human error""",
     }
 
 #  dyndb <string> <quoted_string> { <unspecified-text> };
@@ -148,7 +285,28 @@ g_nc_keywords['dyndb'] = \
         'found-in': {'', 'view'},  # added to 'view' in v9.11.0
         'introduced': '9.6.0',
         'topic': 'dynamic database',
-        'comment': '',
+        'comment': """Provides a plugin-based mechanism for serving DNS data dynamically.
+
+Syntax:
+    dyndb <name> "<library-path>" {
+        <driver-specific configuration>
+    };
+
+Features:
+
+  * Uses shared libraries to implement custom DNS backends
+  * Better integration with BIND than 'dlz'
+  * Supports more features, including DNSSEC in some implementations
+
+Behavior:
+
+  * Dynamically answers queries via plugin logic
+  * Can integrate tightly with BIND's resolver and cache
+
+Notes:
+
+  * Requires external module development or vendor plugin
+  * Preferred over 'dlz' for new dynamic backend designs""",
     }
 
 g_nc_keywords['http'] = \
@@ -161,7 +319,32 @@ g_nc_keywords['http'] = \
         'found-in': {''},
         'introduced': '9.18',
         'topic': 'DNS-over-HTTP, DoH',
-        'comment': '',
+        'comment': """Configures the built-in HTTP/HTTPS service used for statistics and APIs.
+
+Syntax:
+    http {
+        endpoints {
+            "<path>" {
+                handler <type>;
+            };
+        };
+        listener-clients <integer>;
+    };
+
+Purpose:
+
+  * Serves runtime statistics and monitoring endpoints
+  * Supports integration with external monitoring systems
+
+Behavior:
+
+  * Exposes HTTP endpoints for metrics or control
+  * Often used with 'statistics-channels'
+
+Notes:
+
+  * Secure access via firewall or binding to localhost
+  * TLS availability depends on build configuration""",
     }
 
 g_nc_keywords['include'] = \
@@ -183,16 +366,16 @@ g_nc_keywords['key'] = \
         'occurs-multiple-times': True,
         'topblock': True,
         'found-in': {
-            '', 'view', 'primaries', 'masters',
+            '', 'primaries', 'masters',
             'also-notify',  # 'key' added to also-notify in v9.9
-            'catalog-zones', 'parental-agents'
+            'catalog-zones', 'parental-agents',
+            # 'view'  # gone in 9.15.0; added in v9.0
             },
-        # found in view since v9.0
         'user-defined-indices': True,  # keyname
         'multi-line-order-id': 2,  # Keys should always be on top, after ACL
         'topic': 'key',
         'introduced': "8.1",
-        'obsoleted': '',  # it's gone from 'view' in 9.15.0
+        'obsoleted': '',
     }
 
 g_nc_keywords['keys'] = \
@@ -205,6 +388,30 @@ g_nc_keywords['keys'] = \
         'topic': 'list of keys',
         'introduced': '9.1',
         'obsoleted': '',
+        'comment': """Defines TSIG keys used for authenticating DNS operations.
+
+Syntax:
+    key <name> {
+        algorithm <algorithm>;
+        secret "<base64-secret>";
+    };
+
+Purpose:
+
+  * Secure zone transfers (AXFR/IXFR)
+  * Authenticate dynamic updates
+  * Used in ACLs and server statements
+
+Supported algorithms:
+
+  * hmac-sha256 (recommended)
+  * hmac-sha512
+  * Others depending on build
+
+Notes:
+
+  * Protect key material with strict file permissions
+  * Avoid deprecated algorithms such as hmac-md5"""
     }
 
 g_nc_keywords['logging'] = \
@@ -216,7 +423,40 @@ g_nc_keywords['logging'] = \
         'subordering-matters': True,
         'output-order-id': 20,  # 'logging' is second last
         'introduced': "8.1",
-        'topic': 'debug, log, logging, log file'
+        'topic': 'debug, log, logging, log file',
+        'comment': """Controls logging output, destinations, and categories.
+
+Syntax:
+    logging {
+        channel <name> {
+            file "<path>";
+            severity <level>;
+            print-time yes | no;
+        };
+
+        category <category> {
+            <channel>;
+        };
+    };
+
+Channels:
+
+*  Define where logs are sent (file, syslog, stderr)
+
+Categories:
+
+*  queries, security, dnssec, config, etc.
+
+Severity levels:
+
+*  critical, error, warning, notice, info, debug
+
+Notes:
+
+*  Debug levels can produce high volume output
+
+External log rotation is recommended
+"""
     }
 
 g_nc_keywords['lwres'] = \
@@ -239,7 +479,27 @@ g_nc_keywords['managed-keys'] = \
         'introduced': '9.5.0',
         'deprecated': "9.15.1",  # replaced by 'dnssec-keys' w/ 'initial-key'
         'topic': 'DNSSEC, key',
-        'comment': '',
+        'comment': """Defines DNSSEC trust anchors used by validating resolvers.
+
+Syntax:
+    managed-keys {
+        <domain> initial-key <flags> <protocol> <algorithm> "<key>";
+    };
+
+Purpose:
+
+  * Enables DNSSEC validation
+  * Supports automatic trust anchor updates (RFC 5011)
+
+Behavior:
+
+  * BIND tracks and updates keys automatically
+  * Requires managed-keys-directory
+
+Notes:
+
+  * Commonly used for the root zone
+  * Often replaced by 'dnssec-validation auto' in modern configs""",
     }
 
 # This is top-level 'masters' only which is
@@ -254,6 +514,22 @@ g_nc_keywords['masters'] = \
         'zone-type': {'secondary', 'mirror', 'redirect', 'stub', 'slave'},
         'topic': 'nameserver, master, server, transfer',
         'introduced': "4.8",
+        'comment': """Defines reusable lists of master servers (deprecated).
+
+Syntax:
+    masters <name> {
+        <ip> [port <port>] [key <tsig-key>];
+    };
+
+Purpose:
+
+  * Used in secondary/slave zone definitions
+
+Notes:
+
+  * Deprecated in favor of 'primaries'
+
+Still supported for backward compatibility"""
     }
 
 g_nc_keywords['options'] = \
@@ -264,7 +540,32 @@ g_nc_keywords['options'] = \
         'found-in': {''},
         'output-order-id': 4,  # options should be after keys, ACLs, and controls)
         'topic': 'general options',
-        'introduced': "4.9.3"  # 1994 Vixie Enterprise
+        'introduced': "4.9.3",  # 1994 Vixie Enterprise
+        'comment': """Defines global configuration affecting the entire BIND instance.
+
+Syntax:
+    options {
+        directory "<path>";
+        recursion yes | no;
+        allow-query { ... };
+        listen-on { ... };
+        forwarders { ... };
+        dnssec-validation auto;
+        ...
+    };
+
+Common settings:
+  * directory: Working directory for relative paths
+  * recursion: Enables resolver functionality
+  * listen-on / listen-on-v6: Network interfaces to bind
+  * forwarders: Upstream DNS servers
+  * allow-*: Access control using ACLs
+
+Notes:
+
+* Core configuration block
+
+Many settings can be overridden in 'view' or 'zone'"""
     }
 
 g_nc_keywords['parental-agents'] = \
@@ -274,8 +575,22 @@ g_nc_keywords['parental-agents'] = \
         'required': False,
         'found-in': {''},
         'introduced': "9.19",
-        'topic': '',
-        'comment': '',
+        'topic': 'recursion',
+        'comment': """Defines upstream recursive resolvers used for parental control features.
+
+Syntax:
+    parental-agents {
+        <ip> [port <port>];
+    };
+
+Purpose:
+
+  * Used with policy-based filtering (e.g., RPZ)
+
+Notes:
+
+  * Rarely used in typical deployments
+  * Specialized use cases only""",
     }
 
 g_nc_keywords['plugin'] = \
@@ -287,7 +602,27 @@ g_nc_keywords['plugin'] = \
         'occurs-multiple-times': True,
         'introduced': '9.14.0',
         'topic': 'plugin',
-        'comment': '',
+        'comment': """Loads a general-purpose plugin into BIND.
+
+Syntax:
+    plugin <name> {
+        library "<path>";
+        parameters { ... };
+    };
+
+Purpose:
+
+  * Extend BIND functionality with external modules
+
+Behavior:
+
+  * Loads shared library at runtime
+  * Passes configuration parameters to plugin
+
+Notes:
+
+  * Requires compatible external module
+  * More general than 'dyndb'""",
     }
 
 g_nc_keywords['primaries'] = \
@@ -300,6 +635,21 @@ g_nc_keywords['primaries'] = \
         'topic': 'nameserver, server, list of masters, list of servers, transfer',
         'zone-type': {'mirror', 'secondary', 'stub', 'redirect'},
         'introduced': "9.16",
+        'comment': """Defines reusable lists of primary authoritative servers.
+
+Syntax:
+    primaries <name> {
+        <ip> [port <port>] [key <tsig-key>];
+    };
+
+Purpose:
+
+  * Used by secondary zones for zone transfers
+
+Notes:
+
+  * Replacement for deprecated 'masters'
+  * Supports TSIG authentication"""
     }
 
 g_nc_keywords['server'] = \
@@ -311,6 +661,27 @@ g_nc_keywords['server'] = \
         'output-order-id': 9,  # 'server' should be AFTER 'masters'
         'topic': 'view, server',
         'introduced': "8.1",
+        'comment': """Configures behavior for specific remote DNS servers.
+
+Syntax:
+    server <ip> {
+        keys { <tsig-key>; };
+        edns yes | no;
+        tcp-only yes | no;
+    };
+
+Purpose:
+
+  * Customize communication with specific servers
+
+Common uses:
+
+  * Assign TSIG keys
+  * Disable EDNS for incompatible servers
+
+Notes:
+
+  * Applies only to the specified server address"""
     }
 
 g_nc_keywords['statistics-channels'] = \
@@ -321,7 +692,26 @@ g_nc_keywords['statistics-channels'] = \
         'output-order-id': 9999,
         'introduced': '9.5.0',
         'topic': 'statistics, channel',
-        'comment': '',
+        'comment': """Enables HTTP endpoints for BIND statistics output.
+
+Syntax:
+    statistics-channels {
+        inet <ip> port <port> [allow { ... }];
+    };
+
+Purpose:
+
+  * Provides XML/JSON statistics for monitoring tools
+
+Behavior:
+
+  * Exposes runtime metrics via HTTP
+
+Notes:
+
+  * Restrict access using ACLs or localhost binding
+  * Often used with 'http' configuration
+  * Should not be publicly exposed without protection""",
     }
 
 g_nc_keywords['tls'] = \
@@ -334,7 +724,33 @@ g_nc_keywords['tls'] = \
         'occurs-multiple-times': True,
         'introduced': '9.18.0',
         'topic': 'TLS, DNS-over-HTTP, DoH',
-        'comment': '',
+        'comment': """Defines reusable TLS configuration blocks for secure DNS transports.
+
+Syntax:
+    tls <name> {
+        cert-file "<path>";
+        key-file "<path>";
+        ca-file "<path>";
+        ciphers "<string>";
+        protocols { <protocol-list>; };
+    };
+
+Purpose:
+
+  * Enables DNS over TLS (DoT) and HTTPS-related features
+  * Centralizes TLS configuration for reuse
+
+Parameters:
+  * cert-file: Server certificate in PEM format
+  * key-file: Private key corresponding to certificate
+  * ca-file: Trusted certificate authorities
+  * ciphers: Allowed cipher suites
+  * protocols: Allowed TLS protocol versions (e.g., TLSv1.2, TLSv1.3)
+Notes:
+
+  * Required for secure DNS transports
+  * File permissions must protect private keys
+  * Cipher/protocol selection impacts security posture""",
     }
 
 g_nc_keywords['trust-anchors'] = \
@@ -345,6 +761,32 @@ g_nc_keywords['trust-anchors'] = \
         'occurs-multiple-times': True,
         'output-order-id': 10,
         'introduced': "9.16",
+        'comment': """Defines DNSSEC trust anchors for validating resolvers.
+
+Syntax:
+    trust-anchors {
+        <domain> static-key <flags> <protocol> <algorithm> "<key>";
+        <domain> initial-key <flags> <protocol> <algorithm> "<key>";
+    };
+
+Purpose:
+
+  * Establishes root of trust for DNSSEC validation
+
+Types:
+  * static-key: Manually configured, not automatically updated
+  * initial-key: Enables RFC 5011 automatic updates
+
+Behavior:
+
+  * Used by resolver to validate DNSSEC chains
+  * Typically configured for the root zone (.)
+
+Notes:
+
+  * Preferred modern replacement for 'managed-keys'
+  * 'dnssec-validation auto' may implicitly configure this
+  * Incorrect configuration breaks validation"""
     }
 
 g_nc_keywords['trusted-keys'] = \
@@ -590,7 +1032,26 @@ g_nc_keywords['all-per-seconds'] = \
         'default': "no",
         'introduced': '9.8.0',
         'topic': 'rate-limit, defense',
-        'comment': '',
+        'comment': """Controls aggregate rate limiting for all responses.
+
+Syntax:
+    all-per-seconds <integer>;
+
+Purpose:
+
+  * Limits total number of responses per second
+  * Used within Response Rate Limiting (RRL)
+
+Behavior:
+
+  * Applies a global cap across all clients
+  * Excess responses may be dropped or truncated
+
+Notes:
+
+  * Helps mitigate amplification attacks
+  * Should be tuned carefully to avoid impacting legitimate traffic
+  * Typically used with other RRL settings""",
     }
 
 g_nc_keywords['allow-new-zones'] = \
@@ -601,7 +1062,26 @@ g_nc_keywords['allow-new-zones'] = \
         'introduced': '9.8.0',
         'topic': 'rndc, zone, ddns',
         'comment':
-            """If yes, then zones can be added at runtime via 'rndc addzone',
+            """Controls whether new zones can be added dynamically.
+
+Syntax:
+    allow-new-zones yes | no;
+
+Purpose:
+
+  * Enables dynamic creation of zones via RNDC or API
+
+Behavior:
+
+  * When enabled, allows runtime zone provisioning
+  * Requires appropriate control channel permissions
+
+Notes:
+
+  * Useful for automation and dynamic DNS platforms
+  * Should be restricted in secure environments
+  * Defaults to 'no' in many configurations
+  * If yes, then zones can be added at runtime via 'rndc addzone',
 'rndc modzone' or deleted via 'rndc delzone'. The default is no.""",
     }
 
@@ -675,7 +1155,25 @@ g_nc_keywords['allow-query-cache-on'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.5.0',
         'topic': 'caching, cache access control, active',
-        'comment': '',
+        'comment': """Controls which interfaces accept cache query requests.
+
+Syntax:
+    allow-query-cache-on { <address_match_element>; };
+
+Purpose:
+
+  * Restricts which local interfaces respond to cache queries
+
+Behavior:
+
+  * Works in conjunction with 'allow-query-cache'
+  * Limits exposure of recursive data
+
+Notes:
+
+  * Useful for multi-homed systems
+  * Helps reduce attack surface
+  * Combine with ACLs for fine-grained control""",
     }
 
 g_nc_keywords['allow-query-on'] = \
@@ -1157,7 +1655,24 @@ g_nc_keywords['ca-file'] = \
         'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
-        'comment': '',
+        'comment': """Specifies a file containing trusted Certificate Authorities.
+
+Syntax:
+    ca-file "<path>";
+
+Purpose:
+
+  * Used for TLS verification of peers
+
+Behavior:
+
+  * Provides trust anchors for certificate validation
+
+Notes:
+
+  * Typically used within 'tls' blocks
+  * File must contain PEM-encoded CA certificates
+  * Keep updated to maintain trust chain validity""",
     }
 
 g_nc_keywords['cache-file'] = \
@@ -1191,7 +1706,67 @@ g_nc_keywords['category'] = \
         'occurs-multiple-times': True,
         'introduced': '9.0.0',
         'topic': 'logging',
-        'comment': '',
+        'comment': """
+Here are the available options for the category directive in BIND 9.20:
+
+default: This category includes all messages that don't belong to a specific category. It is the fallback category if no other category is matched.
+
+client: Logs client-related events, such as client connection attempts and errors related to the clients making requests to the server.
+
+client-subnet: Logs events related to the Client Subnet feature in EDNS (Extension Mechanisms for DNS), where the client’s subnet information is passed along with the DNS query.
+
+config: Logs configuration-related events, such as parsing errors or other issues encountered while processing the named.conf configuration file.
+
+config-error: Logs errors related to the named.conf configuration file, such as parsing issues or invalid configuration directives.
+
+database: Logs events related to the database (zone files) that the server is handling, including changes to the zone data, or failures in reading zones.
+
+debug: A very verbose category for logging detailed debugging information. This can be helpful when troubleshooting issues but may generate large log files.
+
+dispatch: Logs details about the dispatching of DNS queries to backend servers for resolution, typically in environments using DNS forwarding.
+
+dns64: DNS64 (which allows DNS clients that support IPv6 to access IPv4 resources), this category logs events related to the DNS64 functionality.
+
+dnssec: DNSSEC validation, including failures or success in verifying DNSSEC signatures.
+
+edns: EDNS (Extension mechanisms for DNS), such as EDNS client subnet or other extended DNS features.
+
+failures: Logs failures in various parts of the system, such as failed queries or problems encountered when accessing external resources (e.g., unable to fetch a zone).
+
+keys: Logs events related to DNSSEC keys, such as key generation, key signing, and key expiration.
+
+lame-servers: Logs information about lame servers, which are DNS servers that return invalid responses or do not respond at all.
+
+notify: Logs notifications sent to other DNS servers when the server updates its zone.
+
+queries: Logs queries that the server receives, including both successful and unsuccessful queries.
+
+query-errors: errors related to DNS queries, such as failures or invalid queries.
+
+resolver: Logs events related to DNS resolution, including any recursive queries the server might be making to other servers.
+
+resolver-errors: Logs errors encountered during the resolution of recursive queries, including errors from upstream DNS servers.
+
+response-policy: Logs information related to the actions taken by RPZ rules (e.g., blocking or redirecting queries).
+
+rpz: related to Response Policy Zones (RPZ) itself, such as when queries are blocked or redirected according to RPZ rules.
+
+rpz-passthru: when a query matches an RPZ policy that doesn't result in a block or modification.  New in 9.17.2
+
+security: Logs security-related events, such as potential attacks, misconfigurations that could lead to security vulnerabilities, or other security issues.
+
+stats: Logs DNS server statistics (e.g., counters of queries and responses, zone transfers, etc.).
+
+traffic: Logs detailed traffic information, including both DNS queries and responses that are sent and received.
+
+update: Logs DNS dynamic updates. This category includes logs related to zone updates initiated by nsupdate or dynamic DNS operations.
+
+xfer-in: Logs inbound zone transfers (i.e., when the server receives a zone transfer from another DNS server).
+
+xfer-out: Logs outbound zone transfers (i.e., when the server initiates a zone transfer to another DNS server).
+
+all: This category includes all loggable events, regardless of their type.
+""",
     }
 
 g_nc_keywords['cert-file'] = \
@@ -1201,7 +1776,25 @@ g_nc_keywords['cert-file'] = \
         'found-in': {'tls'},  # was in 'primaries'? in v9.18?
         'introduced': '9.19.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
-        'comment': '',
+        'comment': """
+Specifies the server certificate file for TLS.
+
+Syntax:
+    cert-file "<path>";
+
+Purpose:
+
+  * Identifies the server in TLS connections
+
+Behavior:
+
+  * Presented to clients during TLS handshake
+
+Notes:
+
+  * Must match the private key in 'key-file'
+  * Should be signed by a trusted CA
+  * PEM format required""",
     }
 
 g_nc_keywords['channel'] = \
@@ -1396,7 +1989,24 @@ g_nc_keywords['ciphers'] = \
         'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
-        'comment': '',
+        'comment': """Defines allowed TLS cipher suites.
+
+Syntax:
+    ciphers "<cipher-list>";
+
+Purpose:
+
+  * Controls cryptographic algorithms used in TLS
+
+Behavior:
+
+  * Limits negotiation to specified secure ciphers
+
+Notes:
+
+  * Use modern, secure cipher suites only
+  * Avoid deprecated/weak algorithms
+  * Syntax typically follows OpenSSL conventions""",
     }
 
 g_nc_keywords['class'] = \
@@ -1406,7 +2016,24 @@ g_nc_keywords['class'] = \
         'found-in': {'rrset-order'},
         'introduced': '9.0.0',
         'topic': 'class, network layer',
-        'comment': '',
+        'comment': """Specifies DNS class for zones or resource records.
+
+Syntax:
+    class <class-name>;
+
+Common values:
+  * IN: Internet (default and most common)
+  * CH: CHAOS class (used for special queries like version.bind)
+  * HS: Hesiod (rare)
+
+Purpose:
+
+  * Distinguishes separate DNS namespaces
+
+Notes:
+
+  * Almost all modern DNS uses class IN
+  * CHAOS class often used for diagnostic queries""",
     }
 
 g_nc_keywords['cleaning-interval'] = \
@@ -1470,7 +2097,24 @@ g_nc_keywords['cookie-algorithm'] = \
         'found-in': {'options'},
         'introduced': '9.11.0',
         'topic': 'TCP, network',
-        'comment': '',
+        'comment': """Specifies the algorithm used for DNS cookies.
+
+Syntax:
+    cookie-algorithm <algorithm>;
+
+Purpose:
+
+  * Controls generation of DNS COOKIE option values
+
+Behavior:
+
+  * Used to validate client/server identity without state
+  * Helps mitigate spoofing and amplification attacks
+
+Notes:
+
+  * Typically set automatically
+  * Rarely needs manual configuration""",
     }
 
 g_nc_keywords['cookie-secret'] = \
@@ -1481,7 +2125,25 @@ g_nc_keywords['cookie-secret'] = \
         'introduced': '9.11.0',
         'occurs-multiple-times': True,
         'topic': 'TCP, network',
-        'comment': '',
+        'comment': """Defines the secret used to generate DNS cookies.
+
+Syntax:
+    cookie-secret "<secret>";
+
+Purpose:
+
+  * Provides entropy for DNS cookie generation
+
+Behavior:
+
+  * Used to compute server cookies
+  * Should be consistent across restarts for stability
+
+Notes:
+
+  * Keep secret confidential
+  * Can be manually set or auto-generated
+  * Changing it invalidates existing cookies""",
     }
 
 g_nc_keywords['coresize'] = \
@@ -1505,7 +2167,31 @@ g_nc_keywords['database'] = \
         'obsoleted': '9.11.0',
         'topic': 'operating-system, database',
         'zone-type': {'master', 'slave', 'mirror', 'stub', 'primary', 'secondary'},
-        'comment': '',
+        'comment': """Specifies the database backend or storage method used for a zone.
+
+Syntax:
+    database "<string>";
+
+Purpose:
+
+  * Overrides the default zone storage mechanism
+  * Used to define custom or alternative data sources
+
+Behavior:
+
+  * Interpreted by the zone implementation (e.g., DLZ, DynDB, or built-in)
+  * May reference driver-specific configuration strings
+
+Common usage:
+
+  * With dynamically loaded backends
+  * For specialized storage formats
+
+Notes:
+
+  * Rare in standard configurations
+  * Meaning depends heavily on context (zone type or driver)
+  * Misconfiguration may prevent zone loading""",
     }
 
 g_nc_keywords['datasize'] = \
@@ -1556,7 +2242,30 @@ g_nc_keywords['delegation-only'] = \
         'introduced': '9.3.0',
         'topic': 'query, forwarding',
         'zone-type': {'hint', 'stub', 'forward'},
-        'comment': '',
+        'comment': """Marks a zone as containing only delegations (no authoritative data).
+
+Syntax:
+    delegation-only yes | no;
+
+Purpose:
+
+  * Prevents responses from including non-delegation data
+  * Helps mitigate certain DNS abuse scenarios
+
+Behavior:
+
+  * Only NS records (and necessary glue) are returned
+  * Other record types are suppressed
+
+Common usage:
+
+  * Applied to TLD-like zones or forwarding zones
+
+Notes:
+
+  * Often used with root or TLD mirrors
+  * Misuse can break legitimate resolution
+  * Typically not needed in modern recursive setups""",
     }
 
 g_nc_keywords['deny-answer-addresses'] = \
@@ -1567,7 +2276,30 @@ g_nc_keywords['deny-answer-addresses'] = \
         'introduced': '9.7.0',
         'topic': 'query, content filtering',
         'zone-type': '',
-        'comment': '',
+        'comment': """Filters DNS responses containing specific IP addresses.
+
+Syntax:
+    deny-answer-addresses { <address_match_element>; };
+
+Purpose:
+
+  * Blocks responses pointing to undesirable IPs
+  * Used as a security control against malicious redirection
+
+Behavior:
+
+  * If a response contains a matching IP, it is rejected
+  * May trigger SERVFAIL or filtered response
+
+Use cases:
+
+  * Prevent access to internal/private address space via DNS
+  * Block known malicious endpoints
+
+Notes:
+
+  * Works on A/AAAA records in answers
+  * Should be used carefully to avoid false positives""",
     }
 
 g_nc_keywords['deny-answer-aliases'] = \
@@ -1577,7 +2309,28 @@ g_nc_keywords['deny-answer-aliases'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.7.0',
         'topic': 'query, alias, content filtering',
-        'comment': '',
+        'comment': """Filters DNS responses based on CNAME/DNAME targets.
+
+Syntax:
+    deny-answer-aliases { <domain_name>; };
+
+Purpose:
+
+  * Blocks responses that alias to specific domains
+
+Behavior:
+
+  * If a CNAME or DNAME matches a listed domain, response is denied
+
+Use cases:
+
+  * Prevent redirection to malicious domains
+  * Enforce DNS policy restrictions
+
+Notes:
+
+  * Complements 'deny-answer-addresses'
+  * Matching is based on domain names, not IPs""",
     }
 
 g_nc_keywords['dhparam-file'] = \
@@ -1587,7 +2340,24 @@ g_nc_keywords['dhparam-file'] = \
         'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH, server, master, primary',
-        'comment': '',
+        'comment': """Specifies Diffie-Hellman parameters for TLS connections.
+
+Syntax:
+    dhparam-file "<path>";
+
+Purpose:
+
+  * Provides parameters for ephemeral key exchange in TLS
+
+Behavior:
+
+  * Used during TLS handshake for forward secrecy
+
+Notes:
+
+  * File must contain valid DH parameters (PEM format)
+  * Larger parameter sizes improve security but increase CPU cost
+  * Often optional with modern TLS (ECDHE preferred)""",
     }
 
 g_nc_keywords['dialup'] = \
@@ -1791,7 +2561,23 @@ g_nc_keywords['dns64-contact'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.8.0',
         'topic': 'ip6, dnssec',
-        'comment': '',
+        'comment': """Specifies contact information for DNS64-related issues.
+
+Syntax:
+    dns64-contact "<string>";
+
+Purpose:
+
+  * Provides administrative contact metadata for DNS64 services
+
+Behavior:
+
+  * May be included in diagnostic or informational outputs
+
+Notes:
+
+  * Informational only
+  * Does not affect DNS resolution behavior""",
     }
 
 g_nc_keywords['dns64-server'] = \
@@ -1801,7 +2587,23 @@ g_nc_keywords['dns64-server'] = \
         'introduced': '9.8.0',
         'found-in': {'options', 'view'},
         'topic': 'dnssec, inert',
-        'comment': '',
+        'comment': """Identifies the DNS64 server instance.
+
+Syntax:
+    dns64-server "<string>";
+
+Purpose:
+
+  Provides server identification for DNS64 deployments
+
+Behavior:
+
+  * Used in logging, diagnostics, or metadata
+
+Notes:
+
+  * Informational field
+  * No direct effect on resolution logic""",
     }
 
 g_nc_keywords['dnskey-sig-validity'] = \
@@ -1817,51 +2619,6 @@ g_nc_keywords['dnskey-sig-validity'] = \
         'comment':
             """This option has been replaced in favor of the KASP
 configuration value `signatures-validity-dnskey`.
-""",
-    }
-
-g_nc_keywords['dnsrps-enable'] = \
-    {
-        'default': None,
-        'validity': {'regex': r'(yes)|(no)'},
-        'introduced': '9.12',
-        'found-in': {'options', 'view'},
-        'topic': 'policy, RPZ rewriting',
-        'comment':
-            """The dnsrps-enable yes option turns on the DNS Response
-Policy Server (DNSRPS) interface, if it has been compiled
-to named using configure --enable-dnsrps.
-The dnsrps-options block provides additional RPZ
-configuration settings, which are passed throught to the
-DNSRPS proivder library.  Multiple DNSRPS settings in an
-dnsrps-options string should be separated with semi-colons.
-The DNSRPS provider librpz, is passed a configuration
-string consisting of the dnsrps-options text, concatenated
-with settings derived from the response-policy statement.  """,
-    }
-
-g_nc_keywords['dnsrps-options'] = \
-    {
-        'default': None,
-        'validity': {'string'},
-        'introduced': '9.12',
-        'found-in': {'options', 'view'},
-        'topic': 'policy, inert, RPZ rewriting',
-        'comment': '',
-    }
-
-g_nc_keywords['dnskey-ttl'] = \
-    {
-        'default': '1h',
-        'validity': {'range': {0, 3660},
-                     'function': 'iso8601_time_duration'},
-        'unit': 'second_unless_stated',
-        'introduced': '9.15.6',
-        'found-in': {'', 'dnssec-policy'},
-        'topic': 'DNSSEC',
-        'comment':
-            """The TTL to use when generating DNSKEY resource reocrds.
-The default is 1 hour (3660 seconds).
 """,
     }
 
@@ -1885,6 +2642,21 @@ sig-validity-interval is used. The maximum value is 3660
 days (10 years), and higher values will be rejected.""",
     }
 
+g_nc_keywords['dnskey-ttl'] = \
+    {
+        'default': '1h',
+        'validity': {'range': {0, 3660},
+                     'function': 'iso8601_time_duration'},
+        'unit': 'second_unless_stated',
+        'introduced': '9.15.6',
+        'found-in': {'', 'dnssec-policy'},
+        'topic': 'DNSSEC',
+        'comment':
+            """The TTL to use when generating DNSKEY resource reocrds.
+The default is 1 hour (3660 seconds).
+""",
+    }
+
 g_nc_keywords['dnsrps-enable'] = \
     {
         'default': None,
@@ -1892,7 +2664,8 @@ g_nc_keywords['dnsrps-enable'] = \
         'introduced': '9.12',
         'found-in': {'options', 'view'},
         'topic': 'policy, RPZ rewriting',
-        'comment': """The dnsrps-enable yes option turns on the DNS Response
+        'comment':
+            """The dnsrps-enable yes option turns on the DNS Response
 Policy Server (DNSRPS) interface, if it has been compiled
 to named using configure --enable-dnsrps.
 The dnsrps-options block provides additional RPZ
@@ -1904,6 +2677,7 @@ string consisting of the dnsrps-options text, concatenated
 with settings derived from the response-policy statement.  """,
     }
 
+
 g_nc_keywords['dnsrps-options'] = \
     {
         'default': None,
@@ -1912,7 +2686,27 @@ g_nc_keywords['dnsrps-options'] = \
         'found-in': {'options', 'view'},
         'topic': 'policy, inert, RPZ rewriting',
         'zone-type': '',
-        'comment': '',
+        'comment': """Configures options for DNS Remote Procedure Call (DNSRPC) subsystem.
+
+Syntax:
+    dnsrpc-options {
+        <option> <value>;
+        ...
+    };
+
+Purpose:
+
+  Controls RPC-based DNS management or communication features
+
+Behavior:
+
+  * Affects internal or external RPC interactions
+
+Notes:
+
+  * Rarely used in typical deployments
+  * Intended for advanced or integrated systems
+  * Documentation and support may be limited""",
     }
 
 g_nc_keywords['dnssec-accept-expired'] = \
@@ -2053,7 +2847,36 @@ g_nc_keywords['dnssec-policy'] = \
         'introduced': '9.17.0',
         'topic': 'DNSSEC',
         'zone-type': {'master', 'slave', 'primary', 'secondary'},
-        'comment': '',
+        'comment': """Defines automated DNSSEC key management and signing policy.
+
+Syntax:
+    dnssec-policy <name> {
+        keys {
+            ksk lifetime <duration> algorithm <alg>;
+            zsk lifetime <duration> algorithm <alg>;
+        };
+        max-zone-ttl <duration>;
+        signatures-refresh <duration>;
+        signatures-validity <duration>;
+        dnskey-ttl <duration>;
+        publish-safety <duration>;
+        retire-safety <duration>;
+    };
+
+Purpose:
+
+  Automates DNSSEC signing and key rollover
+
+Behavior:
+
+  * Keys are generated, published, and retired automatically
+  * Zones referencing the policy inherit its parameters
+
+Notes:
+
+  * Preferred modern DNSSEC configuration method
+  * Reduces manual intervention and risk
+  * Requires inline-signing or dynamic zone support""",
     }
 
 g_nc_keywords['dnssec-secure-to-insecure'] = \
@@ -2187,7 +3010,23 @@ g_nc_keywords['dnstap-identity'] = \
         'found-in': {'options'},
         'introduced': '9.11.0',
         'topic': 'capture, tap, operating-system, inert, not-configured',
-        'comment': '',
+        'comment': """Sets the identity string used in DNSTAP logging.
+
+Syntax:
+    dnstap-identity "<string>";
+
+Purpose:
+
+  Identifies the server in DNSTAP message streams
+
+Behavior:
+
+  * Included in exported DNSTAP data
+
+Notes:
+
+  * Useful for distinguishing multiple servers
+  * Informational only""",
     }
 
 g_nc_keywords['dnstap-output'] = \
@@ -2395,7 +3234,27 @@ g_nc_keywords['endpoints'] = \
         'found-in': {'http'},
         'introduced': '9.15.7',
         'topic': 'HTTP, DoH, TLS',
-        'comment': '',
+        'comment': """Defines HTTP service endpoints within the 'http' configuration.
+
+Syntax:
+    endpoints {
+        "<path>" {
+            handler <type>;
+        };
+    };
+
+Purpose:
+
+  Maps URL paths to specific handlers
+
+Behavior:
+
+  * Each endpoint serves a specific function (e.g., metrics, status)
+
+Notes:
+
+  * Used only inside 'http' blocks
+  * Handlers determine response format and content""",
     }
 
 g_nc_keywords['fake-iquery'] = \
@@ -2555,7 +3414,25 @@ g_nc_keywords['file'] = \
         'introduced': '8.2',
         'topic': 'zone data, redirect',
         'zone-type': {'master', 'slave', 'mirror', 'hint', 'stub', 'redirect', 'primary', 'secondary'},
-        'comment': '',
+        'comment': """Specifies a file path for configuration, zone data, or logging.
+
+Syntax:
+    file "<path>";
+
+Context-dependent usage:
+
+  * In zones: path to zone file
+  * In logging: log output file
+  * In other contexts: resource file reference
+
+Behavior:
+
+  * Path may be relative to 'directory' option
+
+Notes:
+
+  * Meaning varies depending on enclosing statement
+  * Ensure proper file permissions""",
     }
 
 g_nc_keywords['files'] = \
@@ -2758,7 +3635,24 @@ g_nc_keywords['geoip-use-ecs'] = \
         'introduced': '9.11.0',
         'obsoleted': '9.14.0',
         'topic': 'ancient, operating-system, geoip, inert',
-        'comment': '',
+        'comment': """Controls whether EDNS Client Subnet (ECS) is used with GeoIP.
+
+Syntax:
+    geoip-use-ecs yes | no;
+
+Purpose:
+
+  Determines if client subnet data influences GeoIP lookups
+
+Behavior:
+
+  * When enabled, ECS data refines geographic targeting
+
+Notes:
+
+  * May improve geo-based responses
+  * Raises privacy considerations
+  * Requires ECS-enabled clients and configuration""",
     }
 
 g_nc_keywords['glue-cache'] = \
@@ -2767,9 +3661,27 @@ g_nc_keywords['glue-cache'] = \
         'validity': {'regex': '(yes|no)'},
         'found-in': {'options', 'view'},  # 'view' added in 9.12?
         'introduced': '9.12',
-        'deprecated': '9.17',
+        'deprecated': '9.17.6',
         'topic': 'ancient, glue, cache, caching',
-        'comment': '',
+        'comment': """Controls caching of glue records.
+
+Syntax:
+    glue-cache yes | no;
+
+Purpose:
+
+  Enables caching of additional (glue) address records
+
+Behavior:
+
+  * Improves performance by reducing repeated lookups
+  * Stores A/AAAA records from authority/additional sections
+
+Notes:
+
+  * Generally beneficial for resolver performance
+  * Disabling may reduce cache size but increase query load
+  * Default is typically enabled""",
     }
 
 g_nc_keywords['has-old-clients'] = \
@@ -2860,7 +3772,24 @@ g_nc_keywords['http-listener-clients'] = \
         'found-in': {'options'},
         'introduced': '9.18',
         'topic': 'DNS-over-HTTP, DoH',
-        'comment': '',
+        'comment': """Specifies the maximum number of simultaneous HTTP clients per listener.
+
+Syntax:
+    http-listener-clients <integer>;
+
+Purpose:
+
+  Limits concurrent client connections to the built-in HTTP server
+
+Behavior:
+
+  * Applies per configured HTTP listener
+  * Excess connections may be refused or queued depending on implementation
+
+Notes:
+
+  * Helps prevent resource exhaustion
+  * Should be tuned based on expected monitoring/API load""",
     }
 
 g_nc_keywords['http-port'] = \
@@ -2885,7 +3814,23 @@ g_nc_keywords['http-streams-per-connection'] = \
         'found-in': {'options'},
         'introduced': '9.18',
         'topic': 'DNS-over-HTTP, DoH',
-        'comment': '',
+        'comment': """Limits the number of HTTP/2 streams per client connection.
+
+Syntax:
+    http-streams-per-connection <integer>;
+
+Purpose:
+
+  Controls multiplexing level for HTTP/2 connections
+
+Behavior:
+
+  * Restricts how many concurrent streams a single connection may open
+
+Notes:
+
+  * Relevant for high-throughput monitoring setups
+  * Lower values can reduce resource contention""",
     }
 
 g_nc_keywords['https-port'] = \
@@ -2935,7 +3880,32 @@ g_nc_keywords['inet'] = \
         'found-in': {'controls', 'statistics-channels'},  # added to 'statistics-channels' in v9.5
         'introduced': '8.1',
         'topic': 'Unix socket, IPC',
-        'comment': ''
+        'comment': """Specifies an IPv4 listener for a service.
+
+Syntax:
+    inet <ip-address> [port <port>] [allow { <acl>; }];
+
+Purpose:
+
+  Defines a network endpoint for services such as:
+
+    - statistics-channels
+    - control channels
+
+Parameters:
+    ip-address: Address to bind
+    port: Port number (optional, defaults depend on context)
+    allow: ACL defining permitted clients
+
+Behavior:
+
+  * Service listens on specified IP/port
+  * Access restricted by ACL if provided
+
+Notes:
+
+  * Often paired with localhost binding for security
+  * Multiple 'inet' entries can be defined"""
     }
 
 g_nc_keywords['inline-signing'] = \
@@ -2947,7 +3917,14 @@ g_nc_keywords['inline-signing'] = \
         'topic': 'DNSSEC',
         'zone-type': {'primary', 'secondary', 'master', 'slave'},
         'comment':
-            """If yes, this enables "bump-in-the-wire" signing
+            """Default is 'no'.
+
+If 'dnssec-policy' is defined, implied default becomes
+'yes' until 9.17.2;
+
+After 9.17.1, 'yes' is implied if zone is NOT 'dynamic'.
+
+If yes, this enables "bump-in-the-wire" signing
 of a zone, where an unsigned zone is transferred in or
 loaded from disk and a signed version of the zone is
 served, with possibly a different serial number.
@@ -2959,9 +3936,15 @@ when setting a `dnssec-policy` for a secondary zone
 or a zone with zone file, this indicates that
 `inline-signing` is desired.
 
-This behavior is disabled by default.
+Added to 'options' and 'view' section in v9.9.0.
 
-Added to 'options' and 'view' section in v9.9.0.""",
+Properly fixed at v9.17.13.
+
+Before v9.19, inheirtence for zone settings from 'options'/
+'view' was incorrectly done.
+
+At v9.19, restrict ``inline-signing`` to just ``zone``,
+no longer allowed in 'options' or 'view' section.""",
     }
 
 g_nc_keywords['interface-interval'] = \
@@ -2991,7 +3974,23 @@ g_nc_keywords['ipv4only-contact'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.18',
         'topic': 'DNS-over-HTTP, DoH',
-        'comment': ''
+        'comment': """Specifies contact information for IPv4-only DNS64 service.
+
+Syntax:
+    ipv4only-contact "<string>";
+
+Purpose:
+
+  Provides administrative contact metadata
+
+Behavior:
+
+  * Informational only, may appear in diagnostics or logs
+
+Notes:
+
+  * Used in DNS64 environments
+  * No effect on resolution"""
     }
 
 g_nc_keywords['ipv4only-enable'] = \
@@ -3001,7 +4000,23 @@ g_nc_keywords['ipv4only-enable'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.18',
         'topic': 'DNS-over-HTTP, DoH',
-        'comment': ''
+        'comment': """Enables IPv4-only mode for DNS64 synthesis.
+
+Syntax:
+    ipv4only-enable yes | no;
+
+Purpose:
+
+  Controls DNS64 behavior for IPv4-only environments
+
+Behavior:
+
+  * When enabled, modifies how AAAA records are synthesized
+
+Notes:
+
+  * Used in NAT64/DNS64 deployments
+  * Should align with network architecture"""
     }
 
 g_nc_keywords['ipv4only-server'] = \
@@ -3011,8 +4026,25 @@ g_nc_keywords['ipv4only-server'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.18',
         'topic': 'DNS-over-HTTP, DoH',
-        'comment': ''
+        'comment': """Identifies the server name for IPv4-only DNS64 service.
+
+Syntax:
+    ipv4only-server "<string>";
+
+Purpose:
+
+  Provides server identification metadata
+
+Behavior:
+
+  * Used in logs or diagnostic output
+
+Notes:
+
+  * Informational only
+  * No effect on DNS resolution"""
     }
+
 g_nc_keywords['ixfr-base'] = \
     {
         'default': None,
@@ -3038,7 +4070,26 @@ g_nc_keywords['ixfr-from-differences'] = \
         'found-in': {'options', 'view'},  # only 'zone' got dropped at v9.18.0 after initial intro
         'introduced': '9.3.0',
         'topic': 'IXFR, transfer',
-        'comment': '',
+        'comment': """Enables generation of incremental zone transfers from differences.
+
+Syntax:
+    ixfr-from-differences yes | no;
+
+Purpose:
+
+  Allows BIND to compute IXFR deltas from full zone changes
+
+Behavior:
+
+  * When enabled, differences between old and new zone versions
+    are computed automatically
+  * Enables IXFR even when updates are not dynamic
+
+Notes:
+
+  * Improves efficiency for secondary servers
+  * May increase CPU and memory usage during computation
+  * Commonly enabled for dynamic or frequently updated zones""",
     }
 
 g_nc_keywords['ixfr-tmp-file'] = \
@@ -3049,7 +4100,24 @@ g_nc_keywords['ixfr-tmp-file'] = \
         'introduced': '9.0',
         'obsoleted': '9.14',
         'topic': 'ancient, inert, IXFR, transfer',
-        'comment': '',
+        'comment': """Controls use of temporary files during IXFR processing.
+
+Syntax:
+    ixfr-tmp-files yes | no;
+
+Purpose:
+
+  Determines whether temporary files are used for IXFR generation
+
+Behavior:
+
+  * When enabled, intermediate data may be written to disk
+  * When disabled, processing is done in memory
+
+Notes:
+
+  * Disk usage vs memory trade-off
+  * May improve performance or stability depending on workload""",
     }
 
 g_nc_keywords['journal'] = \
@@ -3060,7 +4128,25 @@ g_nc_keywords['journal'] = \
         'introduced': '9.3.0',
         'topic': 'journal, zone',
         'zone-type': {'master', 'slave', 'mirror', 'primary', 'secondary'},
-        'comment': '',
+        'comment': """Specifies the journal file used for dynamic zone updates.
+
+Syntax:
+    journal "<path>";
+
+Purpose:
+
+  Stores incremental changes to a zone
+
+Behavior:
+
+  * Records dynamic updates (DDNS)
+  * Used for IXFR generation and recovery
+
+Notes:
+
+  * File is automatically managed by BIND
+  * Should not be manually edited
+  * Ensure sufficient disk space""",
     }
 
 g_nc_keywords['keep-response-order'] = \
@@ -3107,7 +4193,24 @@ g_nc_keywords['key-file'] = \
         'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'DoH, TLS, HTTPS',
-        'comment': '',
+        'comment': """Specifies a file containing a private key.
+
+Syntax:
+    key-file "<path>";
+
+Purpose:
+
+  Used for TLS or DNSSEC operations requiring private keys
+
+Behavior:
+
+  * Loaded at startup and used in cryptographic operations
+
+Notes:
+
+  * Must correspond to associated certificate (for TLS)
+  * File permissions must be restricted
+  * PEM format typically required""",
     }
 
 g_nc_keywords['keys'] = \
@@ -3155,7 +4258,7 @@ g_nc_keywords['lifetime'] = \
     {
         'default': 'unlimited',
         'validity': {'function': 'iso8601_time_duration',
-                     'regex': '(unlimited)'},
+                     'regex': '(unlimited|PT0S)'},
         'unit': 'second_unless_stated',
         'introduced': '9.17.0',
         'found-in': {'keys'},
@@ -3257,7 +4360,24 @@ g_nc_keywords['lmdb-mapsize'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.12.0',
         'topic': 'operating-system, database',
-        'comment': '',
+        'comment': """Specifies the maximum size of LMDB database maps.
+
+Syntax:
+    lmdb-mapsize <size>;
+
+Purpose:
+
+  Controls maximum memory-mapped database size
+
+Behavior:
+
+  * Sets upper limit for LMDB-backed data storage
+
+Notes:
+
+  * Must be large enough for expected data
+  * Overly large values may waste address space
+  * Used with LMDB-based zone or cache storage""",
     }
 
 g_nc_keywords['lock-file'] = \
@@ -3381,7 +4501,24 @@ g_nc_keywords['match-clients'] = \
         'found-in': {'view'},
         'introduced': '9.3.0',
         'topic': 'content filtering',
-        'comment': '',
+        'comment': """Defines which clients match a particular view.
+
+Syntax:
+    match-clients { <address_match_element>; };
+
+Purpose:
+
+  Determines which queries are handled by a view
+
+Behavior:
+
+  * Evaluated against client source IP
+  * First matching view is selected
+
+Notes:
+
+  * Common in split-horizon DNS
+  * Often used with ACLs""",
     }
 
 g_nc_keywords['match-destination'] = \
@@ -3391,7 +4528,23 @@ g_nc_keywords['match-destination'] = \
         'found-in': {'view'},
         'introduced': '9.3.0',
         'topic': 'content filtering',
-        'comment': '',
+        'comment': """Matches queries based on destination address.
+
+Syntax:
+    match-destination { <address_match_element>; };
+
+Purpose:
+
+  Selects view based on the server IP receiving the query
+
+Behavior:
+
+  * Evaluates destination IP of incoming request
+
+Notes:
+
+  * Useful on multi-homed servers
+  * Works alongside 'match-clients'""",
     }
 
 g_nc_keywords['match-mapped-addresses'] = \
@@ -3421,7 +4574,23 @@ g_nc_keywords['match-recursive-only'] = \
         'found-in': {'view'},
         'introduced': '9.3.0',
         'topic': 'recursive, filter',
-        'comment': '',
+        'comment': """Restricts view matching to recursive queries only.
+
+Syntax:
+    match-recursive-only yes | no;
+
+Purpose:
+
+  Applies view only to recursive queries
+
+Behavior:
+
+  * Non-recursive queries bypass the view
+
+Notes:
+
+  * Useful for separating authoritative and recursive behavior
+  * Helps enforce resolver-specific policies""",
     }
 
 g_nc_keywords['max-acache-size'] = \
@@ -3464,7 +4633,11 @@ Any positive values less than 2MB will be ignored and
 reset to 2MB. In a server with multiple views, the limit
 applies separately to the cache of each view.
 
-The default is unlimited.""",
+The default is unlimited.
+
+In 9.17.3, setting 'max-cache-size' now preallocates a
+fixed-size hash table so that rehashing does not cause
+resolution brownouts while the hash table is grown""",
     }
 
 g_nc_keywords['max-cache-ttl'] = \
@@ -3642,7 +4815,7 @@ query is terminated and returns SERVFAIL. The default is 7.""",
 
 g_nc_keywords['max-recursion-queries'] = \
     {
-        'default': 100,  # was 75 in v9.11
+        'default': 100,  # was 75 before v9.17.8
         'validity': {'range': {0, 1024}},
         'unit': 'queries_per_recursion',
         'found-in': {'options', 'view'},
@@ -3730,13 +4903,31 @@ The default zero (0) is also accepted and is equivalent to 4096.""",
 
 g_nc_keywords['max-stale-ttl'] = \
     {
-        'default': '86400',  # 1 day; was '1w' in v9.12
+        'default': '2592000',  # 1 day; was 12h before 9.17.10; was 1 day before v9.17.2; was '1w' before v9.12
         'validity': {'function': 'iso8601_time_duration'},
         'unit': 'second_unless_stated',
         'found-in': {'options', 'view'},
         'introduced': '9.12',
         'topic': 'DNS, tuning',
-        'comment': '',
+        'comment': """Specifies the maximum time that stale cached data may be used.
+
+Syntax:
+    max-stale-ttl <duration>;
+
+Purpose:
+
+  Enables serving stale data when authoritative servers are unavailable
+
+Behavior:
+
+  * Cached records beyond their normal TTL may still be used
+  * Limited by this maximum stale lifetime
+
+Notes:
+
+  * Works with 'stale-answer-enable'
+  * Improves resilience during upstream outages
+  * Excessive values may result in outdated responses""",
     }
 
 g_nc_keywords['max-transfer-idle-in'] = \
@@ -3898,7 +5089,25 @@ g_nc_keywords['message-compression'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
         'topic': 'query, compression, answer',
-        'comment': '',
+        'comment': """Controls DNS message name compression.
+
+Syntax:
+    message-compression yes | no;
+
+Purpose:
+
+  Reduces DNS message size by compressing repeated names
+
+Behavior:
+
+  * When enabled, standard DNS compression is applied
+  * When disabled, responses may be larger
+
+Notes:
+
+  * Disabling may be useful for debugging
+  * Compression is generally beneficial for performance
+  * Rarely changed from default""",
     }
 
 g_nc_keywords['min-cache-ttl'] = \
@@ -3909,7 +5118,25 @@ g_nc_keywords['min-cache-ttl'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.14',
         'topic': 'tuning, cache, caching',
-        'comment': '',
+        'comment': """Sets a minimum TTL for positive cache entries.
+
+Syntax:
+    min-cache-ttl <duration>;
+
+Purpose:
+
+  Prevents very low TTLs from causing excessive queries
+
+Behavior:
+
+  * Cached records are retained for at least this duration
+  * Overrides lower TTL values from authoritative data
+
+Notes:
+
+  * Improves cache efficiency
+  * May delay propagation of legitimate updates
+  * Use cautiously in dynamic environments""",
     }
 
 g_nc_keywords['min-ncache-ttl'] = \
@@ -3920,7 +5147,24 @@ g_nc_keywords['min-ncache-ttl'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.14',
         'topic': 'tuning, cache, caching',
-        'comment': '',
+        'comment': """Sets a minimum TTL for negative cache entries.
+
+Syntax:
+    min-ncache-ttl <duration>;
+
+Purpose:
+
+  Controls caching duration for NXDOMAIN and NODATA responses
+
+Behavior:
+
+  * Ensures negative responses are cached for at least this time
+
+Notes:
+
+  * Reduces repeated lookups for nonexistent domains
+
+  * May delay recognition of newly created records"""
     }
 
 g_nc_keywords['min-refresh-time'] = \
@@ -4010,8 +5254,10 @@ g_nc_keywords['minimal-response'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.2',
         'obsoleted': '9.11.0',
-        'topic': 'DNS',
-        'comment': '',
+        'topic': 'DNS, recursion, response',
+        'comment': """
+'subzone' now working properly with 'yes' option in v9.17.5.
+""",
     }
 
 g_nc_keywords['multiple-cnames'] = \
@@ -4065,7 +5311,24 @@ g_nc_keywords['new-zones-directory'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.12',
         'topic': 'zone',
-        'comment': '',
+        'comment': """Specifies the directory for dynamically added zones.
+
+Syntax:
+    new-zones-directory "<path>";
+
+Purpose:
+
+  Stores configuration/state for zones added at runtime
+
+Behavior:
+
+  * Used when 'allow-new-zones' is enabled
+  * New zone files and metadata are written here
+
+Notes:
+
+  * Directory must be writable by BIND
+  * Important for automation and dynamic provisioning""",
     }
 
 g_nc_keywords['no-case-compress'] = \
@@ -4127,7 +5390,24 @@ g_nc_keywords['nocookie-udp-size'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
         'topic': 'UDP, cookie',
-        'comment': '',
+        'comment': """Sets maximum UDP response size for clients without DNS cookies.
+
+Syntax:
+    nocookie-udp-size <size>;
+
+Purpose:
+
+  Limits response size for unauthenticated clients
+
+Behavior:
+
+  * Reduces amplification risk from spoofed requests
+  * Larger responses may be truncated
+
+Notes:
+
+  * Enhances security against reflection attacks
+  * Should be balanced against legitimate client needs""",
     }
 
 g_nc_keywords['nosit-udp-size'] = \
@@ -4284,8 +5564,24 @@ g_nc_keywords['nsec3-test-zone'] = \
         'unit': 'isc-boolean',
         'found-in': {'option', 'view'},  # 'option' was added when?
         'introduced': '9.6.0',
-        'topic': 'DNSSEC',
-        'comment': '',
+        'topic': 'DNSSEC, debug, test',
+        'comment': """Enables special handling for NSEC3 test zones.
+
+Syntax:
+    nsec3-test-zone yes | no;
+
+Purpose:
+
+  Supports testing of NSEC3 DNSSEC behavior
+
+Behavior:
+
+  * Alters handling of NSEC3 records for experimental zones
+
+Notes:
+
+  * Intended for testing and debugging only
+  * Not recommended for production use""",
     }
 
 g_nc_keywords['nsec3param'] = \
@@ -4306,7 +5602,9 @@ The default is to use NSEC.  The ``iterations``, ``optout`` and
 ``salt-length`` parts are optional, but if not set, the values in
 the example above are the default NSEC3 parameters. Note that you don't
 specify a specific salt string, :iscman:`named` will create a salt for you
-of the provided salt length.""",
+of the provided salt length.
+
+WARNING: Any ``iterations`` greater than 150 is insecure.""",
     }
 
 g_nc_keywords['nta-lifetime'] = \
@@ -4317,7 +5615,23 @@ g_nc_keywords['nta-lifetime'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
         'topic': 'negative trust, DNSSEC, NTA',
-        'comment': '',
+        'comment': """Specifies the lifetime of Negative Trust Anchors (NTA).
+
+Syntax:
+    nta-lifetime <duration>;
+
+Purpose:
+
+  Controls how long DNSSEC validation is bypassed for a domain
+
+Behavior:
+
+  * Temporarily disables validation failures for specified zones
+
+Notes:
+
+  * Useful during DNSSEC outages or misconfigurations
+  * Should be kept as short as possible""",
     }
 
 g_nc_keywords['nta-recheck'] = \
@@ -4328,7 +5642,23 @@ g_nc_keywords['nta-recheck'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
         'topic': 'negative trust, DNSSEC, NTA',
-        'comment': '',
+        'comment': """Specifies interval for rechecking Negative Trust Anchors.
+
+Syntax:
+    nta-recheck <duration>;
+
+Purpose:
+
+  Determines how often BIND retries validation for NTA domains
+
+Behavior:
+
+  * Periodically tests whether DNSSEC issues are resolved
+
+Notes:
+
+  * Shorter intervals allow faster recovery
+  * Excessively frequent checks increase query load""",
     }
 
 g_nc_keywords['nxdomain-redirect'] = \
@@ -4338,7 +5668,29 @@ g_nc_keywords['nxdomain-redirect'] = \
         'found-in': {'options', 'view'},
         'introduced': '9.11.0',
         'topic': 'nxdomain',
-        'comment': '',
+        'comment': """Redirects NXDOMAIN responses to a specified domain.
+
+Syntax:
+    nxdomain-redirect <domain-name>;
+
+Purpose:
+
+  Provides alternate resolution for nonexistent domains
+
+Behavior:
+
+  * NXDOMAIN responses are replaced with a CNAME or redirect
+
+Use cases:
+
+  * Captive portals
+  * Search redirection services
+
+Notes:
+
+  * Alters standard DNS behavior
+  * May break applications expecting NXDOMAIN responses
+  * Use with caution""",
     }
 
 g_nc_keywords['padding'] = \
@@ -4349,7 +5701,24 @@ g_nc_keywords['padding'] = \
         'found-in': {'server'},
         'introduced': '9.12.0',
         'topic': 'UDP, data layer, server',
-        'comment': '',
+        'comment': """Controls EDNS(0) padding for DNS messages.
+
+Syntax:
+    padding <size> | block-size <size>;
+
+Purpose:
+
+  Obscures message size to improve privacy
+
+Behavior:
+
+  * Adds padding bytes to DNS messages
+  * Helps mitigate traffic analysis
+
+Notes:
+
+  * Increases bandwidth usage
+  * Often used with DNS over TLS/HTTPS""",
     }
 
 g_nc_keywords['parent-ds-ttl'] = \
@@ -4357,7 +5726,7 @@ g_nc_keywords['parent-ds-ttl'] = \
         'default': '',
         'validity': {'range': {0, 3660}},
         'unit': 'ttl_second',
-        'found-in': {'dnssec-policy'},  # removed from 'options' 9.12
+        'found-in': {'dnssec-policy'},  # removed from 'options'?
         'introduced': '9.15.6',
         'topic': 'DNSSEC',
         'comment': "",
@@ -4395,7 +5764,22 @@ g_nc_keywords['parental-source'] = \
         'found-in': {'options', 'view'},  # added 'options' in v9.19?
         'introduced': '9.18',
         'topic': 'DoH',
-        'comment': '',
+        'comment': """Specifies IPv4 source address for parental agent queries.
+
+Syntax:
+    parental-source <ip-address>;
+
+Purpose:
+
+  Defines source address for upstream parental control queries
+
+Behavior:
+
+  * Used when communicating with parental agents
+
+Notes:
+
+  * Relevant only when parental features are configured""",
     }
 
 g_nc_keywords['parental-source-v6'] = \
@@ -4405,7 +5789,22 @@ g_nc_keywords['parental-source-v6'] = \
         'found-in': {'options', 'view'},  # added 'options' in v9.19?
         'introduced': '9.18',
         'topic': 'DoH',
-        'comment': '',
+        'comment': """Specifies IPv6 source address for parental agent queries.
+
+Syntax:
+    parental-source-v6 <ipv6-address>;
+
+Purpose:
+
+  IPv6 equivalent of 'parental-source'
+
+Behavior:
+
+  * Used for IPv6 communications with parental agents
+
+Notes:
+
+  * Only applicable in IPv6-enabled environments""",
     }
 
 g_nc_keywords['pid-file'] = \
@@ -4453,7 +5852,24 @@ g_nc_keywords['prefer-server-ciphers'] = \
         'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
-        'comment': '',
+        'comment': """Controls whether server-preferred TLS ciphers are enforced.
+
+Syntax:
+    prefer-server-ciphers yes | no;
+
+Purpose:
+
+  Determines cipher selection priority in TLS handshakes
+
+Behavior:
+
+  * When enabled, server chooses preferred cipher suite
+  * When disabled, client preference may take precedence
+
+Notes:
+
+  * Enhances security by enforcing strong ciphers
+  * Recommended to enable in most secure deployments""",
     }
 
 g_nc_keywords['preferred-glue'] = \
@@ -4507,7 +5923,28 @@ g_nc_keywords['protocols'] = \
         'found-in': {'tls'},
         'introduced': '9.18.0',
         'topic': 'TLS, HTTPS, DoH',
-        'comment': '',
+        'comment': """Specifies allowed TLS protocol versions.
+
+Syntax:
+    protocols { <protocol>; ... };
+
+Common values:
+
+    TLSv1.2
+    TLSv1.3
+
+Purpose:
+
+  Restricts TLS versions used for secure connections
+
+Behavior:
+
+  * Only listed protocols are permitted during negotiation
+
+Notes:
+
+  * Older protocols (TLSv1.0/1.1) should be avoided
+  * Align with current security best practices""",
     }
 
 g_nc_keywords['provide-ixfr'] = \
@@ -4573,7 +6010,7 @@ g_nc_keywords['purge-keys'] = \
                      'function': 'iso8601_time_duration'},
         'unit': 'second',
         'found-in': {'options', 'dnssec-policy'},
-        'introduced': '9.16.0',  # code appeared in 9.15.7
+        'introduced': '9.17.11',  # code first appeared in 9.15.7
         'topic': 'DNSSEC',
         'comment': '',
     }
@@ -5039,7 +6476,7 @@ g_nc_keywords['root-key-sentinel'] = \
 g_nc_keywords['rrset-order'] = \
     {
         'default': {'class': 'any', 'type': "any", 'name': "*",
-                    'order': 'random'},  # was 'order': 'cyclic' in v9.11
+                    'order': 'random'},  # was 'order': 'cyclic' in v9.11 (other option is 'none')
         'validity': {'function': 'rrset'},
         'found-in': {'options', 'view'},  # TBD moved 'zone' to 'view' in 9.17?
         'introduced': '8.2',
@@ -5554,11 +6991,11 @@ The default is default.""",
 
 g_nc_keywords['stale-answer-client-timeout'] = \
     {
-        'default': 'off',
+        'default': 'off',  # was 'on' before v9.17.12
         'validity': {'regex': '(disabled|off)',
                      'range': {0, 32767}},
         'found-in': {'options', 'view'},  # added to 'options' in v9.19?
-        'introduced': '9.18',
+        'introduced': '9.17.10',  # better fixed in v9.17.11
         'topic': '',
         'comment': """
 This option defines the amount of time (in milliseconds) that :iscman:`named`
@@ -5575,8 +7012,7 @@ The maximum value for this option is ``resolver-query-timeout`` minus
 one second. The minimum value, ``0``, causes a cached (stale) RRset to be
 immediately returned if it is available while still attempting to
 refresh the data in cache. :rfc:`8767` recommends a value of ``1800``
-(milliseconds).
-        """,
+(milliseconds).""",
     }
 
 g_nc_keywords['stale-answer-enable'] = \
@@ -5607,7 +7043,7 @@ log category.
 
 g_nc_keywords['stale-answer-ttl'] = \
     {
-        'default': 30,
+        'default': 30,  # was 1s before 9.17.10
         'validity': {'function': 'ttlval'},
         'unit': 'delta_second',  # was 'second' in v9.12
         'found-in': {'options', 'view'},  # 'options' added 9.13?
@@ -5629,7 +7065,7 @@ g_nc_keywords['stale-cache-enable'] = \
         'default': 'no',
         'validity': {'regex': '(true|false|yes|no)'},
         'found-in': {'options', 'view'},
-        'introduced': '9.16',
+        'introduced': '9.17.4',  # keyword reserved in 9.12
         'topic': 'caching, cache, answer',
         'comment':
             """If ``yes``, enable the returning of "stale" cached answers when the name
@@ -5656,7 +7092,7 @@ g_nc_keywords['stale-refresh-time'] = \
         'validity': {'function': 'ttlval'},
         'unit': 'delta_second',
         'found-in': {'options', 'view'},
-        'introduced': '9.18',
+        'introduced': '9.17.7',
         'topic': 'refresh, answer, window',
         'comment':
             """If the name servers for a given zone are not answering, this sets the time
@@ -5858,7 +7294,9 @@ Note: This value must be greater than expected round
 
 This value can be updated at runtime by using
 
-'rndc tcp-timeouts'""",
+'rndc tcp-timeouts'
+
+Better fixed in v9.17.11""",
     }
 
 g_nc_keywords['tcp-initial-timeout'] = \
@@ -5887,7 +7325,9 @@ Note: This value must be greater than expected round
 
 This value can be updated at runtime by using
 
-    'rndc tcp-timeouts'""",
+    'rndc tcp-timeouts'
+
+Better fixed in v9.17.11""",
     }
 
 g_nc_keywords['tcp-keepalive'] = \
@@ -5966,7 +7406,7 @@ g_nc_keywords['tcp-receive-buffer'] = \
         'validity': {'range': {0, 65535},
                      'string': 'unlimited'},
         'found-in': {'options'},
-        'introduced': '9.18.0',
+        'introduced': '9.17.14',
         'topic': 'TCP, buffer, resource',
         'comment': '',
     }
@@ -5977,7 +7417,7 @@ g_nc_keywords['tcp-send-buffer'] = \
         'validity': {'range': {0, 2 ** 32 - 1},
                      'string': 'unlimited'},
         'found-in': {'options'},
-        'introduced': '9.18.0',
+        'introduced': '9.17.14',
         'topic': 'TCP, buffer, resource',
         'comment': '',
     }
@@ -6518,7 +7958,7 @@ g_nc_keywords['udp-receive-buffer'] = \
         'validity': {'range': {0, 2 ** 32 - 1},
                      'string': 'unlimited'},
         'found-in': {'options'},
-        'introduced': '9.18.0',
+        'introduced': '9.17.14',
         'topic': 'TCP, buffer, resource',
         'comment': '',
     }
@@ -6529,7 +7969,7 @@ g_nc_keywords['udp-send-buffer'] = \
         'validity': {'range': {0, 2 ** 32 - 1},
                      'string': 'unlimited'},
         'found-in': {'options'},
-        'introduced': '9.18.0',
+        'introduced': '9.17.14',
         'topic': 'TCP, buffer, resource',
         'comment': '',
     }
@@ -6581,6 +8021,7 @@ g_nc_keywords['update-policy'] = \
         'topic': 'dynamic zone update',
         'zone-type': {'master', 'primary'},
         'comment': """
+Option "subdomain" used to be treated like 'zonesub' until 9.17.3.
 Option "local" and "zonesub" introduced in 9.7.0.
 Option "external" introduced in 9.8.0.
 """,
@@ -7195,7 +8636,7 @@ def main():
     if args.keyvalue:
         search_keyvalue = args.keyvalue
     else:
-        search_keyvalue = '\s*'
+        search_keyvalue = r'\s*'
 
     if args.command == "validate":
         validate()
